@@ -1,0 +1,3 @@
+CREATE USER ipman WITH PASSWORD '133742';
+CREATE DATABASE ft_transcendence;
+GRANT ALL PRIVILEGES ON DATABASE ft_transcendence TO ipman;
