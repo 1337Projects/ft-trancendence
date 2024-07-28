@@ -1,11 +1,15 @@
 version : "3.7"
 
 services:
-  db:
-    container_name: postgres
-    build: ./srcs/Data_Base/.
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+  be:
+    container_name: back_end
+    build: ./srcs/Back_end/.
+    restart : always
+  # db:
+  #   container_name: data_base
+  #   build: ./srcs/Data_Base/.
+  #   restart: always
+  #   environment:
+  #     POSTGRES_PASSWORD: $POSTGRES_PASSWORD
 
 
