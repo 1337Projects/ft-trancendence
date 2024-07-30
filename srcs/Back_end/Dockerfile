@@ -14,11 +14,11 @@ WORKDIR /ft_transcendence/
 
 COPY ft_transcendence .
 
-RUN python3 -m venv env
-
-RUN /bin/bash -c "source /ft_transcendence/env/bin/activate"
+# RUN /bin/bash -c "source /ft_transcendence/env/bin/activate"
 
 RUN apt-get update && apt-get install -y libpq-dev
 
-CMD ["python3", "manage.py", "runserver"]
+RUN python3 -m venv env; . env/bin/activate; pip install -r requirements.txt
+
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
 
