@@ -2,12 +2,18 @@ version : "3.7"
 
 networks:
   Net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
 
 services:
   db:
     container_name: data_base
     build: ./srcs/Data_Base/.
     restart: always
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: 133742
       POSTGRES_USER: ipman
@@ -19,7 +25,9 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - Net
+      Net:
+        ipv4_address: 172.20.0.3
+
   be:
     container_name: back_end
     build: ./srcs/Back_end/.
@@ -31,5 +39,6 @@ services:
     depends_on:
       - db
     networks:
-      - Net
+      Net:
+        ipv4_address: 172.20.0.2
     
