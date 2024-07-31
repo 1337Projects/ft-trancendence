@@ -1,16 +1,9 @@
 version : "3.7"
 
+networks:
+  Net:
+
 services:
-  be:
-    container_name: back_end
-    build: ./srcs/Back_end/.
-    restart : always
-    volumes:
-      - srcs/Back_end:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
   db:
     container_name: data_base
     build: ./srcs/Data_Base/.
@@ -25,6 +18,18 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
-
-networks:
-  ft_transcendence:
+    networks:
+      - Net
+  be:
+    container_name: back_end
+    build: ./srcs/Back_end/.
+    restart : always
+    # volumes:
+    #   - srcs/Back_end:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - Net
+    
