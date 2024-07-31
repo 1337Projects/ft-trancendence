@@ -3,9 +3,6 @@ version : "3.7"
 networks:
   Net:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
 
 services:
   db:
@@ -26,19 +23,23 @@ services:
       retries: 10
     networks:
       Net:
-        ipv4_address: 172.20.0.3
 
   be:
     container_name: back_end
     build: ./srcs/Back_end/.
     restart : always
-    # volumes:
-    #   - srcs/Back_end:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
     networks:
       Net:
-        ipv4_address: 172.20.0.2
+
+volumes:
+  v :
+    driver : local
+    driver_opt:
+      bind : o
+      type : local
+      x : /user/home/data
     

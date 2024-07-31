@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'ft_transcendence',
         'USER': 'ipman',
         'PASSWORD': '133742',
-        'HOST': '172.20.0.3',
+        'HOST': 'data_base',
         'PORT': '5432',
     }
 }
