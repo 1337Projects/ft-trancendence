@@ -1,7 +1,6 @@
-version : "3.7"
 
 networks:
-  Net:
+  ft_transcendence:
     driver: bridge
 
 services:
@@ -22,7 +21,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      Net:
+      ft_transcendence:
 
   be:
     container_name: back_end
@@ -33,16 +32,17 @@ services:
     depends_on:
       - db
     networks:
-      Net:
+      ft_transcendence:
     
-  fr:
-    container_name: react
+  frontend:
+    container_name: frontend
     build: srcs/Front_end/
+    image: frontend:aamhamdi
     restart : always
     ports:
       - 5173:5173
     volumes:
       - ${PWD}/srcs/Front_end:/app
     networks:
-      - Net
+      - ft_transcendence
 
