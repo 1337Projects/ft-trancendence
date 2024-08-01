@@ -7,7 +7,7 @@ import FriendImg from '../assets/FriendImg'
 import AiImg from "../assets/AiImg"
 import TornmentImg from "../assets/TornmentImg"
 import { Link } from "react-router-dom"
-import { theme } from "flowbite-react"
+
 
 
 function Player() {
@@ -129,9 +129,6 @@ function CreatRoom({handler}) {
     )
 }
 
-// SM MD LG XL 2XL
-
-
 function Hero({color}) {
     
     return (
@@ -186,8 +183,8 @@ function Card({text , img, color, handler}) {
 function Cards({color, handler}) {
     const theme = useContext(ThemeContext)
     return (
-        <div className={`cards mt-2 ${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
-            <div className={`header mx-4 ${""}`}>
+        <div className={`cards h-[90vh] ${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
+            <div className={`header mx-4 my-6 `}>
                 <h1 className="text-secondary capitalize ">game modes:</h1>
                 <p className="text-small mt-2">pick a game to play in</p>
             </div>
@@ -209,14 +206,14 @@ export default function Game() {
     const [step, setStep] = useState(null)
     return (
         <>
-            <div className={`mt-2 game w-full h-fit overflow-y-scroll relative bg-darkItems p-1`}>
+            <div className={`${theme == 'light' ? "bg-lightItems" : "bg-darkItems"} mt-2 game w-full h-screen overflow-scroll p-2`}>
                 <div className="mx-auto relative">
                     <Hero color={color} />
                     <Cards color={color} handler={setStep} />
-                    {
+                    {/* {
                         step === 'create' && <CreatRoom handler={setStep} /> ||
                         step === 'waiting' && <WaitingRoom handler={(setStep)} />
-                    }
+                    } */}
                 </div>
             </div> 
         </>

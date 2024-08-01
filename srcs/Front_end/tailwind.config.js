@@ -18,6 +18,7 @@ export default {
         'hero': "url('/Ping.png')",
         'pong': "url('/wallpaperflare.png')",
         'pat': "url('/14.svg')",
+        'banner': "url('/banner.png')",
       },
       fontFamily : {
         'kaushan' : ['"kaushan script"', "sans-serif"],

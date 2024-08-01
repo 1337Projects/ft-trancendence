@@ -12,7 +12,7 @@ import {
   import "react-circular-progressbar/dist/styles.css";
 
 
-function Stats ({day="mon", date="10", fire=false}) {
+export function Stats ({day="mon", date="10", fire=false}) {
 	const theme = useContext(ThemeContext);
 	const color = useContext(ColorContext)
 	return (
@@ -35,7 +35,7 @@ export default function Status( {toggleExpanded, expand}) {
 					<p className={`text-[15px] font-kaushan ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>More Infos</p>
 			</div> */}
 			<div className='flex h-[200px] items-center'>
-				<div className='w-[35%] flex flex-col '>
+				{/* <div className='w-[35%] flex flex-col '>
 					<div className=' grow flex items-center justify-center'>
 						<div className='w-[40%] h-[50%] rounded-full'>
 						<CircularProgressbarWithChildren styles={buildStyles({pathColor: color,strokeLinecap: "butt", trailColor:"#374151"})} strokeWidth={13}  value={30} >
@@ -46,8 +46,8 @@ export default function Status( {toggleExpanded, expand}) {
 						</CircularProgressbarWithChildren>
 						</div>
 					</div>
-				</div>
-				<div className='flex w-[60%] h-full items-center justify-center'>
+				</div> */}
+				<div className='flex w-full h-full items-center justify-center'>
 					<div className='flex flex-col w-full h-[55%]'>
 						<div className={`shrink-0 flex w-[77%] h-[35px] text-[10px] mb-2 font-thin justify-between ${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
 							<p>Last Week</p>

@@ -9,6 +9,7 @@ import {ColorContext, ThemeContext} from '../../Contexts/ThemeContext'
 // import ReactApexChart from 'react-apexcharts'
 import { LineChart } from '@mui/x-charts/LineChart';
 import Status from "./status"
+import { Stats } from './status';
 
 
 
@@ -35,10 +36,7 @@ function Achivments() {
 	const theme = useContext(ThemeContext)
 	return (
 		<>
-			<div className={`h-[33vh] mt-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/30"} w-full max-h-[400px] overflow-scroll h-fit rounded-sm p-4`} >
-				<div className="header my-6 text-secondary">
-					<h1>Achivments</h1>
-				</div>
+			<div className={`h-[300px] mt-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/30"} w-full max-h-[400px] overflow-scroll h-fit rounded-sm p-4`} >
 				<ul className='mt-4'>
 					{
 						achivments.map(a => {
@@ -150,19 +148,166 @@ const achivments = [
 	{id:3,title:'Bill Gates 3', des:'be active for more 3,5,7 days', rec : '0/2', achived:false, icon:'/thumb-up.png'},
 ]
 
+function Level() {
+	return (
+		<>
+			<div className='flex items-center text-white text-[13px] justify-between'>
+				<h1><span className='text-[24px] text-red-500'>5</span>/200</h1>
+				<h1>4.3LVL</h1>
+			</div>
+			<div className='relative mt-2'>
+				<div className='bg-white h-2 rounded-sm'></div>
+				<div className='bg-red-500 w-1/4 h-2 top-0 rounded-sm absolute'></div>
+			</div>
+		</>
+	)
+}
+
+function LChart() {
+	const theme = useContext(ThemeContext)
+	const chartColor = theme == 'light' ? "#374151" : "#ffffff"
+	return(
+		<div className='h-[100px] w-full mt-20'>
+			<LineChart
+				leftAxis={null}
+				bottomAxis={null}
+				series={
+					[{ 
+						curve: "linear",
+						data: [
+							0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10,0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10, 2, 10
+						],
+						color: chartColor,
+						showMark:false
+					}]
+				}
+				margin={{left: 10,bottom:10, top:10, right:10}}
+				disableLineItemHighlight={true}
+			/>
+		</div>
+	)
+}
+
+function Statuss() {
+	return (
+		<div className='mt-10'>
+			<div className='flex'>
+				<Stats/>
+				<Stats fire date='11' day='tur'/>
+				<Stats date='12' day='wed'/>
+				<Stats date='13' day='thr'/>
+				<Stats fire date='14' day='fri'/>
+				<Stats date='15' day='sat'/>
+				<Stats fire date='16' day='sun'/>
+			</div>
+		</div>
+	)
+}
+
+function Avatar() {
+	return (
+		<img src="/ava2.png" className='h-[250px] ml-[50%] translate-x-[-50%]' alt="" />
+	)
+}
+
+function Statistics() {
+	const theme = useContext(ThemeContext)
+	const color = useContext(ColorContext)
+	return (
+		<div className="h-[50px] mt-10 w-full p-2 flex justify-between ">
+			<div className="text-[12px] flex flex-col justify-center text-center">
+				<p className={`font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Win</p>
+				<div className="flex items-center mt-2">
+					<FontAwesomeIcon icon={faTrophy} style={{color: color}} className="ml-[1px] mr-[2px]" />
+					<p className={`ml-1 font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>11</p>
+				</div>
+			</div>
+			<div className="text-[12px] flex flex-col justify-center text-center">
+				<p className={`font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Time</p>
+				<div className="flex items-center mt-2">
+					<FontAwesomeIcon icon={faClock}  style={{color: color}}className="ml-[1px] mr-[2px]" />
+					<p className={`ml-1 font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>2h 30 min</p>
+				</div>
+			</div>
+			<div className="text-[12px] flex flex-col justify-center text-center">
+				<p className={`font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Rate</p>
+				<div className="flex items-center mt-2">
+					<FontAwesomeIcon icon={faCertificate} style={{color: color}}className="ml-[1px] mr-[2px]" />
+					<p className={`ml-1 font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>5</p>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+function Banner() {
+	const theme = useContext(ThemeContext)
+	// const [expand, setExpand] = useState(false)
+	// const toggleExpanded = () => {
+	// 	setExpand(!expand)
+	// }
+	return (
+		<>
+			<div className='p-2'>
+				<div className='bg-banner bg-cover border-[.2px] border-darkText/40 w-full h-[140px] rounded-xl relative' >
+					<div className='absolute bottom-[-50px] left-10 flex items-end'>
+						<img className='w-[100px] border-[.3px] rounded-full ' src="/aamhamdi1.jpeg" alt="" />
+						<h1 className='text-white font-bold ml-4'>@aamhamdi</h1>
+					</div>
+				</div>
+				<div className='p-2 h-fit text-[12px] mt-16 flex'>
+					<div className='w-1/2'>
+						<ul className='text-white ml-10'>
+							<li className='mt-2'>🔥 Lorem ipsum dolor sit amet.</li>
+							<li className='mt-2'>🎮 Lorem ipsum dolor.</li>
+							<li className='mt-2'>🚀 Lorem amet.</li>
+						</ul>
+					</div>
+					<div className='w-1/2 p-2 flex justify-center items-center'>
+						{/* <button className='bg-green-300 p-1 mr-2 rounded-sm'>Add Frient</button>
+						<button className='bg-green-300 p-1 mr-2 rounded-sm'>Contact</button> */}
+					</div>
+				</div>
+			</div>
+			<div className='h-fit p-2 flex'>
+				<div className='w-3/5 flex border-[0px] justify-center h-[380px] border-white/30 p-2 rounded-sm'>
+					<div className='w-3/4'>
+						<Level />
+						<LChart />
+						<Statuss />
+					</div>
+				</div>
+				<div className='w-2/5 flex items-center border-[0px] ml-2 justify-center h-[380px] border-white/30 p-2 rounded-sm'>
+					<div className='w-3/4 h-full py-2'>
+						<div className=''>
+							<Avatar />
+						</div>
+						<Statistics />
+					</div>
+				</div>
+			</div>
+			{/* achivments */}
+			<div className='px-2 h-[400px] border-white/30 border-[0px] rounded-sm'>
+				<Achivments />
+			</div>
+		</>
+	)
+}
 
 export default function Profile() {
 	const [expand, setExpand] = useState(false)
 
+	const theme = useContext(ThemeContext)
 	const toggleExpanded = () => {
 		setExpand(!expand)
 	}
 	return (
 		<div className="flex flex-grow justify-center h-full w-full mr-2">
-			<div className='w-full'>
-				<PlayerStatus />
-				<Status toggleExpanded={toggleExpanded} expand={expand}  />
-				<Achivments />
+			<div className={`w-full p-1 h-[100vh] overflow-scroll ${theme == 'light' ? "bg-lightItems" : "bg-darkItems"}`}>
+				<Banner />
+				{/* <PlayerStatus /> */}
+				{/* <Status toggleExpanded={toggleExpanded} expand={expand}  />
+				<Achivments /> */}
 			</div>
 			{/* <PlayerStatus toggleExpanded={toggleExpanded} expand={expand} />	 */}
 		</div>
