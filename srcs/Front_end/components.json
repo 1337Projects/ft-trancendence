@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": false,
+  "tailwind": {
+    "config": "/goinfre/oaboulgh/react/ft_trancendence/",
+    "css": "app/globals.css",
+    "baseColor": "gray",
+    "cssVariables": true,
+    "prefix": "yes"
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils"
+  }
+}
