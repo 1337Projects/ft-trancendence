@@ -7,7 +7,7 @@ export default {
     extend: {
       colors : {
         primary : '#C53F3F',
-        lightBg : '#F5F5FF',
+        lightBg : '#f7f7f7',
         lightText : '#374151',
         lightItems : 'white',
         darkBg : '#161b22',

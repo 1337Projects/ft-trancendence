@@ -8,44 +8,77 @@ function FriendCard({data}) {
 	const theme = useContext(ThemeContext);
     const color = useContext(ColorContext)
 	return (
-		<div className='h-[160px] rounded-sm bg-cover mb-2 w-[170px]'>
-			<div className={`mb-2 shadow-sm flex w-full h-[160px] backdrop-blur-md rounded-sm ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"} `}> 
-					<div className="w-1/2 flex flex-col">
-						<div style={{background:color}} className="rounded-br-sm py-1 w-[65%] flex items-center justify-center ">
-							<p className={`text-[12px] text-darkText capitalize`}>friend</p>
+		<div className='h-[160px] rounded-md border-darkText/30 bg-cover mb-2 w-full border-[.3px]'>
+			<div className={`mb-2 h-full shadow-sm w-full backdrop-blur-md rounded-md ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"} `}> 
+					<div className='flex w-full'>
+						<div className="w-1/2 flex flex-col">
+							<div style={{background:color}} className="rounded-br-lg py-1 w-[65%] flex items-center justify-center ">
+								<p className={`text-[12px] text-darkText capitalize`}>friend</p>
+							</div>
+							<div className="flex-col flex items-center justify-center grow">
+								<p className={`text-[15px] mb-2 ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data.name}</p>
+								<p className={`text-[10px]  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>win rate</p>
+								<p className={`text-[10px] mt-2  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data.rate} %</p>
+							</div>
 						</div>
-						<div className="flex-col flex items-center justify-center grow">
-							<p className={`text-[15px] mb-2 ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data.name}</p>
-							<p className={`text-[10px]  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>win rate</p>
-							<p className={`text-[10px] mt-2  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data.rate} %</p>
+						<div className="flex w-1/2 justify-between items-center p-2">
+							<div className='w-full'>
+								<img src={data.avatar} alt="Description" className="h-[50px] ml-[50%] translate-x-[-50%] rounded-full" />
+							</div>
 						</div>
 					</div>
-					<div className="flex w-1/2 justify-between items-center p-2">
-						<div className='w-full'>
-							<img src={data.avatar} alt="Description" className="h-[70px] ml-[50%] translate-x-[-50%] rounded-lg" />
-							<button className='bg-blue-400 text-white h-[26px] text-[12px] block w-full rounded-lg mt-6'>
-								Contact
-								<FontAwesomeIcon className='ml-2 text-[10px]' icon={faMessage} />
-							</button>
-						</div>
+					<div className='px-6'>
+						<button className='bg-blue-400 text-white capitalize h-[26px] text-[10px] block w-full rounded-sm mt-6'>
+							get in touch
+							<FontAwesomeIcon className='ml-2' icon={faMessage} />
+						</button>
 					</div>
 			</div>
 		</div>
 	);
 }
 
+function Fcard({data}) {
+	const theme = useContext(ThemeContext)
+	const color = useContext(ColorContext)
+	return (
+		<div className={`h-[140px] border-[.2px] p-2 mb-2 flex items-center shadow-sm w-full backdrop-blur-md rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/20" : "bg-darkItems border-darkText/20"} `}> 
+			<div className="w-full h-fit">
+				{/* <div className='w-full flex justify-end'>
+					<div style={{background:color}} className="rounded-lg py-1 w-1/3 flex items-center justify-center ">
+						<p className={`text-[10px] text-darkText capitalize`}>friend</p>
+					</div>
+				</div> */}
+				<div className='flex items-center'>
+					<img src={data.avatar} alt="Description" className="h-[50px] rounded-full mr-2" />
+					<div className={`${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
+						<p className={`text-[15px] mb-2`}>@{data.name}</p>
+						<p className='text-[10px] capitalize'>{data.fullname}</p>
+					</div>
+				</div>
+				<div className='w-full h-[26px] mt-4 flex justify-center'>
+					<button style={{background:color}} className='text-white capitalize h-[26px] text-[10px] block w-2/3 rounded-sm'>
+						get in touch
+						<FontAwesomeIcon className='ml-2' icon={faMessage} />
+					</button>
+				</div>
+			</div>
+		</div>
+	)
+}
+
 const friends = [
-    {id:0, avatar: '/aamhamdi1.jpeg', name:'jemmy', rate:'50'},
-    {id:0, avatar: '/nmaazouz.jpg', name:'jemmy', rate:'50'},
-    {id:0, avatar: '/oaboulgh.jpg', name:'jemmy', rate:'50'},
-    {id:0, avatar: '/mel-harc.jpg', name:'jemmy', rate:'50'},
+    {id:0, avatar: '/aamhamdi1.jpeg', name:'aamhamdi', fullname:'abdelhadi amhamdi'},
+    {id:1, avatar: '/nmaazouz.jpg', name:'nmaazouz', fullname:'noreddine maazzouz'},
+    {id:2, avatar: '/oaboulgh.jpg', name:'oaboulgh', fullname:'othman aboulghit'},
+    {id:3, avatar: '/mel-harc.jpg', name:'mel-harc', fullname:'mohammed el harchi'},
 ]
 
 export default function friendsList() {
 	const theme = useContext(ThemeContext)
     return (
-        <div className={`${theme == 'light' ? "bg-lightItems" : ""} min-w-[170px]`}>
-            {friends.map(f => <Link to={f.name}><FriendCard key={f.id} data={f}/></Link>)}
+        <div className={`${theme == 'light' ? "" : ""} min-w-[170px] overflow-scroll h-[90vh]`}>
+            {friends.map(f => <Link key={f.id} to={f.name}><Fcard data={f}/></Link>)}
         </div>
     )
 }

@@ -132,8 +132,8 @@ function CreatRoom({handler}) {
 function Hero({color}) {
     
     return (
-        <div className=" hero border-[.5px] shadow-sm border-gray-600 h-2/3 sm:h-1/2 max-h-[800px] sm:max-h-[500px]  bg-hero bg-cover rounded-sm">
-            <div className="flex items-center justify-center h-full w-full backdrop-blur-md rounded-sm p-1 bg-[#141323]/65">
+        <div className=" hero border-[.5px] shadow-sm border-gray-600 h-2/3 sm:h-1/2 max-h-[800px] sm:max-h-[500px] bg-pong bg-cover rounded-sm">
+            <div className="flex items-center justify-center h-full w-full backdrop-blur-sm rounded-sm p-1 bg-[#141323]/50">
                 <div className="grid place-items-center sm:flex items-center justify-center max-w-[1500px] ">
                     <div className="img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
                         <HeroImg color={color} />
@@ -159,7 +159,7 @@ function Hero({color}) {
 function Card({text , img, color, handler}) {
     const theme = useContext(ThemeContext);
     return(
-        <div className={`card h-[400px] p-2 w-full max-w-[450px] border-[.3px] rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/90" : " bg-darkItems border-darkText/10"}`}>
+        <div className={`card h-[400px] shadow-sm p-2 w-full max-w-[450px] border-[.3px] rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/10 shadow-lightText/10" : " bg-darkItems border-darkText/10 shadow-darkText/10"}`}>
             <div className="img w-full h-2/3 flex items-center justify-center ml-[50%] translate-x-[-50%] m-2">
                 {img}
             </div>

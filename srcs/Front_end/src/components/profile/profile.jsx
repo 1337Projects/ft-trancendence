@@ -10,6 +10,7 @@ import {ColorContext, ThemeContext} from '../../Contexts/ThemeContext'
 import { LineChart } from '@mui/x-charts/LineChart';
 import Status from "./status"
 import { Stats } from './status';
+import { useParams } from 'react-router-dom';
 
 
 
@@ -41,7 +42,7 @@ function Achivments() {
 					{
 						achivments.map(a => {
 							return (
-								<li className='my-6 flex items-center justify-between px-6'>
+								<li key={a.id} className='my-6 flex items-center justify-between px-6'>
 									<div className='flex items-center'>
 										<img src={a.icon} className='w-[45px]' alt="" />
 										<div className='ml-4'>
@@ -149,15 +150,17 @@ const achivments = [
 ]
 
 function Level() {
+	const color = useContext(ColorContext)
+	const theme = useContext(ThemeContext)
 	return (
 		<>
-			<div className='flex items-center text-white text-[13px] justify-between'>
-				<h1><span className='text-[24px] text-red-500'>5</span>/200</h1>
+			<div className={`${theme == 'light' ? "text-lightText" : "text-darkText"} flex items-center text-[13px] justify-between`}>
+				<h1><span style={{color:color}} className='text-[24px]'>5</span>/200</h1>
 				<h1>4.3LVL</h1>
 			</div>
 			<div className='relative mt-2'>
-				<div className='bg-white h-2 rounded-sm'></div>
-				<div className='bg-red-500 w-1/4 h-2 top-0 rounded-sm absolute'></div>
+				<div className={`${theme == 'light' ? "bg-darkItems" : "bg-lightItems"} h-2 rounded-sm`}></div>
+				<div style={{background:color}} className='w-1/4 h-2 top-0 rounded-sm absolute'></div>
 			</div>
 		</>
 	)
@@ -175,7 +178,7 @@ function LChart() {
 					[{ 
 						curve: "linear",
 						data: [
-							0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10,0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10, 2, 10
+							0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10,0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10, 2, 10,
 						],
 						color: chartColor,
 						showMark:false
@@ -242,6 +245,7 @@ function Statistics() {
 
 function Banner() {
 	const theme = useContext(ThemeContext)
+	const {user} = useParams()
 	// const [expand, setExpand] = useState(false)
 	// const toggleExpanded = () => {
 	// 	setExpand(!expand)
@@ -249,25 +253,28 @@ function Banner() {
 	return (
 		<>
 			<div className='p-2'>
-				<div className='bg-banner bg-cover border-[.2px] border-darkText/40 w-full h-[140px] rounded-xl relative' >
+				<div className='bg-banner mb-16 bg-cover border-[.2px] border-darkText/40 w-full h-[140px] rounded-sm relative' >
 					<div className='absolute bottom-[-50px] left-10 flex items-end'>
 						<img className='w-[100px] border-[.3px] rounded-full ' src="/aamhamdi1.jpeg" alt="" />
 						<h1 className='text-white font-bold ml-4'>@aamhamdi</h1>
 					</div>
 				</div>
-				<div className='p-2 h-fit text-[12px] mt-16 flex'>
-					<div className='w-1/2'>
-						<ul className='text-white ml-10'>
-							<li className='mt-2'>🔥 Lorem ipsum dolor sit amet.</li>
-							<li className='mt-2'>🎮 Lorem ipsum dolor.</li>
-							<li className='mt-2'>🚀 Lorem amet.</li>
-						</ul>
+				{
+					user != undefined && 
+					<div className='p-2 h-fit text-[12px] flex'>
+						<div className='w-1/2'>
+							<ul className={`${theme == 'light' ? "text-lightText" : "text-darkText"} ml-10`}>
+								<li className='mt-2'>🔥 Lorem ipsum dolor sit amet.</li>
+								<li className='mt-2'>🎮 Lorem ipsum dolor.</li>
+								<li className='mt-2'>🚀 Lorem amet.</li>
+							</ul>
+						</div>
+						<div className='w-1/2 flex justify-end items-center'>
+							<button className='bg-green-300 p-2 rounded-sm'>Add Frient</button>
+							<button className='bg-green-300 p-2 ml-2 rounded-sm'>Contact</button>
+						</div>
 					</div>
-					<div className='w-1/2 p-2 flex justify-center items-center'>
-						{/* <button className='bg-green-300 p-1 mr-2 rounded-sm'>Add Frient</button>
-						<button className='bg-green-300 p-1 mr-2 rounded-sm'>Contact</button> */}
-					</div>
-				</div>
+				}
 			</div>
 			<div className='h-fit p-2 flex'>
 				<div className='w-3/5 flex border-[0px] justify-center h-[380px] border-white/30 p-2 rounded-sm'>
@@ -303,7 +310,7 @@ export default function Profile() {
 	}
 	return (
 		<div className="flex flex-grow justify-center h-full w-full mr-2">
-			<div className={`w-full p-1 h-[100vh] overflow-scroll ${theme == 'light' ? "bg-lightItems" : "bg-darkItems"}`}>
+			<div className={`w-full p-1 h-[100vh] overflow-scroll border-[.3px] ${theme == 'light' ? "bg-lightItems border-lightText/10" : "bg-darkItems border-darkText/10"}`}>
 				<Banner />
 				{/* <PlayerStatus /> */}
 				{/* <Status toggleExpanded={toggleExpanded} expand={expand}  />

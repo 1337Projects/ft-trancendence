@@ -28,7 +28,7 @@ export default function FriendsList() {
 
     return (
         <div className={`
-            friends shadow-sm w-[190px] p-1 ml-2
+            friends shadow-sm w-[170px] p-1 ml-2
             ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} 
         `}>
             <div className="header w-full h-[60px] flex justify-between items-center text-[12px] px-4">

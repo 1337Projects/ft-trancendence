@@ -4,35 +4,35 @@ networks:
     driver: bridge
 
 services:
-  db:
-    container_name: data_base
-    build: ./srcs/Data_Base/.
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_PASSWORD: 133742
-      POSTGRES_USER: ipman
-      POSTGRES_DB: ft_transcendence
-      POSTGRES_HOST_AUTH_METHOD: trust
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-    networks:
-      ft_transcendence:
+  # db:
+  #   container_name: data_base
+  #   build: ./srcs/Data_Base/.
+  #   restart: always
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_PASSWORD: 133742
+  #     POSTGRES_USER: ipman
+  #     POSTGRES_DB: ft_transcendence
+  #     POSTGRES_HOST_AUTH_METHOD: trust
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready"]
+  #     interval: 1s
+  #     timeout: 5s
+  #     retries: 10
+  #   networks:
+  #     ft_transcendence:
 
-  be:
-    container_name: back_end
-    build: ./srcs/Back_end/.
-    restart : always
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    networks:
-      ft_transcendence:
+  # be:
+  #   container_name: back_end
+  #   build: ./srcs/Back_end/.
+  #   restart : always
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     ft_transcendence:
     
   frontend:
     container_name: frontend
