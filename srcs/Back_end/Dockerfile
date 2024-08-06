@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY . .
+COPY setup.sh .
 
 RUN chmod +x setup.sh
 
