@@ -1,5 +1,5 @@
 
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SideBar from '../components/sidebar'
 import Search from '../components/Search'
 import Notification from '../components/Notifications'
@@ -8,7 +8,6 @@ import {Invites} from '../components/Notifications'
 import LastMatch from '../components/profile/lastMatch'
 
 export default function DashboardLayout() {
-
     const location = useLocation()
     return (
       <>

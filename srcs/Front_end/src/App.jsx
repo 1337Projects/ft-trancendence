@@ -26,6 +26,9 @@ import Tournament from './components/game/tournament'
 import PingPong from './components/game/PingPong'
 import NotFound from './components/NotFound'
 import Nav from './components/auth/nav'
+import AuthcontextProvidder from './Contexts/authContext'
+import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
+import ConfirmeEmail from './components/auth/ConfirmeEmail'
 
 function Home() {
   return (
@@ -44,28 +47,27 @@ const router = createBrowserRouter(
 		<Route path='auth' element={<AuthLayout />}> 
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
+		  <Route path='confirme' element={<ConfirmeEmail/>} />
     </Route>
 
 
-		<Route path='/dashboard' element={<DashboardLayout />}>
+		<Route path='/dashboard' element={<DashboardPrivateRoute />}>
+        <Route path='tournment' element={<Tournament/>} />
+        <Route path="game/room/:id" element={<PingPong />}/>
+        <Route path='game' element={<Game />} />
+        <Route  path='setings' element={<Setings />} />
 
-		  <Route path='tournment' element={<Tournament/>} />
-		  <Route path="game/room/:id" element={<PingPong />}/>
-		  <Route path='game' element={<Game />} />
-		  <Route  path='setings' element={<Setings />} />
+        {/* chat  */}
+        <Route path='chat' element={<ChatLayout />}>
+          <Route index element={<ConversationsList/>} />
+          <Route path=':id' element={<Conversation />} />
+        </Route>
 
-      {/* chat  */}
-		  <Route path='chat' element={<ChatLayout />}>
-			  <Route index element={<ConversationsList/>} />
-			  <Route path=':id' element={<Conversation />} />
-		  </Route>
-
-      {/* profile */}
-      <Route path='profile' element={<ProfileLayout />}>
-        <Route index element={<Profile />} />
-		    <Route path=':user' element={<Profile />} />
-      </Route>
-      
+        {/* profile */}
+        <Route path='profile' element={<ProfileLayout />}>
+          <Route index element={<Profile />} />
+          <Route path=':user' element={<Profile />} />
+        </Route>
 	  </Route>
 		<Route path='*' element={<NotFound/>} />
   </Route>
@@ -78,6 +80,7 @@ function App() {
 
   let appliedTheme = window.localStorage.getItem('theme')
   let appliedColor = window.localStorage.getItem('color')
+  let authTokens = window.localStorage.getItem('auth')
   if (!appliedTheme) {
     window.localStorage.setItem('theme' ,'dark')
     appliedTheme = 'dark'
@@ -88,6 +91,7 @@ function App() {
   }
   const [theme, setTheme] = useState(appliedTheme)
   const [color, setColor] = useState(appliedColor);
+  const [user, setUser] = useState(authTokens)
 
   function ThemeHandler(theme) {
     setTheme(theme);
@@ -99,15 +103,25 @@ function App() {
     window.localStorage.setItem('color' , color) 
   }
 
+  function userHandler(tokens) {
+    setUser(tokens)
+    if (!tokens)
+      window.localStorage.removeItem('auth')
+    else
+      window.localStorage.setItem('auth', tokens)
+  }
+
   return (
     <div style={{backgroundSize:'50px 50px'}} className={`font-pt ${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
-      <ThemeProvider theme={theme} handler={ThemeHandler}>
-        <ColorProvider color={color} handler={colorHandler}>
-          <div className='container max-w-[1400px] mx-auto'>
-            <RouterProvider router={router} />
-          </div>
-        </ColorProvider>
-      </ThemeProvider>
+      <AuthcontextProvidder user={user} handler={userHandler}>
+        <ThemeProvider theme={theme} handler={ThemeHandler}>
+          <ColorProvider color={color} handler={colorHandler}>
+            <div className='container max-w-[1400px] mx-auto'>
+              <RouterProvider router={router} />
+            </div>
+          </ColorProvider>
+        </ThemeProvider>
+      </AuthcontextProvidder>
     </div>
   )
 }

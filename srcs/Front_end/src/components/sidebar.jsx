@@ -11,9 +11,10 @@ import {
 	faBars
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import {ColorContext, ThemeContext, ThemeToggelContext} from '../Contexts/ThemeContext'
+import { authContextHandler } from '../Contexts/authContext'
 
 
 function SideBar() {
@@ -21,6 +22,14 @@ function SideBar() {
 	const theme = useContext(ThemeContext);
 	const color = useContext(ColorContext)
 	const themeHanlder = useContext(ThemeToggelContext);
+	const navigate = useNavigate()
+	const authHandler = useContext(authContextHandler)
+
+
+	function logoutHandler() {
+		authHandler(null)
+		navigate("/auth/login")
+	}
 
 	return (
     <>
@@ -58,10 +67,10 @@ function SideBar() {
 								<FontAwesomeIcon  icon={faGear} />
 								<p className='text-primaryText mt-1'>setings</p>
 							</Link>
-							<Link to="../auth/login" className='text-center'>
+							<button className='text-center' onClick={logoutHandler}>
 								<FontAwesomeIcon icon={faRightToBracket} />
 								<p className='text-primaryText mt-1'>Logout</p>
-							</Link>
+							</button>
 						</div>
 			</header>
 		</div>

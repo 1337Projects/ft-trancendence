@@ -28,7 +28,7 @@ export default function AuthLayout() {
                         </div>
                       </div>
                     </div>
-                    <div className="login-form p-1 h-1/2 sm:h-[95vh] w-2/4 flex items-center">
+                    <div className="login-form p-1 h-[100vh] sm:h-[95vh] w-2/4 flex items-center relative">
                         <div className="w-full">
                           <Outlet />
                         </div>

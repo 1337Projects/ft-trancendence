@@ -84,7 +84,7 @@ export default function Search() {
                     </div>
                     {
                         show && 
-                        <ul className={`${theme === 'light' ? "bg-lightItems" : "bg-darkItems"} text-primaryText p-1 rounded-b-sm}`}>
+                        <ul className={`${theme === 'light' ? "bg-lightItems" : "bg-darkItems/50 border-darkText/10"} border-[.4px] rounded-sm backdrop-blur-md text-primaryText p-1 mt-[4px] rounded-b-sm}`}>
                             <li>
                                 <Link to="profile" className="flex w-full justify-between items-center px-4 my-4">
                                     <p>Pfrofile</p>
@@ -97,7 +97,7 @@ export default function Search() {
                                     <FontAwesomeIcon icon={faGear} />
                                 </Link>
                             </li>
-                            <li className="flex w-full justify-between items-center px-4 my-4">
+                            <li className="flex w-full border-t-[.3px] border-darkText/20 justify-between items-center p-2 px-4">
                                 <p className="">Logout</p>
                                 <FontAwesomeIcon icon={faRightToBracket} />
                             </li>
