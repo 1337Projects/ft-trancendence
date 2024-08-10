@@ -7,6 +7,7 @@ services:
   db:
     container_name: data_base
     build: ./srcs/Data_Base/.
+    image: data-base:ipman
     restart: always
     ports:
       - "5432:5432"
@@ -26,7 +27,8 @@ services:
   be:
     container_name: back_end
     build: ./srcs/Back_end/.
-    restart : always
+    image: back-end:ipman
+    # restart : always
     ports:
       - "8000:8000"
     depends_on:
@@ -40,7 +42,7 @@ services:
     container_name: frontend
     build: srcs/Front_end/
     image: frontend:aamhamdi
-    restart : always
+    # restart : always
     ports:
       - 5173:5173
     volumes:
