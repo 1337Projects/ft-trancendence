@@ -29,7 +29,20 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
+# if os.environ.get('DJANGO_SUPERUSER_USERNAME'):
+#     from django.contrib.auth import get_user_model
+
+#     User = get_user_model()
+#     if not User.objects.filter(username=os.environ['DJANGO_SUPERUSER_USERNAME']).exists():
+#         User.objects.create_superuser(
+#             username=os.environ['DJANGO_SUPERUSER_USERNAME'],
+#             email=os.environ['DJANGO_SUPERUSER_EMAIL'],
+#             password=os.environ['DJANGO_SUPERUSER_PASSWORD']
+#         )
+
 # Application definition
+
+SITE_ID=1
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -39,9 +52,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'login',
-    'api',
     'rest_framework',
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google" : {
+        "SCOPE" : [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {"access_type" : "online"}
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -128,3 +157,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
