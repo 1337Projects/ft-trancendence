@@ -3,6 +3,5 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.home),
-    path("logout", views.logout_view),
+    path('test/', views.google_oauth),
 ]

@@ -9,9 +9,19 @@ import { Input } from './signup';
 
 export function OauthItems() {
     const color = useContext(ColorContext)
+
+    function googleAuth() {
+        fetch('http://localhost:8000/test')
+        .then(res => res.json())
+        .then(data => {
+            window.location.href = data.url
+        })
+        .catch(err => console.log(err))
+    }
+
     return (
         <>
-            <div className="login-google cursor-pointer text-[8px] uppercase h-8 border-blue-500/80 border-[1px] w-1/1 rounded flex items-center justify-center">
+            <div onClick={googleAuth} className="login-google cursor-pointer text-[8px] uppercase h-8 border-blue-500/80 border-[1px] w-1/1 rounded flex items-center justify-center">
                 <h5 className="mr-2">continue with google account</h5>
                 <i><FontAwesomeIcon icon={faGoogle} /></i>
             </div>

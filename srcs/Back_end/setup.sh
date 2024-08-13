@@ -15,6 +15,7 @@ pip install django-allauth
 pip install requests
 pip install pyjwt
 pip install cryptography
+pip install django-cors-headers
 
 python3 /app/ft_transcendence/manage.py makemigrations; \
 python3 /app/ft_transcendence/manage.py migrate
