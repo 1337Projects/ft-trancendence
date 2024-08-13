@@ -31,6 +31,11 @@ import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
 
 function Home() {
+
+  const params = new URLSearchParams(window.location.search)
+  const code = params.get('code')
+  console.log(code)
+
   return (
     <>
       <h1 className='h-[100vh] text-white  sm:text-red-500'>landing page</h1> 
