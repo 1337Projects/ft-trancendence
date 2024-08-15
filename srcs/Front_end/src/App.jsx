@@ -1,6 +1,6 @@
 
 import './App.css'
-import {Route, RouterProvider, createBrowserRouter, createRoutesFromElements} from 'react-router-dom'
+import {Route, RouterProvider, createBrowserRouter, createRoutesFromElements, json, useNavigate, useSearchParams} from 'react-router-dom'
 
 // Layout
 import AuthLayout from './Layouts/AuthLayout'
@@ -19,7 +19,7 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 
 import {ThemeProvider, ColorProvider} from './Contexts/ThemeContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ConversationsList from './components/chat/chat'
 import Tournament from './components/game/tournament'
 
@@ -38,13 +38,45 @@ function Home() {
   )
 }
 
+function getCSRFToken() {
+  const cookieValue = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('csrftoken='))
+      ?.split('=')[1];
+  return cookieValue || '';
+}
+
+function Oauth() {
+  const [searchParam, setSerachParam] = useSearchParams()
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const code = searchParam.get("code")
+      fetch(`http://localhost:8000/?code=${code}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCSRFToken(),
+        }
+      })
+      .then(res => res.json())
+      .then(data => console.log(data))
+      .catch(err => console.log(err))
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [])
+  return (
+    <h1>Oauth ...</h1>
+  )
+}
+
 const router = createBrowserRouter(
   createRoutesFromElements(
 	<>
 	<Route path='/'>
     <Route index element={<Home />} />
     {/* auth */}
-		<Route path='auth' element={<AuthLayout />}> 
+		<Route path='auth' element={<AuthLayout />}>
+      <Route path='oauth' element={<Oauth />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
 		  <Route path='confirme' element={<ConfirmeEmail/>} />

@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGoogle , faAirbnb } from '@fortawesome/free-brands-svg-icons'
 import { faMailBulk, faKey, faClose, faUser } from '@fortawesome/free-solid-svg-icons'
-import { Link, useNavigate } from "react-router-dom";
+import { Link, json, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { ColorContext } from "../../Contexts/ThemeContext";
 import { Input } from './signup';
@@ -11,9 +11,23 @@ import { authContextHandler } from '../../Contexts/authContext';
 
 export function OauthItems() {
     const color = useContext(ColorContext)
+
+
+    function GoogleOauthHandler() {
+        fetch('http://localhost:8000/auth/google_auth/')
+        .then(res => res.json())
+        .then(res => {
+            console.log(res)
+            window.location.href = res.url;
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+
     return (
         <>
-            <div className="login-google cursor-pointer text-[8px] uppercase h-8 border-blue-500/80 border-[1px] w-1/1 rounded flex items-center justify-center">
+            <div onClick={GoogleOauthHandler} className="login-google cursor-pointer text-[8px] uppercase h-8 border-blue-500/80 border-[1px] w-1/1 rounded flex items-center justify-center">
                 <h5 className="mr-2">continue with google account</h5>
                 <i><FontAwesomeIcon icon={faGoogle} /></i>
             </div>

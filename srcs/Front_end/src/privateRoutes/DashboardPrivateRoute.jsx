@@ -6,5 +6,6 @@ import DashboardLayout from '../Layouts/DashboardLayout'
 
 export function DashboardPrivateRoute() {
     const authTokens = useContext(authContext)
+    console.log(authTokens)
     return authTokens ? <DashboardLayout /> : <Navigate to="../../auth/login" />
 }
