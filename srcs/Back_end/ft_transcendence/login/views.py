@@ -3,11 +3,11 @@ from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.conf import settings
 import urllib.parse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
-# Create your views here.
 
-
-
+@csrf_exempt
 def google_oauth(request):
     if request.method == 'GET':
         # Define the Google OAuth 2.0 endpoint
@@ -15,7 +15,7 @@ def google_oauth(request):
 
         # Client ID and Redirect URI from Google Developer Console
         client_id = "1063752047067-68ak54eimd9bkcorgsvmp918vk85e57c.apps.googleusercontent.com"
-        redirect_uri = "http://localhost:5173/"  # This is where Google will redirect after authentication
+        redirect_uri = "http://localhost:5173/auth/oauth"  # This is where Google will redirect after authentication
         response_type = "code"  # We're using the authorization code flow
         scope = "openid email profile"  # Define the scopes you want
         state = "random_state_string"  # Optional: helps protect against CSRF attacks
@@ -36,5 +36,7 @@ def google_oauth(request):
         # Return the URL to the frontend
         return JsonResponse({"url": oauth_url})
     elif request.method == 'POST' :
-        return JsonResponse({"code": request.POST.get("code")})
+        data = json.loads(request.body)
+
+        return JsonResponse({"code": data.get("code")})
 

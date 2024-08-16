@@ -56,12 +56,16 @@ function Oauth() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
-      fetch(`http://localhost:8000/?code=${code}`, {
+      console.log(code)
+      fetch(`http://localhost:8000/test/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken(),
-        }
+        },
+        body : JSON.stringify({
+          code : code,
+        })
       })
       .then(res => res.json())
       .then(data => console.log(data))
