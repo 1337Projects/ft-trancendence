@@ -3,11 +3,11 @@ from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.conf import settings
 import urllib.parse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
-# Create your views here.
 
-
-
+@csrf_exempt
 def google_oauth(request):
     if request.method == 'GET':
         # Define the Google OAuth 2.0 endpoint
@@ -36,7 +36,7 @@ def google_oauth(request):
         # Return the URL to the frontend
         return JsonResponse({"url": oauth_url})
     elif request.method == 'POST' :
-        # Step 1: Get the authorization code from the URL
-        code = request.G
-        return JsonResponse({"code": request.POST.get("code")})
+        data = json.loads(request.body)
+
+        return JsonResponse({"code": data.get("code")})
 
