@@ -6,6 +6,7 @@ import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import User
+import requests
 
 
 @csrf_exempt
@@ -66,13 +67,14 @@ def google_oauth(request):
         email = userinfo['email']
         name = userinfo.get('name')
         #step4:
-        # try:
-        #     user = User.objects.get(email=email)
-        # except User.DoesNotExist:
-        #     user = User.objects.create_user(
-        #         username=email,
-        #         email=email,
-        #         first_name=name.split()[0] if name else "",
-        #         last_name=name.split()[1] if name else "",
-        #         google_id=google_id,
-        #     )
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                first_name=name.split()[0] if name else "",
+                last_name=name.split()[1] if name else "",
+                google_id=google_id,
+            )
+        return JsonResponse({'status': 'success'}, status=200)

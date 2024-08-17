@@ -1,13 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-# Create your models here.
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-class User(models.Model):
-    username = models.CharField(max_length=255)
-    email = models.CharField(max_length=255, blank=True)
-    first_name = models.CharField(max_length=255, default='')
-    last_name = models.CharField(max_length=255, default='')
-    google_id = models.BigIntegerField()
-
-    class Meta:
-        verbose_name = "User"
+class User(AbstractBaseUser):
+    email = models.EmailField(unique=True)
+    password = models.CharField(default='', max_length=128)
+    username = models.CharField(max_length=150, unique=True, default='')
+    first_name = models.CharField(default='', max_length=255)
+    last_name = models.CharField(default='', max_length=255)
+    google_id = models.CharField(default=0)
+    objects = UserManager()
