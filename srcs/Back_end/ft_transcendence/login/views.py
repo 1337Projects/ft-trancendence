@@ -68,13 +68,13 @@ def google_oauth(request):
         name = userinfo.get('name')
         #step4:
         try:
-            user = User.objects.get(email=email)
+            User.objects.get(email=email)
         except User.DoesNotExist:
-            user = User.objects.create_user(
+            User.objects.create_user(
                 username=email,
                 email=email,
-                first_name=name.split()[0] if name else "",
-                last_name=name.split()[1] if name else "",
+                last_name=name.split()[0] if name else "",
+                first_name=name.split()[1] if name else "",
                 google_id=google_id,
             )
         return JsonResponse({'status': 'success'}, status=200)
