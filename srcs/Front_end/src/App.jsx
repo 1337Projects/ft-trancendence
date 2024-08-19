@@ -19,14 +19,14 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 
 import {ThemeProvider, ColorProvider} from './Contexts/ThemeContext'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ConversationsList from './components/chat/chat'
 import Tournament from './components/game/tournament'
 
 import PingPong from './components/game/PingPong'
 import NotFound from './components/NotFound'
 import Nav from './components/auth/nav'
-import AuthcontextProvidder from './Contexts/authContext'
+import AuthcontextProvidder, { authContextHandler } from './Contexts/authContext'
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
 
@@ -43,38 +43,35 @@ function Home() {
   )
 }
 
-function getCSRFToken() {
-  const cookieValue = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('csrftoken='))
-      ?.split('=')[1];
-  return cookieValue || '';
-}
 
 function Oauth() {
   const [searchParam, setSerachParam] = useSearchParams()
+  const authHandler = useContext(authContextHandler)
+  const navigate = useNavigate()
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
       console.log(code)
-      fetch(`http://localhost:8000/test/`, {
+      fetch(`http://localhost:8000/api/auth/oauth/google/token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCSRFToken(),
         },
-        body : JSON.stringify({
-          code : code,
-        })
+        body : JSON.stringify({code}),
+        credentials : 'include'
       })
       .then(res => res.json())
-      .then(data => console.log(data))
+      .then(data => {
+        console.log(data)
+        authHandler(data.access)
+        navigate('../../dashboard/profile')
+      })
       .catch(err => console.log(err))
     }, 300)
     return () => clearTimeout(timer)
   }, [])
   return (
-    <h1>Oauth ...</h1>
+    <h1></h1>
   )
 }
 
@@ -85,7 +82,7 @@ const router = createBrowserRouter(
     <Route index element={<Home />} />
     {/* auth */}
 		<Route path='auth' element={<AuthLayout />}>
-      <Route path='oauth' element={<Oauth />} />
+      <Route path='oauth_api' element={<Oauth />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
 		  <Route path='confirme' element={<ConfirmeEmail/>} />

@@ -13,7 +13,7 @@ export function OauthItems() {
     const color = useContext(ColorContext)
 
     function googleAuth() {
-        fetch('http://localhost:8000/test')
+        fetch('http://localhost:8000/api/auth/oauth/google/')
         .then(res => res.json())
         .then(data => {
             window.location.href = data.url
