@@ -57,8 +57,36 @@ function Oauth() {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
       console.log(code)
-      fetch(`http://localhost:8000/test/`, {
+      fetch(`http://localhost:8000/api/auth/google/`, {
         method: 'POST',
+        credentials : 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCSRFToken(),
+        },
+        body : JSON.stringify({
+          code : code,
+        })
+      })
+      .then(res => res.json())
+      .then(data => console.log(data))
+      .catch(err => console.log(err))
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [])
+  return (
+    <h1>Oauth ...</h1>
+  )
+}
+function IntraOauth() {
+  const [searchParam, setSerachParam] = useSearchParams()
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const code = searchParam.get("code")
+      console.log(code)
+      fetch(`http://localhost:8000/api/auth/42/`, {
+        method: 'POST',
+        credentials : 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken(),
@@ -86,6 +114,7 @@ const router = createBrowserRouter(
     {/* auth */}
 		<Route path='auth' element={<AuthLayout />}>
       <Route path='oauth' element={<Oauth />} />
+      <Route path='oauth/42' element={<IntraOauth />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
 		  <Route path='confirme' element={<ConfirmeEmail/>} />

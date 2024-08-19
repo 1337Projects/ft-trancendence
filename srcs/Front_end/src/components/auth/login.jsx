@@ -13,21 +13,29 @@ export function OauthItems() {
     const color = useContext(ColorContext)
 
     function googleAuth() {
-        fetch('http://localhost:8000/test')
+        fetch('http://localhost:8000/api/auth/google/', {credentials: 'include'})
         .then(res => res.json())
         .then(data => {
             window.location.href = data.url
         })
         .catch(err => console.log(err))
     }
-
+    function IntraAuth() {
+        fetch('http://localhost:8000/api/auth/42/', {credentials: 'include'})
+        .then(res => res.json())
+        .then(data => {
+            window.location.href = data.url
+        })
+        .catch(err => console.log(err))
+    }
+   
     return (
         <>
             <div onClick={googleAuth} className="login-google cursor-pointer text-[8px] uppercase h-8 border-blue-500/80 border-[1px] w-1/1 rounded flex items-center justify-center">
                 <h5 className="mr-2">continue with google account</h5>
                 <i><FontAwesomeIcon icon={faGoogle} /></i>
             </div>
-            <div className="login-42 cursor-pointer text-[8px] uppercase h-8 mt-4 border-red-500/80 border-[1px] rounded w-1/1 flex items-center justify-center">
+            <div onClick={IntraAuth} className="login-42 cursor-pointer text-[8px] uppercase h-8 mt-4 border-red-500/80 border-[1px] rounded w-1/1 flex items-center justify-center">
                 <h5 className="mr-2">continue with 42 account</h5>
                 <i><FontAwesomeIcon icon={faAirbnb} /></i>
             </div>

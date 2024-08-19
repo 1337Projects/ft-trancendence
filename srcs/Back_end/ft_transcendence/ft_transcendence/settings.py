@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-n)z6y-28r18$*7r)3c5i8&fvxjfpbi!=@(tl48h8e1_#la%r$+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 SITE_ID=2
 
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',     
     'login',
     "django.contrib.sites",
     "allauth",
@@ -58,8 +60,8 @@ INSTALLED_APPS = [
 # }
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -68,12 +70,16 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
 
+# SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_SECURE = False
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
-    "http://localhost:5173",
 ]
 
 ROOT_URLCONF = 'ft_transcendence.urls'

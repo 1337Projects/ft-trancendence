@@ -17,8 +17,13 @@ pip install pyjwt
 pip install cryptography
 pip install django-cors-headers
 pip install requests
+pip install djangorestframework-simplejwt
+pip install pyjwt
 
 python3 /app/ft_transcendence/manage.py makemigrations; \
 python3 /app/ft_transcendence/manage.py migrate
 python3 /app/ft_transcendence/manage.py createsuperuser --noinput || true
 python3 /app/ft_transcendence/manage.py runserver 0.0.0.0:8000
+
+
+

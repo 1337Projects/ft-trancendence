@@ -1,13 +1,36 @@
 from django.shortcuts import render,redirect
-from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.conf import settings
 import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
-import json
 from .models import User
 import requests
+from rest_framework.response import Response
+import jwt
+import json
+import datetime
 
+
+def generate_refresh_token(user):
+    payload = {
+        'user_id': user.id,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
+    }
+    refresh_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+    return refresh_token
+
+def set_refresh_token_cookie(response, refresh_token):
+    response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True, samesite='Lax')
+    return response
+
+def generate_access_token(user):
+    payload = {
+        'username':user.username,
+        'user_id': user.id,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
+    }
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+    return token
 
 @csrf_exempt
 def google_oauth(request):
@@ -68,13 +91,25 @@ def google_oauth(request):
         name = userinfo.get('name')
         #step4:
         try:
-            User.objects.get(email=email)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
-            User.objects.create_user(
+            user = User.objects.create_user(
                 username=email,
                 email=email,
                 last_name=name.split()[0] if name else "",
                 first_name=name.split()[1] if name else "",
                 google_id=google_id,
             )
-        return JsonResponse({'status': 'success'}, status=200)
+        #step5:
+        try:
+            access_token = generate_access_token(user)
+            refresh_token = generate_refresh_token(user)
+            response = JsonResponse({'access': access_token})
+            set_refresh_token_cookie(response, refresh_token)
+            return response
+        except AuthenticationFailed:
+            return JsonResponse({'error': 'Invalid credentials'}, status=401)
+
+def intra_oauth(request):
+    if request.method == 'GET':
+        
