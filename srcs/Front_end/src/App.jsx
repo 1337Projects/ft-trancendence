@@ -77,6 +77,8 @@ function Oauth() {
 }
 function IntraOauth() {
   const [searchParam, setSerachParam] = useSearchParams()
+  const authHandler = useContext(authContextHandler)
+  const navigate = useNavigate()
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")

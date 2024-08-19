@@ -25,7 +25,7 @@ def set_refresh_token_cookie(response, refresh_token):
 
 def generate_access_token(user):
     payload = {
-        'username':user.username,
+        'username': user.username,
         'user_id': user.id,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
     }
@@ -39,12 +39,12 @@ def refresh_token_view(request):
             raise AuthenticationFailed('Missing refresh token')
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
         user_id = payload['user_id']
-        user = User.objects.get(pk=user_id)  # Replace with your user model access
+        user = User.objects.get(pk=user_id)
         new_access_token = generate_access_token(user)
         response = JsonResponse({'access_token': new_access_token})
         return response
-    except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError, User.DoesNotExist):
-        return JsonResponse({'error': 'Invalid refresh token'}, status=401)  # Handle errors appropriately
+    except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError, User.DoesNotExist, AuthenticationFailed):
+        return JsonResponse({'error': 'Invalid refresh token'}, status=401)
 
 def logout(request):
     response = JsonResponse({'message': 'Logout successful'}, status=200)
@@ -132,7 +132,7 @@ def google_oauth(request):
 @csrf_exempt
 def intra_oauth(request):
     if request.method == 'GET' :
-        oauth_url = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d2959210e86a5215856b8429ac7fb1d14b7bf99663a51cdff0bc4b949bd04bf&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fauth%2Foauth&response_type=code'
+        oauth_url = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d2959210e86a5215856b8429ac7fb1d14b7bf99663a51cdff0bc4b949bd04bf&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fauth%2Foauth%2F42&response_type=code'
         return JsonResponse({"url": oauth_url})
     elif request.method == 'POST' :
         code = json.loads(request.body).get("code")
@@ -143,7 +143,7 @@ def intra_oauth(request):
             "code": code,
             "client_id": "u-s4t2ud-6d2959210e86a5215856b8429ac7fb1d14b7bf99663a51cdff0bc4b949bd04bf",
             "client_secret": "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",
-            "redirect_uri": "http://localhost:5173/auth/oauth",
+            "redirect_uri": "http://localhost:5173/auth/oauth/42",
             "grant_type": "authorization_code",
         }
         token_reponse = requests.post(token_url, data=data)
