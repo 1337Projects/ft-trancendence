@@ -13,7 +13,7 @@ export default function AuthLayout() {
     return (
       <>
         <main>
-          <div className="w-screen h-screen">
+          <div className="w-full h-screen">
             <div className={`main ${theme == 'light' ? 'bg-lightItems text-lightText' : 'bg-darkItems text-darkText'} h-full`}>
                 <div className="login h-full flex justify-between">
                     <div className="pic h-full bg-pong bg-cover w-3/4 flex flex-col items-center p-2 justify-center">
