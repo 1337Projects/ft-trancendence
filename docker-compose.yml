@@ -28,7 +28,7 @@ services:
     container_name: back_end
     build: ./srcs/Back_end/.
     image: back-end:ipman
-    # restart : always
+    restart : always
     ports:
       - "8000:8000"
     depends_on:
@@ -42,7 +42,7 @@ services:
     container_name: frontend
     build: srcs/Front_end/
     image: frontend:aamhamdi
-    # restart : always
+    restart : always
     ports:
       - 5173:5173
     volumes:
