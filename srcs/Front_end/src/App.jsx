@@ -19,14 +19,14 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 
 import {ThemeProvider, ColorProvider} from './Contexts/ThemeContext'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ConversationsList from './components/chat/chat'
 import Tournament from './components/game/tournament'
 
 import PingPong from './components/game/PingPong'
 import NotFound from './components/NotFound'
 import Nav from './components/auth/nav'
-import AuthcontextProvidder from './Contexts/authContext'
+import AuthcontextProvidder, { authContextHandler } from './Contexts/authContext'
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
 
@@ -43,16 +43,11 @@ function Home() {
   )
 }
 
-function getCSRFToken() {
-  const cookieValue = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('csrftoken='))
-      ?.split('=')[1];
-  return cookieValue || '';
-}
 
 function Oauth() {
   const [searchParam, setSerachParam] = useSearchParams()
+  const authHandler = useContext(authContextHandler)
+  const navigate = useNavigate()
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
@@ -62,20 +57,22 @@ function Oauth() {
         credentials : 'include',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCSRFToken(),
         },
         body : JSON.stringify({
           code : code,
         })
       })
       .then(res => res.json())
-      .then(data => console.log(data))
+      .then(data => {
+        authHandler(data.access)
+        navigate('../../dashboard/profile')
+      })
       .catch(err => console.log(err))
     }, 300)
     return () => clearTimeout(timer)
   }, [])
   return (
-    <h1>Oauth ...</h1>
+    <h1></h1>
   )
 }
 function IntraOauth() {
@@ -89,20 +86,22 @@ function IntraOauth() {
         credentials : 'include',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCSRFToken(),
         },
-        body : JSON.stringify({
-          code : code,
-        })
+        body : JSON.stringify({code}),
+        credentials : 'include'
       })
       .then(res => res.json())
-      .then(data => console.log(data))
+      .then(data => {
+        console.log(data)
+        authHandler(data.access)
+        navigate('../../dashboard/profile')
+      })
       .catch(err => console.log(err))
     }, 300)
     return () => clearTimeout(timer)
   }, [])
   return (
-    <h1>Oauth ...</h1>
+    <h1></h1>
   )
 }
 
@@ -112,8 +111,8 @@ const router = createBrowserRouter(
 	<Route path='/'>
     <Route index element={<Home />} />
     {/* auth */}
+      <Route path='auth/oauth' element={<Oauth />} />
 		<Route path='auth' element={<AuthLayout />}>
-      <Route path='oauth' element={<Oauth />} />
       <Route path='oauth/42' element={<IntraOauth />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
@@ -150,7 +149,6 @@ function App() {
 
   let appliedTheme = window.localStorage.getItem('theme')
   let appliedColor = window.localStorage.getItem('color')
-  let authTokens = window.localStorage.getItem('auth')
   if (!appliedTheme) {
     window.localStorage.setItem('theme' ,'dark')
     appliedTheme = 'dark'
@@ -161,7 +159,7 @@ function App() {
   }
   const [theme, setTheme] = useState(appliedTheme)
   const [color, setColor] = useState(appliedColor);
-  const [user, setUser] = useState(authTokens)
+  const [user, setUser] = useState('')
 
   function ThemeHandler(theme) {
     setTheme(theme);
@@ -175,10 +173,6 @@ function App() {
 
   function userHandler(tokens) {
     setUser(tokens)
-    if (!tokens)
-      window.localStorage.removeItem('auth')
-    else
-      window.localStorage.setItem('auth', tokens)
   }
 
   return (

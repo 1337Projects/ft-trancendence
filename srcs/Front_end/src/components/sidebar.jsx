@@ -27,8 +27,15 @@ function SideBar() {
 
 
 	function logoutHandler() {
-		authHandler(null)
-		navigate("/auth/login")
+		fetch('http://localhost:8000/api/auth/logout/', {
+			method:'GET',
+			credentials : 'include'
+		})
+		.then(res => res.json())
+		.then(data => console.log(data))
+		.catch(err => console.log(err))
+		// authHandler(null)
+		// navigate("/auth/login")
 	}
 
 	return (

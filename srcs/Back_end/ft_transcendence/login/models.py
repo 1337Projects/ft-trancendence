@@ -8,6 +8,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=150, unique=True, default='')
