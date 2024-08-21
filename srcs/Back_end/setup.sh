@@ -10,6 +10,7 @@ python3 -m venv virtualenv
 
 pip install --upgrade pip
 pip install --no-cache-dir -r requirements.txt
+pip install python-dotenv
 pip install djangorestframework
 pip install django-allauth
 pip install requests

@@ -14,5 +14,5 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True, default='')
     first_name = models.CharField(default='', max_length=255)
     last_name = models.CharField(default='', max_length=255)
-    google_id = models.CharField(default=0)
+    account_id = models.CharField(default=0)
     objects = UserManager()
