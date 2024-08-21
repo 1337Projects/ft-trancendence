@@ -54,7 +54,7 @@ def logout(request):
     response = JsonResponse({'message': 'Logout successful'}, status=200)
     response.delete_cookie('refresh_token')
     return response
-      
+
 @csrf_exempt
 def google_oauth(request):
     if request.method == 'GET':

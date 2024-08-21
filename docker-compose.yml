@@ -32,8 +32,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      db :
-        - "health_service"
+      - db
     volumes:
       - ${PWD}/srcs/Back_end:/app
     networks:

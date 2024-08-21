@@ -15,3 +15,9 @@ restart:
 	docker-compose restart
 
 re : down all
+
+clean:
+	rm -rf srcs/Back_end/virtualenv
+	rm -rf srcs/Back_end/ft_transcendence/ft_transcendence/__pycache__
+	rm -rf srcs/Back_end/ft_transcendence/login/__pycache__
+	rm -rf srcs/Back_end/ft_transcendence/login/migrations/*
