@@ -17,7 +17,16 @@ export function OauthItems() {
         fetch('http://localhost:8000/auth/google_auth/')
         .then(res => res.json())
         .then(res => {
-            console.log(res)
+            window.location.href = res.url;
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+    function IntraOauthHandler() {
+        fetch('http://localhost:8000/auth/42/')
+        .then(res => res.json())
+        .then(res => {
             window.location.href = res.url;
         })
         .catch(err => {
@@ -31,7 +40,7 @@ export function OauthItems() {
                 <h5 className="mr-2">continue with google account</h5>
                 <i><FontAwesomeIcon icon={faGoogle} /></i>
             </div>
-            <div className="login-42 cursor-pointer text-[8px] uppercase h-8 mt-4 border-red-500/80 border-[1px] rounded w-1/1 flex items-center justify-center">
+            <div onClick={IntraOauthHandler} className="login-42 cursor-pointer text-[8px] uppercase h-8 mt-4 border-red-500/80 border-[1px] rounded w-1/1 flex items-center justify-center">
                 <h5 className="mr-2">continue with 42 account</h5>
                 <i><FontAwesomeIcon icon={faAirbnb} /></i>
             </div>

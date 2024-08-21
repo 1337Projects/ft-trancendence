@@ -19,16 +19,18 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 
 import {ThemeProvider, ColorProvider} from './Contexts/ThemeContext'
-import { useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import ConversationsList from './components/chat/chat'
 import Tournament from './components/game/tournament'
 
 import PingPong from './components/game/PingPong'
 import NotFound from './components/NotFound'
 import Nav from './components/auth/nav'
-import AuthcontextProvidder from './Contexts/authContext'
+import AuthcontextProvidder, { authContext, authContextHandler } from './Contexts/authContext'
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
+
+import {jwtDecode} from 'jwt-decode'
 
 function Home() {
   return (
@@ -38,34 +40,62 @@ function Home() {
   )
 }
 
-function getCSRFToken() {
-  const cookieValue = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('csrftoken='))
-      ?.split('=')[1];
-  return cookieValue || '';
-}
 
-function Oauth() {
+
+function GoogleOauth() {
   const [searchParam, setSerachParam] = useSearchParams()
+  const authHandler = useContext(authContextHandler)
+  const navigate = useNavigate()
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
-      fetch(`http://localhost:8000/?code=${code}`, {
+      fetch(`http://localhost:8000/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCSRFToken(),
-        }
+        },
+        credentials : 'include',
+        body : JSON.stringify({code})
       })
       .then(res => res.json())
-      .then(data => console.log(data))
+      .then(data => {
+        authHandler(data.access)
+        navigate("dashboard/profile")
+      })
       .catch(err => console.log(err))
     }, 300)
     return () => clearTimeout(timer)
   }, [])
   return (
-    <h1>Oauth ...</h1>
+    <h1></h1>
+  )
+}
+function IntraOauth() {
+  const [searchParam, setSerachParam] = useSearchParams()
+  const authHandler = useContext(authContextHandler)
+  const navigate = useNavigate()
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const code = searchParam.get("code")
+      fetch(`http://localhost:8000/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials : 'include',
+        body : JSON.stringify({code})
+      })
+      .then(res => res.json())
+      .then(data => {
+        authHandler(data.access)
+        navigate("dashboard/profile")
+      })
+      .catch(err => console.log(err))
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [])
+  return (
+    <h1></h1>
   )
 }
 
@@ -76,7 +106,8 @@ const router = createBrowserRouter(
     <Route index element={<Home />} />
     {/* auth */}
 		<Route path='auth' element={<AuthLayout />}>
-      <Route path='oauth' element={<Oauth />} />
+      <Route path='oauth/google' element={<GoogleOauth />} />
+      <Route path='oauth/42' element={<IntraOauth />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
 		  <Route path='confirme' element={<ConfirmeEmail/>} />
@@ -112,7 +143,6 @@ function App() {
 
   let appliedTheme = window.localStorage.getItem('theme')
   let appliedColor = window.localStorage.getItem('color')
-  let authTokens = window.localStorage.getItem('auth')
   if (!appliedTheme) {
     window.localStorage.setItem('theme' ,'dark')
     appliedTheme = 'dark'
@@ -123,7 +153,7 @@ function App() {
   }
   const [theme, setTheme] = useState(appliedTheme)
   const [color, setColor] = useState(appliedColor);
-  const [user, setUser] = useState(authTokens)
+  const [auth, setAuth] = useState({token:'', username:''})
 
   function ThemeHandler(theme) {
     setTheme(theme);
@@ -135,17 +165,19 @@ function App() {
     window.localStorage.setItem('color' , color) 
   }
 
-  function userHandler(tokens) {
-    setUser(tokens)
-    if (!tokens)
-      window.localStorage.removeItem('auth')
-    else
-      window.localStorage.setItem('auth', tokens)
+  function authHandler(token) {
+    if (token) {
+      const data = jwtDecode(token)
+      const username = data.username
+      setAuth({...auth, token, username})
+    } else {
+      setAuth({token:'', username:''})
+    }
   }
 
   return (
     <div style={{backgroundSize:'50px 50px'}} className={`font-pt ${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
-      <AuthcontextProvidder user={user} handler={userHandler}>
+      <AuthcontextProvidder user={auth} handler={authHandler}>
         <ThemeProvider theme={theme} handler={ThemeHandler}>
           <ColorProvider color={color} handler={colorHandler}>
             <div className='container max-w-[1400px] mx-auto'>
