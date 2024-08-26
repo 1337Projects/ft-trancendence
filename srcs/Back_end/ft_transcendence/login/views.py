@@ -164,13 +164,14 @@ def intra_oauth(request):
         except AuthenticationFailed:
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
       
-@api_view(['POST'])    
+@api_view(['POST'])
 def login(request):
     data = json.loads(request.body)
     if len(data) != 2 or not data.get("username") or not data.get("password"):
-        return Response({"message": "Bad informations", "data": data}, status=200)
+        return Response({"message": "Bad informations", "data": data}, status=400)
     try:
-        user = User.objects.get(username=data.get("username"), password=data.get("password"))
+        User.objects.get(username=data.get("username"), password=data.get("password"))
     except User.DoesNotExist:
-        return Response({"message": "Bad informations", "data": data}, status=200)
+        return Response({"message": "Bad informations", "data": data}, status=400)
     return Response({"message": "login successuful", "data": data}, status=200)
+
