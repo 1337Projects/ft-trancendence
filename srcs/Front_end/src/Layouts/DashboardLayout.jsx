@@ -6,9 +6,33 @@ import Notification from '../components/Notifications'
 import {Invites} from '../components/Notifications'
 
 import LastMatch from '../components/profile/lastMatch'
+import { useEffect } from 'react'
 
 export default function DashboardLayout() {
     const location = useLocation()
+
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        fetch(`http://localhost:8000/api/profile/infos/`, {
+          method: 'GET',
+          credentials : 'include',
+          headers : {
+            'Authorization' : `Bearer ${auth.mytoken}`,
+          }
+        })
+        .then(res => res.json())
+        .then(res => {
+          console.log(res)
+          // console.log(res)
+          // userHandler(res.data)
+          // setIsLoading(false)
+        })
+        .catch(err => console.log(err))
+      }, 300)
+      return () => clearTimeout(timer)
+    }, [])
+
     return (
       <>
         <div className="flex justify-between w-full p-2">
