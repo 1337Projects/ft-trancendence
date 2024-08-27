@@ -6,6 +6,7 @@ class UserManager(BaseUserManager):
     def create_user(self, email, **extra_fields):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
+        # user.set_password(password)
         user.save(using=self._db)
         return  user
 
@@ -14,17 +15,9 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True, default='')
     first_name = models.CharField(default='', max_length=255)
     last_name = models.CharField(default='', max_length=255)
-    account_id = models.CharField(default=0)
-    password = models.CharField(max_length=10, default=make_password('default_password'))
     objects = UserManager()
 
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     bio = models.TextField(default='', blank=True)
-#     exp = models.IntegerField(default=0)
-#     avatar = models.CharField(default='')
-#     image = models.CharField(unique=True, default='')
-#     online = models.BooleanField(default=False)
-#     groups = None
-#     user_permissions = None
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+
   

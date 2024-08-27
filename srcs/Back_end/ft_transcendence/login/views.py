@@ -105,7 +105,6 @@ def google_oauth(request):
                 email=email,
                 last_name=name.split()[0] if name else "",
                 first_name=name.split()[1] if name else "",
-                account_id=google_id,
             )
         #step5:
         try:
@@ -153,7 +152,6 @@ def intra_oauth(request):
                 email=email,
                 last_name=name,
                 first_name=name,
-                account_id=intra_id,
             )
         try:
             access_token = generate_access_token(user)
