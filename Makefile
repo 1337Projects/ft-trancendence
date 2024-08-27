@@ -6,7 +6,7 @@ down:
 	docker system prune -a
 
 clear: clean
-	sudo rm -rf srcs/Back_end/virtualenv
+	rm -rf srcs/Back_end/virtualenv
 
 stop:
 	docker-compose stop
