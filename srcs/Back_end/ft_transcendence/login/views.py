@@ -19,6 +19,7 @@ load_dotenv()
 def generate_refresh_token(user):
     payload = {
         'user_id': user.id,
+        'username': user.username,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
     }
     refresh_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')

@@ -6,7 +6,7 @@ from .models import Profile
 from login.models import User
 import json
 import jwt
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
 
 class ProfileSerializers(serializers.ModelSerializer):
@@ -14,35 +14,36 @@ class ProfileSerializers(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'
 
-  
-def user_id(refresh_token):
-    # if request.user.is_authenticated:
-        # refresh_token = request.COOKIES.get('refresh_token')
+def get_id(request):
+    # try:
+        refresh_token = request.COOKIES.get('refresh_token')
         # if not refresh_token:
-        #     raise PermissionDenied('User is not authenticated')
+        #     raise AuthenticationFailed('Missing refresh token')
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
         user_id = payload['user_id']
-        return User.objects.get(pk=user_id)
-    # else:
-    #     raise PermissionDenied('User is not authenticated')
+        return user_id
+    # except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError, User.DoesNotExist, AuthenticationFailed):
+    #     return Response({'error': 'Invalid refresh token'}, status=401)
 
-  
+
+
+@api_view(['POST'])
+def creat_profile(request):
+    id = get_id(request)
+    if Profile.objects.filter(user_id=id).exists():
+        return Response({"message": "this user already exist"}, status=400)
+    elif not User.objects.filter(pk=id).exists():
+        return Response({"message": "this user is not exist"}, status=400)
+    else:
+        Profile.objects.create_profile(user_id=id, online=True, exp=0, bio='Nothing', image='', avatar='')
+    return Response({"message": "Success"}, status=200)
+
 @api_view(['GET'])
-def get_infos(request, name):
-    account = get_object_or_404(Profile, user_id=user_id(name))
+def get_infos(request):
+    account = get_object_or_404(Profile, user_id=get_id(request))
     serialiser = ProfileSerializers(account, many=False)
     return Response(serialiser.data)
 
-@api_view(['POST'])    
-def creat_profile(request, name):
-    if Profile.objects.filter(user__username=name).exists():
-        return Response({"message": "this username already exist"}, status=400)
-    else:
-        try:
-            player = User.objects.get(username=name)
-        except User.DoesNotExist:
-            Profile.objects.create(user=player, online=True, exp=0, bio='Nothing')
-        return Response({"message": "Success"}, status=200)
 
 # @api_view(['POST'])
 # def set_bio(request):
@@ -88,8 +89,3 @@ def creat_profile(request, name):
 
 #     else:
 #         return Response({"message": "This username don't have a account"}, status=404)
-
-        
-
-
-

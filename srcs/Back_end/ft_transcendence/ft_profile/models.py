@@ -3,14 +3,13 @@ from login.models import User
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class ProfileManager(BaseUserManager):
-    def create(self, **extra_fields):
-        user = self.model(**extra_fields)
-        user.save(using=self._db)
-        password = None
-        return  user
+    def create_profile(self, **extra_fields):
+        profile = self.model(**extra_fields)
+        profile.save(using=self._db)
+        return  profile
 
 class Profile(AbstractBaseUser):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     bio = models.TextField(default='', blank=True)
     exp = models.IntegerField(default=0)
     avatar = models.CharField(default='')
