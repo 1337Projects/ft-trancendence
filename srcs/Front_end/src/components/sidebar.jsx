@@ -32,10 +32,11 @@ function SideBar() {
 			credentials : 'include'
 		})
 		.then(res => res.json())
-		.then(data => console.log(data))
+		.then(data => {
+			authHandler(null)
+			navigate("../../auth/login")
+		})
 		.catch(err => console.log(err))
-		// authHandler(null)
-		// navigate("/auth/login")
 	}
 
 	return (

@@ -1,6 +1,8 @@
 from django.db import models
 from login.models import User
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, AbstractUser, User
+from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.dispatch import receiver
 
 class ProfileManager(BaseUserManager):
     def create_profile(self, **extra_fields):
@@ -16,3 +18,15 @@ class Profile(AbstractBaseUser):
     image = models.CharField(default='')
     online = models.BooleanField(default=False)
     objects = ProfileManager()
+
+# @receiver(user_logged_in)
+# def user_logged_in(sender, user, request, **kwargs):
+#     profile = Profile.objects.get(user=user)
+#     profile.online = True
+#     profile.save()
+
+# @receiver(user_logged_out)
+# def user_logged_out(sender, user, request, **kwargs):
+#     profile = Profile.objects.get(user=user)
+#     profile.online = False
+#     profile.save()

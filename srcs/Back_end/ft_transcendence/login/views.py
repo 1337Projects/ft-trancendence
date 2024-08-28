@@ -13,6 +13,9 @@ import datetime
 from dotenv import load_dotenv, dotenv_values
 import os
 from rest_framework.decorators import api_view
+from ft_profile.models import user_logged_out
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.signals import user_logged_out
 
 load_dotenv()
 

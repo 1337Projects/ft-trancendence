@@ -29,6 +29,7 @@ import Nav from './components/auth/nav'
 import AuthcontextProvidder, { authContextHandler } from './Contexts/authContext'
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
+import {jwtDecode} from 'jwt-decode'
 
 function Home() {
 
@@ -161,7 +162,7 @@ function App() {
   }
   const [theme, setTheme] = useState(appliedTheme)
   const [color, setColor] = useState(appliedColor);
-  const [user, setUser] = useState('')
+  const [auth, setAuth] = useState({token:'', username:''})
 
   function ThemeHandler(theme) {
     setTheme(theme);
@@ -173,13 +174,19 @@ function App() {
     window.localStorage.setItem('color' , color) 
   }
 
-  function userHandler(tokens) {
-    setUser(tokens)
+  function authHandler(token) {
+    if (token) {
+      const data = jwtDecode(token)
+      const username = data.username
+      setAuth({...auth, token, username})
+    } else {
+      setAuth({token:'', username:''})
+    }
   }
 
   return (
     <div style={{backgroundSize:'50px 50px'}} className={`font-pt ${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
-      <AuthcontextProvidder user={user} handler={userHandler}>
+      <AuthcontextProvidder user={auth} handler={authHandler}>
         <ThemeProvider theme={theme} handler={ThemeHandler}>
           <ColorProvider color={color} handler={colorHandler}>
             <div className='container max-w-[1400px] mx-auto'>
