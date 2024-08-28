@@ -2,61 +2,112 @@ import { faBell, faGear, faLanguage, faLocation, faMailBulk, faMailReply, faMoon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useState } from "react";
 import { ColorContext, ColorToggelContext, ThemeContext, ThemeToggelContext } from "../../Contexts/ThemeContext";
+import {authContext, userContext, userContextHandler} from '../../Contexts/authContext'
 
-
-// icon-primary 20px
-// icon-secendary 12px
-// text-primary 14px
-// text-secendar 10px
-
-function Avatars() {
+function Avatars({user}) {
     const theme = useContext(ThemeContext)
     return (
-        <div className="w-full p-1 my-2">
-            <div className="user flex">
-                <img src="/ava2.png" className="w-[40px] h-fit rounded-sm mr-3" alt="" />
+        <div className="w-full">
+            <div className="user w-full flex mt-8">
+                <img src={user?.profile?.image} className="bg-white w-[60px] h-[60px] rounded-sm mr-3" alt="img" />
                 <div className="text-[10px]">
-                    <button className={`${theme === 'light' ? "bg-lightText text-lightItems" : "bg-black/30"}  p-1 rounded-sm`}>change avatar</button>
-                    <p className="mt-2 text-[8px]">JPG, PNG, JPEG, !MB max.</p>
-                </div>
-            </div>
-            <div className="user flex mt-10">
-                <img src="/aamhamdi1.jpeg" className="w-[40px] h-[40px] rounded-sm mr-3" alt="" />
-                <div className="text-[10px]">
-                    <button className={`${theme === 'light' ? "bg-lightText text-lightItems" : "bg-black/30"}  p-1 rounded-sm`}>change picture</button>
-                    <p className="mt-2 text-[8px]">JPG, PNG, JPEG, !MB max.</p>
+                    <input
+                        onChange={(e) => console.log(e.target.value)}
+                    className={`${theme === 'light' ? "bg-lightText text-lightItems" : "bg-black/30"} capitalize p-2 rounded-sm w-[160px]`} type="file"/>
+                    <p className="mt-2 text-[10px]">JPG, PNG, JPEG, 3MB max.</p>
                 </div>
             </div>
         </div>
     )
 }
 
+function SettingsInput({theme, value, name, type, handler}) {
+
+    return (
+        <div className="w-full max-w-[230px] block">
+            <label className="w-full block mb-2 text-[10px] capitalize">{name}</label>
+            <input 
+                className={`focus:outline-none rounded-sm px-2 ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} w-full text-[10px] h-[40px]`} 
+                value={value} type={type} 
+                onChange={(e) => handler(prev => {
+                    return {...prev, [name]: e.target.value}
+                })}
+            />
+            
+        </div>
+    )
+}
+
 function Profile() {
     const theme = useContext(ThemeContext)
+    const user = useContext(userContext)
+    const userHandler = useContext(userContextHandler)
+    const token = useContext(authContext)
+    const color = useContext(ColorContext)
+    const [disabled, setDisabled] = useState(true)
+    const [alert, setAlert] = useState({})
+    const [userData, setUserData] = useState({...user})
+    function updateDatahandler() {
+        console.log(userData)
+        fetch('http://localhost:8000/api/profile/set_profile_data/', {
+            method: 'PUT',
+            credentials:'include',
+            body : JSON.stringify({data: userData}),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token.mytoken}`
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+            if (data.status == 200) {
+                setAlert({"data" : data.res})
+                userHandler(userData)
+            } 
+            else if (data.status == 401) {
+                setAlert({"data" : data.err})
+            }
+        })
+        .catch(err => console.log(err))
+    }
+
     return (
-        <div>
-            <Avatars />
-            <ul>
-                <li className="my-10">
-                    <label >
-                        <div className="flex text-[10px] items-center justify-between w-[230px] my-2 px-2">
-                            <p>username</p>
-                            <FontAwesomeIcon icon={faUser} />
+        <div className="">
+            {
+                alert.data != null &&
+                <div className="bg-red-500 p-2 px-4 w-fit text-[11px] rounded-sm capitalize">
+                    {alert.data}
+                </div>
+            }
+            <Avatars user={user}/>
+            <ul className="mt-8"> 
+                <div>
+                    <SettingsInput theme={theme} value={userData?.username} name="username" type="text" handler={setUserData} />
+                </div>
+                <div className="mt-8">
+                    <SettingsInput theme={theme} value={userData?.first_name} name="first_name" type="text" handler={setUserData} />
+                </div>
+                <div className="mt-8">
+                    <SettingsInput theme={theme} value={userData?.last_name} name="last_name" type="text" handler={setUserData} />
+                </div>
+                <li className="mt-8">
+                    <label>
+                        <div className="flex text-[10px] capitalize items-center justify-between w-[230px] mb-2">
+                            <p>bio</p>
                         </div>
-                        <input className={` focus:outline-none rounded-sm px-2 ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} w-[230px] text-[10px] h-[40px]`} value="aamhamdi" type="text" />
-                    </label>
-                </li>
-                <li className="my-4">
-                    <label >
-                        <div className="flex text-[10px] items-center justify-between w-[230px] my-2 px-2">
-                            <p>email</p>
-                            <FontAwesomeIcon icon={faMailBulk} />
-                        </div>
-                        <input className={` focus:outline-none rounded-sm w-[130px] ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} px-2 w-[230px] h-[40px] text-[10px]`} value="example@gmail.com" type="text" />
+                        <textarea
+                            onChange={(e) => setUserData(prev => {
+                                setDisabled(false)
+                                return {...prev,  profile : {...prev.profile, bio:e.target.value}}
+                            })}
+                            value={userData.profile.bio}
+                            rows="4" className={`p-2 focus:outline-none rounded-sm w-[130px] ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} px-2 w-[230px] text-[10px]`} type="text" />
                     </label>
                 </li>
                 
             </ul>
+            <button  onClick={updateDatahandler} style={{background:color}} className="text-white cursor-pointer p-2 mt-8 rounded-sm w-[230px] h-[35px] flex items-center justify-center">save changes</button>
         </div>
     )
 }

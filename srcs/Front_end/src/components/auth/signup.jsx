@@ -1,15 +1,15 @@
 
 import { Alert, OauthItems } from "./login"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBirthdayCake, faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons"
 import { Link, useNavigate } from "react-router-dom"
 import { useContext, useState } from "react"
 import { ColorContext } from "../../Contexts/ThemeContext"
 
 export function Input({icon, label, placeholder, type, handler}) {
     return (
-        <>
-            <label className="text-[10px] flex justify-between px-2 mt-4" htmlFor="email">{label} : <FontAwesomeIcon icon={icon} /></label>
+        <div>
+            <label className="text-[10px] capitalize w-full flex justify-between mb-1 mt-4" htmlFor="email">{label} : <FontAwesomeIcon icon={icon} /></label>
             <input
                 className="mt-1 w-full text-lightText outline-none text-[10px] px-2 rounded h-8 border-gray-300 border-[.5px]" 
                 type={type} 
@@ -17,7 +17,7 @@ export function Input({icon, label, placeholder, type, handler}) {
                 placeholder={placeholder}
                 onChange={(e) => handler({[label]: e.target.value})}
             />
-        </>
+        </div>
     )
 }
 
@@ -33,14 +33,27 @@ export default function Signup() {
 
     function registerData() {
         if (data.username == "") {
-            setAlert({level:"warning", detail:"empty username is not valid"})
+            setAlert({level:"warning", error:"empty username is not valid"})
         } else if (data.email == "") {
-            setAlert({level:"warning", detail:"email cannot be empty"})
+            setAlert({level:"warning", error:"email cannot be empty"})
         } else if (data.password == "") {
-            setAlert({level:"warning", detail:"password required !!!"})
+            setAlert({level:"warning", error:"password required !!!"})
         } else {
-            console.log(data)
-            navigate("../confirme")
+            fetch('http://localhost:8000/api/auth/signup/', {
+                headers : {
+                    "Content-Type": "application/json",
+                },
+                body : JSON.stringify(data),
+                credentials: 'include',
+                method: 'POST',
+            }).then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if (data.id) {
+                    navigate(`../confirme/${data.id}`)
+                }
+            })
+            .catch(err => console.log(err))
         }
     }
 
@@ -54,6 +67,10 @@ export default function Signup() {
         <div className="w-1/2 max-w-[500px] mx-auto mt-6">
             <OauthItems />
             <div className="login-form grid mt-6 w-full">
+                <div className="w-full flex justify-between">
+                    <Input handler={dataHandler} icon={faUser} label="first_name" placeholder="jhon" type="text" />
+                    <Input handler={dataHandler} icon={faUser} label="last_name" placeholder="doe" type="text" />
+                </div>
                 <Input handler={dataHandler} icon={faUser} label="username" placeholder="jhon doe" type="text" />
                 <Input handler={dataHandler} icon={faMailBulk} label="email" placeholder="example@gmail.com" type="email" />
                 <Input handler={dataHandler} icon={faKey} label="password" placeholder="***********" type="password" />

@@ -13,3 +13,17 @@ export function ConversationsProvider({children, data, dispatch}) {
         </ConversationsContext.Provider>
     )
 }
+
+
+export const chatContext = createContext(null)
+export const chatHandlerContext = createContext(null)
+
+export function ChatProvider({children, data, dispatch}) {
+    return (
+        <chatContext.Provider value={data}>
+            <chatHandlerContext.Provider value={dispatch}>
+                {children}
+            </chatHandlerContext.Provider>
+        </chatContext.Provider>
+    )
+}

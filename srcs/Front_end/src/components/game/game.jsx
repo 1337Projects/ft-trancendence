@@ -134,14 +134,14 @@ function Hero({color}) {
     return (
         <div className=" hero border-[.5px] shadow-sm border-gray-600 h-2/3 sm:h-1/2 max-h-[800px] sm:max-h-[500px] bg-pong bg-cover rounded-sm">
             <div className="flex items-center justify-center h-full w-full backdrop-blur-sm rounded-sm p-1 bg-[#141323]/50">
-                <div className="grid place-items-center sm:flex items-center justify-center max-w-[1500px] ">
+                <div className="place-items-center flex items-center justify-center max-w-[1500px] ">
                     <div className="img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
                         <HeroImg color={color} />
                     </div>
                     <div className="centent w-[50%] h-full leading-snug text-white p-7 flex justify-between items-center">
                         <div className="">
                             <p className="text-small">welcome to pong comunity</p>
-                            <h3 className="text-[3rem] font-kaushan font-bold capitalize">its time to play ping pong</h3>
+                            <h3 className="text-[2rem] font-kaushan font-bold capitalize">its time to play ping pong</h3>
                             <Link to="room/1">
                                 <button style={{backgroundColor : color}} className={`flex justify-between h-[3rem] w-[8rem] items-center p-2 px-4 text-white rounded-3xl mt-10`}>
                                     <p className="mr-2 text-[1rem] capitalize font-kaushan">Play now</p>

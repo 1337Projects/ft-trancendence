@@ -10,7 +10,6 @@ export const DashboardPrivateRoute = () => {
     const [loading, setLoading] = useState(true);
     const authhandler = useContext(authContextHandler)
     let accessToken = useContext(authContext);
-    console.log("private route")
     useEffect(() => {
             const getTokens = async () => {
                 await fetch('http://localhost:8000/api/auth/refresh/', 
@@ -20,7 +19,6 @@ export const DashboardPrivateRoute = () => {
                 })
                 .then(res => res.json())
                 .then(res => {
-                    console.log(res.access_token)
                     authhandler(res.access_token)
                     setIsAuthenticated(res.access_token != null)
                 })
@@ -28,9 +26,10 @@ export const DashboardPrivateRoute = () => {
             }
             
             const timer = setTimeout(async () => {
-                if (!accessToken.token) {
-                    await getTokens()
+                if (accessToken.mytoken == '') {
+                    await getTokens() 
                 } else {
+                    console.log(accessToken)
                     setIsAuthenticated(true)
                 }
                 setLoading(false);

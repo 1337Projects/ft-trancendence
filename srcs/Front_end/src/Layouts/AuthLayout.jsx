@@ -14,9 +14,9 @@ export default function AuthLayout() {
       <>
         <main>
           <div className="w-full h-screen">
-            <div className={`main ${theme == 'light' ? 'bg-lightItems text-lightText' : 'bg-darkItems text-darkText'} h-full`}>
-                <div className="login h-full flex justify-between">
-                    <div className="pic h-full bg-pong bg-cover w-3/4 flex flex-col items-center p-2 justify-center">
+            <div className={`main w-full bg-lightItems text-lightText h-full`}>
+                <div className="login h-full flex justify-between w-full">
+                    <div className="hidden lg:flex pic h-full bg-pong bg-cover w-3/4 flex-col items-center p-2 justify-center">
                       <div className='bg-blue-200/10 backdrop-blur-md h-[90vh] w-[40vw] max-h-[500px] max-w-[500px] p-2 rounded-3xl relative border-white/50 border-[.3px]'>
                         <p className='text-white font-bold text-xl mt-6 capitalize w-48 font-kaushan left-20 leading-10 absolute'>welcome to ping pong community. 🎉</p>
                         <Picture color={color}/>
@@ -28,7 +28,7 @@ export default function AuthLayout() {
                         </div>
                       </div>
                     </div>
-                    <div className="login-form p-1 h-[100vh] sm:h-[95vh] w-2/4 flex items-center relative">
+                    <div className="login-form p-1 h-[100vh] sm:h-[95vh] w-full lg:w-2/4 flex items-center relative">
                         <div className="w-full">
                           <Outlet />
                         </div>

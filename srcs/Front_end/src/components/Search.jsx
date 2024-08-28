@@ -1,25 +1,57 @@
-import { faSearch, faCaretDown, faUser, faGear, faRightToBracket, faCaretUp } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faCaretDown, faUser, faGear, faRightToBracket, faCaretUp, faAnglesUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
 import { ColorContext, ThemeContext } from "../Contexts/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
+import { authContext, userContext } from "../Contexts/authContext";
 
 
 const users = [
-    {id:0, username: 'aamhamdi', img:'/aamhamdi1.jpeg'},
-    {id:1, username: 'nmaazouz', img:'/aamhamdi1.jpeg'},
-    {id:2, username: 'oaboulgh', img:'/aamhamdi1.jpeg'},
-    {id:3, username: 'kben-ham', img:'/aamhamdi1.jpeg'},
-    {id:4, username: 'mel-harc', img:'/aamhamdi1.jpeg'},
+    {
+        email: "aamhamdi@student.1337.ma",
+        first_name: "Abdelhadi",
+        id: 44,
+        last_name: "Amhamdi",
+        profile : {
+            image: 'https://cdn.intra.42.fr/users/a60d6e59c8e25f00d89f55621023e181/aamhamdi.jpg',
+            bio: 'number #1 in ping pong 🥱\naamhamdi.com', 
+            level: 0.7, 
+            rank: 44
+        },
+        username: "aamhamdi"
+    }
 ]
 
 function SearchResult({query, queryHandler}) {
-    const res = users.filter(item => item.username.includes(query))
     const navigate = useNavigate()
+    const tokens = useContext(authContext)
+    const [data, setData] = useState(null)
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            await fetch(`http://localhost:8000/api/profile/search_user/?query=${query}`, {
+                method : 'GET',
+                headers : {
+                    "Content-Type": "application/json",
+					"Authorization": `Bearer ${tokens.mytoken}`
+                },
+                credentials : 'include'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.data != undefined) {
+                    setData(data.data)
+                }
+            })
+            .catch(err => console.log("err:", err))
+            setLoading(false)
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [query])
 
-    function eventHandler() {
+    function eventHandler(user) {
         queryHandler('')
-        navigate('/dashboard/profile')
+        navigate(`/dashboard/profile/${user}`)
     }
 
     return (
@@ -27,13 +59,28 @@ function SearchResult({query, queryHandler}) {
             <div className="text-[12px] w-full z-10 bg-darkItems border-r-[.2px] border-l-[.2px] border-b-[.2px] border-darkText/10 mt-2 absolute ml-[-2.5rem] p-4 h-fit max-h-">
                 <ul>
                     {
-                        res.length ? 
-                        res.map(i => {
-                            return <li key={i.id} className="flex my-2 items-center cursor-pointer" onClick={() => eventHandler()}>
-                                <img  src={i.img} className="w-[27px] rounded-full mr-2" alt={i.img} />
-                                <p className="lowercase">{i.username}</p>
-                             </li>
-                        }) : "Not result Found"
+                        (data != null && data.length) ? 
+                        data.map(i => {
+                            return ( 
+                                <li 
+                                    key={i.id} 
+                                    className="flex my-2 items-center justify-between cursor-pointer border-[.2px] p-2 rounded-md border-white/10 cursor-pointer" 
+                                    onClick={() => eventHandler(i.username)}
+                                >
+                                    <div className="flex">
+                                        <img  src={i?.profile?.image} className="w-[44px] bg-white rounded-md mr-4" alt={i?.profile?.image} />
+                                        <div>
+                                            <p className="text-[16px] lowercase font-bold">@{i.username}</p>
+                                            <p className="mt-[4px]">{i.first_name} {i.last_name}</p>
+
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <h1 className="mr-2">{i?.profile?.level} LVL</h1>
+                                        <FontAwesomeIcon icon={faAnglesUp} />
+                                    </div>
+                                </li>)
+                        }) : !loading ? <h1>not found</h1> : <h1>Loading...</h1>
                     }
                 </ul>
             </div>
@@ -45,6 +92,7 @@ export default function Search() {
     const theme = useContext(ThemeContext)
     const [show, setShow] = useState(false)
     const [searchText, seTSearchText] = useState('')
+    const user = useContext(userContext)
     return (
         <>
             <div className="flex relative w-full h-[60px]">
@@ -78,9 +126,9 @@ export default function Search() {
                                 <p>enjoy</p>
                                 <FontAwesomeIcon icon={!show ? faCaretDown : faCaretUp} />
                             </div>
-                            <h1 className="text-primaryText font-bold">aamhamdi</h1>
+                            <h1 className="text-primaryText font-bold">{user.username}</h1>
                         </div>
-                        <img className="w-[40px] rounded-[50%] h-25px border-[1px] ml-4" src="/aamhamdi1.jpeg" alt="avatar" />
+                        <img className="w-[40px] rounded-[50%] h-25px border-[1px] bg-white ml-4" src={user?.profile?.image} alt="avatar" />
                     </div>
                     {
                         show && 
