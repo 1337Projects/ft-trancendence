@@ -16,7 +16,7 @@ export default function DashboardLayout() {
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
       const timer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/profile/profile_data/`, {
+        fetch(`http://localhost:8000/api/profile/infos/`, {
           method: 'GET',
           credentials : 'include',
           headers : {
@@ -25,6 +25,7 @@ export default function DashboardLayout() {
         })
         .then(res => res.json())
         .then(res => {
+          console.log(res)
           userHandler(res.data)
           setIsLoading(false)
         })

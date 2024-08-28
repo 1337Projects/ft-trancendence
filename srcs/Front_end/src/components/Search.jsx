@@ -126,7 +126,7 @@ export default function Search() {
                                 <p>enjoy</p>
                                 <FontAwesomeIcon icon={!show ? faCaretDown : faCaretUp} />
                             </div>
-                            <h1 className="text-primaryText font-bold">{user.username}</h1>
+                            <h1 className="text-primaryText font-bold">{user?.username}</h1>
                         </div>
                         <img className="w-[40px] rounded-[50%] h-25px border-[1px] bg-white ml-4" src={user?.profile?.image} alt="avatar" />
                     </div>

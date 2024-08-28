@@ -114,7 +114,7 @@ def google_oauth(request):
         try:
             access_token = generate_access_token(user)
             refresh_token = generate_refresh_token(user)
-            response = JsonResponse({'access': access_token})
+            response = JsonResponse({'access': access_token,"status":200})
             set_refresh_token_cookie(response, refresh_token)
             return response
         except AuthenticationFailed:
@@ -160,7 +160,7 @@ def intra_oauth(request):
         try:
             access_token = generate_access_token(user)
             refresh_token = generate_refresh_token(user)
-            response = JsonResponse({'access': access_token})
+            response = JsonResponse({'access': access_token,"status":200})
             set_refresh_token_cookie(response, refresh_token)
             return response
         except AuthenticationFailed:

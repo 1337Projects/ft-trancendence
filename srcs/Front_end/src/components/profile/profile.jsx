@@ -428,8 +428,8 @@ function Banner() {
 					<div className='absolute bottom-[-70px] left-10 flex items-end'>
 						<img className='w-[90px] border-[.3px] bg-white rounded-full ' src={`${data?.profile?.image}`} alt="" />
 						<div className='ml-4 text-white'>
-							<h1 className='text-[16px] uppercase'>{data.first_name} {data.last_name}</h1>
-							<h1 className='mt-2 font-bold'>@{data.username}</h1>
+							<h1 className='text-[16px] uppercase'>{data?.first_name} {data?.last_name}</h1>
+							<h1 className='mt-2 font-bold'>@{data?.username}</h1>
 						</div>
 					</div>
 				</div>

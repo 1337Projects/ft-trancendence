@@ -10,6 +10,7 @@ from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
 
 class ProfileSerializers(serializers.ModelSerializer):
+    #profile = 
     class Meta:
         model = Profile
         fields = '__all__'

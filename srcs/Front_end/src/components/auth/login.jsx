@@ -12,7 +12,7 @@ export function OauthItems() {
     const color = useContext(ColorContext)
 
     function googleAuth() {
-        fetch('http://localhost:8000/api/auth/oauth/google/')
+        fetch('http://localhost:8000/api/auth/google/')
         .then(res => res.json())
         .then(data => {
             window.location.href = data.url
@@ -21,7 +21,7 @@ export function OauthItems() {
     }
 
     function intraAuth() {
-        fetch('http://localhost:8000/api/auth/oauth/intra/')
+        fetch('http://localhost:8000/api/auth/42/')
         .then(res => res.json())
         .then(data => {
             window.location.href = data.url
