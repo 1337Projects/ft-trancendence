@@ -26,7 +26,8 @@ def get_infos(request):
     if not User.objects.filter(pk=id).exists():
         return Response({"message": "this user is not exist", "id": id}, status=400)
     if not Profile.objects.filter(user_id=id).exists():
-        Profile.objects.create_profile(user_id=id, online=True, level=0, bio='Nothing', image='', avatar='')
+        path = "http://127.0.0.1:8000/static/mel-harc.jpeg"
+        Profile.objects.create_profile(user_id=id, online=True, level=8, bio="I'm the best player in the world", image=path, avatar=path)
     user = get_object_or_404(User, id=id)
     serialiser = UserWithProfileSerializer(user)
     return Response({"data": serialiser.data}, status=200)

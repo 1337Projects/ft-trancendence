@@ -15,6 +15,7 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True, default='')
     first_name = models.CharField(default='', max_length=255)
     last_name = models.CharField(default='', max_length=255)
+    image = models.CharField(default='')
     objects = UserManager()
 
     USERNAME_FIELD = 'username'

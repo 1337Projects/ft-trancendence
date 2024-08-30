@@ -147,7 +147,7 @@ def intra_oauth(request):
             return JsonResponse({"error": "Failed to fetch user info"}, status=400)
         intra_id = userinfo['id']
         email = userinfo['email']
-        name = userinfo.get('login')
+        name = userinfo['login']
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
