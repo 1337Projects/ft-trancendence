@@ -19,7 +19,7 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email', 'firstname', 'lastname']
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
 
   
