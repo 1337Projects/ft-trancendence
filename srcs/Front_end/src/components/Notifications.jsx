@@ -110,7 +110,7 @@ export function Invites() {
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="mr-2">invites</h1>
                     <FontAwesomeIcon icon={faUserPlus} />
-                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">{invites?.length}</div>
+                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">0</div>
                 </div>
                 <FontAwesomeIcon className="text-[14px]" icon={!show ? faCaretDown : faCaretUp} />
             </div>
@@ -118,7 +118,7 @@ export function Invites() {
                 show && 
                 <ul className="my-2 border-[1px] m-2 border-darkText/10 rounded-sm">
                     {
-                        invites.length ? 
+                        invites ? 
                         invites.map(inv => <InviteItem key={inv.sender.id} data={inv} />)
                         :
                         <li className="h-[100px] flex justify-center items-center">

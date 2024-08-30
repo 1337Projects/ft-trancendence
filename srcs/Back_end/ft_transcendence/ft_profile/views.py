@@ -4,16 +4,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Profile
 from login.models import User
+from .serializer import ProfileSerializers, UserWithProfileSerializer
 import json
 import jwt
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
 
-class ProfileSerializers(serializers.ModelSerializer):
-    #profile = 
-    class Meta:
-        model = Profile
-        fields = '__all__'
 
 def get_id(request):
     refresh_token = request.COOKIES.get('refresh_token')
@@ -30,7 +26,7 @@ def get_infos(request):
     if not User.objects.filter(pk=id).exists():
         return Response({"message": "this user is not exist", "id": id}, status=400)
     if not Profile.objects.filter(user_id=id).exists():
-        Profile.objects.create_profile(user_id=id, online=True, exp=0, bio='Nothing', image='', avatar='')
-    account = get_object_or_404(Profile, user_id=id)
-    serialiser = ProfileSerializers(account, many=False)
-    return Response(serialiser.data)
+        Profile.objects.create_profile(user_id=id, online=True, level=0, bio='Nothing', image='', avatar='')
+    user = get_object_or_404(User, id=id)
+    serialiser = UserWithProfileSerializer(user)
+    return Response({"data": serialiser.data}, status=200)
