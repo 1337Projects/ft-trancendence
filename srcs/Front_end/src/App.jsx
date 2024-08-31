@@ -19,20 +19,24 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 
 import {ThemeProvider, ColorProvider} from './Contexts/ThemeContext'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ConversationsList from './components/chat/chat'
 import Tournament from './components/game/tournament'
 
 import PingPong from './components/game/PingPong'
 import NotFound from './components/NotFound'
 import Nav from './components/auth/nav'
-import AuthcontextProvidder, { authContext, authContextHandler } from './Contexts/authContext'
+import AuthcontextProvidder, { authContextHandler, userContextHandler, userContext, UsercontextProvidder } from './Contexts/authContext'
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
-
-import {jwtDecode} from 'jwt-decode'
+import  { jwtDecode } from 'jwt-decode'
 
 function Home() {
+
+  const params = new URLSearchParams(window.location.search)
+  const code = params.get('code')
+  console.log(code)
+
   return (
     <>
       <h1 className='h-[100vh] text-white  sm:text-red-500'>landing page</h1> 
@@ -40,27 +44,30 @@ function Home() {
   )
 }
 
-
-
-function GoogleOauth() {
+function Oauth() {
   const [searchParam, setSerachParam] = useSearchParams()
   const authHandler = useContext(authContextHandler)
   const navigate = useNavigate()
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
-      fetch(`http://localhost:8000/`, {
+      fetch(`http://localhost:8000/api/auth/oauth/google/token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials : 'include',
-        body : JSON.stringify({code})
+        credentials: 'include',
+        body : JSON.stringify({
+          code : code,
+        })
       })
       .then(res => res.json())
       .then(data => {
-        authHandler(data.access)
-        navigate("dashboard/profile")
+        console.log(data)
+        if (data.status == 200) {
+          authHandler(data.access)
+          navigate('../../dashboard/profile')
+        }
       })
       .catch(err => console.log(err))
     }, 300)
@@ -70,32 +77,37 @@ function GoogleOauth() {
     <h1></h1>
   )
 }
-function IntraOauth() {
+function Oauth42() {
   const [searchParam, setSerachParam] = useSearchParams()
   const authHandler = useContext(authContextHandler)
   const navigate = useNavigate()
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
-      fetch(`http://localhost:8000/`, {
+      fetch(`http://localhost:8000/api/auth/oauth/42/token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials : 'include',
-        body : JSON.stringify({code})
+        body : JSON.stringify({
+          code : code,
+        })
       })
       .then(res => res.json())
       .then(data => {
-        authHandler(data.access)
-        navigate("dashboard/profile")
+        console.log(data)
+        if (data.status == 200) {
+          authHandler(data.access)
+          navigate('../../dashboard/profile')
+        }
       })
       .catch(err => console.log(err))
     }, 300)
     return () => clearTimeout(timer)
   }, [])
   return (
-    <h1></h1>
+    <></>
   )
 }
 
@@ -106,11 +118,11 @@ const router = createBrowserRouter(
     <Route index element={<Home />} />
     {/* auth */}
 		<Route path='auth' element={<AuthLayout />}>
-      <Route path='oauth/google' element={<GoogleOauth />} />
-      <Route path='oauth/42' element={<IntraOauth />} />
+      <Route path='oauth_api' element={<Oauth />} />
+      <Route path='oauth_api/42' element={<Oauth42 />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
-		  <Route path='confirme' element={<ConfirmeEmail/>} />
+		  <Route path='confirme/:id' element={<ConfirmeEmail/>} />
     </Route>
 
 
@@ -123,7 +135,7 @@ const router = createBrowserRouter(
         {/* chat  */}
         <Route path='chat' element={<ChatLayout />}>
           <Route index element={<ConversationsList/>} />
-          <Route path=':id' element={<Conversation />} />
+          <Route path=':user' element={<Conversation />} />
         </Route>
 
         {/* profile */}
@@ -143,6 +155,7 @@ function App() {
 
   let appliedTheme = window.localStorage.getItem('theme')
   let appliedColor = window.localStorage.getItem('color')
+  // let authTokens = window.localStorage.getItem('auth')
   if (!appliedTheme) {
     window.localStorage.setItem('theme' ,'dark')
     appliedTheme = 'dark'
@@ -153,7 +166,9 @@ function App() {
   }
   const [theme, setTheme] = useState(appliedTheme)
   const [color, setColor] = useState(appliedColor);
-  const [auth, setAuth] = useState({token:'', username:''})
+  const [token, setToken] = useState({mytoken:'', username:''})
+  const [user, setUser] = useState({})
+
 
   function ThemeHandler(theme) {
     setTheme(theme);
@@ -165,27 +180,31 @@ function App() {
     window.localStorage.setItem('color' , color) 
   }
 
-  function authHandler(token) {
-    if (token) {
-      const data = jwtDecode(token)
-      const username = data.username
-      setAuth({...auth, token, username})
+  function tokenHandler(mytoken) {
+    if (mytoken) {
+      const data = jwtDecode(mytoken)
+      const username = data.username;
+      setToken({...token, mytoken, username})
     } else {
-      setAuth({token:'', username:''})
+      setToken({mytoken:'', username:''})
     }
   }
 
+
+
   return (
     <div style={{backgroundSize:'50px 50px'}} className={`font-pt ${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
-      <AuthcontextProvidder user={auth} handler={authHandler}>
-        <ThemeProvider theme={theme} handler={ThemeHandler}>
-          <ColorProvider color={color} handler={colorHandler}>
-            <div className='container max-w-[1400px] mx-auto'>
-              <RouterProvider router={router} />
-            </div>
-          </ColorProvider>
-        </ThemeProvider>
-      </AuthcontextProvidder>
+      <UsercontextProvidder user={user} userhandler={setUser}>
+        <AuthcontextProvidder token={token} tokenHandler={tokenHandler}>
+            <ThemeProvider theme={theme} handler={ThemeHandler}>
+              <ColorProvider color={color} handler={colorHandler}>
+                <div className='container max-w-[1400px] mx-auto'>
+                  <RouterProvider router={router} />
+                </div>
+              </ColorProvider>
+            </ThemeProvider>
+        </AuthcontextProvidder>
+      </UsercontextProvidder>
     </div>
   )
 }

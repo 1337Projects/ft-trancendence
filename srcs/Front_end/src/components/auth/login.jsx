@@ -6,41 +6,36 @@ import { Link, json, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { ColorContext } from "../../Contexts/ThemeContext";
 import { Input } from './signup';
-import axios from 'axios'
 import { authContextHandler } from '../../Contexts/authContext';
 
 export function OauthItems() {
     const color = useContext(ColorContext)
 
-
-    function GoogleOauthHandler() {
-        fetch('http://localhost:8000/auth/google_auth/')
+    function googleAuth() {
+        fetch('http://localhost:8000/api/auth/oauth/google/')
         .then(res => res.json())
-        .then(res => {
-            window.location.href = res.url;
+        .then(data => {
+            window.location.href = data.url
         })
-        .catch(err => {
-            console.log(err)
-        })
+        .catch(err => console.log(err))
     }
-    function IntraOauthHandler() {
-        fetch('http://localhost:8000/auth/42/')
+
+    function intraAuth() {
+        fetch('http://localhost:8000/api/auth/oauth/intra/')
         .then(res => res.json())
-        .then(res => {
-            window.location.href = res.url;
+        .then(data => {
+            window.location.href = data.url
         })
-        .catch(err => {
-            console.log(err)
-        })
+        .catch(err => console.log(err))
     }
 
     return (
         <>
-            <div onClick={GoogleOauthHandler} className="login-google cursor-pointer text-[8px] uppercase h-8 border-blue-500/80 border-[1px] w-1/1 rounded flex items-center justify-center">
+            <div onClick={googleAuth} className="login-google cursor-pointer text-[10px] uppercase h-8 border-blue-500/80 border-[1px] w-1/1 rounded flex items-center justify-center">
                 <h5 className="mr-2">continue with google account</h5>
                 <i><FontAwesomeIcon icon={faGoogle} /></i>
             </div>
-            <div onClick={IntraOauthHandler} className="login-42 cursor-pointer text-[8px] uppercase h-8 mt-4 border-red-500/80 border-[1px] rounded w-1/1 flex items-center justify-center">
+            <div onClick={intraAuth} className="login-42 cursor-pointer text-[10px] uppercase h-8 mt-4 border-red-500/80 border-[1px] rounded w-1/1 flex items-center justify-center">
                 <h5 className="mr-2">continue with 42 account</h5>
                 <i><FontAwesomeIcon icon={faAirbnb} /></i>
             </div>
@@ -50,15 +45,16 @@ export function OauthItems() {
 }
 
 export function Alert({data, dataHandler}) {
+    console.log(data)
     useEffect(() => {
         const timer = setTimeout(() => dataHandler(null), 3000)
         return () => clearTimeout(timer)
     })
     const ccolor = data.level == "error" ? "#ef4444cc" : "#ff9800"
     return (
-        <div style={{borderColor:ccolor, background:ccolor}} className={`border-l-[3px] w-fit min-w-[280px] absolute top-6 rounded-sm left-[50%] translate-x-[-50%]`}>
+        <div style={{borderColor:ccolor, background:ccolor}} className={`text-white border-l-[3px] w-fit min-w-[280px] absolute top-6 rounded-sm left-[50%] translate-x-[-50%]`}>
             <div className='p-4 text-[10px] text-white'>
-                <span className='font-bold uppercase'>Error:</span> {data.detail}
+                <span className='font-bold uppercase'>Error:</span> {data.error}
             </div>
             <button
                 className='text-white absolute top-1 text-[12px] right-2'
@@ -83,22 +79,34 @@ export default function Login() {
 
     function login_handler() {
         if (data.username == "") {
-            setAlert({detail:"Empty username is not valid", level : "warning"})
+            setAlert({error:"Empty username is not valid", level : "warning"})
         }
         else if (data.password == "") {
-            setAlert({detail:"Empty password not valid", level: "warning"})
+            setAlert({error:"Empty password not valid", level: "warning"})
         }
         else {
-            axios({
-                method:'post',
-                url:'http://localhost:8000/api/token/',
-                data
-            }).then(res => {
-                authHandler(JSON.stringify(res.data))
-                navigate("../../dashboard/game")
-            }).catch(err => {
-                setAlert({...err.response.data, level : "error"})
+            fetch('http://localhost:8000/api/auth/login/',
+                {
+                    headers : {
+                        "Content-Type": "application/json",
+                    },
+                    method:'POST',
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                },   
+            )
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if (data.status == 300) {
+                    navigate(`../confirme/${data.id}`)
+                }
+                if (data.status == 200) {
+                    authHandler(data.access)
+                    navigate("../../dashboard/game")
+                }
             })
+            .catch(err => console.log(err))
         }
     }
 

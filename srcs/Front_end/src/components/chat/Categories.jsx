@@ -24,7 +24,6 @@ export default function Categories({categorie, Handler}) {
             <CatButton text="all" icon={faInbox} categorie={categorie} handler={Handler} />
             <CatButton text="archived" icon={faBoxArchive} categorie={categorie} handler={Handler} />
             <CatButton text="unread" icon={faPaperPlane} categorie={categorie}  handler={Handler} />
-            <CatButton text="groups" icon={faUsersRays} categorie={categorie} handler={Handler} />
         </div>
     )
 }

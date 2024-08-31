@@ -1,41 +1,45 @@
 
 import {useContext, useEffect, useState} from 'react'
-import { authContext } from '../Contexts/authContext'
+import { authContext, authContextHandler } from '../Contexts/authContext'
 import { Navigate } from 'react-router-dom'
 import DashboardLayout from '../Layouts/DashboardLayout'
 
-export function DashboardPrivateRoute() {
-    const authTokens = useContext(authContext)
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
 
+export const DashboardPrivateRoute = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const authhandler = useContext(authContextHandler)
+    let accessToken = useContext(authContext);
     useEffect(() => {
-        async function getToken() {
-            await fetch('url', {
-                method : 'GET',
-                credentials : 'include',
-            })
-            .then(res => res.json())
-            .then(data => {
-                authTokens(data.access)
-                setIsAuthenticated(data.access != null)
-            })
-            .catch(err => console.log(err))
-        }
-        const timer = setTimeout(async () => {
-        if (authTokens.token == '') {
-            await getToken()
-        } else {
-            setIsAuthenticated(true)
-        }
-        setIsLoading(false)
-        }, 300)
-        return () => clearTimeout(timer)
-    }, [])
-    
-    if (isLoading) {
-        return (<div>Loading...</div>)
-    }
+            const getTokens = async () => {
+                await fetch('http://localhost:8000/api/auth/refresh/', 
+                {
+                    method: 'GET',
+                    credentials : 'include'
+                })
+                .then(res => res.json())
+                .then(res => {
+                    authhandler(res.access_token)
+                    setIsAuthenticated(res.access_token != null)
+                })
+                .catch(err => console.log(err))
+            }
+            
+            const timer = setTimeout(async () => {
+                if (accessToken.mytoken == '') {
+                    await getTokens() 
+                } else {
+                    console.log(accessToken)
+                    setIsAuthenticated(true)
+                }
+                setLoading(false);
+            }, 300)
+            return () => clearTimeout(timer)
+    }, []);
 
-    return isAuthenticated ? <DashboardLayout /> : <Navigate to="../../auth/login" />
-}
+  if (loading) {
+    return <div></div>;
+  }
+
+  return isAuthenticated ? <DashboardLayout /> : <Navigate to="../../auth/login" />
+};

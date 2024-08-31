@@ -2,7 +2,7 @@ import {useContext} from 'react'
 import { ColorContext, ThemeContext } from '../../Contexts/ThemeContext';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage } from '@fortawesome/free-solid-svg-icons';
+import { faAnglesLeft, faAnglesRight, faArrowLeft, faArrowRight, faMessage } from '@fortawesome/free-solid-svg-icons';
 
 function FriendCard({data}) {
 	const theme = useContext(ThemeContext);
@@ -42,15 +42,15 @@ function Fcard({data}) {
 	const theme = useContext(ThemeContext)
 	const color = useContext(ColorContext)
 	return (
-		<div className={`h-[140px] border-[.2px] p-2 mb-2 flex items-center shadow-sm w-full backdrop-blur-md rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/20" : "bg-darkItems border-darkText/20"} `}> 
+		<div className={`h-[140px] mx-1 w-[180px] border-[.2px] p-2  flex items-center shadow-sm w-full backdrop-blur-md rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/20" : "bg-darkItems border-darkText/20"} `}> 
 			<div className="w-full h-fit">
 				{/* <div className='w-full flex justify-end'>
 					<div style={{background:color}} className="rounded-lg py-1 w-1/3 flex items-center justify-center ">
 						<p className={`text-[10px] text-darkText capitalize`}>friend</p>
 					</div>
 				</div> */}
-				<div className='flex items-center'>
-					<img src={data.avatar} alt="Description" className="h-[50px] rounded-full mr-2" />
+				<div className='flex items-center justify-center'>
+					<img src={data.avatar} alt="Description" className="h-[42px] rounded-full mr-2" />
 					<div className={`${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
 						<p className={`text-[15px] mb-2`}>@{data.name}</p>
 						<p className='text-[10px] capitalize'>{data.fullname}</p>
@@ -77,8 +77,16 @@ const friends = [
 export default function friendsList() {
 	const theme = useContext(ThemeContext)
     return (
-        <div className={`${theme == 'light' ? "" : ""} min-w-[170px] overflow-scroll h-[90vh]`}>
-            {friends.map(f => <Link key={f.id} to={f.name}><Fcard data={f}/></Link>)}
-        </div>
+		<div className='mt-4'>
+			<div className={`${theme == 'light' ? "" : ""} min-w-[170px] overflow-scroll h-fit flex justify-center relative`}>
+				{/* <div className='flex items-center justify-center text-white absolute  top-0 left-0  w-[40px] z-10 h-full'>
+					<FontAwesomeIcon className='bg-darkBg p-2 rounded-full' icon={faAnglesLeft} />
+				</div> */}
+				{friends.map(f => <Link key={f.id} to={f.name}><Fcard data={f}/></Link>)}
+				{/* <div className='flex items-center justify-center text-white absolute bg-darkItems top-0 right-0  w-[40px] z-10 h-full'>
+					<FontAwesomeIcon icon={faAnglesRight} />
+				</div> */}
+			</div>
+		</div>
     )
 }

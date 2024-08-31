@@ -9,11 +9,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import {ColorContext, ThemeContext} from '../../Contexts/ThemeContext'
 import Categories, {reducerHandler} from './Categories'
 import { Link } from "react-router-dom";
-import { ConversationsHandlerContext, ConversationsProvider } from "../../Contexts/ConversationsContext";
+import { ConversationsHandlerContext, ConversationsProvider, chatContext } from "../../Contexts/ConversationsContext";
+import { authContext } from "../../Contexts/authContext";
 
 
 function SetingsListItem({text, icon, handler}) {
@@ -57,25 +58,24 @@ function SetingsList({data}) {
 
 function ConvItem({data, id, handler}) {
     const color = useContext(ColorContext)
-
     return (
         <li className="w-full h-[50px] relative mt-3 flex justify-center items-center cursor-pointer" onClick={() => handler(null)}>
-            <Link to="1" className="flex justify-start items-center w-[80%]">
+            <Link to={`${data.username}`} className="flex justify-start items-center w-[80%]">
                 <div className="flex justify-start items-center w-full">
                     <div className="img relative w-[35px] h-[35px] mr-4">
-                        <img src={data.img} className="w-[35px] h-[35px] rounded-[50%]" alt="img" />
+                        <img src={data?.profile?.image} className="w-[35px] bg-white h-[35px] rounded-[50%]" alt="img" />
                     </div>
-                    <div className="content text-[11px] w-fit">
-                        <h1 className="font-bold ">{data.name}</h1>
+                    <div className="content text-[14px] w-fit">
+                        <h1 className="font-bold ">{data?.username}</h1>
                         <p className="text-[8px] mt-1">
                             <FontAwesomeIcon className="mr-1 text-blue-400" icon={faCheckDouble} />
-                            {data.conv[data.conv.length - 1]?.message}
+                            {/* {data.conv[data?.conv?.length - 1]?.message} */}
                         </p>
                     </div>
                 </div>
                 <div className="date flex justify-end w-[70px] items-center relative mr-4">
                     {data.categorie === 'unread' &&  <div style={{background:color}} className="dot flex items-center justify-center w-[20px] h-[20px] text-[9px] font-bold rounded-full text-white">1</div>}
-                    <p className="text-[8px] ml-4">{data.date}</p>
+                    {/* <p className="text-[8px] ml-4">{data.date}</p> */}
                 </div>
             </Link>
             <div className="">
@@ -83,25 +83,47 @@ function ConvItem({data, id, handler}) {
                     e.stopPropagation();
                     handler(data.id)
                 }} className="text-[12px] w-3" icon={faEllipsisVertical} />
-                {id === data.id && <SetingsList data={data}/>}
+                {/* {id === data.id && <SetingsList data={data}/>} */}
             </div>
         </li>
     )
 }
 
-
-
+Object.filter = (obj, predicate) => 
+    Object.keys(obj)
+          .filter( key => predicate(obj[key]) )
+          .map(key => obj[key]);
 
 export default function ConversationsList() {
     
-    const [categorie, setCategorie] = useState('all')
     const theme = useContext(ThemeContext)
     const [visibleItem, setVisibleItem] = useState(null)
-    const [data, dispatch] = useReducer(reducerHandler, iniConvs);
+    const [cnvs, setCnvs] = useState([])
+    // const [data, dispatch] = useReducer(reducerHandler, cnvs);
 
-    function Handler(text) {
-        setCategorie(text);
-    }
+    const tokens = useContext(authContext)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetch('http://localhost:8000/api/chat/get_conversations/', {
+                method : 'GET',
+                credentials : 'include',
+                headers : {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${tokens.mytoken}`
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if (data.data) {
+                    setCnvs(data.data)
+                }
+            })
+            .catch(err => console.log(err))
+        }, 300)
+        return () => clearTimeout(timer)
+    }, [])
+
 
     function ListVisibilityHandler(id) {
         id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);
@@ -118,14 +140,18 @@ export default function ConversationsList() {
                     <h1 className="font-kaushan">conversations</h1>
                     <FontAwesomeIcon icon={faCommentDots} />
                 </div>
-                <Categories categorie={categorie} Handler={Handler} />
+                {/* <Categories categorie={categorie} Handler={Handler} /> */}
 
-                <ConversationsProvider data={data} dispatch={dispatch}>
+                {/* <ConversationsProvider data={cnvs} dispatch={dispatch}> */}
                     <ul className="mt-10">{
-                        data?.map(c => (c.categorie === categorie || (categorie === 'all' && c.categorie !== 'archived')) 
-                        && <ConvItem id={visibleItem} handler={ListVisibilityHandler}  key={c.id} data={c} />)
+                        cnvs?.map(c => {
+                            const item = Object.filter(c, i => typeof i == "object" && i.username != tokens.username)[0]
+                            return <ConvItem id={visibleItem} handler={ListVisibilityHandler}  key={c.id} data={item} />
+                        })
+                        // cnvs?.map(c => (c.categorie === categorie || (categorie === 'all' && c.categorie !== 'archived')) 
+                        // && <ConvItem id={visibleItem} handler={ListVisibilityHandler}  key={c.id} data={c} />)
                     }</ul>
-                </ConversationsProvider>
+                {/* </ConversationsProvider> */}
             </div>
         </div>
     )

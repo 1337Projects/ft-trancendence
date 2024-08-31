@@ -1,12 +1,13 @@
-import { faBell, faCaretDown, faCheck, faTrash, faUserPlus, faCaretUp } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faCaretDown, faCheck, faTrash, faUserPlus, faCaretUp, faPoo, faBomb, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ColorContext, ThemeContext } from "../Contexts/ThemeContext";
+import { authContext, userContext } from "../Contexts/authContext";
 
 
 function NotItem({data}) {
     return (
-        <li className="flex font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
+        <li className="flex relative font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
             <img src={data.img} alt="user" className="h-10 w-10 rounded-[50%]" />
             <div className="text text-primaryText">
                 <h1 className="font-bold">{data.type}</h1>
@@ -15,6 +16,7 @@ function NotItem({data}) {
             <div className="date">
                 <p className="text-[8px]">{data.date}</p>
             </div>
+            
         </li>
     )
 }
@@ -22,19 +24,23 @@ function NotItem({data}) {
 function InviteItem({data}) {
     const color = useContext(ColorContext)
     return (
-        <li className="flex ml-[50%] translate-x-[-50%] w-full p-2 h-[110px] my-3  rounded-md">
-            <img src={data.img} alt="user" className="h-10 w-10 rounded-[50%]" />
+        <li className="flex ml-[50%] translate-x-[-50%] w-full my-6 p-1 h-fit h-[60px]">
             <div className="text text-primaryText ml-4 w-full">
-                <h1 className="font-bold">{data.user}</h1>
-                <p className="text-small mt-1"> {data.user} sent a friend request</p>
-                <div className="actions flex items-center text-primaryText mt-4 w-full">
-                    <div style={{background:color}} className="flex items-center h-[28px] rounded-sm px-2 cursor-pointer">
-                        <p className="mr-2 capitalize">accept</p>
-                        <FontAwesomeIcon icon={faCheck} />
+                <div className="flex items-center">
+                    <img src={data?.sender?.profile?.image} alt="user" className="h-10 w-10 rounded-[50%]" />
+                    <div className="ml-4">
+                        <h1 className="font-bold">{data?.sender?.username}</h1>
+                        <p className="text-small mt-1">sent friend request</p>
                     </div>
-                    <div className="flex items-center ml-4 cursor-pointer">
-                        <p className="mr-2 capitalize">reject</p>
-                        <FontAwesomeIcon icon={faTrash} />
+                    <div className="ml-4 actions flex  items-center text-primaryText ">
+                        <div  className="flex text-[10px] text-white items-center h-[28px] rounded px-2 cursor-pointer">
+                            {/* <p className="mr-2 capitalize">accept</p> */}
+                            <FontAwesomeIcon icon={faCheck} />
+                        </div>
+                        <div style={{borderColor:color}} className="flex text-[10px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
+                            {/* <p className="mr-2 capitalize">reject</p> */}
+                            <FontAwesomeIcon icon={faTrash} />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,7 +73,18 @@ export default function Notifications() {
             </div>
             {
                 show === true && 
-                <ul className="px-4 py-2">{nots.map(not => <NotItem key={not.id} data={not}/>)}</ul>
+                <ul className="px-4 py-2 border-[.2px] border-darkText/10 rounded-sm m-2">
+                    {
+                        nots.length ? 
+                        nots.map(not => <NotItem key={not.id} data={not}/>)
+                         : 
+                        <li className="h-[100px] flex justify-center items-center">
+                            <div className="flex items-center">
+                                <h1 className="text-[12px] capitalize">😕 no notifications yet</h1>
+                            </div>
+                        </li>
+                    }
+                </ul>
             }
         </div>
     )
@@ -78,7 +95,8 @@ export function Invites() {
     if(showInvites === null)
             window.localStorage.setItem('showInvites', false);
     const theme = useContext(ThemeContext)
-    const [invites, setInvites] = useState(initInvites)
+    const user = useContext(userContext)
+    const [invites, setInvites] = useState(user.friends.filter(item => item.status == 'waiting'))
     const [show, setShow] = useState(showInvites == 'true')
 
     function handler(value) {
@@ -92,13 +110,24 @@ export function Invites() {
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="mr-2">invites</h1>
                     <FontAwesomeIcon icon={faUserPlus} />
-                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">{invites.length}</div>
+                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">{invites?.length}</div>
                 </div>
                 <FontAwesomeIcon className="text-[14px]" icon={!show ? faCaretDown : faCaretUp} />
             </div>
             {
                 show && 
-                <ul className="my-2 pb-2 px-4">{invites.map(inv => <InviteItem key={inv.id} data={inv} />)}</ul>
+                <ul className="my-2 border-[1px] m-2 border-darkText/10 rounded-sm">
+                    {
+                        invites.length ? 
+                        invites.map(inv => <InviteItem key={inv.sender.id} data={inv} />)
+                        :
+                        <li className="h-[100px] flex justify-center items-center">
+                            <div className="flex items-center">
+                                <h1 className="text-[12px] capitalize"><span className="text-[20px] mr-2">😕</span> no invites yet</h1>
+                            </div>
+                        </li>
+                    }
+                </ul>
             }
         </div>
     )
@@ -109,9 +138,4 @@ const initNots = [
     {id:1, type:'invite to play', img:'/aamhamdi1.jpeg', date:'24-02-23 19:33'},
     {id:2, type:'new message', img:'/aamhamdi1.jpeg', date:'24-02-23 19:33'},
     {id:3, type:'new message', img:'/aamhamdi1.jpeg', date:'24-02-23 19:33'},
-]
-
-const initInvites = [
-    {id:0, user:'aamhamdi', img:'/aamhamdi1.jpeg'},
-    {id:1, user:'aamhamdi', img:'/aamhamdi1.jpeg'},
 ]
