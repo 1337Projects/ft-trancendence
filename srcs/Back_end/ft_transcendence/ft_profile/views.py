@@ -27,7 +27,24 @@ def get_infos(request):
         return Response({"message": "this user is not exist", "id": id}, status=400)
     if not Profile.objects.filter(user_id=id).exists():
         path = "http://127.0.0.1:8000/static/mel-harc.jpeg"
-        Profile.objects.create_profile(user_id=id, online=True, level=8, bio="I'm the best player in the world", image=path, avatar=path)
+        Profile.objects.create_profile(user_id=id, online=True, level=8.7, bio="I'm the best player in the world", image=path, avatar=path)
     user = get_object_or_404(User, id=id)
+    serialiser = UserWithProfileSerializer(user)
+    return Response({"data": serialiser.data}, status=200)
+
+@api_view(['POST'])
+def get_users(request):
+    data = json.loads(request.body)
+    if len(data) != 1 or not data.get("username"):
+        return Response({"message": "Bad informations"}, status=400)
+    users = User.objects.filter(username__startswith=data.get("username"))
+    usernames = [user.username for user in users]
+    return Response({"data": usernames}, status=200)
+
+@api_view(['GET'])
+def get_profile(request, username):
+    if not User.objects.filter(username=username).exists():
+        return Response({"message": "this user is not exist"}, status=400)
+    user = get_object_or_404(User, username=username)
     serialiser = UserWithProfileSerializer(user)
     return Response({"data": serialiser.data}, status=200)
