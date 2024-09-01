@@ -383,7 +383,7 @@ function Banner() {
 	useEffect(() => {
 		const timer = setTimeout(async () => {
 			if (user != undefined) {
-				await fetch(`http://localhost:8000/api/profile/get_user_data/?user=${user}`, {
+				await fetch(`http://localhost:8000/api/profile/${user}/`, {
 					headers : {
 						"Content-Type": "application/json",
 						"Authorization": `Bearer ${tokens.mytoken}`
@@ -447,10 +447,10 @@ function Banner() {
 					{
 						user != undefined && 
 						<div className='w-1/2 flex justify-end items-center'> 
-							{
+							{/* {
 								loading ? "" :
 								<Actions auth_user={userData} profile_user={data} handlers={handlers} />
-							}
+							} */}
 						</div>
 					}
 				</div>

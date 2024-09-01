@@ -32,14 +32,12 @@ def get_infos(request):
     serialiser = UserWithProfileSerializer(user)
     return Response({"data": serialiser.data}, status=200)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def get_users(request):
-    data = json.loads(request.body)
-    if len(data) != 1 or not data.get("username"):
-        return Response({"message": "Bad informations"}, status=400)
-    users = User.objects.filter(username__startswith=data.get("username"))
-    usernames = [user.username for user in users]
-    return Response({"data": usernames}, status=200)
+    username = request.GET.get('query')
+    users = User.objects.filter(username__startswith=username)
+    serializer = UserWithProfileSerializer(users, many=True)
+    return Response({"data": serializer.data}, status=200)
 
 @api_view(['GET'])
 def get_profile(request, username):
