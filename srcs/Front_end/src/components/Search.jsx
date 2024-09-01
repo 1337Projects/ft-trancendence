@@ -40,6 +40,7 @@ function SearchResult({query, queryHandler}) {
             .then(res => res.json())
             .then(data => {
                 if (data.data != undefined) {
+                    console.log(data.data)
                     setData(data.data)
                 }
             })
