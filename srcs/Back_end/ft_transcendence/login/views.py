@@ -1,21 +1,16 @@
 from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from django.conf import settings
-import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
 from .models import User
-import requests
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-import jwt
-import json
-import datetime
 from dotenv import load_dotenv, dotenv_values
-import os
 from rest_framework.decorators import api_view
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.signals import user_logged_out
-
+from urllib.parse import urlencode
+import requests, secrets , jwt, datetime, json, os
  
 load_dotenv()
 
@@ -110,3 +105,67 @@ def intra_oauth(request):
             return response
         except AuthenticationFailed:
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
+
+def google_login(request):
+    # state = secrets.token_urlsafe(16)
+    params = urlencode({
+        'client_id': os.getenv("Google_KEY"),
+        'redirect_uri': os.getenv("redirect_uri"),
+        'scope': os.getenv("scope"),
+        'response_type': 'code',
+        # 'state': state,
+    })
+    google_auth_url = f'https://accounts.google.com/o/oauth2/auth?{params}'
+    return JsonResponse({'url': google_auth_url})
+
+
+@csrf_exempt
+@api_view(["post"])
+def google_oauth(request):
+    code = request.data.get('code')
+    if not code:
+        return Response({'error': 'Authorization code is missing'}, status=400)
+
+    token_url = os.getenv('token_url')
+    data = {
+        'code': code,
+        'client_id': os.getenv("Google_KEY"),
+        'redirect_uri': os.getenv("redirect_uri"),
+        'client_secret': os.getenv('google_secret'),
+        'grant_type': os.getenv('authorization_code'),
+    }
+
+    response = requests.post(token_url, data=data)
+    if response.status_code != 200:
+        return JsonResponse(response.json(), status=response.status_code)
+    token_info = response.json()
+    access_token = token_info.get('access_token')
+    if access_token:
+        user_info_url = os.getenv('user_info_url '),
+        user_info_response = requests.get(user_info_url, headers={'Authorization': f'Bearer {access_token}'})
+        if user_info_response.status_code == 200:
+            user_info = user_info_response.json()
+            email = user_info.get('email')
+            username = user_info.get('name')
+            
+            if not email or not username:
+                return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
+
+            user, created = User.objects.update_or_create(
+                email=email,
+                defaults={
+                    'username': username,
+                    'registration_method': 'google'
+                }
+            )
+            try:
+                access_token = generate_access_token(user)
+                refresh_token = generate_refresh_token(user)
+                response = JsonResponse({'access': access_token,"status":200})
+                set_refresh_token_cookie(response, refresh_token)
+                return response
+            except AuthenticationFailed:
+                return JsonResponse({'error': 'Invalid credentials'}, status=401)
+            return Response({'status': 200, 'access': jwt_token}, status=200)
+    else:
+        return JsonResponse({'error': 'Failed to retrieve access token'}, status=400)

@@ -20,7 +20,14 @@ pip install cryptography
 pip install django-cors-headers
 pip install requests
 pip install djangorestframework-simplejwt
-pip install pyjwt
+
+#khawla
+pip install dj-rest-auth
+pip install social-auth-app-django
+pip install psycopg2-binary
+pip install rest_social_auth
+pip install django-oauth-toolkit
+pip install python-social-auth
 
 python3 /app/ft_transcendence/manage.py makemigrations login
 python /app/ft_transcendence/manage.py makemigrations --noinput

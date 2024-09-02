@@ -51,7 +51,7 @@ function Oauth() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
-      fetch(`http://localhost:8000/api/auth/oauth/google/token`, {
+      fetch(`http://localhost:8000/api/auth/google_callback/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const router = createBrowserRouter(
     <Route index element={<Home />} />
     {/* auth */}
 		<Route path='auth' element={<AuthLayout />}>
-      <Route path='oauth_api' element={<Oauth />} />
+      <Route path='oauth/google' element={<Oauth />} />
       <Route path='oauth/42' element={<Oauth42 />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
