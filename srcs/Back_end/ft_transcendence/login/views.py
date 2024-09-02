@@ -14,6 +14,7 @@ from dotenv import load_dotenv, dotenv_values
 import os
 from rest_framework.decorators import api_view
 from ft_profile.models import user_logged_out
+from ft_profile.views import create_profile
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.signals import user_logged_out
 
@@ -100,6 +101,7 @@ def google_oauth(request):
         google_id = userinfo['id']
         email = userinfo['email']
         name = userinfo.get('name')
+        image = "http://127.0.0.1:8000/static/images.jpeg"
         #step4:
         try:
             user = User.objects.get(email=email)
@@ -110,6 +112,7 @@ def google_oauth(request):
                 last_name=name.split()[0] if name else "",
                 first_name=name.split()[1] if name else "",
             )
+            create_profile(user.id, image)
         #step5:
         try:
             access_token = generate_access_token(user)
@@ -147,21 +150,26 @@ def intra_oauth(request):
             return JsonResponse({"error": "Failed to fetch user info"}, status=400)
         intra_id = userinfo['id']
         email = userinfo['email']
+        first_name = userinfo['first_name']
+        last_name = userinfo['last_name']
         name = userinfo['login']
+        image = userinfo['image']['link']
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             user = User.objects.create_user(
                 username=name,
                 email=email,
-                last_name=name,
-                first_name=name,
+                last_name=last_name,
+                first_name=first_name,
             )
+            create_profile(user.id, image)
         try:
             access_token = generate_access_token(user)
             refresh_token = generate_refresh_token(user)
-            response = JsonResponse({'access': access_token,"status":200})
+            response = JsonResponse({'access': access_token, "userinfo": userinfo, "status":200})
             set_refresh_token_cookie(response, refresh_token)
+
             return response
         except AuthenticationFailed:
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
