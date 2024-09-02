@@ -84,7 +84,7 @@ function Oauth42() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const code = searchParam.get("code")
-      fetch(`http://localhost:8000/api/auth/oauth/42/token`, {
+      fetch(`http://localhost:8000/api/auth/oauth/intra/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ const router = createBrowserRouter(
     {/* auth */}
 		<Route path='auth' element={<AuthLayout />}>
       <Route path='oauth_api' element={<Oauth />} />
-      <Route path='oauth_api/42' element={<Oauth42 />} />
+      <Route path='oauth/42' element={<Oauth42 />} />
 		  <Route path='login' element={<Login />} />
 		  <Route path='signup' element={<Signup/>} />
 		  <Route path='confirme/:id' element={<ConfirmeEmail/>} />
