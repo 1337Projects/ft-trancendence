@@ -28,6 +28,7 @@ pip install psycopg2-binary
 pip install rest_social_auth
 pip install django-oauth-toolkit
 pip install python-social-auth
+pip install django-rest-framework-social-oauth2
 
 python3 /app/ft_transcendence/manage.py makemigrations login
 python /app/ft_transcendence/manage.py makemigrations --noinput

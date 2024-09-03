@@ -6,6 +6,6 @@ urlpatterns = [
     path('refresh/', views.refresh_token_view),
     path('logout/', views.logout),
     path('oauth/intra/', views.intra_oauth),
-    path('google_auth/', google_login, name='google_login'),
+    path('google/', google_login, name='google_login'),
     path('google_callback/', google_oauth, name='google_callback'),
 ]

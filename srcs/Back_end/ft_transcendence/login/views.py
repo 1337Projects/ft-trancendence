@@ -106,18 +106,17 @@ def intra_oauth(request):
         except AuthenticationFailed:
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
+
 def google_login(request):
-    # state = secrets.token_urlsafe(16)
     params = urlencode({
-        'client_id': os.getenv("Google_KEY"),
+        'client_id': '939461351021-ru3eqql8sgakc3unrce3s9n0bmlpln3g.apps.googleusercontent.com',
+        # 'client_id': os.getenv("google_key"),
         'redirect_uri': os.getenv("redirect_uri"),
         'scope': os.getenv("scope"),
         'response_type': 'code',
-        # 'state': state,
     })
     google_auth_url = f'https://accounts.google.com/o/oauth2/auth?{params}'
     return JsonResponse({'url': google_auth_url})
-
 
 @csrf_exempt
 @api_view(["post"])
@@ -126,36 +125,36 @@ def google_oauth(request):
     if not code:
         return Response({'error': 'Authorization code is missing'}, status=400)
 
-    token_url = os.getenv('token_url')
+    token_url = 'https://oauth2.googleapis.com/token'
     data = {
         'code': code,
-        'client_id': os.getenv("Google_KEY"),
-        'redirect_uri': os.getenv("redirect_uri"),
-        'client_secret': os.getenv('google_secret'),
-        'grant_type': os.getenv('authorization_code'),
+        'client_id': '939461351021-ru3eqql8sgakc3unrce3s9n0bmlpln3g.apps.googleusercontent.com',
+        'client_secret': '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',
+        'redirect_uri': 'http://localhost:5173/auth/oauth/google',
+        'grant_type': 'authorization_code',
     }
-
     response = requests.post(token_url, data=data)
     if response.status_code != 200:
         return JsonResponse(response.json(), status=response.status_code)
+
     token_info = response.json()
     access_token = token_info.get('access_token')
     if access_token:
-        user_info_url = os.getenv('user_info_url '),
+        user_info_url = 'https://www.googleapis.com/oauth2/v2/userinfo'
         user_info_response = requests.get(user_info_url, headers={'Authorization': f'Bearer {access_token}'})
         if user_info_response.status_code == 200:
             user_info = user_info_response.json()
             email = user_info.get('email')
             username = user_info.get('name')
-            
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
-
             user, created = User.objects.update_or_create(
                 email=email,
                 defaults={
                     'username': username,
-                    'registration_method': 'google'
+                    'email': email,
+                    'last_name': username,
+                    'first_name': username,
                 }
             )
             try:
