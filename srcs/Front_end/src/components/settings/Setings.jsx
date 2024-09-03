@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { ColorContext, ColorToggelContext, ThemeContext, ThemeToggelContext } from "../../Contexts/ThemeContext";
 import {authContext, userContext, userContextHandler} from '../../Contexts/authContext'
 
-function Avatars({user}) {
+function Avatars({user, handler}) {
     const theme = useContext(ThemeContext)
     return (
         <div className="w-full">
@@ -12,7 +12,7 @@ function Avatars({user}) {
                 <img src={user?.profile?.image} className="bg-white w-[60px] h-[60px] rounded-sm mr-3" alt="img" />
                 <div className="text-[10px]">
                     <input
-                        onChange={(e) => console.log(e.target.value)}
+                        onChange={(e) => handler(e.target.files)}
                     className={`${theme === 'light' ? "bg-lightText text-lightItems" : "bg-black/30"} capitalize p-2 rounded-sm w-[160px]`} type="file"/>
                     <p className="mt-2 text-[10px]">JPG, PNG, JPEG, 3MB max.</p>
                 </div>
@@ -47,14 +47,18 @@ function Profile() {
     const [disabled, setDisabled] = useState(true)
     const [alert, setAlert] = useState({})
     const [userData, setUserData] = useState({...user})
+    const [avatar, setAvatar] = useState(null)
+
     function updateDatahandler() {
-        console.log(userData)
+        const formdata = new FormData()
+        if (avatar)
+            formdata.append("img" , avatar[0])
+        formdata.append("user", JSON.stringify(userData))
         fetch('http://localhost:8000/api/profile/set_profile_data/', {
             method: 'PUT',
             credentials:'include',
-            body : JSON.stringify({data: userData}),
+            body : formdata,
             headers: {
-                "Content-Type": "application/json",
                 "Authorization" : `Bearer ${token.mytoken}`
             }
         })
@@ -62,8 +66,7 @@ function Profile() {
         .then(data => {
             console.log(data)
             if (data.status == 200) {
-                setAlert({"data" : data.res})
-                userHandler(userData)
+                userHandler(data.res)
             } 
             else if (data.status == 401) {
                 setAlert({"data" : data.err})
@@ -80,7 +83,7 @@ function Profile() {
                     {alert.data}
                 </div>
             }
-            <Avatars user={user}/>
+            <Avatars user={user} handler={setAvatar}/>
             <ul className="mt-8"> 
                 <div>
                     <SettingsInput theme={theme} value={userData?.username} name="username" type="text" handler={setUserData} />
