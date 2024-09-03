@@ -109,9 +109,8 @@ def intra_oauth(request):
 
 def google_login(request):
     params = urlencode({
-        'client_id': '939461351021-ru3eqql8sgakc3unrce3s9n0bmlpln3g.apps.googleusercontent.com',
-        # 'client_id': os.getenv("google_key"),
-        'redirect_uri': os.getenv("redirect_uri"),
+        'client_id': os.getenv("google_key"),
+        'redirect_uri': os.getenv("redirect_uri_google"),
         'scope': os.getenv("scope"),
         'response_type': 'code',
     })
@@ -128,10 +127,10 @@ def google_oauth(request):
     token_url = 'https://oauth2.googleapis.com/token'
     data = {
         'code': code,
-        'client_id': '939461351021-ru3eqql8sgakc3unrce3s9n0bmlpln3g.apps.googleusercontent.com',
-        'client_secret': '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',
-        'redirect_uri': 'http://localhost:5173/auth/oauth/google',
-        'grant_type': 'authorization_code',
+        'client_id': os.getenv("google_key"),
+        'client_secret': os.getenv("google_secret"),
+        'redirect_uri': os.getenv("redirect_uri_google"),
+        'grant_type': os.getenv("grant_type"),
     }
     response = requests.post(token_url, data=data)
     if response.status_code != 200:
