@@ -1,0 +1,3 @@
+if you do Message.objects.all(), you'll get all messages, with the most recent one first.
+you can access the messages a user has sent with user.sent_messages.all()
+and the messages a user has received with user.received_messages.all().
