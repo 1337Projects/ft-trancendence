@@ -4,16 +4,25 @@ import { useContext, useState } from "react";
 import { ColorContext, ColorToggelContext, ThemeContext, ThemeToggelContext } from "../../Contexts/ThemeContext";
 import {authContext, userContext, userContextHandler} from '../../Contexts/authContext'
 
-function Avatars({user}) {
+function Avatars({user, handler, images}) {
     const theme = useContext(ThemeContext)
     return (
         <div className="w-full">
+            <div className="w-full h-[100px] bg-banner bg-cover rounded-sm p-2">
+                <input
+                    type="file" 
+                    onChange={(e) => handler({...images, banner : e.target.files})}
+                    className="bg-darkItems/40 backdrop-blur-lg p-2 w-fit text-[12px]"
+                />
+            </div>
             <div className="user w-full flex mt-8">
                 <img src={user?.profile?.image} className="bg-white w-[60px] h-[60px] rounded-sm mr-3" alt="img" />
                 <div className="text-[10px]">
                     <input
-                        onChange={(e) => console.log(e.target.value)}
-                    className={`${theme === 'light' ? "bg-lightText text-lightItems" : "bg-black/30"} capitalize p-2 rounded-sm w-[160px]`} type="file"/>
+                        type="file"
+                        onChange={(e) => handler({...images, avatar : e.target.files})}
+                        className={`${theme === 'light' ? "bg-lightText text-lightItems" : "bg-black/30"} capitalize p-2 rounded-sm w-[160px]`}
+                    />
                     <p className="mt-2 text-[10px]">JPG, PNG, JPEG, 3MB max.</p>
                 </div>
             </div>
@@ -47,14 +56,20 @@ function Profile() {
     const [disabled, setDisabled] = useState(true)
     const [alert, setAlert] = useState({})
     const [userData, setUserData] = useState({...user})
+    const [images, setImages] = useState({avatar : null, banner: null})
+
     function updateDatahandler() {
-        console.log(userData)
-        fetch('http://localhost:8000/api/profile/set_profile_data/', {
+        const formdata = new FormData()
+        formdata.append("user", JSON.stringify(userData))
+        if (images.avatar)
+            formdata.append("avatar" , images.avatar[0])
+        if (images.banner)
+            formdata.append("banner" , images.banner[0])
+        fetch('http://localhost:8000/api/profile/settings/', {
             method: 'PUT',
             credentials:'include',
-            body : JSON.stringify({data: userData}),
+            body : formdata,
             headers: {
-                "Content-Type": "application/json",
                 "Authorization" : `Bearer ${token.mytoken}`
             }
         })
@@ -62,8 +77,7 @@ function Profile() {
         .then(data => {
             console.log(data)
             if (data.status == 200) {
-                setAlert({"data" : data.res})
-                userHandler(userData)
+                userHandler(data.res)
             } 
             else if (data.status == 401) {
                 setAlert({"data" : data.err})
@@ -80,7 +94,7 @@ function Profile() {
                     {alert.data}
                 </div>
             }
-            <Avatars user={user}/>
+            <Avatars user={user} handler={setImages} images={images}/>
             <ul className="mt-8"> 
                 <div>
                     <SettingsInput theme={theme} value={userData?.username} name="username" type="text" handler={setUserData} />

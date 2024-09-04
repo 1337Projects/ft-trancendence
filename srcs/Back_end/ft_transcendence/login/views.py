@@ -107,7 +107,7 @@ def google_oauth(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             user = User.objects.create_user(
-                username=name.split()[1] if name else "",
+                username=name,
                 email=email,
                 last_name=name.split()[0] if name else "",
                 first_name=name.split()[1] if name else "",

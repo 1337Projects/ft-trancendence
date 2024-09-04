@@ -9,6 +9,13 @@ import json
 import jwt
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+
+@api_view(['PUT'])
+@csrf_exempt
+def set_settings_info(request):
+    return Response({"data": request.data})
 
 
 def get_id(request):
@@ -19,7 +26,7 @@ def get_id(request):
     return None
 
 @api_view(['GET'])
-def get_infos(request):
+def get_profile_infos(request):
     id = get_id(request)
     if not id:
         return Response({"message": "Invalid token"}, status=400)
@@ -36,7 +43,6 @@ def create_profile(id, image_link):
         level=8.7,
         bio="I'm the best player in the world",
         image=image_link,
-        avatar=image_link,
     )
 
 
@@ -54,3 +60,22 @@ def get_profile(request, username):
     user = get_object_or_404(User, username=username)
     serialiser = UserWithProfileSerializer(user)
     return Response({"data": serialiser.data}, status=200)
+
+@api_view(['PUT'])
+def set_infos(request):
+    user_infos = request.data.get('user')
+    user_infos_dict = json.loads(user_infos)
+    user_id = user_infos_dict.get('id')
+    username = user_infos_dict.get('username')
+    first_name = user_infos_dict.get('first_name')
+    last_name = user_infos_dict.get('last_name')
+    bio = user_infos_dict.get('profile')['bio']
+    User.objects.filter(id=user_id).update(
+        username=username,
+        first_name=first_name,
+        last_name=last_name,
+    )
+    if bio is not None:
+        Profile.objects.filter(id=user_id).update(bio=bio)
+    avatar = default_storage.save(f'static/{username}.jpeg', request.FILES['avatar'])
+    return Response({"username": repr(request.data)})

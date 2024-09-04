@@ -119,7 +119,7 @@ export function Invites() {
                 show && 
                 <ul className="my-2 border-[1px] m-2 border-darkText/10 rounded-sm">
                     {
-                        invites ? 
+                        invites.length ? 
                         invites.map(inv => <InviteItem key={inv.sender.id} data={inv} />)
                         :
                         <li className="h-[100px] flex justify-center items-center">
