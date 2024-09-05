@@ -61,6 +61,14 @@ def get_profile(request, username):
     serialiser = UserWithProfileSerializer(user)
     return Response({"data": serialiser.data}, status=200)
 
+
+def manage_images(request, file_name, type):
+    if default_storage.exists(file_name):
+        default_storage.delete(file_name)
+    avatar = default_storage.save(file_name, request.FILES[type])
+    return avatar
+   
+
 @api_view(['PUT'])
 def set_infos(request):
     user_infos = request.data.get('user')
@@ -77,5 +85,21 @@ def set_infos(request):
     )
     if bio is not None:
         Profile.objects.filter(id=user_id).update(bio=bio)
-    avatar = default_storage.save(f'static/{username}.jpeg', request.FILES['avatar'])
-    return Response({"username": repr(request.data)})
+    if 'avatar' in request.FILES:
+        old_image = Profile.objects.filter(user_id=user_id).values('image').first()
+        if old_image:
+            default_storage.delete(old_image['image'])
+        name = manage_images(request, f'{username}{id}-profile.jpeg', 'avatar')
+        Profile.objects.filter(user_id=user_id).update(
+            avatar=f'http://127.0.0.1:8000/media/{name}'
+        )
+    if 'banner' in request.FILES:
+        old_banner = Profile.objects.filter(user_id=user_id).values('banner').first()
+        if old_banner:
+            default_storage.delete(old_banner['banner'])
+        name = manage_images(request, f'{username}{id}-banner.jpeg', 'banner')
+        Profile.objects.filter(user_id=user_id).update(
+            banner=f'http://127.0.0.1:8000/media/{name}'
+        )
+    return Response({"message": "DONE"}, status=200)
+    

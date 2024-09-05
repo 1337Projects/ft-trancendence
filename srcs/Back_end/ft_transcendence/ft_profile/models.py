@@ -27,12 +27,6 @@ class Friends(AbstractBaseUser):
     sender = models.IntegerField(default=0)
     receiver = models.IntegerField(default=0)
 
-
-
-
-
-
-
 # @receiver(user_logged_in)
 # def user_logged_in(sender, user, request, **kwargs):
 #     profile = Profile.objects.get(user=user)

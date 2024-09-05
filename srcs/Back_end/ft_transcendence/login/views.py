@@ -101,7 +101,7 @@ def google_oauth(request):
         google_id = userinfo['id']
         email = userinfo['email']
         name = userinfo.get('name')
-        image = "http://127.0.0.1:8000/static/images.jpeg"
+        image = "http://127.0.0.1:8000/media/inconnu.jpeg"
         #step4:
         try:
             user = User.objects.get(email=email)
