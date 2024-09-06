@@ -11,6 +11,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.signals import user_logged_out
 from urllib.parse import urlencode
 import requests, secrets , jwt, datetime, json, os
+from account.views import create_profile
  
 load_dotenv()
 
@@ -95,7 +96,7 @@ def intra_oauth(request):
                 last_name=last_name,
                 first_name=first_name,
             )
-            # create_profile(user.id, image)
+            create_profile(user.id, image)
         try:
             access_token = generate_access_token(user)
             refresh_token = generate_refresh_token(user)
@@ -145,6 +146,7 @@ def google_oauth(request):
             user_info = user_info_response.json()
             email = user_info.get('email')
             username = user_info.get('name')
+            image = user_info.get('picture')
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
             user, created = User.objects.update_or_create(
@@ -152,10 +154,11 @@ def google_oauth(request):
                 defaults={
                     'username': username,
                     'email': email,
-                    'last_name': username,
-                    'first_name': username,
+                    'last_name': username.split()[0] if name else "",
+                    'first_name': username.split()[1] if name else "",
                 }
             )
+            create_profile(user.id, image)
             try:
                 access_token = generate_access_token(user)
                 refresh_token = generate_refresh_token(user)

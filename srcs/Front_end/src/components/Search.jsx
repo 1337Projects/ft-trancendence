@@ -66,13 +66,13 @@ function SearchResult({query, queryHandler}) {
                                 <li 
                                     key={i.id} 
                                     className="flex my-2 items-center justify-between cursor-pointer border-[.2px] p-2 rounded-md border-white/10 cursor-pointer" 
-                                    onClick={() => eventHandler(i.username)}
+                                    onClick={() => eventHandler(i?.username)}
                                 >
                                     <div className="flex">
                                         <img  src={i?.profile?.image} className="w-[44px] bg-white rounded-md mr-4" alt={i?.profile?.image} />
                                         <div>
-                                            <p className="text-[16px] lowercase font-bold">@{i.username}</p>
-                                            <p className="mt-[4px]">{i.first_name} {i.last_name}</p>
+                                            <p className="text-[16px] lowercase font-bold">@{i?.username}</p>
+                                            <p className="mt-[4px]">{i?.first_name} {i?.last_name}</p>
 
                                         </div>
                                     </div>
@@ -127,7 +127,7 @@ export default function Search() {
                                 <p>enjoy</p>
                                 <FontAwesomeIcon icon={!show ? faCaretDown : faCaretUp} />
                             </div>
-                            <h1 className="text-primaryText font-bold">{user.username}</h1>
+                            <h1 className="text-primaryText font-bold">{user?.username}</h1>
                         </div>
                         <img className="w-[40px] rounded-[50%] h-25px border-[1px] bg-white ml-4" src={user?.profile?.image} alt="avatar" />
                     </div>

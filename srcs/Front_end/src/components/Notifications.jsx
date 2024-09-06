@@ -96,7 +96,7 @@ export function Invites() {
             window.localStorage.setItem('showInvites', false);
     const theme = useContext(ThemeContext)
     const user = useContext(userContext)
-    const [invites, setInvites] = useState(user?.friends?.filter(item => item.status == 'waiting'))
+    const [invites, setInvites] = useState([])
     const [show, setShow] = useState(showInvites == 'true')
 
     function handler(value) {
