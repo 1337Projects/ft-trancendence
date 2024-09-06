@@ -17,11 +17,11 @@ function FriendItem({data}) {
         <Link to={`${data.username}`}>
             <li className="w-full h-[50px] mt-2 flex justify-center items-center cursor-pointer">
                 <div className="img relative w-[35px] h-[35px]">
-                    <img src={data.profile.image} className="bg-white w-[35px] h-[35px] rounded-[50%]" alt="img" />
+                    <img src={data?.profile?.image} className="bg-white w-[35px] h-[35px] rounded-[50%]" alt="img" />
                     <div className={`dot w-[10px] h-[10px] rounded-full absolute top-[30px] ${'active' !== 'active' ? "bg-rose-400" : "bg-teal-400"}`}></div>
                 </div>
                 <div className=" content text-[10px] w-[70px] ml-4">
-                    <h1 className="font-bold ">{data.username}</h1>
+                    <h1 className="font-bold ">{data?.username}</h1>
                     <p className="text-[7px] mt-1">active</p>
                 </div>
             </li>
@@ -34,29 +34,29 @@ export default function FriendsList() {
     const [friends, setFriends] = useState([])
     const theme = useContext(ThemeContext)
     const tokens = useContext(authContext)
-    const chatHandler = useContext(chatHandlerContext)
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            fetch('http://localhost:8000/api/friends/get_friends/', {
+            fetch('http://localhost:8000/users/list_users/', {
                 method : 'GET',
                 headers : {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${tokens.mytoken}`
+                    // "Authorization": `Bearer ${tokens.mytoken}`
                 },
                 credentials: 'include',
             })
             .then(res => res.json())
             .then(data => {
-                if (data.data) {
-                    chatHandler(data.data)
-                    setFriends(data.data)
-                }
+                // console.log(data)
+                setFriends(data)
+                // if (data.data) {
+                // }
             })
             .catch(err => console.log(err))
         }, 300)
         return () => clearTimeout(timer)
     }, [])
+    // console.log(friends)
     return (
         <div className={`
             friends shadow-sm w-[170px] p-1 ml-2 h-full
@@ -66,9 +66,10 @@ export default function FriendsList() {
                 <h1 className="font-kaushan">friends</h1>
                 <FontAwesomeIcon icon={faUserGroup} />
             </div>
-            <ul>{friends.map(friend => {
-                const user = Object.filter(friend, f => typeof f == "object" && f.username != tokens.username)[0]
-                return <FriendItem key={user.id} data={user} />
+            <ul>{friends?.map(friend => {
+                // console.log("a",friends)
+                // const user = Object.filter(friend, f => typeof f == "object" && f.username != tokens.username)[0]
+                return <FriendItem key={friend.id} data={friend} />
             })}</ul>
         </div>
     )

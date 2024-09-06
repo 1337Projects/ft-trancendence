@@ -81,7 +81,7 @@ export default function Conversation() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            Socket.connect("ws://localhost:8000/ws/chat/abc/")
+            Socket.connect("ws://localhost:8000/ws/chat/<int:user_id>/<int:partner_id>/")//i update this
             Socket.addCallback("setData", setMessages)
             Socket.addCallback("setUser", setUserData)
             Socket.sendMessage({

@@ -16,19 +16,19 @@ export default function DashboardLayout() {
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
       const timer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/profile/profile_data/`, {
-          method: 'GET',
-          credentials : 'include',
-          headers : {
-            'Authorization' : `Bearer ${auth.mytoken}`,
-          }
-        })
-        .then(res => res.json())
-        .then(res => {
-          userHandler(res.data)
+        // fetch(`http://localhost:8000/api/profile/profile_data/`, {
+        //   method: 'GET',
+        //   credentials : 'include',
+        //   headers : {
+        //     'Authorization' : `Bearer ${auth.mytoken}`,
+        //   }
+        // })
+        // .then(res => res.json())
+        // .then(res => {
+        //   userHandler(res.data)
           setIsLoading(false)
-        })
-        .catch(err => console.log(err))
+        // })
+        // .catch(err => console.log(err))
       }, 300)
       return () => clearTimeout(timer)
     }, [])

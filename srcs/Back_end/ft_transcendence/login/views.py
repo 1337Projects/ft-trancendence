@@ -167,3 +167,13 @@ def google_oauth(request):
             return Response({'status': 200, 'access': jwt_token}, status=200)
     else:
         return JsonResponse({'error': 'Failed to retrieve access token'}, status=400)
+
+# #/*******************************************************/
+#3la wd tlister ga3 les iusers likaynin ?
+
+from .serializer import UserSerializer
+@api_view(['GET'])
+def user_list(request, ):
+    users = User.objects.all().order_by('username')
+    serializer = UserSerializer(instance=users, many=True)
+    return Response(serializer.data)

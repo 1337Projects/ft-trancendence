@@ -104,7 +104,9 @@ export default function ConversationsList() {
     const tokens = useContext(authContext)
     useEffect(() => {
         const timer = setTimeout(() => {
-            fetch('http://localhost:8000/api/chat/get_conversations/', {
+            // console.log(tokens)
+            // console.log(tokens.mytoken)
+            fetch('http://localhost:8000/api/chat/conversations/', {
                 method : 'GET',
                 credentials : 'include',
                 headers : {
@@ -115,14 +117,14 @@ export default function ConversationsList() {
             .then(res => res.json())
             .then(data => {
                 console.log(data)
-                if (data.data) {
+                // if (data.data) {
                     setCnvs(data.data)
-                }
+                // }
             })
             .catch(err => console.log(err))
         }, 300)
         return () => clearTimeout(timer)
-    }, [])
+    }, [tokens])//i updates this
 
 
     function ListVisibilityHandler(id) {
@@ -145,7 +147,8 @@ export default function ConversationsList() {
                 {/* <ConversationsProvider data={cnvs} dispatch={dispatch}> */}
                     <ul className="mt-10">{
                         cnvs?.map(c => {
-                            const item = Object.filter(c, i => typeof i == "object" && i.username != tokens.username)[0]
+                            const item = Object.filter(c, i => typeof i === "object" && i.username !== tokens?.username)[0];//i add this
+                            // const item = Object.filter(c, i => typeof i == "object" && i.username != tokens.username)[0]
                             return <ConvItem id={visibleItem} handler={ListVisibilityHandler}  key={c.id} data={item} />
                         })
                         // cnvs?.map(c => (c.categorie === categorie || (categorie === 'all' && c.categorie !== 'archived')) 
