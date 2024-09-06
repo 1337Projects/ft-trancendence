@@ -31,6 +31,7 @@ pip install python-social-auth
 pip install django-rest-framework-social-oauth2
 
 python3 /app/ft_transcendence/manage.py makemigrations login
+python3 /app/ft_transcendence/manage.py makemigrations account
 python /app/ft_transcendence/manage.py makemigrations --noinput
 python3 /app/ft_transcendence/manage.py migrate
 python3 /app/ft_transcendence/manage.py createsuperuser --noinput || true
