@@ -141,9 +141,9 @@ function Hero({color}) {
                     </div>
                     <div className="centent w-[50%] h-full leading-snug text-white p-7 flex justify-between items-center">
                         <div className="">
-                            <p className="text-small">welcome to pong comunity</p>
-                            <h3 className="text-[2rem] font-kaushan font-bold capitalize">its time to play ping pong</h3>
-                            <Link to="room/1">
+                            <p className="text-[8px] capitalize max-w-[260px]">welcome to pong comunity, go play with your friends, and leet them see your amazing skills , enjoy ; )</p>
+                            <h3 className="text-[2rem] mt-2 font-kaushan max-w-[270px] font-bold capitalize">its time to play ping pong</h3>
+                            <Link to="waiting">
                                 <button style={{backgroundColor : color}} className={`flex justify-between h-[3rem] w-[8rem] items-center p-2 px-4 text-white rounded-3xl mt-10`}>
                                     <p className="mr-2 text-[1rem] capitalize font-kaushan">Play now</p>
                                     <FontAwesomeIcon className="text-[1rem]" icon={faGamepad} />
@@ -157,23 +157,25 @@ function Hero({color}) {
     )
 }
 
-function Card({text , img, color, handler}) {
+function Card({text , img, color, handler, link}) {
     const theme = useContext(ThemeContext);
     return(
-        <div className={`card h-[400px] shadow-sm p-2 w-full max-w-[450px] border-[.3px] rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/10 shadow-lightText/10" : " bg-darkItems border-darkText/10 shadow-darkText/10"}`}>
-            <div className="img w-full h-2/3 flex items-center justify-center ml-[50%] translate-x-[-50%] m-2">
+        <div className={`card h-[350px] w-full max-w-[340px] border-[0.3px] rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/40 shadow-lightText/10" : " bg-darkItems/50 border-darkText/30 shadow-darkText/10"}`}>
+            <div className="img w-[250px] h-[200px] flex items-center justify-center ml-[50%] translate-x-[-50%] m-2">
                 {img}
             </div>
-            <div className="card-body w-full">
+            <div className="card-body mt-4 w-full">
                 <div className="content mt-2 w-full text-center text-[20px]">
                     <h1 className="capitalize font-kaushan">{text}</h1>
                     <p className="text-[10px] mt-2">Lorem ipsum dolor sit amet.</p>
                 </div>
                 <div className="action flex items-end justify-center">
-                    <button style={{backgroundColor : color}} className="text-[12px] w-[50%] mt-5  h-fit py-2 rounded-sm uppercase text-white flex justify-center items-center" onClick={() => handler('create')} >
-                        paly 
-                        <FontAwesomeIcon icon={faGamepad} className="ml-1 text-[20px]" />
-                    </button>
+                    <Link to={link}>
+                        <button style={{backgroundColor : color}} className="text-[12px] w-fit px-4 mt-5  h-[40px] py-2 rounded-full uppercase text-white flex justify-center items-center" onClick={() => handler('create')} >
+                            <h1 className="text-[16px]">play</h1>
+                            <FontAwesomeIcon icon={faGamepad} className="ml-2 text-[20px]" />
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -189,12 +191,12 @@ function Cards({color, handler}) {
                 <h1 className="text-secondary capitalize ">game modes:</h1>
                 <p className="text-small mt-2">pick a game to play in</p>
             </div>
-            <div className="cards mt-2 grid place-items-center grid-flow-col-1 px-10 lg:grid-cols-2 lg:px-0 xl:grid-cols-3 xl:px-0 gap-4">
-                <Card text="play vs friend" img={<FriendImg color={color} />} color={color} handler={handler} />
-                <Link to="room/1" className="w-full flex justify-center">
-                    <Card text="play vs ai" img={<AiImg color={color} />}  color={color}  />
-                </Link>
-                <Card text="play on tornemnt" img={<TornmentImg color={color} />} color={color} handler={handler} />
+            <div className="cards mt-2 grid place-items-center  py-2 grid-flow-col-1 px-10 sm:grid-cols-2 lg:px-0 xl:grid-cols-3 xl:px-0 gap-4">
+                <Card text="play vs ai" img={<AiImg color={color} />}  color={color} link="room/1"  />
+  
+                <Card text="play on tornemnt" img={<TornmentImg color={color} />} color={color} handler={handler} link="waiting" />
+                <Card text="play vs friend" img={<FriendImg color={color} />} color={color} handler={handler} link="waiting" />
+                <Card text="random match" img={<HeroImg color={color} />} color={color} handler={handler} link="waiting" />
             </div>
         </div>
     )
@@ -207,7 +209,7 @@ export default function Game() {
     const [step, setStep] = useState(null)
     return (
         <>
-            <div className={`${theme == 'light' ? "bg-lightItems" : "bg-darkItems"} mt-2 game w-full h-screen overflow-scroll p-2`}>
+            <div className={`${theme == 'light' ? "bg-lightItems" : "bg-darkItems"} backdrop-blur-md mt-2 game w-full h-screen overflow-scroll p-2`}>
                 <div className="mx-auto relative">
                     <Hero color={color} />
                     <Cards color={color} handler={setStep} />

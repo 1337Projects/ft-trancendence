@@ -8,15 +8,13 @@ import {
 	faRightToBracket,
 	faEnvelope,
 	faSun,
-	faBars,
 	faTableTennisPaddleBall
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import {ColorContext, ThemeContext, ThemeToggelContext} from '../Contexts/ThemeContext'
 import { authContextHandler } from '../Contexts/authContext'
-import { data } from 'autoprefixer'
 
 
 
@@ -93,10 +91,9 @@ export function LargeSideBar() {
 			<div className={`w-[160px] min-h-[667px] h-[100vh] inline-flex items-start justify-start shrink-0`}>
 				<header 
 					className={`w-full h-full border-[.3px] shadow-sm rounded-sm relative ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/10"}`}>
-					<div className="cursor-pointer flex items-center justify-center w-full text-[22px] my-6">
-						<div style={{color:color}} className='flex items-center'>
-							<h1  className={`mr-1 text-[28px] uppercase font-insp`}>Pong /</h1>
-							<FontAwesomeIcon icon={faTableTennisPaddleBall} />
+					<div className="cursor-pointer flex items-center justify-center w-full text-[22px] my-4">
+						<div style={{color:color}} className='items-center'>
+							<h1  className={`mr-1 text-[28px] font-insp`}>Pong Game</h1>
 						</div>
 					</div>
 							<div className="menu w-full mt-20 h-[160px] text-[20px] flex flex-col items-center justify-between">

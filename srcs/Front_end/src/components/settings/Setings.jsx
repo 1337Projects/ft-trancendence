@@ -58,6 +58,8 @@ function Profile() {
     const [userData, setUserData] = useState({...user})
     const [images, setImages] = useState({avatar : null, banner: null})
 
+
+    console.log(userData)
     function updateDatahandler() {
         const formdata = new FormData()
         formdata.append("user", JSON.stringify(userData))
@@ -75,8 +77,8 @@ function Profile() {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data)
             if (data.status == 200) {
+                // setAlert({"data" : data.res})
                 userHandler(data.res)
             } 
             else if (data.status == 401) {

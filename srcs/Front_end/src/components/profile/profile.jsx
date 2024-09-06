@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { faAnglesUp, faCheck, faCheckDouble, faClock, faCommentDots, faEllipsisV, faGamepad, faHourglassHalf, faRankingStar, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons"
+import {faCheck, faCheckDouble, faClock, faCommentDots, faEllipsisV, faRankingStar, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons"
 import {faTrophy} from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useContext } from "react"
@@ -7,7 +7,7 @@ import {ColorContext, ThemeContext} from '../../Contexts/ThemeContext'
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Stats } from './status';
 import { useParams } from 'react-router-dom';
-import { authContext, userContext, userContextHandler } from '../../Contexts/authContext';
+import { authContext, friendsContext, friendsContextHandler, userContext } from '../../Contexts/authContext';
 
 
 function Achivments() {
@@ -41,82 +41,6 @@ function Achivments() {
 	)
 }
 
-
-export function PlayerStatus( {toggleExpanded, expand} ) {
-	const theme = useContext(ThemeContext);
-	const chartColor = theme == 'light' ? "#374151" : "#ffffff"
-	const color = useContext(ColorContext)
-    return (
-		<div className="flex flex-col w-full h-[33vh] mb-2 flex-grow overflow-scroll"> 
-			<div className={`flex rounded-sm w-full h-full ${theme === 'light' ? "bg-lightItems" : "bg-darkItems border-darkText/30"}`}>
-				<div className="w-[65%] min-w-[180px] flex flex-col px-10 py-2 relative">
-					<div className="h-[50px] w-[85%] flex justify-between items-center mt-6">
-							<div className="w-[18%] p-1">
-								<img src="/aamhamdi1.jpeg" alt="Description" className=" h-[95%] w-[92%] rounded-full shadow-sm" />
-							</div>
-							<div className=" flex flex-col justify-between h-full py-2 w-[87%] ml-4">
-								<p className={`text-[12px] font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Hello</p>
-								<p className={`text-[14px] font-semibold  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>aamhamdi</p>
-							</div>
-					</div>
-					<div className="flex flex-col flex-wrap mt-6">
-						<div className=" flex justify-between items-center h-[20px]">
-							<p className={`text-[10px] font-light ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>
-								<span style={{color:color}} className="text-[16px] font-bold">30 </span>
-								/ 100
-							</p>
-							<p className={`text-[13px] font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>4.30 LVL</p>
-						</div>
-						<div className={`${theme === 'light' ? "bg-lightText" : "bg-[#ffffff]"} max-h-[20px] h-[10px] rounded-[7px] mt-2 shadow-sm`}>
-							<div style={{background:color}} className={`h-full rounded-[6px] w-[30%] `}></div>
-						</div>
-					</div>
-					<div className="w-[85%] h-[200px] flex flex-col mt-2">
-						<p className={`text-[14px] font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Progress</p>
-						<div className='h-[100%] w-[120%] ml-[-45px]'>
-							<LineChart
-								leftAxis={null}
-								bottomAxis={null}
-								series={[
-									{ curve: "linear", data: [0, 1, 6, 3, 9.3, 3, 0, 10, 10, -10, 10,0, 1, 6, 3, 9.3, 3, 0, 10, 10, -10, 10, 2, 10], color: chartColor },
-									// { curve: "linear", data: [0, 0], color: chartColor },
-									
-								]}
-							/>
-						</div>
-					</div>
-					<div className="h-[50px] flex justify-between w-[60%] absolute bottom-4">
-						<div className="text-[12px] flex flex-col justify-center">
-							<p className={`font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Win</p>
-							<div className="flex items-center mt-2">
-								<FontAwesomeIcon icon={faTrophy} style={{color: color}} className="ml-[1px] mr-[2px]" />
-								<p className={`ml-1 font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>11</p>
-							</div>
-						</div>
-						<div className="text-[12px] flex flex-col justify-center">
-							<p className={`font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Time</p>
-							<div className="flex items-center mt-2">
-								<FontAwesomeIcon icon={faClock}  style={{color: color}}className="ml-[1px] mr-[2px]" />
-								<p className={`ml-1 font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>2h 30 min</p>
-							</div>
-						</div>
-						<div className="text-[12px] flex flex-col justify-center">
-							<p className={`font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Rank</p>
-							<div className="flex items-center mt-2">
-								<FontAwesomeIcon icon={faAnglesUp} style={{color: color}}className="ml-[1px] mr-[2px]" />
-								<p className={`ml-1 font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>5</p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="w-[40%] flex justify-center">
-					<img src="/ava2.png" alt="Description" className="h-[350px]" />
-				</div>
-			</div>
-			
-		</div>
-    )
-}
 
 
 const achivments = [
@@ -240,26 +164,26 @@ function ActionButton({text, icon, handler}) {
 	)
 }
 
-function Actions({auth_user, profile_user, handlers}) {
+function Actions({friends, profile_user, handlers}) {
 	
-	function has_relation(arr, id) {
-		const res = arr.filter(item => (item.receiver == id || item.sender.id== id))
-		return res.length
+	function has_relation(arr, id, status) {
+		let res = arr?.filter(item => (item.receiver.id == id || item.sender.id== id))
+		if (status)
+			return res[0].status == status
+		return res?.length
 	}
 
-	function is_waiting(arr, id) {
-		const res = arr.filter(item => (item.receiver == id || item.sender.id== id))
-		if (res.length) {
-			return res[0].status == 'waiting'
-		}
-		return res.length
+	function is_receiver(arr, id, status) {
+		let res = arr?.filter(item => (item.receiver.id== id && item.status == status))
+		return res?.length
 	}
 
-	if (!has_relation(auth_user.friends, profile_user.id) && !has_relation(profile_user.friends, auth_user.id)) {
+
+	if (!has_relation(friends, profile_user.id, null)) {
 		return (<ActionButton text="Add Friend" icon={faUserPlus} handler={handlers.new} />)
 	}
 
-	if (has_relation(auth_user.friends, profile_user.id) && is_waiting(auth_user.friends, profile_user.id)) {
+	if (has_relation(friends, profile_user.id, 'waiting') && !is_receiver(friends, profile_user.id, 'waiting')) {
 		return (
 			<div className='flex justify-between w-[220px]'>
 				<ActionButton text="accept friend" icon={faCheckDouble} handler={handlers.accept} />
@@ -267,10 +191,7 @@ function Actions({auth_user, profile_user, handlers}) {
 			</div>
 		)
 	}
-	if ((has_relation(auth_user.friends, profile_user.id) && !is_waiting(auth_user.friends, profile_user.id))
-		||
-		(has_relation(profile_user.friends, auth_user.id) && !is_waiting(profile_user.friends, auth_user.id))
-	){
+	if (has_relation(friends, profile_user.id, 'accepted')){
 		return (
 			<div className='flex justify-between items-center w-[230px]'>
 				<ActionButton text="contact" icon={faCommentDots} handler={null} />
@@ -281,7 +202,6 @@ function Actions({auth_user, profile_user, handlers}) {
 			</div>
 		)
 	}
-
 	return (<ActionButton text="cancle the request" icon={faXmark} handler={handlers.cancle} />)
 }
 
@@ -291,9 +211,9 @@ function Banner() {
 	const {user} = useParams()
 	const [data, setData] = useState(userData)
 	const [loading, setLoading] = useState(true)
-	const [update, setUpdate] = useState(false)
 	const tokens = useContext(authContext)
-	const userHandler = useContext(userContextHandler)
+	const friends = useContext(friendsContext)
+	const friendsHandler = useContext(friendsContextHandler)
 
 	const handlers = {
 		"new" : send_friend_request,
@@ -314,8 +234,8 @@ function Banner() {
 		})
 		.then(res => res.json())
 		.then(data => {
-			if (data.status == 'success') {
-				setUpdate(prev => !prev)
+			if (data.status == 200) {
+				friendsHandler(data.data)
 			}
 		})
 		.catch(err => console.log(err))
@@ -334,8 +254,8 @@ function Banner() {
 		})
 		.then(res => res.json())
 		.then(data => {
-			if (data.status == 'success') {
-				setUpdate(prev => !prev)
+			if (data.status == 200) {
+				friendsHandler(data.data)
 			}
 		})
 		.catch(err => console.log(err))
@@ -353,8 +273,8 @@ function Banner() {
 		})
 		.then(res => res.json())
 		.then(data => {
-			if (data.status == 'success') {
-				setUpdate(prev => !prev)
+			if (data.status == 200) {
+				friendsHandler(data.data)
 			}
 		})
 		.catch(err => console.log(err))
@@ -372,9 +292,8 @@ function Banner() {
 		})
 		.then(res => res.json())
 		.then(data => {
-			console.log(data)
-			if (data.status == 'success') {
-				setUpdate(prev => !prev)
+			if (data.status == 200) {
+				friendsHandler(data.data)
 			}
 		})
 		.catch(err => console.log(err))
@@ -383,7 +302,7 @@ function Banner() {
 	useEffect(() => {
 		const timer = setTimeout(async () => {
 			if (user != undefined) {
-				await fetch(`http://localhost:8000/api/profile/${user}/`, {
+				await fetch(`http://localhost:8000/api/profile/get_user_data/?user=${user}`, {
 					headers : {
 						"Content-Type": "application/json",
 						"Authorization": `Bearer ${tokens.mytoken}`
@@ -399,97 +318,80 @@ function Banner() {
 			} else {
 				setData(userData)
 			}
-			if (update) {
-				fetch(`http://localhost:8000/api/profile/profile_data/`, {
-					method: 'GET',
-					credentials : 'include',
-					headers : {
-						'Authorization' : `Bearer ${tokens.mytoken}`,
-					}
-				})
-				.then(res => res.json())
-				.then(res => {
-					userHandler(res.data)
-				})
-				.catch(err => console.log(err))
-			}
 			setLoading(false)
 		}, 300)
 		return () => {
 			clearTimeout(timer)
 			setLoading(true)
 		}
-	}, [user, update])
+	}, [user])
 
 	return (
 		<>
-			<div className='p-2'>
-				<div className='bg-banner mb-16 bg-cover border-[.2px] border-darkText/40 w-full h-[140px] rounded-sm relative' >
-					<div className='absolute bottom-[-70px] left-10 flex items-end'>
+			<div className='p-2 relative'>
+				<div className='bg-banner bg-cover border-[.2px] border-darkText/40 w-full h-[140px] rounded-sm'></div>
+				<div className='w-full  ml-[50%] translate-x-[-50%] mt-[-20px] absolute'>
+					<div className='flex items-end px-10'>
 						<img className='w-[90px] border-[.3px] bg-white rounded-full ' src={`${data?.profile?.image}`} alt="" />
 						<div className='ml-4 text-white'>
-							<h1 className='text-[16px] uppercase'>{data?.first_name} {data?.last_name}</h1>
-							<h1 className='mt-2 font-bold'>@{data?.username}</h1>
+							<h1 className='text-[16px] uppercase'>{data.first_name} {data.last_name}</h1>
+							<h1 className='mt-2 font-bold'>@{data.username}</h1>
 						</div>
 					</div>
-				</div>
-				<div className='p-2 h-fit text-[12px] py-10 flex items-center'>
-					<div className='w-1/2'>
+					<div className='p-2 h-fit text-[12px] py-10 flex items-center'>
+						<div className='w-1/2'>
+							{
+								data?.profile?.bio != '' && 
+								<textarea 
+									value={data?.profile?.bio} 
+									disabled={true}
+									className={`${theme == 'light' ? "text-lightText" : "text-darkText"} resize-none bg-transparent outline-none w-full mx-10`}>
+								</textarea>
+							}
+						</div>
 						{
-							data?.profile?.bio != '' && 
-							<textarea 
-								value={data?.profile?.bio} 
-								disabled={true}
-								className={`${theme == 'light' ? "text-lightText" : "text-darkText"} resize-none bg-transparent outline-none w-full mx-10`}>
-							</textarea>
+							user != undefined && 
+							<div className='w-1/2  mx-4 flex justify-end items-center'> 
+								{
+									loading ? "" :
+									<Actions friends={friends} profile_user={data} handlers={handlers} />
+								}
+							</div>
 						}
 					</div>
-					{
-						user != undefined && 
-						<div className='w-1/2 flex justify-end items-center'> 
-							{/* {
-								loading ? "" :
-								<Actions auth_user={userData} profile_user={data} handlers={handlers} />
-							} */}
+					<div className='h-fit flex'>
+						<div className='w-3/5 flex  border-[0px] justify-center h-[380px] border-white/30 rounded-sm'>
+							<div className='w-3/4'>
+								<Level />
+								<LChart />
+								<Statuss />
+							</div>
 						</div>
-					}
-				</div>
-			</div>
-			<div className='h-fit flex'>
-				<div className='w-3/5 flex border-[0px] justify-center h-[380px] border-white/30 rounded-sm'>
-					<div className='w-3/4'>
-						<Level />
-						<LChart />
-						<Statuss />
+						<div className='w-2/5 flex items-center border-[0px] justify-center h-[380px] border-white/30 rounded-sm'>
+							<div className='w-3/4 h-full'>
+								<div className=''>
+									<Avatar />
+								</div>
+								<Statistics />
+							</div>
+						</div>
+					</div>
+					{/* achivments */}
+					<div className='px-2 h-[400px] border-white/30 border-[0px] flex justify-center rounded-sm'>
+						<div className='w-full h-full'>
+							{/* <FriendsList /> */}
+							<Achivments />
+						</div>
 					</div>
 				</div>
-				<div className='w-2/5 flex items-center border-[0px] justify-center h-[380px] border-white/30 rounded-sm'>
-					<div className='w-3/4 h-full'>
-						<div className=''>
-							<Avatar />
-						</div>
-						<Statistics />
-					</div>
-				</div>
-			</div>
-			{/* achivments */}
-			<div className='px-2 h-[400px] border-white/30 border-[0px] flex justify-center rounded-sm'>
-				<div className='w-full h-full'>
-					{/* <FriendsList /> */}
-					<Achivments />
-				</div>
+
 			</div>
 		</>
 	)
 }
 
 export default function Profile() {
-	const [expand, setExpand] = useState(false)
-
 	const theme = useContext(ThemeContext)
-	const toggleExpanded = () => {
-		setExpand(!expand)
-	}
 	return (
 		<div className="flex flex-grow justify-center h-full w-full">
 			<div className={`w-full p-1 h-[100vh] overflow-scroll border-[.3px] ${theme == 'light' ? "bg-lightItems border-lightText/10" : "bg-darkItems border-darkText/10"}`}>
