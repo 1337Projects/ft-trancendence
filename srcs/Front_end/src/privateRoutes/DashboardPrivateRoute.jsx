@@ -29,7 +29,7 @@ export const DashboardPrivateRoute = () => {
                 if (accessToken.mytoken == '') {
                     await getTokens() 
                 } else {
-                    console.log(accessToken)
+                    // console.log(accessToken)
                     setIsAuthenticated(true)
                 }
                 setLoading(false);

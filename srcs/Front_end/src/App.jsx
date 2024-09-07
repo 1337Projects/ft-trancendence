@@ -63,7 +63,7 @@ function Oauth() {
       })
       .then(res => res.json())
       .then(data => {
-        console.log(data)
+        // console.log(data)
         if (data.status == 200) {
           authHandler(data.access)
           navigate('../../dashboard/profile')
@@ -96,7 +96,7 @@ function Oauth42() {
       })
       .then(res => res.json())
       .then(data => {
-        console.log(data)
+        // console.log(data)
         if (data.status == 200) {
           authHandler(data.access)
           navigate('../../dashboard/profile')

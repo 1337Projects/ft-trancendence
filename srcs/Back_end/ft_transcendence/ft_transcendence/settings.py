@@ -62,6 +62,7 @@ INSTALLED_APPS = [
 #         'rest_framework.permissions.IsAuthenticated',
 #     ],
 # }
+
 ASGI_APPLICATION = "ft_transcendance.asgi.application"#i added this
 CHANNEL_LAYERS = {#i added this
     'default': {

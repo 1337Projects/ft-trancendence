@@ -103,6 +103,7 @@ export default function ConversationsList() {
 
     const tokens = useContext(authContext)
     useEffect(() => {
+        console.log("Token: ", tokens.mytoken);
         const timer = setTimeout(() => {
             // console.log(tokens)
             // console.log(tokens.mytoken)
@@ -121,7 +122,6 @@ export default function ConversationsList() {
                     setCnvs(data.data)
                 // }
             })
-            .catch(err => console.log(err))
         }, 300)
         return () => clearTimeout(timer)
     }, [tokens])//i updates this

@@ -149,16 +149,25 @@ def google_oauth(request):
             image = user_info.get('picture')
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
-            user, created = User.objects.update_or_create(
-                email=email,
-                defaults={
-                    'username': username,
-                    'email': email,
-                    'last_name': username.split()[0] if name else "",
-                    'first_name': username.split()[1] if name else "",
-                }
-            )
-            create_profile(user.id, image)
+            # user, created = User.objects.update_or_create(
+            #     email=email,
+            #     defaults={
+            #         'username': username,
+            #         'email': email,
+            #         'last_name': username.split()[0] if username else "",
+            #         'first_name': username.split()[1] if username else "",
+            #     }
+            # )
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    last_name= username.split()[0] if username else "",
+                    first_name= username.split()[1] if username else "",
+                )
+                create_profile(user.id, image)
             try:
                 access_token = generate_access_token(user)
                 refresh_token = generate_refresh_token(user)
@@ -167,9 +176,9 @@ def google_oauth(request):
                 return response
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
-            return Response({'status': 200, 'access': jwt_token}, status=200)
-    else:
-        return JsonResponse({'error': 'Failed to retrieve access token'}, status=400)
+    #         return Response({'status': 200, 'access': jwt_token}, status=200)
+    # else:
+    #     return JsonResponse({'error': 'Failed to retrieve access token'}, status=400)
 
 # #/*******************************************************/
 #3la wd tlister ga3 les iusers likaynin ?
