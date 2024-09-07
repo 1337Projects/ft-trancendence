@@ -1,0 +1,67 @@
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../tabs/variables/colors" as *;
+@use "../tabs/mixins" as *;
+@use "../../base/tabPanel";
+
+// adduse
+
+.dx-tabpanel {
+  .dx-tabpanel-tab {
+    min-width: 72px;
+    flex-basis: unset;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .dx-tabs-scrollable .dx-tab {
+    flex-basis: auto;
+  }
+
+  .dx-tabs-nav-button {
+    height: auto;
+  }
+}
+
+.dx-tabpanel-tabs-position-top {
+  .dx-tabs {
+    border-bottom: 1px solid $base-border-color;
+
+    @at-root #{selector-append(".dx-empty-collection", &)} {
+      border-bottom: none;
+    }
+  }
+}
+
+.dx-tabpanel-tabs-position-bottom {
+  .dx-tabs {
+    border-top: 1px solid $base-border-color;
+
+    @at-root #{selector-append(".dx-empty-collection", &)} {
+      border-top: none;
+    }
+  }
+}
+
+.dx-tabpanel-tabs-position-left {
+  .dx-tabs {
+    border-right: 1px solid $base-border-color;
+
+    @at-root #{selector-append(".dx-empty-collection", &)} {
+      border-right: none;
+    }
+  }
+}
+
+.dx-tabpanel-tabs-position-right {
+  .dx-tabs {
+    border-left: 1px solid $base-border-color;
+
+    @at-root #{selector-append(".dx-empty-collection", &)} {
+      border-left: none;
+    }
+  }
+}

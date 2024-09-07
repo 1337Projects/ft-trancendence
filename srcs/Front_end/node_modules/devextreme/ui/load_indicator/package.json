@@ -1,0 +1,10 @@
+{
+  "sideEffects": [
+    "../../esm/events/click.js",
+    "../../esm/events/core/emitter.feedback.js",
+    "../../esm/events/hover.js"
+  ],
+  "main": "../../cjs/ui/load_indicator.js",
+  "module": "../../esm/ui/load_indicator.js",
+  "typings": "../load_indicator.d.ts"
+}

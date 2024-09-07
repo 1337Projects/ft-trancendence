@@ -1,0 +1,9 @@
+{
+  "sideEffects": [
+    "../../../esm/viz/tree_map/tiling.squarified.js",
+    "../../../esm/viz/tree_map/colorizing.discrete.js",
+    "../../../esm/viz/tree_map/api.js"
+  ],
+  "main": "../../../cjs/viz/tree_map/drilldown.js",
+  "module": "../../../esm/viz/tree_map/drilldown.js"
+}

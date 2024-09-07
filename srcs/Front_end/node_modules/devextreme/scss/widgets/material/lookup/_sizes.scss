@@ -1,0 +1,21 @@
+@use "../sizes" as *;
+
+// adduse
+
+$material-lookup-font-size: null !default;
+$material-lookup-popup-content-padding: null !default;
+$material-lookup-list-top: null !default;
+
+$material-lookup-popup-content-top: 49px !default;
+
+@if $size == "default" {
+  $material-lookup-font-size: 16px !default;
+  $material-lookup-popup-content-padding: 20px !default;
+  $material-lookup-list-top: 66px !default;
+}
+
+@else if $size == "compact" {
+  $material-lookup-font-size: 12px !default;
+  $material-lookup-popup-content-padding: 8px !default;
+  $material-lookup-list-top: 36px !default;
+}

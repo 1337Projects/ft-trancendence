@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/scroll-view.js",
+  "module": "../esm/scroll-view.js",
+  "typings": "../cjs/scroll-view.d.ts"
+}

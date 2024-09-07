@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/draggable.js",
+  "module": "../esm/draggable.js",
+  "typings": "../cjs/draggable.d.ts"
+}

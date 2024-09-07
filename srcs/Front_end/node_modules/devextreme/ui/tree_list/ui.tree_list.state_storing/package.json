@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/__internal/grids/tree_list/m_state_storing.js"
+  ],
+  "main": "../../../cjs/ui/tree_list/ui.tree_list.state_storing.js",
+  "module": "../../../esm/ui/tree_list/ui.tree_list.state_storing.js"
+}

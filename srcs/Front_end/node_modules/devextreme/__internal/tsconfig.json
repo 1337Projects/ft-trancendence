@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    "outDir": "../../artifacts/dist_ts",
+    "module": "es6",
+    "target": "ES2017",
+    "jsx": "preserve",
+    "baseUrl": "../",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noEmitOnError": true,
+    "resolveJsonModule": false,
+    "sourceMap": false,
+    "declaration": false,
+    "declarationMap": false,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": false,
+    "isolatedModules": true,
+    "alwaysStrict": true,
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "noImplicitThis": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "lib": [
+      "ES2017",
+      "ES2020.BigInt",
+      "DOM"
+    ],
+    "strict": true,
+    // TODO: set to true
+    "noImplicitAny": false,
+    // TODO: set to true after typescript update
+    //"useUnknownInCatchVariables": true,
+    //"noImplicitOverride": true,
+    "paths": {
+      "@js/*": [
+        "./*"
+      ],
+      "@ts/*": [
+        "./__internal/*"
+      ],
+    },
+    "types": [ "jest" ]
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": false,
+    "fileExtensions": {
+      "inputGlob": "js,jsx,ts,tsx",
+      "outputCheck": [
+        "js",
+        "jsx",
+        "ts",
+        "tsx"
+      ]
+    }
+  }
+}

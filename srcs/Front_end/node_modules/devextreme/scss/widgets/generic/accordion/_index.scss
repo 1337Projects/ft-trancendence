@@ -1,0 +1,112 @@
+@use "sass:math";
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../../base/icons" as *;
+@use "../typography/sizes" as *;
+@use "../../base/accordion";
+
+// adduse
+
+.dx-accordion {
+  background-color: $accordion-background-color;
+  color: $accordion-color;
+}
+
+.dx-accordion-item {
+  border: 1px solid transparent;
+  border-top-color: $accordion-item-border-color;
+
+  &:last-child {
+    border-bottom: 1px solid $accordion-item-border-color;
+  }
+
+  &.dx-state-active:not(.dx-accordion-item-opened) {
+    & > .dx-accordion-item-title {
+      color: $accordion-title-active-color;
+      background-color: $accordion-title-active-bg;
+    }
+  }
+
+  &.dx-state-hover {
+    & > .dx-accordion-item-title {
+      background-color: $accordion-item-hover-bg;
+    }
+
+    &:not(:last-child):not(.dx-accordion-item-opened):not(.dx-state-focused) {
+      border-bottom-color: $accordion-item-hover-bg;
+    }
+  }
+}
+
+.dx-accordion-item-opened {
+  border-color: $accordion-item-border-color;
+
+  &.dx-state-hover {
+    & > .dx-accordion-item-title {
+      background-color: $accordion-item-title-opened-bg;
+    }
+  }
+
+  & > .dx-accordion-item-title {
+    background-color: $accordion-item-title-opened-bg;
+
+    &::before {
+      content: "\f014";
+    }
+  }
+
+  + .dx-accordion-item {
+    border-top-color: transparent;
+
+    &.dx-state-hover:not(.dx-state-focused) {
+      border-top-color: $accordion-item-hover-bg;
+    }
+  }
+}
+
+.dx-accordion-item-title {
+  color: $accordion-title-color;
+  padding: $generic-accordion-title-vertical-padding $generic-accordion-title-horizontal-padding;
+  font-size: $generic-s-font-size;
+
+  &::before {
+    content: "\f016";
+    position: absolute;
+    font-family: DXIcons; // stylelint-disable-line font-family-no-missing-generic-family-keyword, font-family-name-quotes
+    font-size: $generic-accordion-title-icon-size;
+    font-weight: normal;
+    inset-inline-end: $generic-accordion-title-horizontal-padding;
+    line-height: 100%;
+  }
+
+  .dx-icon {
+    @include dx-icon-sizing($generic-base-icon-size);
+  }
+}
+
+.dx-accordion-item-title-caption {
+  margin-inline-end: $generic-accordion-title-icon-size;
+
+  .dx-icon {
+    @include dx-icon-margin($accordion-title-icon-margin);
+  }
+}
+
+.dx-state-disabled {
+  &.dx-accordion-item {
+    opacity: $base-disabled-opacity;
+  }
+}
+
+.dx-state-focused {
+  &.dx-accordion-item {
+    border-color: $accordion-item-focused-border-color;
+  }
+}
+
+.dx-accordion-item-body {
+  padding: $generic-accordion-body-padding;
+}

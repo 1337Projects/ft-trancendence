@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/core/template.js",
+  "module": "../esm/core/template.js",
+  "typings": "../cjs/core/template.d.ts"
+}

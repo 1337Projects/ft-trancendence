@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../../cjs/common/grids.js",
+  "module": "../../esm/common/grids.js",
+  "typings": "../../cjs/common/grids.d.ts"
+}

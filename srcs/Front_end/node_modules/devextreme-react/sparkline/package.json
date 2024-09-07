@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/sparkline.js",
+  "module": "../esm/sparkline.js",
+  "typings": "../cjs/sparkline.d.ts"
+}

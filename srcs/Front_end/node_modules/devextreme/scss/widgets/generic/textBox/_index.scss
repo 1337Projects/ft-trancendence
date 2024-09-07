@@ -1,0 +1,56 @@
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../../base/icons" as *;
+@use "../textEditor/colors" as *;
+@use "../textEditor/sizes" as *;
+@use "../../base/textBox";
+
+// adduse
+@use "../textEditor" as *;
+
+
+.dx-searchbox {
+  .dx-icon-search {
+    @include dx-icon(search);
+    @include dx-texteditor-icon();
+
+    font-size: $generic-texteditor-icon-size - 1;
+
+    &::before {
+      color: $textbox-search-icon-color;
+    }
+
+    color: $texteditor-placeholder-color;
+  }
+
+  .dx-texteditor-input,
+  .dx-placeholder::before {
+    padding-inline-start: $generic-texteditor-icon-container-size;
+  }
+
+  &.dx-editor-underlined {
+    .dx-texteditor-buttons-container + .dx-texteditor-input-container .dx-texteditor-input,
+    .dx-texteditor-input {
+      padding-inline-start: $generic-texteditor-icon-container-size;
+    }
+  }
+
+  &.dx-texteditor {
+    .dx-texteditor-label {
+      .dx-label-before {
+        min-width: 0;
+      }
+    }
+  }
+}
+
+.dx-searchbar {
+  padding-bottom: 5px;
+
+  .dx-texteditor {
+    margin: 0;
+  }
+}

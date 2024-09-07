@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tree-map.js",
+  "module": "../esm/tree-map.js",
+  "typings": "../cjs/tree-map.d.ts"
+}

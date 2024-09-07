@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/range_selector/slider.js",
+  "module": "../../../esm/viz/range_selector/slider.js"
+}

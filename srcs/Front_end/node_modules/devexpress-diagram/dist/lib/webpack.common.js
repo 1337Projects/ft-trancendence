@@ -1,0 +1,64 @@
+'use strict';
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require('path');
+
+module.exports = {
+    entry: {
+        "dx-diagram": "./src/index.ts"
+    },
+    output: {
+        library: ["DevExpress", 'diagram'],
+        libraryTarget: "umd",
+        filename: './[name].js',
+        path: path.resolve("./dist"),
+        globalObject: 'this'
+    },
+    performance: {
+        hints: false,
+        maxEntrypointSize: 2048000,
+        maxAssetSize: 2048000
+    },
+    module: {
+        rules: [
+            {
+                test : /\.scss$/,
+                use : [
+					{
+						loader: MiniCssExtractPlugin.loader
+					},
+					{
+						loader: 'css-loader',
+                        options: {
+                            url: false
+                        }
+					},
+					{
+						loader: 'sass-loader'
+					}
+                ]
+            },
+            {   
+                test: /\.tsx?$/,
+                use: 'ts-loader'
+            },
+        ]
+    },
+    resolve: {
+        extensions: [ '.ts', '.tsx', '.js', '.scss' ]
+    },
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin({
+          test: /\.min\.js$/
+        }),
+        new CssMinimizerPlugin({
+            test: /\.min\.css$/g
+        })
+        ]
+      },
+      plugins: [
+        new MiniCssExtractPlugin()
+      ],
+};

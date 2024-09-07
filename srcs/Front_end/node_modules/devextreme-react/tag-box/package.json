@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tag-box.js",
+  "module": "../esm/tag-box.js",
+  "typings": "../cjs/tag-box.d.ts"
+}

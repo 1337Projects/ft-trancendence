@@ -1,0 +1,16 @@
+{
+  "sideEffects": [
+    "../../esm/integration/knockout/component_registrator.js",
+    "../../esm/events/click.js",
+    "../../esm/events/core/emitter.feedback.js",
+    "../../esm/events/hover.js",
+    "../../esm/integration/knockout/event_registrator.js",
+    "../../esm/integration/knockout/components.js",
+    "../../esm/integration/knockout/validation.js",
+    "../../esm/integration/knockout/variable_wrapper_utils.js",
+    "../../esm/integration/knockout/clean_node.js",
+    "../../esm/integration/knockout/clean_node_old.js"
+  ],
+  "main": "../../cjs/integration/knockout.js",
+  "module": "../../esm/integration/knockout.js"
+}

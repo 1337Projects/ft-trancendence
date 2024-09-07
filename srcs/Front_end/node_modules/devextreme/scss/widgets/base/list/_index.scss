@@ -1,0 +1,312 @@
+@use "../mixins" as *;
+@use "../button/mixins" as *;
+
+// adduse
+
+
+$list-searchbox-margin-bottom: 5px;
+
+.dx-list {
+  margin: 0;
+  min-height: 3em;
+
+  .dx-scrollview-content:focus {
+    outline: 0;
+  }
+}
+
+.dx-wrap-item-text,
+.dx-wrap-item-text > .dx-list-group > .dx-list-group-body {
+  & > .dx-list-item > .dx-list-item-content {
+    white-space: normal;
+  }
+}
+
+.dx-empty-collection .dx-list-select-all {
+  display: none;
+}
+
+.dx-list-group-header {
+  .dx-list-collapsible-groups & {
+    cursor: pointer;
+  }
+}
+
+.dx-list-group-body {
+  overflow: hidden;
+}
+
+.dx-list-item {
+  position: static;
+  cursor: pointer;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+
+  @include dx-overflow();
+}
+
+.dx-list-item-content {
+  @include dx-overflow();
+
+  display: table-cell;
+  width: 100%;
+
+  &::before {
+    content: "_";
+    color: transparent;
+    display: inline-block;
+    width: 0;
+    float: left;
+  }
+}
+
+.dx-list .dx-empty-message {
+  @include dx-overflow();
+
+  text-align: start;
+  min-height: 3em;
+}
+
+.dx-list-item-badge-container {
+  display: table-cell;
+  width: 20px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.dx-list-item-badge {
+  float: right;
+  position: relative;
+}
+
+.dx-list-item-icon-container {
+  display: inline-block;
+}
+
+.dx-list-item-chevron {
+  transform: rotate(0);
+  opacity: 1;
+
+  .dx-rtl & {
+    transform: rotate(180deg);
+  }
+}
+
+
+.dx-list-item-response-wait {
+  opacity: 0.5;
+  transition: opacity 0.2s linear;
+}
+
+.dx-list-slide-menu-content {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.dx-list-item-before-bag,
+.dx-list-item-after-bag {
+  height: 100%;
+  vertical-align: middle;
+}
+
+.dx-list-item-before-bag {
+  .dx-icon-toggle-delete {
+    transition: all 0.1s linear;
+  }
+
+  .dx-list-select-checkbox {
+    float: left;
+    transition: all 0.1s linear;
+  }
+}
+
+.dx-list-select-all {
+  white-space: nowrap;
+}
+
+.dx-list-select-all-label {
+  display: inline-block;
+
+  @include dx-overflow();
+}
+
+.dx-list-item-after-bag {
+  .dx-list-reorder-handle {
+    cursor: move;
+    background-repeat: no-repeat;
+    background-size: 75% 75%;
+    background-position: center;
+    touch-action: manipulation;
+
+    .dx-state-disabled & {
+      cursor: default;
+    }
+  }
+}
+
+.dx-list-switchable-menu-shield-positioning {
+  position: relative;
+  transform: translateZ(0);
+}
+
+.dx-list-switchable-delete-top-shield,
+.dx-list-switchable-delete-bottom-shield {
+  position: absolute;
+  right: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.dx-list-switchable-delete-top-shield {
+  top: 0;
+}
+
+.dx-list-switchable-delete-bottom-shield {
+  bottom: 0;
+}
+
+.dx-list-switchable-delete-item-content-shield {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.dx-list-switchable-delete-button-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.dx-list-switchable-delete-button-wrapper {
+  display: table;
+  height: 100%;
+}
+
+.dx-list-switchable-delete-button-inner-wrapper {
+  display: table-cell;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.dx-list-switchable-menu-item-shield-positioning {
+  position: relative;
+
+  .dx-list-slide-menu-content {
+    position: relative;
+  }
+
+  .dx-list-item-content {
+    position: relative;
+  }
+}
+
+.dx-list-switchable-delete-ready {
+  .dx-icon-toggle-delete {
+    transform: rotate(-90deg);
+  }
+}
+
+.dx-list-slide-menu-buttons-container {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.dx-list-slide-menu-buttons {
+  position: relative;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: table;
+  height: 100%;
+}
+
+.dx-list-slide-menu-button {
+  display: table-cell;
+  padding: 0 10px;
+  vertical-align: middle;
+}
+
+.dx-list-static-delete-button {
+  padding: 0 5px;
+
+  .dx-button-content {
+    overflow: visible;
+  }
+}
+
+.dx-list-next-button {
+  padding: 5px;
+  text-align: center;
+
+  .dx-button {
+    padding: 0 3em;
+  }
+}
+
+.dx-state-disabled {
+  &.dx-list-item,
+  .dx-list-item {
+    cursor: default;
+  }
+
+  .dx-list-toggle-delete-switch,
+  .dx-list-switchable-delete-button {
+    @include dx-button-disabled();
+  }
+}
+
+.dx-list-context-menuitem {
+  cursor: pointer;
+}
+
+.dx-list-search {
+  margin-bottom: $list-searchbox-margin-bottom;
+}
+
+.dx-list-select-all-checkbox {
+  float: left;
+}
+
+.dx-rtl .dx-list,
+.dx-rtl.dx-list {
+  .dx-list-item-badge {
+    float: left;
+  }
+
+  .dx-list-select-all-checkbox {
+    float: right;
+  }
+
+  .dx-list-item-before-bag {
+    .dx-list-toggle-delete-switch {
+      float: right;
+    }
+
+    .dx-list-select-checkbox {
+      float: right;
+    }
+  }
+
+  .dx-list-slide-item-delete-button-container {
+    right: 100%;
+    left: 0;
+  }
+
+  .dx-list-slide-item-delete-button {
+    right: auto;
+    left: 0;
+  }
+
+  .dx-list-group-header::before {
+    float: left;
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js",
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/tree_list/ui.tree_list.data_source_adapter.js",
+  "module": "../../../esm/ui/tree_list/ui.tree_list.data_source_adapter.js"
+}

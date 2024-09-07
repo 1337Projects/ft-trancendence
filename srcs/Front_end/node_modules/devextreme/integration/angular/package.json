@@ -1,0 +1,24 @@
+{
+  "sideEffects": [
+    "../../esm/integration/jquery.js",
+    "../../esm/integration/jquery/renderer.js",
+    "../../esm/integration/jquery/hooks.js",
+    "../../esm/integration/jquery/deferred.js",
+    "../../esm/integration/jquery/hold_ready.js",
+    "../../esm/integration/jquery/events.js",
+    "../../esm/integration/jquery/easing.js",
+    "../../esm/integration/jquery/element_data.js",
+    "../../esm/integration/jquery/element.js",
+    "../../esm/integration/jquery/component_registrator.js",
+    "../../esm/integration/jquery/ajax.js",
+    "../../esm/integration/angular/component_registrator.js",
+    "../../esm/events/click.js",
+    "../../esm/events/core/emitter.feedback.js",
+    "../../esm/events/hover.js",
+    "../../esm/integration/angular/event_registrator.js",
+    "../../esm/integration/angular/components.js",
+    "../../esm/integration/angular/action_executors.js"
+  ],
+  "main": "../../cjs/integration/angular.js",
+  "module": "../../esm/integration/angular.js"
+}

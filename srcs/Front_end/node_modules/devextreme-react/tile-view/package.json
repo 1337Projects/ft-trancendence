@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tile-view.js",
+  "module": "../esm/tile-view.js",
+  "typings": "../cjs/tile-view.d.ts"
+}

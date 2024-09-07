@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../../cjs/core/nested-option.js",
+  "module": "../../esm/core/nested-option.js",
+  "typings": "../../cjs/core/nested-option.d.ts"
+}

@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/validator.js",
+  "module": "../esm/validator.js",
+  "typings": "../cjs/validator.d.ts"
+}

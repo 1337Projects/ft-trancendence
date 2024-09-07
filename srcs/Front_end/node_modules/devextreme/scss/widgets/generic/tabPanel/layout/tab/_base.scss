@@ -1,0 +1,88 @@
+@use "../../variables/colors" as *;
+@use "../../../colors" as *;
+@use "../../variables/sizes" as *;
+@use "../../../sizes" as *;
+@use "../../../tabs/variables/colors" as *;
+@use "../../../tabs/variables/borders" as *;
+@use "../../../tabs/variables/sizes" as *;
+@use "../../../tabs/mixins" as *;
+@use "../../../tabs/layout/tab/base" as *;
+@use "../../../tabs" as *;
+@use "../../../../base/tabPanel";
+@use "../../variables/borders" as *;
+
+// adduse
+
+
+.dx-tabpanel-tab {
+  padding: $generic-tabpanel-tabs-item-padding;
+
+  &.dx-state-focused::after {
+    border-color: $tabs-border-color;
+  }
+
+  &.dx-state-disabled {
+    &::after {
+      z-index: 3;
+    }
+  }
+}
+
+.dx-tabpanel-tabs .dx-tabs:not(.dx-tabs-vertical) {
+  .dx-tabpanel-tab {
+    max-width: $generic-tabpanel-tabs-item-width;
+  }
+}
+
+.dx-tabs-nav-buttons:not(.dx-tabs-vertical) {
+  .dx-tabpanel-tab {
+    width: $generic-tabpanel-tabs-item-width;
+    max-width: unset;
+
+    &:last-child {
+      &.dx-tab-selected::after {
+        right: 0;
+      }
+    }
+  }
+}
+
+.dx-tabpanel.dx-state-focused {
+  .dx-tabpanel-tab {
+    &.dx-state-focused::after {
+      border-color: $tabs-focused-border-color;
+    }
+
+    &.dx-state-focused.dx-state-disabled::after {
+      border-color: $tabs-focused-disabled-border-color;
+    }
+
+    &.dx-focused-disabled-next-tab {
+      &::after {
+        border-inline-end: none;
+      }
+    }
+  
+    &.dx-focused-disabled-prev-tab {
+      &::after {
+        border-inline-start: none;
+      }
+    }
+  }
+
+  .dx-tabs-vertical {
+    .dx-tabpanel-tab {
+      &.dx-focused-disabled-next-tab {
+        &::after {
+          border-block-end: none;
+        }
+      }
+  
+      &.dx-focused-disabled-prev-tab {
+        &::after {
+          border-block-start: none;
+        }
+      }
+    }
+  }
+}

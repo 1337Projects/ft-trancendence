@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/progress-bar.js",
+  "module": "../esm/progress-bar.js",
+  "typings": "../cjs/progress-bar.d.ts"
+}

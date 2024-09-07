@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/load-panel.js",
+  "module": "../esm/load-panel.js",
+  "typings": "../cjs/load-panel.d.ts"
+}

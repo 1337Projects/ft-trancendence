@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/resizable.js",
+  "module": "../esm/resizable.js",
+  "typings": "../cjs/resizable.d.ts"
+}

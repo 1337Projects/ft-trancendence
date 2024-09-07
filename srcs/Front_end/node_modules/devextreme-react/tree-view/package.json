@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tree-view.js",
+  "module": "../esm/tree-view.js",
+  "typings": "../cjs/tree-view.d.ts"
+}

@@ -1,0 +1,125 @@
+@use "../mixins" as *;
+@use "../../base/icons" as *;
+
+// adduse
+
+$treeview-searchbox-margin-bottom: 5px;
+$tree-view-icon-size: 24px;
+
+.dx-treeview-loadindicator-wrapper {
+  text-align: center;
+}
+
+.dx-treeview-search {
+  margin-bottom: $treeview-searchbox-margin-bottom;
+}
+
+.dx-treeview {
+  height: 100%;
+
+  :focus {
+    outline: none;
+  }
+
+  .dx-scrollable:focus {
+    outline: none;
+  }
+
+  .dx-empty-message {
+    line-height: normal;
+  }
+
+  .dx-treeview-node.dx-treeview-root-node {
+    padding-inline-start: 0;
+  }
+}
+
+.dx-checkbox + .dx-treeview-node-container,
+.dx-treeview-node-container:first-child {
+  margin: 0;
+  display: block;
+}
+
+.dx-treeview-select-all-item {
+  width: 100%;
+}
+
+.dx-treeview-node-container {
+  list-style-position: inside;
+  padding: 0;
+  margin: 0;
+  display: none;
+  overflow: hidden;
+
+  &.dx-treeview-node-container-opened {
+    display: block;
+  }
+}
+
+.dx-treeview-node {
+  list-style-type: none;
+
+  @include user-select(none);
+
+  -webkit-user-drag: none;
+
+  a {
+    text-decoration: none;
+  }
+
+  .dx-checkbox {
+    order: 1;
+    margin: 0;
+  }
+}
+
+.dx-treeview-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  .dx-treeview-item-content {
+    flex: 1 1 auto;
+    order: 2;
+
+    .dx-icon {
+      margin-inline-end: 8px;
+    }
+
+    .dx-button-has-icon {
+      .dx-icon {
+        margin-inline-end: 0;
+      }
+    }
+  }
+
+  .dx-item-content {
+    .dx-item-url {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &.dx-state-disabled {
+    opacity: 0.5;
+  }
+}
+
+.dx-treeview-toggle-item-visibility,
+.dx-treeview-custom-expand-icon,
+.dx-treeview-custom-collapse-icon {
+  cursor: pointer;
+  order: 0;
+
+  &.dx-state-disabled {
+    cursor: default;
+  }
+}
+
+.dx-rtl {
+  .dx-treeview-toggle-item-visibility,
+  .dx-treeview-custom-expand-icon,
+  .dx-treeview-custom-collapse-icon {
+    @include flip-horizontally();
+  }
+}

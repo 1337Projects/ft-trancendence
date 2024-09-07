@@ -1,0 +1,68 @@
+@use "sass:math";
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../../base/form";
+@use "../../base/icons" as *;
+
+// adduse
+@use "../scrollable";
+
+
+.dx-layout-manager {
+  .dx-field-item:not(.dx-first-col) {
+    padding-inline-start: 15px;
+  }
+
+  .dx-field-item:not(.dx-last-col) {
+    padding-inline-end: 15px;
+  }
+
+  &.dx-layout-manager-one-col {
+    .dx-box-item:not(:first-child) .dx-single-column-item-content > .dx-field-item {
+      padding-top: $generic-form-default-padding;
+    }
+  }
+}
+
+.dx-form-group-caption {
+  font-size: $generic-form-group-caption-font-size;
+}
+
+.dx-form-group-with-caption { // stylelint-disable-line no-duplicate-selectors
+  & > .dx-form-group-content {
+    border-top: 1px solid $form-group-border-color;
+    padding-bottom: $generic-form-group-content-padding-bottom;
+  }
+}
+
+.dx-field-item-label-text {
+  color: $form-field-item-color;
+}
+
+.dx-field-item-label-location-top {
+  margin-bottom: $generic-form-top-label-bottom-margin;
+}
+
+.dx-field-item-help-text {
+  color: $form-field-item-color;
+}
+
+.dx-field-item-optional .dx-label > span::after,
+.dx-field-item-optional-mark {
+  color: $form-field-mark-color;
+}
+
+.dx-field-item-required .dx-label > span::after,
+.dx-field-item-required-mark {
+  color: $form-field-required-color;
+}
+
+.dx-field-item-custom-label-content {
+  .dx-icon {
+    @include dx-icon-sizing($generic-form-label-icon-size);
+    @include dx-icon-margin(math.div($generic-base-icon-size, 2));
+  }
+}

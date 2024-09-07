@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../../../cjs/common/data/custom-store.js",
+  "module": "../../../esm/common/data/custom-store.js",
+  "typings": "../custom-store.d.ts"
+}

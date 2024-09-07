@@ -1,0 +1,13 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js",
+    "../../../esm/ui/popup.js",
+    "../../../esm/ui/toolbar.js",
+    "../../../esm/ui/toolbar/ui.toolbar.base.js",
+    "../../../esm/ui/drop_down_button.js"
+  ],
+  "main": "../../../cjs/ui/file_manager/ui.file_manager.toolbar.js",
+  "module": "../../../esm/ui/file_manager/ui.file_manager.toolbar.js"
+}

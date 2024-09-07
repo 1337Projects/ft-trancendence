@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/range-slider.js",
+  "module": "../esm/range-slider.js",
+  "typings": "../cjs/range-slider.d.ts"
+}

@@ -1,0 +1,10 @@
+{
+  "sideEffects": [
+    "../../../esm/viz/tree_map/tiling.squarified.js",
+    "../../../esm/viz/tree_map/colorizing.discrete.js",
+    "../../../esm/viz/tree_map/api.js",
+    "../../../esm/viz/tree_map/states.js"
+  ],
+  "main": "../../../cjs/viz/tree_map/hover.js",
+  "module": "../../../esm/viz/tree_map/hover.js"
+}

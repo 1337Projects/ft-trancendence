@@ -1,0 +1,55 @@
+@use "sass:color";
+@use "../sizes" as *;
+@use "../colors" as *;
+
+// adduse
+
+/**
+* $name 10. Indicator color
+* $type color
+*/
+$loadindicator-bg: null !default;
+$loadindicator-segment-shadow-color: null !default;
+
+
+@if $color == "carmine" {
+
+  $loadindicator-bg: $base-accent !default;
+  $loadindicator-segment-shadow-color: color.change($base-shadow-color, $alpha: 0.2) !default;
+}
+
+@if $color == "contrast" {
+  $loadindicator-bg: $base-inverted-bg !default;
+  $loadindicator-segment-shadow-color: $base-shadow-color !default;
+}
+
+@if $color == "dark" {
+  $loadindicator-bg: darken($base-text-color, 17.5%) !default;
+  $loadindicator-segment-shadow-color: color.change($base-shadow-color, $alpha: 0.2) !default;
+}
+
+@if $color == "darkmoon" {
+  $loadindicator-bg: $base-accent !default;
+  $loadindicator-segment-shadow-color: color.change($base-shadow-color, $alpha: 0.2) !default;
+}
+
+@if $color == "darkviolet" {
+  $loadindicator-bg: $base-accent-highlight-color !default;
+  $loadindicator-segment-shadow-color: color.change($base-shadow-color, $alpha: 0.2) !default;
+}
+
+@if $color == "greenmist" {
+  $loadindicator-bg: lighten($base-text-color, 17.5%) !default;
+  $loadindicator-segment-shadow-color: color.change($base-shadow-color, $alpha: 0.2) !default;
+}
+
+@if $color == "light" {
+  $loadindicator-bg: lighten($base-text-color, 17.5%) !default;
+  $loadindicator-segment-shadow-color: color.change($base-shadow-color, $alpha: 0.2) !default;
+}
+
+@if $color == "softblue" {
+  $loadindicator-bg: $base-accent !default;
+  $loadindicator-segment-shadow-color: color.change($base-shadow-color, $alpha: 0.2) !default;
+}
+

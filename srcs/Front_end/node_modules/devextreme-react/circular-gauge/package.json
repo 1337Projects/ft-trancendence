@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/circular-gauge.js",
+  "module": "../esm/circular-gauge.js",
+  "typings": "../cjs/circular-gauge.d.ts"
+}

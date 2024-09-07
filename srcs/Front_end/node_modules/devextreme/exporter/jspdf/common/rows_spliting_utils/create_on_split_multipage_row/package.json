@@ -1,0 +1,5 @@
+{
+  "sideEffects": false,
+  "main": "../../../../../cjs/exporter/jspdf/common/rows_spliting_utils/create_on_split_multipage_row.js",
+  "module": "../../../../../esm/exporter/jspdf/common/rows_spliting_utils/create_on_split_multipage_row.js"
+}

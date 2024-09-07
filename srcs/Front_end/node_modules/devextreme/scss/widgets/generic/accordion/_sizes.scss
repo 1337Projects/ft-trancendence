@@ -1,0 +1,23 @@
+@use "../sizes" as *;
+
+// adduse
+
+$generic-accordion-title-vertical-padding: null !default;
+$generic-accordion-title-horizontal-padding: null !default;
+$generic-accordion-body-padding: null !default;
+$accordion-title-icon-margin: null !default;
+$generic-accordion-title-icon-size: $generic-base-icon-size !default;
+
+@if $size == "default" {
+  $generic-accordion-title-vertical-padding: 9px !default;
+  $generic-accordion-title-horizontal-padding: 12px !default;
+  $generic-accordion-body-padding: 8px 12px 22px !default;
+  $accordion-title-icon-margin: 6px !default;
+}
+
+@else if $size == "compact" {
+  $generic-accordion-title-vertical-padding: 5px !default;
+  $generic-accordion-title-horizontal-padding: 7px !default;
+  $generic-accordion-body-padding: 3px 7px 12px !default;
+  $accordion-title-icon-margin: 4px !default;
+}

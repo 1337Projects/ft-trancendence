@@ -1,0 +1,22 @@
+{
+  "sideEffects": [
+    "../../../../esm/ui/list/modules/deleting.context.js",
+    "../../../../esm/ui/list/modules/context.js",
+    "../../../../esm/ui/list/ui.list.edit.decorator.context.js",
+    "../../../../esm/events/click.js",
+    "../../../../esm/events/core/emitter.feedback.js",
+    "../../../../esm/events/hover.js",
+    "../../../../esm/ui/list/modules/deleting.slideButton.js",
+    "../../../../esm/ui/list/ui.list.edit.decorator.switchable.button.js",
+    "../../../../esm/ui/list/modules/deleting.slideItem.js",
+    "../../../../esm/ui/list/ui.list.edit.decorator.switchable.slide.js",
+    "../../../../esm/ui/toolbar/ui.toolbar.base.js",
+    "../../../../esm/ui/list/modules/deleting.static.js",
+    "../../../../esm/ui/list/ui.list.edit.decorator.static.js",
+    "../../../../esm/ui/list/modules/deleting.swipe.js",
+    "../../../../esm/ui/list/ui.list.edit.decorator.swipe.js",
+    "../../../../esm/ui/list/modules/deleting.toggle.js"
+  ],
+  "main": "../../../../cjs/ui/list/modules/deleting.js",
+  "module": "../../../../esm/ui/list/modules/deleting.js"
+}

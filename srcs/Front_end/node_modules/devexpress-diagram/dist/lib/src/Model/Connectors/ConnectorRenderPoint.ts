@@ -1,0 +1,39 @@
+import { Point } from "@devexpress/utils/lib/geometry/point";
+
+export class ConnectorRenderPoint extends Point {
+    constructor(x: number, y: number, public pointIndex: number = -1, public skipped: boolean = false) {
+        super(x, y);
+    }
+    offset(offsetX: number, offsetY: number): this {
+        super.offset(offsetX, offsetY);
+        this.pointIndex = -1;
+        this.skipped = false;
+        return this;
+    }
+    multiply(multiplierX: number, multiplierY: number): this {
+        super.multiply(multiplierX, multiplierY);
+        this.pointIndex = -1;
+        this.skipped = false;
+        return this;
+    }
+    clone(): ConnectorRenderPoint { return new ConnectorRenderPoint(this.x, this.y, this.pointIndex, this.skipped); }
+    static equal(p1: ConnectorRenderPoint, p2: ConnectorRenderPoint): boolean {
+        return p1.equals(p2) && p1.pointIndex === p2.pointIndex && p1.skipped === p2.skipped;
+    }
+    toObject(): Record<string, unknown> {
+        return {
+            x: this.x,
+            y: this.y,
+            pointIndex: this.pointIndex,
+            skipped: this.skipped
+        };
+    }
+    static fromObject(obj: Record<string, unknown>): ConnectorRenderPoint {
+        return new ConnectorRenderPoint(
+            <number>obj["x"],
+            <number>obj["y"],
+            <number>obj["pointIndex"],
+            <boolean>obj["skipped"]
+        );
+    }
+}

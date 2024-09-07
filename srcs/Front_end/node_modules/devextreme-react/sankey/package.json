@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/sankey.js",
+  "module": "../esm/sankey.js",
+  "typings": "../cjs/sankey.d.ts"
+}

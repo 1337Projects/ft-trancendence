@@ -1,0 +1,9 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/file_manager/ui.file_manager.file_uploader.js",
+  "module": "../../../esm/ui/file_manager/ui.file_manager.file_uploader.js"
+}

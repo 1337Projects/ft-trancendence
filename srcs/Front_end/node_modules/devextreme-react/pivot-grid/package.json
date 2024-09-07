@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/pivot-grid.js",
+  "module": "../esm/pivot-grid.js",
+  "typings": "../cjs/pivot-grid.d.ts"
+}

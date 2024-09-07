@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/menu.js",
+  "module": "../esm/menu.js",
+  "typings": "../cjs/menu.d.ts"
+}

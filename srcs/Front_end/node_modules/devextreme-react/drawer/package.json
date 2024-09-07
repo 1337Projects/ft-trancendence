@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/drawer.js",
+  "module": "../esm/drawer.js",
+  "typings": "../cjs/drawer.d.ts"
+}

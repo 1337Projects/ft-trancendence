@@ -1,0 +1,50 @@
+@use "sass:math";
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../../base/treeView" as *;
+@use "../../base/icons" as *;
+@use "../checkBox/colors" as *;
+
+.dx-treeview-custom-expand-icon,
+.dx-treeview-custom-collapse-icon {
+  @include dx-icon-sizing($material-base-icon-size);
+}
+
+@include treeview-item(
+  $material-treeview-item-element-gap,
+  $material-treeview-item-padding,
+  $material-base-icon-size,
+  $treeview-hover-bg,
+  $treeview-item-hover-color,
+  $treeview-item-selected-color,
+  $material-treeview-toggle-item-width + $material-treeview-item-element-gap,
+);
+@include default-expander-icon(
+  'chevrondown',
+  'chevronright', 
+  $material-base-icon-size,
+  $material-treeview-toggle-item-width,
+  $treeview-spin-icon-color,
+);
+@include treeview-checkbox(
+  $material-checkbox-container-size,
+  $base-text-color,
+  $checkbox-border-color-focused,
+  $treeview-item-selected-color,
+  $treeview-item-selected-bg,
+  $treeview-focused-bg,
+  $treeview-focus-color
+);
+@include treeview-aux-items(
+  $material-treeview-searchbox-margin-bottom,
+  $material-treeview-search-editor-height,
+  $treeview-border-color,
+  $material-select-all-item-padding,
+  $material-treeview-item-element-gap,
+  $material-select-all-item-border-visible-padding,
+  $material-treeview-container-padding,
+  $material-treeview-load-indicator-size,
+);

@@ -1,0 +1,166 @@
+import { Point } from "@devexpress/utils/lib/geometry/point";
+import { History } from "../../History/History";
+import { Connector } from "../../Model/Connectors/Connector";
+import { ConnectorRenderPointsContext } from "../../Model/Connectors/Routing/ConnectorRenderPointsContext";
+import { ItemKey } from "../../Model/DiagramItem";
+import { DiagramModel } from "../../Model/Model";
+import { ModelUtils } from "../../Model/ModelUtils";
+import { Shape } from "../../Model/Shapes/Shape";
+import { DiagramModelOperation } from "../../ModelOperationSettings";
+import { Selection } from "../../Selection/Selection";
+import { DiagramMouseEvent, MouseButton, MouseEventElementType } from "../Event";
+import { MouseHandler } from "../MouseHandler";
+import { IVisualizerManager } from "../Visualizers/VisualizersManager";
+import { MouseHandlerDraggingState } from "./MouseHandlerDraggingState";
+import { SelectionDragHelper } from "../../Model/Helpers/DragHelper";
+
+export class DraggingConnector {
+    readonly startPoints: Point[];
+    readonly startRenderContext: ConnectorRenderPointsContext | undefined;
+    constructor(readonly connector: Connector) {
+        this.startPoints = connector.points.map(x => x.clone());
+        this.startRenderContext = connector.tryCreateRenderPointsContext();
+    }
+}
+
+export abstract class MouseHandlerDragDiagramItemStateBase extends MouseHandlerDraggingState {
+    private fixedX: boolean;
+    private fixedY: boolean;
+    private lockInitDrag: boolean;
+    dragHelper: SelectionDragHelper;
+
+    startPoint: Point;
+    startScrollLeft = 0;
+    startScrollTop = 0;
+    shouldClone: boolean;
+
+    protected constructor(handler: MouseHandler, history: History,
+        protected model: DiagramModel,
+        protected selection: Selection,
+        protected visualizerManager: IVisualizerManager) {
+        super(handler, history);
+    }
+
+    protected abstract get areValidDraggingShapes(): boolean;
+    protected abstract get areValidDraggingConnectors(): boolean;
+
+    finish(): void {
+        this.visualizerManager.resetExtensionLines();
+        this.visualizerManager.resetContainerTarget();
+        this.visualizerManager.resetConnectionTarget();
+        this.visualizerManager.resetConnectionPoints();
+        super.finish();
+    }
+    onMouseDown(evt: DiagramMouseEvent): void {
+        this.handler.addDiagramItemToSelection(evt);
+        this.shouldClone = this.handler.canCopySelectedItems(evt);
+        this.startPoint = evt.modelPoint;
+        this.initDrag();
+        this.lockInitDrag = false;
+        super.onMouseDown(evt);
+    }
+
+    onMouseMove(evt: DiagramMouseEvent): void {
+        this.mouseMoveEvent = evt;
+        if(evt.button !== MouseButton.Left) {
+            this.cancelChanges();
+            this.handler.switchToDefaultState();
+            return;
+        }
+        if(!this.canApplyChangesOnMouseMove(this.startPoint, evt.modelPoint))
+            return;
+        if(this.handler.canCopySelectedItems(evt))
+            if(!this.lockInitDrag) {
+                this.cancelChanges();
+                this.shouldClone = true;
+                this.copySelection();
+                this.initDrag();
+                this.lockInitDrag = true;
+            }
+
+        this.onApplyChanges(evt);
+        this.onAfterApplyChanges();
+        this.updateContainers(evt);
+    }
+    private updateContainers(evt: DiagramMouseEvent) : void {
+        this.visualizerManager.setExtensionLines(this.selection.getSelectedShapes(false, true));
+        const container = ModelUtils.findContainerByEventKey(this.model, this.selection, evt.source.key);
+        if(container && this.allowInsertToContainer(evt, container))
+            this.visualizerManager.setContainerTarget(container, evt.source.type);
+        else
+            this.visualizerManager.resetContainerTarget();
+    }
+    onMouseUp(evt: DiagramMouseEvent) : void {
+        super.onMouseUp(evt);
+        if(this.handler.canRemoveDiagramItemToSelection(evt) && this.handler.canMultipleSelection(evt))
+            this.handler.removeDiagramItemFromSelection(evt.button, evt.source.key);
+    }
+    onApplyChanges(evt: DiagramMouseEvent): void {
+        this.calculateFixedPosition(evt);
+        this.dragHelper.move(this.shouldClone, (pt) => this.getSnappedPoint(evt, pt), () => {
+            this.visualizerManager.resetConnectionTarget();
+            this.visualizerManager.resetConnectionPoints();
+        },
+        (shape, connectionPointIndex) => {
+            this.visualizerManager.setConnectionTarget(shape, MouseEventElementType.Shape);
+            this.visualizerManager.setConnectionPoints(shape, MouseEventElementType.Shape, connectionPointIndex, true);
+        });
+        const container = ModelUtils.findContainerByEventKey(this.model, this.selection, evt.source.key);
+        if(container && this.allowInsertToContainer(evt, container))
+            ModelUtils.insertSelectionToContainer(this.history, this.model, this.selection, container);
+        else
+            ModelUtils.removeSelectionFromContainer(this.history, this.model, this.selection);
+        this.handler.tryUpdateModelSize((offsetLeft, offsetTop) => this.dragHelper.onTryUpdateModelSize(offsetLeft, offsetTop));
+    }
+    getDraggingElementKeys(): ItemKey[] {
+        return this.dragHelper.draggingShapes.map(x => x.shape.key).concat(this.dragHelper.draggingConnectors.map(x => x.connector.key));
+    }
+    getSnappedPoint(evt: DiagramMouseEvent, point: Point): Point {
+        return this.handler.getSnappedPointOnDragDiagramItem(evt, point, this.fixedX, this.fixedY, this.startPoint);
+    }
+
+    private initDrag() : void {
+        this.dragHelper = new SelectionDragHelper(this.history, this.model, this.handler.permissionsProvider, this.startPoint, this.selection.getSelectedItems(true));
+        this.initDraggingShapes();
+
+        if(!this.areValidDraggingShapes) {
+            this.handler.switchToDefaultState();
+            return;
+        }
+        this.initDraggingConnectors();
+        if(!this.areValidDraggingConnectors) {
+            this.handler.switchToDefaultState();
+            return;
+        }
+    }
+    private initDraggingShapes() {
+        this.dragHelper.initDraggingShapes(this.selection.getSelectedShapes(false, true), this.shouldClone);
+    }
+    private initDraggingConnectors(): void {
+        this.dragHelper.initDraggingConnectors(this.selection.getSelectedConnectors(false, true), this.shouldClone);
+    }
+    private copySelection() : void {
+        ModelUtils.cloneSelectionToOffset(this.history, this.model, (key: ItemKey) => {
+            const item = this.model.findItem(key);
+            if(item)
+                this.handler.addInteractingItem(item, DiagramModelOperation.AddShape);
+        }, this.selection, 0, 0);
+    }
+    private calculateFixedPosition(evt: DiagramMouseEvent) {
+        this.fixedX = false;
+        this.fixedY = false;
+        if(this.handler.canCalculateFixedPosition(evt)) {
+            const dx = Math.abs(this.startPoint.x - evt.modelPoint.x);
+            const dy = Math.abs(this.startPoint.y - evt.modelPoint.y);
+            if(dx < dy)
+                this.fixedX = true;
+            else
+                this.fixedY = true;
+        }
+    }
+    private allowInsertToContainer(evt: DiagramMouseEvent, container: Shape): boolean {
+        if(this.handler.canMultipleSelection(evt))
+            return false;
+        return container && container.expanded && ModelUtils.canInsertSelectionToContainer(this.model, this.selection, container);
+    }
+}

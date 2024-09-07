@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tab-panel.js",
+  "module": "../esm/tab-panel.js",
+  "typings": "../cjs/tab-panel.d.ts"
+}

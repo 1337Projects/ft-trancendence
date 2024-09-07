@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/form.js",
+  "module": "../esm/form.js",
+  "typings": "../cjs/form.d.ts"
+}

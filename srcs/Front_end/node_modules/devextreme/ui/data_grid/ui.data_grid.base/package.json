@@ -1,0 +1,22 @@
+{
+  "sideEffects": [
+    "../../../esm/__internal/grids/data_grid/module_not_extended/column_headers.js",
+    "../../../esm/localization/currency.js",
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js",
+    "../../../esm/__internal/grids/data_grid/m_columns_controller.js",
+    "../../../esm/__internal/grids/data_grid/m_data_controller.js",
+    "../../../esm/__internal/grids/data_grid/module_not_extended/sorting.js",
+    "../../../esm/__internal/grids/data_grid/module_not_extended/rows.js",
+    "../../../esm/__internal/grids/data_grid/module_not_extended/context_menu.js",
+    "../../../esm/__internal/grids/data_grid/module_not_extended/error_handling.js",
+    "../../../esm/__internal/grids/data_grid/module_not_extended/grid_view.js",
+    "../../../esm/__internal/grids/data_grid/module_not_extended/header_panel.js",
+    "../../../esm/ui/popup.js",
+    "../../../esm/ui/toolbar.js",
+    "../../../esm/ui/toolbar/ui.toolbar.base.js"
+  ],
+  "main": "../../../cjs/ui/data_grid/ui.data_grid.base.js",
+  "module": "../../../esm/ui/data_grid/ui.data_grid.base.js"
+}

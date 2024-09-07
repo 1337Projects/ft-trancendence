@@ -1,0 +1,29 @@
+@use "../icons" as *;
+
+@mixin dx-lookup-arrow(
+  $spin-icon-glyph,
+  $spin-icon-glyph-rtl,
+  $arror-width,
+  $icon-color,
+  $icon-color-active,
+  $icon-size,
+) {
+  .dx-lookup-arrow {
+    @include dx-icon($spin-icon-glyph);
+  
+    .dx-rtl & {
+      &::before {
+        content: $spin-icon-glyph-rtl;
+      }
+    }
+  
+    width: $arror-width;
+    color: $icon-color;
+
+    .dx-dropdowneditor-active & {
+      color: $icon-color-active;
+    }
+  
+    @include dx-icon-font-centered-sizing($icon-size);
+  }
+}

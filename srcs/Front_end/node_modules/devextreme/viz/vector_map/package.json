@@ -1,0 +1,9 @@
+{
+  "sideEffects": [
+    "../../esm/viz/vector_map/projection.js",
+    "../../esm/localization/currency.js"
+  ],
+  "main": "../../cjs/viz/vector_map.js",
+  "module": "../../esm/viz/vector_map.js",
+  "typings": "../vector_map.d.ts"
+}

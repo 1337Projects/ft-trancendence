@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/check-box.js",
+  "module": "../esm/check-box.js",
+  "typings": "../cjs/check-box.d.ts"
+}

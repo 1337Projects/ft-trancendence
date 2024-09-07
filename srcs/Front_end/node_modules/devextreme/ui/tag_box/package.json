@@ -1,0 +1,13 @@
+{
+  "sideEffects": [
+    "../../esm/ui/list/modules/selection.js",
+    "../../esm/ui/list/ui.list.edit.decorator.selection.js",
+    "../../esm/events/click.js",
+    "../../esm/events/core/emitter.feedback.js",
+    "../../esm/events/hover.js",
+    "../../esm/ui/toolbar/ui.toolbar.base.js"
+  ],
+  "main": "../../cjs/ui/tag_box.js",
+  "module": "../../esm/ui/tag_box.js",
+  "typings": "../tag_box.d.ts"
+}

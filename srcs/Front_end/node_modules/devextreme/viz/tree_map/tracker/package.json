@@ -1,0 +1,13 @@
+{
+  "sideEffects": [
+    "../../../esm/viz/tree_map/tiling.squarified.js",
+    "../../../esm/viz/tree_map/colorizing.discrete.js",
+    "../../../esm/viz/tree_map/api.js",
+    "../../../esm/viz/tree_map/hover.js",
+    "../../../esm/viz/tree_map/states.js",
+    "../../../esm/viz/tree_map/tooltip.js",
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/tree_map/tracker.js",
+  "module": "../../../esm/viz/tree_map/tracker.js"
+}

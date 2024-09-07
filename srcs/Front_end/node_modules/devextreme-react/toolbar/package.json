@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/toolbar.js",
+  "module": "../esm/toolbar.js",
+  "typings": "../cjs/toolbar.d.ts"
+}

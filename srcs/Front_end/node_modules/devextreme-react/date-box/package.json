@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/date-box.js",
+  "module": "../esm/date-box.js",
+  "typings": "../cjs/date-box.d.ts"
+}

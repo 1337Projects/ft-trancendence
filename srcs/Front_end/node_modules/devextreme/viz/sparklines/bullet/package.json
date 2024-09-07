@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/sparklines/bullet.js",
+  "module": "../../../esm/viz/sparklines/bullet.js"
+}

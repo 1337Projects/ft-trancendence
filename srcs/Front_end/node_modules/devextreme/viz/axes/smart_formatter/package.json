@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/axes/smart_formatter.js",
+  "module": "../../../esm/viz/axes/smart_formatter.js"
+}

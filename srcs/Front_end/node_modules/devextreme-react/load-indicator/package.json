@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/load-indicator.js",
+  "module": "../esm/load-indicator.js",
+  "typings": "../cjs/load-indicator.d.ts"
+}

@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/bar-gauge.js",
+  "module": "../esm/bar-gauge.js",
+  "typings": "../cjs/bar-gauge.d.ts"
+}

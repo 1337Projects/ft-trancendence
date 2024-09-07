@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/responsive-box.js",
+  "module": "../esm/responsive-box.js",
+  "typings": "../cjs/responsive-box.d.ts"
+}

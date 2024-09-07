@@ -1,0 +1,435 @@
+@forward "./variables";
+@use "./variables" as *;
+@use "sass:color";
+@use "./color" as extcolor;
+$color: null !default;
+
+$generic-color-postfix: null !default;
+
+/**
+* $name 10. Font family
+* $type text
+*/
+$base-font-family: 'Helvetica Neue', 'Segoe UI', helvetica, verdana, sans-serif !default;
+
+/**
+* $name 10. Accent color
+* $type color
+*/
+$base-accent: null !default;
+
+/**
+* $name 20. Label color
+* $type color
+*/
+$base-label-color: null !default;
+
+/**
+* $name 30. Link color
+* $type color
+*/
+$base-link-color: null !default;
+
+/**
+* $name 40. Icon color
+* $type color
+*/
+$base-icon-color: null !default;
+
+/**
+* $name 20. Text color
+* $type color
+*/
+$base-text-color: null !default;
+
+/**
+* $name 30. Background color
+* $type color
+*/
+$base-bg: null !default;
+
+/**
+* $name 40. Border color
+* $type color
+*/
+$base-border-color: null !default;
+
+/**
+* $name 120. Border radius
+* $type text
+*/
+$base-border-radius: null !default;
+$base-border-radius-exsmall: null !default;
+$base-inverted-bg: null !default;
+$base-element-bg: null !default;
+$base-shadow-color: null !default;
+
+/**
+* $name 50. Success color
+* $type color
+*/
+$base-success: null !default;
+
+/**
+* $name 60. Warning color
+* $type color
+*/
+$base-warning: null !default;
+
+/**
+* $name 70. Danger color
+* $type color
+*/
+$base-danger: null !default;
+$typography-bg: null !default;
+$typography-color: null !default;
+$typography-link-color: null !default;
+
+/**
+* $name 80. Hover state text color
+* $type color
+*/
+$base-hover-color: null !default;
+
+/**
+* $name 90. Hover state background color
+* $type color
+*/
+$base-hover-bg: null !default;
+$base-select-color: null !default;
+$base-select-bg: null !default;
+$base-inverted-text-color: null !default;
+
+/**
+* $name 100. Focused state text color
+* $type color
+*/
+$base-focus-color: null !default;
+
+/**
+* $name 110. Focused state background color
+* $type color
+*/
+$base-focus-bg: null !default;
+$base-inverted-icon-color: null !default;
+$base-disabled-opacity: 0.5 !default;
+$base-dropdown-shadow-color: null !default;
+
+/**
+* $name 1. Invalid widget state - active color
+* $type color
+*/
+$base-invalid-color: null !default;
+
+/**
+* $name 2. Invalid widget state - border color
+* $type color
+*/
+$base-invalid-faded-border-color: null !default;
+$base-header-color: null !default;
+
+$scrollview-pulldown-path: null !default;
+$base-default: null !default;
+$base-info: null !default;
+$screen-text-color: null !default;
+$base-grid-selected-border-color: null !default;
+$base-accent-highlight-color: null !default;
+$base-row-alternation-background: null !default;
+$base-selected-border: null !default;
+$base-webwidget-hover-background: null !default;
+$base-grid-selection-background: null !default;
+$base-grid-selectedrow-border-color: null !default;
+
+@if $color == "carmine" {
+  $generic-color-postfix: ".carmine" !default;
+  $base-accent: #f05b41 !default;
+  $base-label-color: #8899a8 !default;
+  $base-link-color: $base-accent !default;
+  $base-icon-color: $base-label-color !default;
+  $base-text-color: #333 !default;
+  $base-bg: #fff !default;
+  $base-border-color: #dee1e3 !default;
+  $base-border-radius: 2px !default;
+  $base-border-radius-exsmall: $base-border-radius - 2px !default;
+  $base-inverted-bg: darken($base-bg, 100%) !default;
+  $base-element-bg: $base-bg !default;
+  $base-shadow-color: $base-inverted-bg !default;
+  $base-success: #5cb85c !default;
+  $base-warning: #f0ad4e !default;
+  $base-danger: #f74d61 !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-hover-color: $base-text-color !default;
+  $base-hover-bg: color.change($base-accent, $alpha: 0.12) !default;
+  $base-select-color: $base-text-color !default;
+  $base-select-bg: lighten($base-accent, 21%) !default;
+  $base-inverted-text-color: #fff !default;
+  $base-focus-color: $base-inverted-text-color !default;
+  $base-focus-bg: $base-accent !default;
+  $base-inverted-icon-color: $base-inverted-text-color !default;
+  $base-dropdown-shadow-color: color.change($base-shadow-color, $alpha: 0.175) !default;
+  $base-invalid-color: $base-danger !default;
+  $base-invalid-faded-border-color: color.change($base-invalid-color, $alpha: 0.4) !default;
+  $base-header-color: #627789 !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkCAQAAABebbrxAAABD0lEQVRo3u2XvQ3CMBCFLbmjYYGsAA2wA1X2gAbEAEwB2eIKflagh6zACJAuUihASUic+M5GNH56dT7J8efTPUXKkDkzrS8LpQAEMBygcwAss2UGQADDBmLa+AMvzAAIYNhATBt/YMEMgACGDcS0wbQBEEAAAQQQwD8CEzaiL7sKqOnojTuQrh95SKkX7kqD5j+M6O6Mu1NkupQJZU64B426bjmmXIzLKe7TZiUGLmweyhTa28XWdJKpYn8pXIVub1U4T4+jUKkKbyWeWhR6Vqpwd+w+hb5U4S/ta54qkhZgVihxrxWaznZVZD2lqVDaVkVafOoKGVWRN6nZR6GMxr+qZjHl3aq4db0NLXld7wVjuu7NS9f7yAAAAABJRU5ErkJggg==") !default;
+}
+
+@if $color == "contrast" {
+  $generic-color-postfix: ".contrast" !default;
+  $base-bg: #000 !default;
+  $base-inverted-bg: extcolor.difference(#fff, $base-bg) !default;
+  $base-border-color: #fff !default;
+  $base-border-radius: 4px !default;
+  $base-accent: #cf00d7 !default;
+  $base-hover-color: $base-accent !default;
+  $base-focus-color: $base-accent !default;
+  $base-shadow-color: transparent !default;
+  $base-default: #52bbe7 !default;
+  $base-success: #71c35e !default;
+  $base-danger: #ee5959 !default;
+  $base-warning: #ffb277 !default;
+  $base-info: #80b9e4 !default;
+  $base-text-color: #fff !default;
+  $base-icon-color: #fff !default;
+  $base-inverted-text-color: extcolor.difference(#fff, $base-text-color) !default;
+  $base-inverted-icon-color: extcolor.difference(#fff, $base-text-color) !default;
+  $base-link-color: $base-text-color !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-invalid-color: #ea4444 !default;
+  $base-invalid-faded-border-color: $base-invalid-color !default;
+  $base-label-color: $base-text-color !default;
+  $base-dropdown-shadow-color: $base-shadow-color !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAyCAQAAAD2dTOtAAAAnUlEQVRIx2P4zwCHvlggXJZhcCjEC8lS2IAFDlmF1A+eM1jgkFVI/eDBBoasQuoHD9EK6/5fwoBYFc4k1jOjCumiUOv/gf+HwfA5FoWHobAUpDrq/5//+MGW/2wQg2PxKt3+nw3hxgScyvb+50T1TBo+Zai+zsTiFU7sKTwHTRkP7qxQCld2DFkZtjxTDVZ28j8/4cxVDSzu+MnOhQAuYS22p7h2vAAAAABJRU5ErkJggg==") !default;
+}
+
+@if $color == "dark" {
+  $generic-color-postfix: ".dark" !default;
+  $base-accent: #1ca8dd !default;
+  $base-text-color: #dedede !default;
+  $base-bg: #2a2a2a !default;
+  $base-border-color: #4d4d4d !default;
+  $base-label-color: $base-text-color !default;
+  $base-link-color: $base-accent !default;
+  $base-icon-color: $base-text-color !default;
+  $base-border-radius: 4px !default;
+  $base-border-radius-exsmall: $base-border-radius - 2px !default;
+  $base-inverted-bg: lighten($base-bg, 100%) !default;
+  $base-element-bg: $base-bg !default;
+  $base-shadow-color: #000 !default;
+  $base-success: #5cb85c !default;
+  $base-warning: #f0ad4e !default;
+  $base-danger: #d9534f !default;
+  $base-hover-color: $base-text-color !default;
+  $base-hover-bg: color.change(#fff, $alpha: 0.05) !default;
+  $base-select-color: $base-text-color !default;
+  $base-select-bg: color.change(#fff, $alpha: 0.12) !default;
+  $base-inverted-text-color: #2a2a2a !default;
+  $base-focus-color: $base-inverted-text-color !default;
+  $base-focus-bg: $base-accent !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-inverted-icon-color: $base-inverted-text-color !default;
+  $base-dropdown-shadow-color: color.change($base-shadow-color, $alpha: 0.175) !default;
+  $base-invalid-color: $base-danger !default;
+  $base-invalid-faded-border-color: color.change($base-invalid-color, $alpha: 0.4) !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAyCAQAAAD2dTOtAAAApElEQVRIx2OYxQCHvlggw38oZBgcCrFCihQ2YIFDViH1g+cMFjhkFVI/eP5jgUNWIfWDh2iFdbMuYUCsCmcS65lRhXRRqDXrwKzDYPgci8LDUFgKMilq1h+saREBt8xig1gai1fp9llsCDcm4FS2dxYnqmfS8ClD9XUmFq9wYk/hOWjKeHBnhVK4smMgZfjyTDVY2clZ/IQzVzWwuOPHyFz/iYQAhMbywidpE3YAAAAASUVORK5CYII=") !default;
+}
+
+@if $color == "darkmoon" {
+  $generic-color-postfix: ".darkmoon" !default;
+  $base-label-color: #c1c7c9 !default;
+  $base-icon-color: #aab2b5 !default;
+  $base-accent: #3debd3 !default;
+  $base-text-color: #fff !default;
+  $base-link-color: $base-accent !default;
+  $base-bg: #465672 !default;
+  $base-border-color: #596980 !default;
+  $base-border-radius: 2px !default;
+  $base-border-radius-exsmall: $base-border-radius - 2px !default;
+  $base-inverted-bg: darken($base-bg, 100%) !default;
+  $base-element-bg: $base-bg !default;
+  $base-success: #59d8a4 !default;
+  $base-warning: #f0ad4e !default;
+  $base-danger: #f9517e !default;
+  $base-hover-color: $base-text-color !default;
+  $base-hover-bg: color.change(#000, $alpha: 0.12) !default;
+  $base-shadow-color: $base-inverted-bg !default;
+  $base-select-color: $base-text-color !default;
+  $base-select-bg: color.change(#748fbc, $alpha: 0.42) !default;
+  $base-inverted-text-color: #2a2a2a !default;
+  $base-focus-color: $base-inverted-text-color !default;
+  $base-focus-bg: $base-accent !default;
+  $base-inverted-bg: darken($base-bg, 100%) !default;
+  $base-shadow-color: $base-inverted-bg !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-inverted-icon-color: $base-inverted-text-color !default;
+  $base-dropdown-shadow-color: color.change(darken($base-shadow-color, 100%), $alpha: 0.175) !default;
+  $base-invalid-color: $base-danger !default;
+  $base-invalid-faded-border-color: color.change($base-invalid-color, $alpha: 0.4) !default;
+  $screen-text-color: extcolor.screen($base-bg, #686868) !default;
+  $base-grid-selected-border-color: #45c7de !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAyCAQAAAD2dTOtAAAApElEQVRIx2OYxQCHvlggw38oZBgcCrFCihQ2YIFDViH1g+cMFjhkFVI/eP5jgUNWIfWDh2iFdbMuYUCsCmcS65lRhXRRqDXrwKzDYPgci8LDUFgKMilq1h+saREBt8xig1gai1fp9llsCDcm4FS2dxYnqmfS8ClD9XUmFq9wYk/hOWjKeHBnhVK4smMgZfjyTDVY2clZ/IQzVzWwuOPHyFz/iYQAhMbywidpE3YAAAAASUVORK5CYII=") !default;
+}
+
+@if $color == "darkviolet" {
+  $generic-color-postfix: ".darkviolet" !default;
+  $base-link-color: #83a2c7 !default;
+  $base-icon-color: #fff !default;
+  $base-accent: #9c63ff !default;
+  $base-text-color: #f5f6f7 !default;
+  $base-label-color: $base-text-color !default;
+  $base-bg: #17171f !default;
+  $base-border-color: #343840 !default;
+  $base-border-radius: 1px !default;
+  $base-border-radius-exsmall: $base-border-radius - 2px !default;
+  $base-inverted-bg: lighten($base-bg, 100%) !default;
+  $base-element-bg: $base-bg !default;
+  $base-shadow-color: #000 !default;
+  $base-success: #5cb85c !default;
+  $base-warning: #f0ad4e !default;
+  $base-danger: #d9534f !default;
+  $base-hover-color: $base-text-color !default;
+  $base-hover-bg: color.change(#9e9ec5, $alpha: 0.3) !default;
+  $base-select-color: $base-text-color !default;
+  $base-select-bg: #573199 !default;
+  $base-inverted-text-color: #2a2a2a !default;
+  $base-focus-color: $base-inverted-text-color !default;
+  $base-focus-bg: $base-accent !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-inverted-icon-color: $base-inverted-text-color !default;
+  $base-header-color: #8894a0 !default;
+  $base-row-alternation-background: #1d2026 !default;
+  $base-selected-border: #6c48a8 !default;
+  $base-accent-highlight-color: #6b2bd9 !default;
+  $base-dropdown-shadow-color: color.change($base-shadow-color, $alpha: 0.175) !default;
+  $base-invalid-color: $base-danger !default;
+  $base-invalid-faded-border-color: color.change($base-invalid-color, $alpha: 0.4) !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAyCAQAAAD2dTOtAAAApElEQVRIx2OYxQCHvlggw38oZBgcCrFCihQ2YIFDViH1g+cMFjhkFVI/eP5jgUNWIfWDh2iFdbMuYUCsCmcS65lRhXRRqDXrwKzDYPgci8LDUFgKMilq1h+saREBt8xig1gai1fp9llsCDcm4FS2dxYnqmfS8ClD9XUmFq9wYk/hOWjKeHBnhVK4smMgZfjyTDVY2clZ/IQzVzWwuOPHyFz/iYQAhMbywidpE3YAAAAASUVORK5CYII=") !default;
+}
+
+@if $color == "greenmist" {
+  $generic-color-postfix: ".greenmist" !default;
+  $base-label-color: #728e94 !default;
+  $base-link-color: #3eb8b0 !default;
+  $base-icon-color: $base-label-color !default;
+  $base-accent: #3cbab2 !default;
+  $base-text-color: #28484f !default;
+  $base-bg: #f5f5f5 !default;
+  $base-border-color: darken($base-bg, 9%) !default;
+  $base-border-radius: 2px !default;
+  $base-border-radius-exsmall: $base-border-radius - 2px !default;
+  $base-inverted-bg: darken($base-bg, 100%) !default;
+  $base-element-bg: $base-bg !default;
+  $base-shadow-color: $base-inverted-bg !default;
+  $base-success: #72d63c !default;
+  $base-warning: #ffc852 !default;
+  $base-danger: #f74a5e !default;
+  $base-hover-color: $base-text-color !default;
+  $base-hover-bg: color.change(#000, $alpha: 0.04) !default;
+  $base-select-color: $base-text-color !default;
+  $base-select-bg: color.change(#000, $alpha: 0.1) !default;
+  $base-inverted-text-color: #fff !default;
+  $base-focus-color: $base-inverted-text-color !default;
+  $base-focus-bg: $base-accent !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-inverted-icon-color: $base-inverted-text-color !default;
+  $base-dropdown-shadow-color: color.change($base-shadow-color, $alpha: 0.175) !default;
+  $base-invalid-color: $base-danger !default;
+  $base-invalid-faded-border-color: color.change($base-invalid-color, $alpha: 0.4) !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkCAQAAABebbrxAAABD0lEQVRo3u2XvQ3CMBCFLbmjYYGsAA2wA1X2gAbEAEwB2eIKflagh6zACJAuUihASUic+M5GNH56dT7J8efTPUXKkDkzrS8LpQAEMBygcwAss2UGQADDBmLa+AMvzAAIYNhATBt/YMEMgACGDcS0wbQBEEAAAQQQwD8CEzaiL7sKqOnojTuQrh95SKkX7kqD5j+M6O6Mu1NkupQJZU64B426bjmmXIzLKe7TZiUGLmweyhTa28XWdJKpYn8pXIVub1U4T4+jUKkKbyWeWhR6Vqpwd+w+hb5U4S/ta54qkhZgVihxrxWaznZVZD2lqVDaVkVafOoKGVWRN6nZR6GMxr+qZjHl3aq4db0NLXld7wVjuu7NS9f7yAAAAABJRU5ErkJggg==") !default;
+}
+
+@if $color == "light" {
+  $generic-color-postfix: ".light" !default;
+  $base-accent: #337ab7 !default;
+  $base-text-color: #333 !default;
+  $base-label-color: $base-text-color !default;
+  $base-link-color: $base-accent !default;
+  $base-icon-color: $base-text-color !default;
+  $base-bg: #fff !default;
+  $base-border-color: #ddd !default;
+  $base-border-radius: 4px !default;
+  $base-border-radius-exsmall: $base-border-radius - 2px !default;
+  $base-inverted-bg: darken($base-bg, 100%) !default;
+  $base-element-bg: $base-bg !default;
+  $base-success: #5cb85c !default;
+  $base-warning: #f0ad4e !default;
+  $base-danger: #d9534f !default;
+  $base-hover-color: $base-text-color !default;
+  $base-hover-bg: color.change(#000, $alpha: 0.04) !default;
+  $base-shadow-color: $base-inverted-bg !default;
+  $base-select-color: $base-text-color !default;
+  $base-select-bg: color.change(#000, $alpha: 0.1) !default;
+  $base-inverted-text-color: #fff !default;
+  $base-focus-color: $base-inverted-text-color !default;
+  $base-focus-bg: $base-accent !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-inverted-icon-color: $base-inverted-text-color !default;
+  $base-dropdown-shadow-color: color.change($base-shadow-color, $alpha: 0.175) !default;
+  $base-invalid-color: $base-danger !default;
+  $base-invalid-faded-border-color: color.change($base-invalid-color, $alpha: 0.4) !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkCAQAAABebbrxAAABD0lEQVRo3u2XvQ3CMBCFLbmjYYGsAA2wA1X2gAbEAEwB2eIKflagh6zACJAuUihASUic+M5GNH56dT7J8efTPUXKkDkzrS8LpQAEMBygcwAss2UGQADDBmLa+AMvzAAIYNhATBt/YMEMgACGDcS0wbQBEEAAAQQQwD8CEzaiL7sKqOnojTuQrh95SKkX7kqD5j+M6O6Mu1NkupQJZU64B426bjmmXIzLKe7TZiUGLmweyhTa28XWdJKpYn8pXIVub1U4T4+jUKkKbyWeWhR6Vqpwd+w+hb5U4S/ta54qkhZgVihxrxWaznZVZD2lqVDaVkVafOoKGVWRN6nZR6GMxr+qZjHl3aq4db0NLXld7wVjuu7NS9f7yAAAAABJRU5ErkJggg==") !default;
+}
+
+@if $color == "softblue" {
+  $generic-color-postfix: ".softblue" !default;
+  $base-icon-color: #99a1a8 !default;
+  $base-accent: #7ab8eb !default;
+  $base-text-color: #333 !default;
+  $base-label-color: #8c8c8c !default;
+  $base-link-color: $base-accent !default;
+  $base-bg: #fff !default;
+  $base-border-color: #e8eaeb !default;
+  $base-border-radius: 2px !default;
+  $base-border-radius-exsmall: $base-border-radius - 2px !default;
+  $base-inverted-bg: darken($base-bg, 100%) !default;
+  $base-element-bg: $base-bg !default;
+  $base-success: #5cb85c !default;
+  $base-warning: #f0ad4e !default;
+  $base-danger: #d9534f !default;
+  $base-hover-color: $base-text-color !default;
+  $base-hover-bg: color.change(#000, $alpha: 0.04) !default;
+  $base-shadow-color: $base-inverted-bg !default;
+  $base-select-color: $base-text-color !default;
+  $base-select-bg: color.change(#000, $alpha: 0.1) !default;
+  $base-inverted-text-color: #fff !default;
+  $base-focus-color: $base-inverted-text-color !default;
+  $base-focus-bg: $base-accent !default;
+  $base-inverted-bg: darken($base-bg, 100%) !default;
+  $base-shadow-color: $base-inverted-bg !default;
+  $typography-bg: $base-bg !default;
+  $typography-color: $base-text-color !default;
+  $typography-link-color: $base-link-color !default;
+  $base-inverted-icon-color: $base-inverted-text-color !default;
+  $base-webwidget-hover-background: #edf0f2 !default;
+  $base-grid-selection-background: #d1e0ed !default;
+  $base-grid-selectedrow-border-color: #e1ecf5 !default;
+  $base-dropdown-shadow-color: color.change($base-shadow-color, $alpha: 0.175) !default;
+  $base-invalid-color: $base-danger !default;
+  $base-invalid-faded-border-color: color.change($base-invalid-color, $alpha: 0.4) !default;
+
+  $scrollview-pulldown-path: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkCAQAAABebbrxAAABD0lEQVRo3u2XvQ3CMBCFLbmjYYGsAA2wA1X2gAbEAEwB2eIKflagh6zACJAuUihASUic+M5GNH56dT7J8efTPUXKkDkzrS8LpQAEMBygcwAss2UGQADDBmLa+AMvzAAIYNhATBt/YMEMgACGDcS0wbQBEEAAAQQQwD8CEzaiL7sKqOnojTuQrh95SKkX7kqD5j+M6O6Mu1NkupQJZU64B426bjmmXIzLKe7TZiUGLmweyhTa28XWdJKpYn8pXIVub1U4T4+jUKkKbyWeWhR6Vqpwd+w+hb5U4S/ta54qkhZgVihxrxWaznZVZD2lqVDaVkVafOoKGVWRN6nZR6GMxr+qZjHl3aq4db0NLXld7wVjuu7NS9f7yAAAAABJRU5ErkJggg==") !default;
+}
+
+$base-border-radius-small: $base-border-radius - 1px !default;
+$base-border-radius-large: $base-border-radius + 2px !default;
+

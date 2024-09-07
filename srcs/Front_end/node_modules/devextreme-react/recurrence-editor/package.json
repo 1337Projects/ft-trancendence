@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/recurrence-editor.js",
+  "module": "../esm/recurrence-editor.js",
+  "typings": "../cjs/recurrence-editor.d.ts"
+}

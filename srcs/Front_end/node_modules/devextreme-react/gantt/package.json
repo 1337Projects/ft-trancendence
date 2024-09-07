@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/gantt.js",
+  "module": "../esm/gantt.js",
+  "typings": "../cjs/gantt.d.ts"
+}

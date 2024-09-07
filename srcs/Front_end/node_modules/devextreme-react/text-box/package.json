@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/text-box.js",
+  "module": "../esm/text-box.js",
+  "typings": "../cjs/text-box.d.ts"
+}

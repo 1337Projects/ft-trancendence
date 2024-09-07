@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../../esm/ui/list/ui.list.edit.decorator.reorder.js"
+  ],
+  "main": "../../../../cjs/ui/list/modules/dragging.js",
+  "module": "../../../../esm/ui/list/modules/dragging.js"
+}

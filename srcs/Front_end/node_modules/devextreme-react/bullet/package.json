@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/bullet.js",
+  "module": "../esm/bullet.js",
+  "typings": "../cjs/bullet.d.ts"
+}

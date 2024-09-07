@@ -1,0 +1,74 @@
+@use "./mixins" as *;
+
+// adduse
+
+.dx-tagbox {
+  .dx-texteditor-input {
+    width: auto;
+  }
+
+  &.dx-tagbox-default-template {
+    &.dx-tagbox-only-select {
+      .dx-texteditor-input {
+        @include hide-input-cursor(); // T278002
+
+        min-width: 0;
+        width: 0.1px; // T393423, T437866
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+  }
+
+  &.dx-state-disabled {
+    .dx-texteditor-input {
+      background: none;
+    }
+
+    .dx-tag-content {
+      cursor: default;
+    }
+  }
+
+  &:not(.dx-tagbox-single-line) {
+    .dx-texteditor-input-container {
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+  }
+}
+
+
+.dx-tag {
+  max-width: calc(100% - 1px);
+  display: inline-flex;
+  align-self: flex-start;
+}
+
+.dx-tag-container {
+  &.dx-texteditor-input-container {
+    outline: none;
+
+    .dx-tagbox-single-line & {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+  }
+
+  @at-root #{selector-append(".dx-texteditor-container", &)} {
+    white-space: normal;
+  }
+}
+
+.dx-tag-content {
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+}
+
+.dx-tag-remove-button {
+  position: absolute;
+  inset-inline-end: 0;
+}

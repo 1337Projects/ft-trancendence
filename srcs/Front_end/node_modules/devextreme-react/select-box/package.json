@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/select-box.js",
+  "module": "../esm/select-box.js",
+  "typings": "../cjs/select-box.d.ts"
+}

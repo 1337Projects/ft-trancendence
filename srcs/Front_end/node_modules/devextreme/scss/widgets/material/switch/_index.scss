@@ -1,0 +1,49 @@
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../../base/mixins" as *;
+@use "../../base/switch";
+@use "../../base/switch/mixins" as *;
+
+// adduse
+
+$material-switch-transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+$material-switch-handle-on-shadow: 0 0 0 $material-switch-shadow-blur-radius color.change($switch-handle-on-bg, $alpha: 0.1);
+$material-switch-shadow: 0 0 0 $material-switch-shadow-blur-radius color.change($base-text-color, $alpha: 0.1);
+$material-invalid-switch-shadow: 0 0 0 $material-switch-shadow-blur-radius color.change($switch-invalid-handle-bg, $alpha: 0.1);
+
+@include dx-switch(
+  $material-switch-width,
+  $material-switch-height,
+  $switch-padding,
+  $switch-handle-height,
+  $switch-container-height,
+  $switch-container-horizontal-padding,
+  $switch-container-vertical-margin,
+  $switch-handle-margin,
+  $switch-handle-border-radius,
+  $material-switch-transition,
+);
+@include dx-switch-states(
+  color.change($base-text-color, $alpha: 0.2),
+  $switch-handle-disabled-bg,
+  $material-switch-shadow,
+  $switch-bg,
+  $switch-on-bg,
+  $material-switch-handle-shadow,
+  $material-switch-handle-on-shadow,
+  $switch-handle-off-bg,
+  $switch-handle-on-bg,
+);
+@include dx-switch-rtl(
+  $material-switch-height,
+  $material-switch-shadow-blur-radius,
+  $material-switch-container-adjustment,
+);
+@include dx-switch-invalid(
+  $switch-invalid-container-bg,
+  $switch-invalid-handle-bg,
+  $material-invalid-switch-shadow,
+);

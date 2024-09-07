@@ -1,0 +1,131 @@
+@use "sass:math";
+@use "../textEditor/sizes" as *;
+@use "../textEditor/colors" as *;
+@use "../dateBox/mixins" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "colors" as *;
+@use "../colors" as *;
+@use "../../base/dateRangeBox";
+@use "../../base/icons" as *;
+@use "../textEditor" as *;
+
+// adduse
+
+$material-editor-custom-button-margin: 5px;
+
+.dx-daterangebox {
+  @include dx-dropdowneditor-button-icon-styling(eventall);
+
+  .dx-editor-outlined {
+    &::before {
+      display: block;
+      bottom: 1px;
+    }
+  }
+
+  .dx-editor-outlined,
+  .dx-editor-filled {
+    &::before {
+      width: calc(100% - 2 * $material-daterangebox-active-bar-horizontal-margin);
+      margin: 0 $material-daterangebox-active-bar-horizontal-margin;
+    }
+  }
+
+  &.dx-editor-underlined,
+  &.dx-editor-filled {
+    &::before {
+      border-bottom-width: 1px;
+      transition: none;
+    }
+
+    &.dx-state-hover {
+      &::after {
+        border-bottom-width: 1px;
+        transition: none;
+      }
+    }
+
+    &.dx-state-focused {
+      &.dx-invalid {
+        &::before {
+          border-bottom-width: 1px;
+          transition: none;
+        }
+      }
+    }
+
+    .dx-datebox {
+      &::before {
+        bottom: 1px;
+      }
+
+      &::after {
+        border-color: transparent;
+        bottom: 1px;
+      }
+    }
+  }
+
+  &.dx-editor-underlined {
+    .dx-daterangebox-separator {
+      padding-right: $material-filled-texteditor-input-horizontal-padding;
+    }
+  }
+
+  &.dx-texteditor {
+    > .dx-texteditor-buttons-container {
+      > .dx-button,
+      > .dx-clear-button-area {
+        margin-inline-start: $material-editor-custom-button-margin;
+        margin-inline-end: $material-editor-custom-button-margin;
+
+        &:first-child {
+          margin-inline-start: 0;
+        }
+
+        &:last-child {
+          margin-inline-end: $material-editor-custom-button-margin * 2;
+        }
+      }
+
+      > .dx-dropdowneditor-button:last-child {
+        margin-inline-end: $material-filled-texteditor-spin-button-horizontal-padding;
+      }
+
+      > .dx-clear-button-area:last-child,
+      > .dx-clear-button-area + div:empty:last-child {
+        margin-inline-end: $material-filled-texteditor-input-button-horizontal-padding;
+      }
+    }
+  }
+
+  .dx-datebox {
+    &.dx-start-datebox {
+      &.dx-texteditor {
+        .dx-texteditor-input {
+          padding-inline-end: $material-filled-texteditor-input-horizontal-padding;
+        }
+      }
+    }
+
+    &.dx-end-datebox {
+      &.dx-texteditor {
+        &.dx-invalid {
+          .dx-texteditor-input {
+            padding-inline-end: $material-texteditor-invalid-badge-size;
+          }
+        }
+      }
+    }
+  }
+}
+
+.dx-daterangebox-separator {
+  padding-left: $material-filled-texteditor-input-horizontal-padding;
+  color: $texteditor-disabled-color;
+
+  .dx-icon {
+    @include dx-icon-sizing($material-base-icon-size);
+  }
+}

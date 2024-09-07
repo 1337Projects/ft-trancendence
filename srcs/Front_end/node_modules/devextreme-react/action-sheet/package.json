@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/action-sheet.js",
+  "module": "../esm/action-sheet.js",
+  "typings": "../cjs/action-sheet.d.ts"
+}

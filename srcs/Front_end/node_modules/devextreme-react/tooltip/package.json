@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tooltip.js",
+  "module": "../esm/tooltip.js",
+  "typings": "../cjs/tooltip.d.ts"
+}

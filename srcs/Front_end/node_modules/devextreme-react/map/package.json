@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/map.js",
+  "module": "../esm/map.js",
+  "typings": "../cjs/map.d.ts"
+}

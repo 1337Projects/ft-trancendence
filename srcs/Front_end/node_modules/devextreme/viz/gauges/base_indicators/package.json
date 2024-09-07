@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/gauges/base_indicators.js",
+  "module": "../../../esm/viz/gauges/base_indicators.js"
+}

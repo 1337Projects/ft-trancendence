@@ -1,0 +1,22 @@
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../button/colors" as *;
+@use "../button/sizes" as *;
+@use "../../base/buttonGroup";
+@use "../../base/buttonGroup/mixins" as *;
+
+// adduse
+
+.dx-buttongroup-mode-contained {
+  .dx-button-mode-contained {
+    border-inline-end-width: 0;
+  }
+}
+
+@include dx-buttongroup-sizing(
+  $button-border-radius,
+  $generic-button-border-weight,
+);

@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/context-menu.js",
+  "module": "../esm/context-menu.js",
+  "typings": "../cjs/context-menu.d.ts"
+}

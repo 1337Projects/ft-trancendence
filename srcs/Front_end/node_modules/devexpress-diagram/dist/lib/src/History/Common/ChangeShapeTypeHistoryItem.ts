@@ -1,0 +1,27 @@
+import { ModelManipulator } from "../../Model/ModelManipulator";
+import { Shape } from "../../Model/Shapes/Shape";
+import { ShapeParameters } from "../../Model/Shapes/ShapeParameters";
+import { HistoryItem } from "../HistoryItem";
+
+export class ChangeShapeTypeHistoryItem extends HistoryItem {
+    private shapeKey: string;
+    private newType: string;
+    private oldType: string;
+    private oldParameters: ShapeParameters;
+
+    constructor(shape: Shape, newType: string) {
+        super();
+        this.shapeKey = shape.key;
+        this.newType = newType;
+    }
+    redo(manipulator: ModelManipulator): void {
+        const shape = manipulator.model.findShape(this.shapeKey);
+        this.oldType = shape.description.key;
+        this.oldParameters = shape.parameters.clone();
+        manipulator.updateShapeType(shape, this.newType, new ShapeParameters());
+    }
+    undo(manipulator: ModelManipulator): void {
+        const shape = manipulator.model.findShape(this.shapeKey);
+        manipulator.updateShapeType(shape, this.oldType, this.oldParameters);
+    }
+}

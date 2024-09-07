@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/popup.js",
+  "module": "../esm/popup.js",
+  "typings": "../cjs/popup.d.ts"
+}

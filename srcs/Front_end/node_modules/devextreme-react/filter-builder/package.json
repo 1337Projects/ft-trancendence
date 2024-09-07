@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/filter-builder.js",
+  "module": "../esm/filter-builder.js",
+  "typings": "../cjs/filter-builder.d.ts"
+}

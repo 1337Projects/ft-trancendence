@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/core/annotations.js",
+  "module": "../../../esm/viz/core/annotations.js"
+}

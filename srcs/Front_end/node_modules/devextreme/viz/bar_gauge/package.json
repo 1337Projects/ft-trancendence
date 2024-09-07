@@ -1,0 +1,8 @@
+{
+  "sideEffects": [
+    "../../esm/localization/currency.js"
+  ],
+  "main": "../../cjs/viz/bar_gauge.js",
+  "module": "../../esm/viz/bar_gauge.js",
+  "typings": "../bar_gauge.d.ts"
+}

@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/text-area.js",
+  "module": "../esm/text-area.js",
+  "typings": "../cjs/text-area.d.ts"
+}

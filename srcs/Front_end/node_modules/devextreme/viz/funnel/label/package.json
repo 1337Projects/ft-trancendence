@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/funnel/label.js",
+  "module": "../../../esm/viz/funnel/label.js"
+}

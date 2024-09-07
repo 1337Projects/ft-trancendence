@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/polar-chart.js",
+  "module": "../esm/polar-chart.js",
+  "typings": "../cjs/polar-chart.d.ts"
+}

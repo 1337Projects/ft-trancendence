@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/accordion.js",
+  "module": "../esm/accordion.js",
+  "typings": "../cjs/accordion.d.ts"
+}

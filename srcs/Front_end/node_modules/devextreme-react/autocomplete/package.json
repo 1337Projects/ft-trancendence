@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/autocomplete.js",
+  "module": "../esm/autocomplete.js",
+  "typings": "../cjs/autocomplete.d.ts"
+}

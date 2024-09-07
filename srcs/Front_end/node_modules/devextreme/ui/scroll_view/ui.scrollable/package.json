@@ -1,0 +1,10 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/scroll_view/ui.scrollable.js",
+  "module": "../../../esm/ui/scroll_view/ui.scrollable.js",
+  "typings": "../ui.scrollable.d.ts"
+}

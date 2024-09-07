@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/file-manager.js",
+  "module": "../esm/file-manager.js",
+  "typings": "../cjs/file-manager.d.ts"
+}

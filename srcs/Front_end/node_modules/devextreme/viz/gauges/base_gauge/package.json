@@ -1,0 +1,8 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/gauges/base_gauge.js",
+  "module": "../../../esm/viz/gauges/base_gauge.js",
+  "typings": "../base_gauge.d.ts"
+}

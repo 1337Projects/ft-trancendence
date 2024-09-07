@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/switch.js",
+  "module": "../esm/switch.js",
+  "typings": "../cjs/switch.d.ts"
+}

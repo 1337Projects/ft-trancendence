@@ -1,0 +1,28 @@
+@use "../sizes" as *;
+
+// adduse
+
+$material-calendar-legacy-width: null !default;
+$material-calendar-legacy-height: null !default;
+
+$material-calendar-footer-button-height: null !default;
+$material-calendar-cell-font-size: null !default;
+
+$material-calendar-element-padding: 8px !default;
+
+@if $size == "default" {
+  $material-calendar-legacy-width: 272px !default;
+  $material-calendar-legacy-height: 264px !default;
+
+  $material-calendar-cell-font-size: 14px !default;
+
+  $material-calendar-footer-button-height: 36px !default;
+}
+
+@else if $size == "compact" {
+  $material-calendar-legacy-width: 252px !default;
+  $material-calendar-legacy-height: 260px !default;
+
+  $material-calendar-cell-font-size: 12px !default;
+  $material-calendar-footer-button-height: 28px !default;
+}

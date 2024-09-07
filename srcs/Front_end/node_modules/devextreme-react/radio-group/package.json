@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/radio-group.js",
+  "module": "../esm/radio-group.js",
+  "typings": "../cjs/radio-group.d.ts"
+}

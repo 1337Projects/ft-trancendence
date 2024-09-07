@@ -1,0 +1,10 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/hierarchical_collection/ui.hierarchical_collection_widget.js",
+  "module": "../../../esm/ui/hierarchical_collection/ui.hierarchical_collection_widget.js",
+  "typings": "../ui.hierarchical_collection_widget.d.ts"
+}

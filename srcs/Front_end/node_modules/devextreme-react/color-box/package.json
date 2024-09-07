@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/color-box.js",
+  "module": "../esm/color-box.js",
+  "typings": "../cjs/color-box.d.ts"
+}

@@ -1,0 +1,11 @@
+{
+  "sideEffects": [
+    "../../esm/events/click.js",
+    "../../esm/events/core/emitter.feedback.js",
+    "../../esm/events/hover.js",
+    "../../esm/ui/toolbar/ui.toolbar.base.js"
+  ],
+  "main": "../../cjs/ui/range_slider.js",
+  "module": "../../esm/ui/range_slider.js",
+  "typings": "../range_slider.d.ts"
+}

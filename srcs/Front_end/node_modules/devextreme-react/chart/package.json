@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/chart.js",
+  "module": "../esm/chart.js",
+  "typings": "../cjs/chart.d.ts"
+}

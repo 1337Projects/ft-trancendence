@@ -1,0 +1,9 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/menu/ui.submenu.js",
+  "module": "../../../esm/ui/menu/ui.submenu.js"
+}

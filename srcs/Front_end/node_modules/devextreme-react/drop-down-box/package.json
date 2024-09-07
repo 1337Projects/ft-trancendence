@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/drop-down-box.js",
+  "module": "../esm/drop-down-box.js",
+  "typings": "../cjs/drop-down-box.d.ts"
+}

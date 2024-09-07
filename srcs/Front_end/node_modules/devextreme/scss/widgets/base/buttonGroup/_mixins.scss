@@ -1,0 +1,35 @@
+@mixin dx-buttongroup-item-states($hover-color, $focused-color) {
+  &.dx-state-hover {
+    background-color: $hover-color;
+  }
+
+  &.dx-state-focused {
+    background-color: $focused-color;
+  }
+}
+
+@mixin dx-buttongroup-sizing(
+  $button-border-radius,
+  $button-border-width,
+) {
+  .dx-button-mode-outlined,
+  .dx-button-mode-contained {
+    &.dx-buttongroup-first-item {
+      border-inline-start-width: $button-border-width;
+
+      &.dx-button {
+        border-start-start-radius: $button-border-radius;
+        border-end-start-radius: $button-border-radius;
+      }
+    }
+
+    &.dx-buttongroup-last-item {
+      border-inline-end-width: $button-border-width;
+
+      &.dx-button {
+        border-start-end-radius: $button-border-radius;
+        border-end-end-radius: $button-border-radius;
+      }
+    }
+  }
+};

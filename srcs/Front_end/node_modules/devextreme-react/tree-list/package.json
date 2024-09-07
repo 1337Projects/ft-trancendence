@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tree-list.js",
+  "module": "../esm/tree-list.js",
+  "typings": "../cjs/tree-list.d.ts"
+}

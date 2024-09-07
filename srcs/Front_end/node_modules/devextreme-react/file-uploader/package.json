@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/file-uploader.js",
+  "module": "../esm/file-uploader.js",
+  "typings": "../cjs/file-uploader.d.ts"
+}

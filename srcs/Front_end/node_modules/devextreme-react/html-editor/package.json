@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/html-editor.js",
+  "module": "../esm/html-editor.js",
+  "typings": "../cjs/html-editor.d.ts"
+}

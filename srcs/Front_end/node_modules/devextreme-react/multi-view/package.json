@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/multi-view.js",
+  "module": "../esm/multi-view.js",
+  "typings": "../cjs/multi-view.d.ts"
+}

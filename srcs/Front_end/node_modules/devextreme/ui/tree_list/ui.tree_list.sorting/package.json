@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/__internal/grids/tree_list/module_not_extended/sorting.js"
+  ],
+  "main": "../../../cjs/ui/tree_list/ui.tree_list.sorting.js",
+  "module": "../../../esm/ui/tree_list/ui.tree_list.sorting.js"
+}

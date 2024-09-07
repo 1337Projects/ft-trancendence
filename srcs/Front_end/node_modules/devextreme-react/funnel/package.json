@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/funnel.js",
+  "module": "../esm/funnel.js",
+  "typings": "../cjs/funnel.d.ts"
+}

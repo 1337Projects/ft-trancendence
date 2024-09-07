@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/pie-chart.js",
+  "module": "../esm/pie-chart.js",
+  "typings": "../cjs/pie-chart.d.ts"
+}

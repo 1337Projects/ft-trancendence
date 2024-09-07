@@ -1,0 +1,24 @@
+@use "../sizes" as *;
+
+// adduse
+
+$generic-calendar-legacy-width: null !default;
+$generic-calendar-legacy-height: null !default;
+
+$generic-calendar-footer-button-height: null !default;
+
+$generic-calendar-element-padding: 8px !default;
+
+@if $size == "default" {
+  $generic-calendar-legacy-height: 268px !default;
+  $generic-calendar-legacy-width: 282px !default;
+
+  $generic-calendar-footer-button-height: 36px !default;
+}
+
+@else if $size == "compact" {
+  $generic-calendar-legacy-height: 226px !default;
+  $generic-calendar-legacy-width: 232px !default;
+
+  $generic-calendar-footer-button-height: 28px !default;
+}

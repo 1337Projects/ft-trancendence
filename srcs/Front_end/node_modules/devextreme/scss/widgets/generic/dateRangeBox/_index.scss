@@ -1,0 +1,153 @@
+@use "sass:math";
+@use "../textEditor/sizes" as *;
+@use "../textEditor/colors" as *;
+@use "../dateBox/mixins" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "colors" as *;
+@use "../colors" as *;
+@use "../../base/dateRangeBox";
+@use "../../base/icons" as *;
+@use "../textEditor" as *;
+@use "../dropDownEditor" as *;
+
+// adduse
+
+.dx-daterangebox {
+  @include dx-dropdowneditor-button-icon-styling(eventall);
+
+  .dx-dropdowneditor-button {
+    min-width: $generic-dropdowneditor-container-button-size - 2px;
+    width: $generic-dropdowneditor-container-button-size - 2px;
+
+    .dx-dropdowneditor-icon {
+      width: $generic-dropdowneditor-button-size - 2px;
+    }
+  }
+
+  .dx-texteditor-input {
+    min-height: $generic-texteditor-input-height - 2px;
+  }
+
+  .dx-texteditor {
+    &::before {
+      content: '';
+      position: absolute;
+      border-bottom: 1px solid transparent;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    &.dx-state-hover {
+      &::before {
+        border-bottom-color: $texteditor-hover-border-color;
+      }
+
+      &.dx-invalid {
+        &::before {
+          border-bottom-color: $texteditor-invalid-faded-border-color;
+        }
+      }
+    }
+
+    &.dx-state-focused {
+      &::before {
+        border-bottom-color: $texteditor-focused-border-color;
+      }
+
+      &.dx-invalid {
+        &::before {
+          border-bottom-color: $texteditor-invalid-focused-border-color;
+        }
+      }
+    }
+
+    &.dx-state-readonly {
+      &::before {
+        border-bottom-style: dashed;
+      }
+    }
+  }
+
+  &.dx-invalid {
+    .dx-texteditor {
+      &.dx-state-hover {
+        &::before {
+          border-bottom-color: $texteditor-invalid-faded-border-color;
+        }
+      }
+
+      &.dx-state-focused {
+        &::before {
+          border-bottom-color: $texteditor-invalid-focused-border-color;
+        }
+      }
+    }
+  }
+
+  .dx-editor-outlined,
+  .dx-editor-filled {
+    &::before {
+      width: calc(100% - 2 * $generic-daterangebox-active-bar-horizontal-margin);
+      margin: 0 $generic-daterangebox-active-bar-horizontal-margin;
+    }
+  }
+
+  .dx-editor-underlined {
+    &::before {
+      width: 100%;
+    }
+  }
+
+  &.dx-editor-underlined {
+    .dx-daterangebox-separator {
+      padding-right: $generic-base-inline-borderedwidget-horizontal-padding;
+    }
+  }
+
+  .dx-datebox {
+    &.dx-start-datebox,
+    &.dx-end-datebox {
+      &.dx-texteditor {
+        .dx-texteditor-input {
+          padding-inline-end: $generic-base-inline-borderedwidget-horizontal-padding;
+        }
+      }
+    }
+
+    &.dx-end-datebox {
+      &.dx-texteditor {
+        &.dx-invalid {
+          .dx-texteditor-input {
+            padding-inline-end: $generic-texteditor-invalid-badge-size;
+          }
+
+          &.dx-rtl {
+            .dx-texteditor-input {
+              padding-right: $generic-base-inline-borderedwidget-horizontal-padding;
+            }
+          }
+        }
+      }
+
+      &.dx-editor-underlined {
+        &.dx-invalid {
+          &.dx-rtl {
+            .dx-texteditor-input {
+              padding-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.dx-daterangebox-separator {
+  padding-left: $generic-base-inline-borderedwidget-horizontal-padding;
+  color: $texteditor-label-color;
+
+  .dx-icon {
+    @include dx-icon-sizing($generic-base-icon-size);
+  }
+}

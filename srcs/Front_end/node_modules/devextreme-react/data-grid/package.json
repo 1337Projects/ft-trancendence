@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/data-grid.js",
+  "module": "../esm/data-grid.js",
+  "typings": "../cjs/data-grid.d.ts"
+}

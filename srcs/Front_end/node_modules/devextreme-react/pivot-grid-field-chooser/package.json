@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/pivot-grid-field-chooser.js",
+  "module": "../esm/pivot-grid-field-chooser.js",
+  "typings": "../cjs/pivot-grid-field-chooser.d.ts"
+}

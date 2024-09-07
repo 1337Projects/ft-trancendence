@@ -1,0 +1,169 @@
+import { Vector } from "@devexpress/utils/lib/geometry/vector";
+import { ChangeConnectorPointsHistoryItem } from "../../History/Common/ChangeConnectorPointsHistoryItem";
+import { History } from "../../History/History";
+import { Connector } from "../Connectors/Connector";
+import { ConnectorRenderPointsContext } from "../Connectors/Routing/ConnectorRenderPointsContext";
+import { DiagramItem } from "../DiagramItem";
+import { ModelUtils } from "../ModelUtils";
+import { DiagramModel } from "../Model";
+import { Point } from "@devexpress/utils/lib/geometry/point";
+import { Shape } from "../Shapes/Shape";
+import { ConnectorRenderPoint } from "../Connectors/ConnectorRenderPoint";
+import { IPermissionsProvider } from "../Permissions/PermissionsProvider";
+import { DiagramModelOperation } from "../../ModelOperationSettings";
+
+export class SelectionDragHelper {
+    draggingShapes: DraggingShape[] = [];
+    draggingConnectors: DraggingConnector[] = [];
+    selectedItems : { [key: string] : DiagramItem } = {};
+    draggingConnectorsIndexByKey: { [key: string]: number } = {};
+
+    modelConnectorsWithoutBeginItemInfo: { connector: Connector, point: Point }[];
+    modelConnectorsWithoutEndItemInfo: { connector: Connector, point: Point }[];
+
+    constructor(private history: History, private model: DiagramModel, private permissionsProvider: IPermissionsProvider, public startPoint: Point, selectedItems: DiagramItem[]) {
+        selectedItems.forEach(i => this.selectedItems[i.key] = i);
+    }
+
+    initDraggingShapes(shapes: Shape[], shouldClone: boolean): void {
+        this.draggingShapes = shapes.map(s => new DraggingShape(s));
+        if(!shouldClone)
+            this.draggingShapes.forEach(draggingShape => this.permissionsProvider.addInteractingItem(draggingShape.shape, DiagramModelOperation.MoveShape));
+    }
+    initDraggingConnectors(connectors: Connector[], shouldClone: boolean): void {
+        this.draggingConnectors = [];
+        this.draggingConnectorsIndexByKey = {};
+        connectors.forEach(c => this.registerConnector(c));
+        if(!shouldClone)
+            this.draggingShapes.forEach(x => {
+                const attachedConnectors = x.shape.attachedConnectors;
+                if(attachedConnectors)
+                    attachedConnectors.forEach(c => {
+                        if(!this.containsDraggingConnectorByKey(c.key))
+                            this.registerConnector(c);
+                    });
+            });
+        this.modelConnectorsWithoutBeginItemInfo = this.createModelConnectorsWithoutBeginItemInfo();
+        this.modelConnectorsWithoutEndItemInfo = this.createModelConnectorsWithoutEndItemInfo();
+    }
+
+    move(shouldClone: boolean, getMovePoint: (point: Point) => Point, resetTargetCallback: () => void, updateTargetCallback: (shape: Shape, connectionPointIndex: number) => void): void {
+        if(this.draggingShapes.length) {
+            const selectedShapes = this.draggingShapes.map(ds => ds.shape);
+            this.draggingShapes.forEach(ds => {
+                let shape = ds.shape;
+                while(shape.container) {
+                    if(selectedShapes.indexOf(shape.container) !== -1) return false;
+                    shape = shape.container;
+                }
+                this.moveShape(ds, getMovePoint, resetTargetCallback, updateTargetCallback);
+            });
+            const firstDraggingShape = this.draggingShapes[0];
+            const offset = Vector.fromPoints(firstDraggingShape.startPosition.clone(), firstDraggingShape.shape.position.clone());
+            if(offset.x || offset.y)
+                this.draggingConnectors.forEach(dc => this.moveConnectorCore(dc.connector, dc.startPoints, dc.startRenderContext, offset, shouldClone));
+        }
+        else
+            this.draggingConnectors.forEach(x => this.moveConnector(x, shouldClone, getMovePoint));
+    }
+    containsDraggingConnectorByKey(key: string): boolean {
+        return this.draggingConnectorsIndexByKey[key] !== undefined;
+    }
+    onTryUpdateModelSize(offsetLeft: number, offsetTop: number): void {
+        this.modelConnectorsWithoutBeginItemInfo.forEach(pi => {
+            pi.point.x += offsetLeft;
+            pi.point.y += offsetTop;
+        });
+        this.modelConnectorsWithoutEndItemInfo.forEach(pi => {
+            pi.point.x += offsetLeft;
+            pi.point.y += offsetTop;
+        });
+    }
+    private moveConnector(dc: DraggingConnector, shouldClone: boolean, getMovePoint: (point: Point) => Point) {
+        const startPoints = dc.startPoints;
+        const offset = Vector.fromPoints(startPoints[0].clone(), getMovePoint(startPoints[0]).clone());
+        if(offset.x || offset.y)
+            this.moveConnectorCore(dc.connector, startPoints, dc.startRenderContext, offset, shouldClone);
+    }
+    private moveConnectorCore(connector: Connector, startPoints: Point[], startRenderContext: ConnectorRenderPointsContext | undefined, offset: Vector, shouldClone: boolean) : void {
+        if(shouldClone || ModelUtils.canMoveConnector(this.selectedItems, connector))
+            this.offsetConnector(connector, startPoints, startRenderContext, offset);
+        else
+            this.changeConnector(connector);
+    }
+    private moveShape(ds: DraggingShape, getMovePoint: (point: Point) => Point, resetTargetCallback: () => void, updateTargetCallback: (shape: Shape, connectionPointIndex: number) => void) {
+        const shape = ds.shape;
+        const position = getMovePoint(ds.startPosition);
+        ModelUtils.setShapePosition(this.history, this.model, shape, position);
+        ModelUtils.updateMovingShapeConnections(this.history, shape,
+            this.modelConnectorsWithoutBeginItemInfo, this.modelConnectorsWithoutEndItemInfo,
+            resetTargetCallback, updateTargetCallback,
+            (connector) => this.permissionsProvider.addInteractingItem(connector)
+        );
+        if(!this.draggingConnectors.filter(dc => !!this.selectedItems[dc.connector.key]).length)
+            ModelUtils.updateShapeAttachedConnectors(this.history, this.model, shape);
+    }
+    private offsetConnector(connector: Connector, startPoints: Point[], startRenderContext: ConnectorRenderPointsContext | undefined, offset: Vector) {
+        const newPoints = startPoints.map(p => this.offsetPoint(p, offset));
+        if(!newPoints[0].equals(connector.points[0]))
+            this.history.addAndRedo(
+                new ChangeConnectorPointsHistoryItem(
+                    connector.key, newPoints,
+                    this.offsetRenderContext(startRenderContext, offset)
+                )
+            );
+    }
+    private offsetRenderContext(context: ConnectorRenderPointsContext | undefined, offset: Vector) : ConnectorRenderPointsContext {
+        if(context === undefined)
+            return undefined;
+        return new ConnectorRenderPointsContext(context.renderPoints.map(p => {
+            const newPoint = this.offsetPoint(p, offset);
+            return new ConnectorRenderPoint(newPoint.x, newPoint.y, p.pointIndex, p.skipped);
+        }), true, context.actualRoutingMode);
+    }
+    private offsetPoint(point: Point, offset: Vector): Point {
+        const pointOffset = Vector.fromPoints(point, this.startPoint);
+        return this.startPoint.clone().offset(offset.x - pointOffset.x, offset.y - pointOffset.y);
+    }
+    private changeConnector(connector: Connector) {
+        ModelUtils.tryRemoveConnectorIntermediatePoints(this.history, connector);
+        ModelUtils.updateConnectorAttachedPoints(this.history, this.model, connector);
+    }
+    private registerConnector(connector: Connector) {
+        this.draggingConnectorsIndexByKey[connector.key] = this.draggingConnectors.push(new DraggingConnector(connector)) - 1;
+    }
+    private createModelConnectorsWithoutBeginItemInfo(): { connector: Connector, point: Point }[] {
+        const connectors = this.model.findConnectorsCore(c => !c.beginItem && !this.containsDraggingConnectorByKey(c.key));
+        return connectors.map(c => {
+            return {
+                connector: c,
+                point: c.points[0].clone()
+            };
+        });
+    }
+    private createModelConnectorsWithoutEndItemInfo(): { connector: Connector, point: Point }[] {
+        const connectors = this.model.findConnectorsCore(c => !c.endItem && !this.containsDraggingConnectorByKey(c.key));
+        return connectors.map(c => {
+            return {
+                connector: c,
+                point: c.points[c.points.length - 1].clone()
+            };
+        });
+    }
+}
+
+export class DraggingConnector {
+    readonly startPoints: Point[];
+    readonly startRenderContext: ConnectorRenderPointsContext | undefined;
+    constructor(readonly connector: Connector) {
+        this.startPoints = connector.points.map(x => x.clone());
+        this.startRenderContext = connector.tryCreateRenderPointsContext();
+    }
+}
+
+class DraggingShape {
+    readonly startPosition: Point;
+    constructor(public readonly shape: Shape) {
+        this.startPosition = shape.position.clone();
+    }
+}

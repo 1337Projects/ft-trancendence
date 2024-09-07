@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/vector-map.js",
+  "module": "../esm/vector-map.js",
+  "typings": "../cjs/vector-map.d.ts"
+}

@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/box.js",
+  "module": "../esm/box.js",
+  "typings": "../cjs/box.d.ts"
+}

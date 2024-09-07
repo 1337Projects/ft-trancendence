@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/speed-dial-action.js",
+  "module": "../esm/speed-dial-action.js",
+  "typings": "../cjs/speed-dial-action.d.ts"
+}

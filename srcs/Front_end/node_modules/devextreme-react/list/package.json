@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/list.js",
+  "module": "../esm/list.js",
+  "typings": "../cjs/list.d.ts"
+}

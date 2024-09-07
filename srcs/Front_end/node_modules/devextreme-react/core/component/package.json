@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../../cjs/core/component.js",
+  "module": "../../esm/core/component.js",
+  "typings": "../../cjs/core/component.d.ts"
+}

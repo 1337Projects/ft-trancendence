@@ -1,0 +1,84 @@
+@use "./mixins" as *;
+
+// adduse
+
+
+.dx-menu {
+  position: relative;
+}
+
+.dx-menu-horizontal {
+  @include vertical-middle();
+
+  .dx-menu-item-wrapper {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .dx-menu-separator {
+    display: inline-block;
+    margin-inline-end: 15px;
+  }
+}
+
+.dx-menu-vertical {
+  @include vertical-middle();
+
+  .dx-menu-item-wrapper {
+    display: block;
+  }
+
+  .dx-menu-separator {
+    margin-bottom: 15px;
+  }
+}
+
+.dx-context-menu-container-border {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}
+
+.dx-context-menu-content-delimiter {
+  position: absolute;
+  display: none;
+  z-index: 2000;
+  cursor: pointer;
+}
+
+.dx-menu-adaptive-mode {
+  .dx-treeview-toggle-item-visibility {
+    order: 3;
+  }
+
+  .dx-treeview-item {
+    cursor: pointer;
+  }
+
+  .dx-treeview-node-container:first-child > .dx-treeview-node {
+    padding: 1px;
+
+    .dx-item-content {
+      padding-inline-start: 15px;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.dx-menu-adaptive-mode-overlay-wrapper {
+  @include flex-container(row);
+
+  .dx-overlay-content {
+    display: flex;
+
+    .dx-treeview {
+      height: auto;
+      flex: 1 1 auto;
+    }
+  }
+}

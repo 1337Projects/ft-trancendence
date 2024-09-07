@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/date-range-box.js",
+  "module": "../esm/date-range-box.js",
+  "typings": "../cjs/date-range-box.d.ts"
+}

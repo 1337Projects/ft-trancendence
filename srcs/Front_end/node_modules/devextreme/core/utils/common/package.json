@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../../../cjs/core/utils/common.js",
+  "module": "../../../esm/core/utils/common.js",
+  "typings": "../common.d.ts"
+}

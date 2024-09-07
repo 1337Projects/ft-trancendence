@@ -1,0 +1,11 @@
+{
+  "sideEffects": [
+    "../../../esm/__internal/grids/tree_list/module_not_extended/filter_panel.js",
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js",
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/ui/tree_list/ui.tree_list.filter_panel.js",
+  "module": "../../../esm/ui/tree_list/ui.tree_list.filter_panel.js"
+}

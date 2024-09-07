@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/linear-gauge.js",
+  "module": "../esm/linear-gauge.js",
+  "typings": "../cjs/linear-gauge.d.ts"
+}

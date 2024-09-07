@@ -1,0 +1,11 @@
+{
+  "sideEffects": [
+    "../../esm/events/click.js",
+    "../../esm/events/core/emitter.feedback.js",
+    "../../esm/events/hover.js",
+    "../../esm/ui/toolbar/ui.toolbar.base.js"
+  ],
+  "main": "../../cjs/ui/action_sheet.js",
+  "module": "../../esm/ui/action_sheet.js",
+  "typings": "../action_sheet.d.ts"
+}

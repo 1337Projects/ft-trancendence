@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/slider.js",
+  "module": "../esm/slider.js",
+  "typings": "../cjs/slider.d.ts"
+}

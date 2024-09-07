@@ -1,0 +1,9 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/color_box/color_view.js",
+  "module": "../../../esm/ui/color_box/color_view.js"
+}

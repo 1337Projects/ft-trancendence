@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/tabs.js",
+  "module": "../esm/tabs.js",
+  "typings": "../cjs/tabs.d.ts"
+}

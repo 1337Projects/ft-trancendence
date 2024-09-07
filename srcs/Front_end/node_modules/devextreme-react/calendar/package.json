@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/calendar.js",
+  "module": "../esm/calendar.js",
+  "typings": "../cjs/calendar.d.ts"
+}

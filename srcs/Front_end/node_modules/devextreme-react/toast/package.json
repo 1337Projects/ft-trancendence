@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/toast.js",
+  "module": "../esm/toast.js",
+  "typings": "../cjs/toast.d.ts"
+}

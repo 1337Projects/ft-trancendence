@@ -1,0 +1,9 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/radio_group/radio_group.js",
+  "module": "../../../esm/ui/radio_group/radio_group.js"
+}

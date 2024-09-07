@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/defer-rendering.js",
+  "module": "../esm/defer-rendering.js",
+  "typings": "../cjs/defer-rendering.d.ts"
+}

@@ -1,0 +1,9 @@
+{
+  "sideEffects": [
+    "../../../esm/events/click.js",
+    "../../../esm/events/core/emitter.feedback.js",
+    "../../../esm/events/hover.js"
+  ],
+  "main": "../../../cjs/ui/calendar/ui.calendar.views.js",
+  "module": "../../../esm/ui/calendar/ui.calendar.views.js"
+}

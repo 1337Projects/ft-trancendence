@@ -1,0 +1,7 @@
+{
+  "sideEffects": [
+    "../../../esm/localization/currency.js"
+  ],
+  "main": "../../../cjs/viz/gauges/linear_range_container.js",
+  "module": "../../../esm/viz/gauges/linear_range_container.js"
+}

@@ -1,0 +1,82 @@
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../_sizes" as *;
+@use "../../base/treeView" as *;
+@use "../../base/icons" as *;
+@use "../checkBox/colors" as *;
+
+.dx-treeview-custom-expand-icon,
+.dx-treeview-custom-collapse-icon {
+  @include dx-icon-sizing($generic-base-icon-size, $generic-treeview-base-container-size);
+}
+
+@include treeview-item(
+  $generic-treeview-item-element-gap,
+  $generic-treeview-item-padding,
+  $generic-base-icon-size,
+  $treeview-hover-bg,
+  $treeview-item-hover-color,
+  $treeview-item-selected-color,
+  $generic-treeview-toggle-item-width + $generic-treeview-item-element-gap,
+);
+@include default-expander-icon(
+  'spindown',
+  'spinright', 
+  $generic-base-icon-size,
+  $generic-treeview-toggle-item-width,
+  $treeview-spin-icon-color,
+);
+@include treeview-checkbox(
+  $generic-checkbox-container-size,
+  $base-text-color,
+  $checkbox-border-color-focused,
+  $treeview-item-selected-color,
+  $treeview-item-selected-bg,
+  $treeview-focused-bg,
+  $treeview-focus-color
+);
+@include treeview-aux-items(
+  $generic-treeview-searchbox-margin-bottom,
+  $generic-treeview-search-editor-height,
+  $treeview-border-color,
+  $generic-select-all-item-padding,
+  $generic-treeview-item-element-gap,
+  $generic-select-all-item-border-visible-padding,
+  $generic-treeview-container-padding,
+  $generic-treeview-load-indicator-size,
+);
+
+.dx-treeview-item-with-checkbox {
+  &.dx-state-focused {
+    >.dx-treeview-item .dx-checkbox .dx-checkbox-icon {
+      border: 1px solid $checkbox-border-color-focused;
+    }
+  }
+}
+
+.dx-treeview-item-without-checkbox {
+  &.dx-state-focused {
+    >.dx-treeview-item {
+      .dx-treeview-toggle-item-visibility {
+        color: unset;
+      }
+
+      .dx-treeview-node-loadindicator {
+        .dx-loadindicator-icon {
+          .dx-loadindicator-segment {
+            background: $generic-treeview-focused-row-load-indicator-color;
+          }
+        }
+      }
+
+      .dx-item-content {
+        .dx-item-url {
+          color: unset;
+        }
+      }
+    }
+  }
+}

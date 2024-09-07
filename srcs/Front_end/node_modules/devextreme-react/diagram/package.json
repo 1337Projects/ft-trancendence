@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/diagram.js",
+  "module": "../esm/diagram.js",
+  "typings": "../cjs/diagram.d.ts"
+}

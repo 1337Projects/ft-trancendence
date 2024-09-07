@@ -1,0 +1,26 @@
+{
+  "sideEffects": [
+    "../../esm/events/click.js",
+    "../../esm/events/core/emitter.feedback.js",
+    "../../esm/events/hover.js",
+    "../../esm/ui/popup.js",
+    "../../esm/ui/toolbar.js",
+    "../../esm/ui/toolbar/ui.toolbar.base.js",
+    "../../esm/ui/select_box.js",
+    "../../esm/ui/list/modules/selection.js",
+    "../../esm/ui/list/ui.list.edit.decorator.selection.js",
+    "../../esm/ui/color_box/color_view.js",
+    "../../esm/ui/number_box.js",
+    "../../esm/ui/form/ui.form.layout_manager.js",
+    "../../esm/ui/text_box.js",
+    "../../esm/ui/check_box.js",
+    "../../esm/ui/date_box.js",
+    "../../esm/ui/button.js",
+    "../../esm/ui/validation_summary.js",
+    "../../esm/ui/validation_group.js",
+    "../../esm/ui/html_editor/converters/delta.js"
+  ],
+  "main": "../../cjs/ui/html_editor.js",
+  "module": "../../esm/ui/html_editor.js",
+  "typings": "../html_editor.d.ts"
+}

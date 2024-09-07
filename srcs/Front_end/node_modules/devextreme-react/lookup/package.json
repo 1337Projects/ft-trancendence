@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/lookup.js",
+  "module": "../esm/lookup.js",
+  "typings": "../cjs/lookup.d.ts"
+}

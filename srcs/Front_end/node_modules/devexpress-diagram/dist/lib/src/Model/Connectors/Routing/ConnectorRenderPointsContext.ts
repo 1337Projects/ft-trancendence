@@ -1,0 +1,24 @@
+import { ConnectorRoutingMode } from "../../../Settings";
+import { ConnectorRenderPoint } from "../ConnectorRenderPoint";
+
+export class ConnectorRenderPointsContext {
+    constructor(
+        readonly renderPoints: ConnectorRenderPoint[],
+        readonly lockCreateRenderPoints: boolean,
+        readonly actualRoutingMode: ConnectorRoutingMode) {
+    }
+    toObject(): Record<string, unknown> {
+        return {
+            actualRoutingMode: this.actualRoutingMode,
+            lockCreateRenderPoints: this.lockCreateRenderPoints,
+            renderPoints: this.renderPoints.map(p => p.toObject())
+        };
+    }
+    static fromObject(obj: Record<string, unknown>): ConnectorRenderPointsContext {
+        return new ConnectorRenderPointsContext(
+            (<Array<any>>obj["renderPoints"]).map(p => ConnectorRenderPoint.fromObject(p)),
+            <boolean>obj["lockCreateRenderPoints"],
+            <ConnectorRoutingMode>obj["actualRoutingMode"]
+        );
+    }
+}

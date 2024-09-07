@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/number-box.js",
+  "module": "../esm/number-box.js",
+  "typings": "../cjs/number-box.d.ts"
+}

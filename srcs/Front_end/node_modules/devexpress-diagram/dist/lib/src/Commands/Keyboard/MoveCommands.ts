@@ -1,0 +1,90 @@
+import { SimpleCommandState } from "../CommandStates";
+import { Point } from "@devexpress/utils/lib/geometry/point";
+import { ModelUtils } from "../../Model/ModelUtils";
+import { UnitConverter } from "@devexpress/utils/lib/class/unit-converter";
+import { SimpleCommandBase } from "../SimpleCommandBase";
+import { SelectionDragHelper } from "../../Model/Helpers/DragHelper";
+
+export abstract class MoveCommand extends SimpleCommandBase {
+    isEnabled(): boolean {
+        return super.isEnabled() && !this.control.selection.isEmpty();
+    }
+    executeCore(state: SimpleCommandState, parameter: any): boolean {
+        this.control.history.beginTransaction();
+        const selection = this.control.selection;
+        const helper = new SelectionDragHelper(this.control.history, this.control.model, this.permissionsProvider, new Point(0, 0), selection.getSelectedItems(true));
+        helper.initDraggingShapes(selection.getSelectedShapes(false, true), false);
+        helper.initDraggingConnectors(selection.getSelectedConnectors(false, true), false);
+        helper.move(false, p => this.getPosition(p), () => {}, () => {});
+        ModelUtils.tryUpdateModelRectangle(this.control.history, (offsetLeft: number, offsetTop: number) => helper.onTryUpdateModelSize(offsetLeft, offsetTop));
+        this.control.history.endTransaction();
+        return true;
+    }
+    protected get isPermissionsRequired(): boolean { return true; }
+    abstract getPosition(position: Point): Point;
+}
+
+export class MoveLeftCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        return position.clone().offset(-UnitConverter.pixelsToTwips(1), 0);
+    }
+}
+
+export class MoveStepLeftCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        if(this.control.settings.snapToGrid)
+            return new Point(ModelUtils.getSnappedPos(this.control.model, this.control.settings.gridSize,
+                position.x - (this.control.settings.gridSize / 2 + 2), true), position.y);
+        else
+            return position.clone().offset(-this.control.settings.gridSize, 0);
+    }
+}
+
+export class MoveRightCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        return position.clone().offset(UnitConverter.pixelsToTwips(1), 0);
+    }
+}
+
+export class MoveStepRightCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        if(this.control.settings.snapToGrid)
+            return new Point(ModelUtils.getSnappedPos(this.control.model, this.control.settings.gridSize,
+                position.x + (this.control.settings.gridSize / 2 + 2), true), position.y);
+        else
+            return position.clone().offset(this.control.settings.gridSize, 0);
+    }
+}
+
+export class MoveUpCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        return position.clone().offset(0, -UnitConverter.pixelsToTwips(1));
+    }
+}
+
+export class MoveStepUpCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        if(this.control.settings.snapToGrid)
+            return new Point(position.x, ModelUtils.getSnappedPos(this.control.model, this.control.settings.gridSize,
+                position.y - (this.control.settings.gridSize / 2 + 2), false));
+        else
+            return position.clone().offset(0, -this.control.settings.gridSize);
+    }
+}
+
+export class MoveDownCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        return position.clone().offset(0, UnitConverter.pixelsToTwips(1));
+    }
+}
+
+export class MoveStepDownCommand extends MoveCommand {
+    getPosition(position: Point): Point {
+        if(this.control.settings.snapToGrid)
+            return new Point(position.x, ModelUtils.getSnappedPos(this.control.model, this.control.settings.gridSize,
+                position.y + (this.control.settings.gridSize / 2 + 2), false));
+        else
+            return position.clone().offset(0, this.control.settings.gridSize);
+    }
+}
+

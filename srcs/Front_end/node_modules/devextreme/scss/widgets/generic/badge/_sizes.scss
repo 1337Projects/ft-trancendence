@@ -1,0 +1,13 @@
+@use "../sizes" as *;
+
+// adduse
+
+$generic-badge-padding: null !default;
+
+@if $size == "default" {
+  $generic-badge-padding: 0 6px !default;
+}
+
+@else if $size == "compact" {
+  $generic-badge-padding: 0 5px !default;
+}

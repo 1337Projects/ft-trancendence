@@ -1,0 +1,6 @@
+{
+  "sideEffects": false,
+  "main": "../cjs/range-selector.js",
+  "module": "../esm/range-selector.js",
+  "typings": "../cjs/range-selector.d.ts"
+}

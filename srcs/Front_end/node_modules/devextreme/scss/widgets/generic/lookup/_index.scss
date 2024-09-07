@@ -1,0 +1,96 @@
+@use "sass:color";
+@use "colors" as *;
+@use "../colors" as *;
+@use "sizes" as *;
+@use "../sizes" as *;
+@use "../../base/icons" as *;
+@use "../textEditor/sizes" as *;
+@use "../textEditor/colors" as *;
+@use "../dropDownEditor" as *;
+@use "../common/mixins" as *;
+@use "../../base/lookup";
+@use "../../base/lookup/mixins" as *;
+
+// adduse
+@use "../dropDownList";
+
+
+.dx-lookup-field {
+  padding-block-start: $generic-base-inline-borderedwidget-top-padding;
+  padding-block-end: $generic-base-inline-borderedwidget-bottom-padding;
+  padding-inline-end: $generic-base-inline-borderedwidget-inner-size;
+  padding-inline-start: $generic-base-inline-borderedwidget-horizontal-padding;
+}
+
+.dx-editor-underlined {
+  .dx-lookup-field {
+    padding-inline-start: 0;
+  }
+}
+
+@include dx-lookup-arrow(
+  spinnext,
+  "\f04f",
+  $generic-base-inline-borderedwidget-inner-size,
+  $lookup-icon-color,
+  $lookup-icon-color-active,
+  $generic-base-icon-size,
+);
+
+.dx-lookup-popup-wrapper {
+  .dx-list-item {
+    border-top: none;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+  }
+
+  .dx-list-item-content {
+    padding-left: $generic-lookup-popup-content-padding;
+    padding-right: $generic-lookup-popup-content-padding;
+  }
+
+  .dx-popup-content {
+    top: 0;
+    padding: 0;
+  }
+
+  .dx-popup-title + .dx-popup-content {
+    top: $generic-lookup-popup-content-top;
+  }
+}
+
+.dx-lookup-empty {
+  .dx-lookup-field {
+    color: $texteditor-placeholder-color;
+  }
+}
+
+@mixin lookup-badge-offset() {
+  inset-inline-end: $generic-dropdowneditor-invalid-badge-offset;
+}
+
+.dx-invalid.dx-lookup .dx-lookup-field::after {
+  @include lookup-badge-offset();
+  @include dx-invalid-generic-badge();
+}
+
+.dx-valid.dx-lookup .dx-lookup-field::after {
+  @include lookup-badge-offset();
+  @include dx-valid-generic-badge();
+}
+
+.dx-validation-pending.dx-lookup .dx-lookup-field-wrapper .dx-pending-indicator {
+  @include lookup-badge-offset();
+  @include dx-pending-indicator-generic();
+}
+
+.dx-lookup-popup-search .dx-list {
+  height: calc(100% - #{$generic-lookup-list-top});
+}
+
+.dx-lookup-search-wrapper {
+  padding: $generic-lookup-popup-content-padding;
+  padding-bottom: $generic-lookup-popup-content-padding - 6px;
+}
