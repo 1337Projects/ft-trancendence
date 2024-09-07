@@ -106,4 +106,4 @@ def friends_infos(request):
     user = User.objects.get(id=id)
     friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user))
     serializer = UserWithFriendsSerializer(friends, many=True)
-    return Response(serializer.data)
+    return Response({"data" : serializer.data})

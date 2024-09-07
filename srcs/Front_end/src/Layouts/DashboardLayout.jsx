@@ -35,7 +35,7 @@ export default function DashboardLayout() {
 
     useEffect(() => {
       const timer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/friends/get_friends/`, {
+        fetch(`http://localhost:8000/api/profile/info/friends/`, {
           method: 'GET',
           credentials : 'include',
           headers : {
@@ -44,6 +44,7 @@ export default function DashboardLayout() {
         })
         .then(res => res.json())
         .then(res => {
+          console.log(res)
           friendsHandler(res.data)
           setIsLoading(false)
         })

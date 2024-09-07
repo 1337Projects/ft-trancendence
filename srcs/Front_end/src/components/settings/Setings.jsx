@@ -77,6 +77,7 @@ function Profile() {
         })
         .then(res => res.json())
         .then(data => {
+            console.log(data)
             if (data.status == 200) {
                 // setAlert({"data" : data.res})
                 userHandler(data.res)

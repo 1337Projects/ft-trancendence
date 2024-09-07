@@ -29,7 +29,7 @@ function SearchResult({query, queryHandler}) {
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         const timer = setTimeout(async () => {
-            await fetch(`http://localhost:8000/api/profile/search_user/?query=${query}`, {
+            await fetch(`http://localhost:8000/api/profile/users/?query=${query}`, {
                 method : 'GET',
                 headers : {
                     "Content-Type": "application/json",
