@@ -1,5 +1,0 @@
-{
-  "sideEffects": false,
-  "main": "../../../cjs/ui/popup/popup_overflow_manager.js",
-  "module": "../../../esm/ui/popup/popup_overflow_manager.js"
-}

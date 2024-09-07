@@ -1,6 +1,0 @@
-
-  {
-    "module": "../esm/common/index",
-    "main": "../cjs/common/index"
-  }
-  

@@ -1,6 +1,0 @@
-
-  {
-    "module": "../esm/inferno/index",
-    "main": "../cjs/inferno/index"
-  }
-  

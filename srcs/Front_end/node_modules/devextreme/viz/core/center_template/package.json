@@ -1,5 +1,0 @@
-{
-  "sideEffects": false,
-  "main": "../../../cjs/viz/core/center_template.js",
-  "module": "../../../esm/viz/core/center_template.js"
-}

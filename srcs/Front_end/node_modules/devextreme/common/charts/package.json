@@ -1,6 +1,0 @@
-{
-  "sideEffects": false,
-  "main": "../../cjs/common/charts.js",
-  "module": "../../esm/common/charts.js",
-  "typings": "../charts.d.ts"
-}

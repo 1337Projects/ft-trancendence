@@ -1,5 +1,0 @@
-{
-  "sideEffects": false,
-  "main": "../../../cjs/ui/gantt/ui.gantt.data_changes_processing_helper.js",
-  "module": "../../../esm/ui/gantt/ui.gantt.data_changes_processing_helper.js"
-}

@@ -1,6 +1,0 @@
-
-  {
-    "module": "../esm/angular/index",
-    "main": "../cjs/angular/index"
-  }
-  

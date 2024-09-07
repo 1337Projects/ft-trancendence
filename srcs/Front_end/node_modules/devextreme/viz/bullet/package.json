@@ -1,8 +1,0 @@
-{
-  "sideEffects": [
-    "../../esm/localization/currency.js"
-  ],
-  "main": "../../cjs/viz/bullet.js",
-  "module": "../../esm/viz/bullet.js",
-  "typings": "../bullet.d.ts"
-}

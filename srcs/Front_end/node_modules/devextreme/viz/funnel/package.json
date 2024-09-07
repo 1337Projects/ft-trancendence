@@ -1,8 +1,0 @@
-{
-  "sideEffects": [
-    "../../esm/localization/currency.js"
-  ],
-  "main": "../../cjs/viz/funnel.js",
-  "module": "../../esm/viz/funnel.js",
-  "typings": "../funnel.d.ts"
-}

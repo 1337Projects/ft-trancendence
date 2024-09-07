@@ -1,7 +1,0 @@
-{
-  "sideEffects": [
-    "../../../esm/data/odata/query_adapter.js"
-  ],
-  "main": "../../../cjs/data/odata/request_dispatcher.js",
-  "module": "../../../esm/data/odata/request_dispatcher.js"
-}
