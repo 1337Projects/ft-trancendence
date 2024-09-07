@@ -47,8 +47,11 @@ def create_profile(id, image_link):
 
 @api_view(['GET'])
 def get_users(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
     username = request.GET.get('query')
-    users = User.objects.filter(username__startswith=username)
+    users = User.objects.filter(username__startswith=username).exclude(id=id)
     serializer = UserWithProfileSerializer(users, many=True)
     return Response({"data": serializer.data}, status=200)
 
@@ -123,10 +126,59 @@ def add_friend(request):
         data = request.data.get('data')
         receiver_id = data.get('id')
         receiver = User.objects.get(id=receiver_id)
-        Friends.objects.create(status="waiting", sender=sender, receiver=receiver).save()
-        return Response({"status": 200, "id": receiver_id})
-    else:
-        return Response({"status": 400})
+        if Friends.objects.filter(sender=sender, receiver=receiver):
+            return Response({"message": "there is a relation between him"})
+        else:
+            Friends.objects.create(status="waiting", sender=sender, receiver=receiver).save()
+            return Response({"status": 200, "id": receiver_id})
+    return Response({"message": "there is no data recieved", "status": 400})
+
+@api_view(['POST'])
+def accept_friend(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    receiver = User.objects.get(id=id)
+    if 'data' in request.data:
+        data = request.data.get('data')
+        sender_id = data.get('id')
+        sender = User.objects.get(id=sender_id)
+        relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
+        relation_friend.status = "accept"
+        relation_friend.save()
+        return Response({"status": 200, "message": "accept successful"})
+    return Response({"message": "there is no data recieved", "status": 400})
+
+@api_view(['POST'])
+def reject_friend(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    receiver = User.objects.get(id=id)
+    if 'data' in request.data:
+        data = request.data.get('data')
+        sender_id = data.get('id')
+        sender = User.objects.get(id=sender_id)
+        relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
+        relation_friend.status = "reject"
+        relation_friend.save()
+        return Response({"status": 200, "message": "reject successful"})
+    return Response({"message": "there is no data recieved", "status": 400})
+
+@api_view(['POST'])
+def unfriend(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    receiver = User.objects.get(id=id)
+    if 'data' in request.data:
+        data = request.data.get('data')
+        sender_id = data.get('id')
+        sender = User.objects.get(id=sender_id)
+        relationship = Friends.objects.get(sender=sender, receiver=receiver)
+        relationship.delete()
+        return Response({"status": 200, "message": "unfriend successul"})
+    return Response({"message": "there is no data recieved", "status": 400})
 
     
 
