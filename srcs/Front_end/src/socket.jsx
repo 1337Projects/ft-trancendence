@@ -1,4 +1,6 @@
 
+
+
 class WebSocketService {
 
     constructor() {
@@ -31,17 +33,33 @@ class WebSocketService {
 
             this.socket.onmessage = (event) => {
                 let data = JSON.parse(event.data)
-                console.log(data)
-                if (data.data.init_data) {
-                    // console.log(JSON.parse(data.data.init_data))
-                    this.callbacks["setInitData"](JSON.parse(data.data.init_data))
-                }
-                else if (data.data.messages) {
-                    this.callbacks["setData"](data.data.messages)
-                    this.callbacks["setUser"](data.data.user)
-                }
-                else  {
-                    this.callbacks["setData"](prev => [...prev , data.data])
+                // console.log(data)
+                switch (data.response.status) {
+                    case 201:
+                        console.log(data.response.room)
+                        this.callbacks["setRoom"](data.response.room)
+                        break;
+                    case 202:
+                        this.callbacks["setInitData"](JSON.parse(data.response.game))
+                        break;
+                    case 203:
+                        this.callbacks["startGame"]()
+                        break;
+                    case 204:
+                        this.callbacks["resultHandler"](data.response.match)
+                        break;
+                    case 205:
+                        this.callbacks["setData"](prev => [...prev , data.response.message])
+                        break;
+                    case 206:
+                        this.callbacks["setData"](data.response.messages)
+                        this.callbacks["setUser"](data.response.user)
+                        break;
+                    case 400:
+                        console.log(data.response.error)
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -63,7 +81,9 @@ class WebSocketService {
       }
 
     close() {
-        this.socket.close()
+        if (this.socket && this.socket.readyState == WebSocket.OPEN) {
+            this.socket.close()
+        }
         this.socket = null
     }
 }
