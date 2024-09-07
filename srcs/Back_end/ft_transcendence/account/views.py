@@ -20,6 +20,11 @@ def get_id(request):
         return payload['user_id']
     return None
 
+def get_infos(id):
+    user = get_object_or_404(User, id=id)
+    serialiser = UserWithProfileSerializer(user)
+    return serialiser
+
 @api_view(['GET'])
 def get_profile_infos(request):
     id = get_id(request)
@@ -27,9 +32,8 @@ def get_profile_infos(request):
         return Response({"message": "Invalid token"}, status=400)
     if not Profile.objects.filter(user_id=id).exists():
         return Response({"message": "this user is not exist", "id": id}, status=400)
-    user = get_object_or_404(User, id=id)
-    serialiser = UserWithProfileSerializer(user)
-    return Response({"data": serialiser.data}, status=200)
+    user = get_infos(id)
+    return Response({"data": user.data}, status=200)
 
 def create_profile(id, image_link):
     Profile.objects.create_profile(
@@ -84,7 +88,7 @@ def set_infos(request):
         old_image = Profile.objects.filter(user_id=user_id).values('image').first()
         if old_image:
             default_storage.delete(old_image['image'])
-        name = manage_images(request, f'{username}{id}-profile.jpeg', 'avatar')
+        name = manage_images(request, f'{username}-profile.jpeg', 'avatar')
         Profile.objects.filter(user_id=user_id).update(
             image=f'http://127.0.0.1:8000/media/{name}'
         )
@@ -92,11 +96,12 @@ def set_infos(request):
         old_banner = Profile.objects.filter(user_id=user_id).values('banner').first()
         if old_banner:
             default_storage.delete(old_banner['banner'])
-        name = manage_images(request, f'{username}{id}-banner.jpeg', 'banner')
+        name = manage_images(request, f'{username}-banner.jpeg', 'banner')
         Profile.objects.filter(user_id=user_id).update(
             banner=f'http://127.0.0.1:8000/media/{name}'
         )
-    return Response({"message": "DONE"}, status=200)
+    new_infos = get_infos(user_id)
+    return Response({"status": 200, "res": new_infos.data}, status=200)
 
 @api_view(['GET'])
 def friends_infos(request):
@@ -107,3 +112,21 @@ def friends_infos(request):
     friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user))
     serializer = UserWithFriendsSerializer(friends, many=True)
     return Response({"data" : serializer.data})
+
+@api_view(['POST'])
+def add_friend(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    sender = User.objects.get(id=id)
+    if 'data' in request.data:
+        data = request.data.get('data')
+        receiver_id = data.get('id')
+        receiver = User.objects.get(id=receiver_id)
+        Friends.objects.create(status="waiting", sender=sender, receiver=receiver).save()
+        return Response({"status": 200, "id": receiver_id})
+    else:
+        return Response({"status": 400})
+
+    
+

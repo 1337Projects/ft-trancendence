@@ -1,6 +1,6 @@
 import { faBell, faGear, faLanguage, faLocation, faMailBulk, faMailReply, faMoon, faPalette, faPassport, faPen, faShieldHalved, faSun, faUser, faXmarksLines } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ColorContext, ColorToggelContext, ThemeContext, ThemeToggelContext } from "../../Contexts/ThemeContext";
 import {authContext, userContext, userContextHandler} from '../../Contexts/authContext'
 
@@ -58,8 +58,6 @@ function Profile() {
     const [userData, setUserData] = useState({...user})
     const [images, setImages] = useState({avatar : null, banner: null})
 
-
-    console.log(userData)
     function updateDatahandler() {
         const formdata = new FormData()
         formdata.append("user", JSON.stringify(userData))
@@ -77,10 +75,12 @@ function Profile() {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data)
+            console.log("user=> " , user)
+            console.log("data =>" , data)
             if (data.status == 200) {
                 // setAlert({"data" : data.res})
                 userHandler(data.res)
+                setUserData(data.res)
             } 
             else if (data.status == 401) {
                 setAlert({"data" : data.err})
@@ -118,7 +118,7 @@ function Profile() {
                                 setDisabled(false)
                                 return {...prev,  profile : {...prev.profile, bio:e.target.value}}
                             })}
-                            value={userData.profile.bio}
+                            value={userData?.profile?.bio}
                             rows="4" className={`p-2 focus:outline-none rounded-sm w-[130px] ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} px-2 w-[230px] text-[10px]`} type="text" />
                     </label>
                 </li>
