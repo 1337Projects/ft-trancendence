@@ -2,15 +2,16 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Profile
+from .models import Profile, Friends
 from login.models import User
-from .serializer import ProfileSerializers, UserWithProfileSerializer
+from .serializer import ProfileSerializers, UserWithProfileSerializer, UserWithFriendsSerializer
 import json
 import jwt
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
+from django.db.models import Q
 
 def get_id(request):
     refresh_token = request.COOKIES.get('refresh_token')
@@ -96,3 +97,13 @@ def set_infos(request):
             banner=f'http://127.0.0.1:8000/media/{name}'
         )
     return Response({"message": "DONE"}, status=200)
+
+@api_view(['GET'])
+def friends_infos(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = User.objects.get(id=id)
+    friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user))
+    serializer = UserWithFriendsSerializer(friends, many=True)
+    return Response(serializer.data)
