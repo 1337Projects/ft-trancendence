@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 import FriendsList from '../components/profile/FriendList'
-import {PlayerStatus} from "../components/profile/profile"
+
 
 
 export default function ChatLayout() {

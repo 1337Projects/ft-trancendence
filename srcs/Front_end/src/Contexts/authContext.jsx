@@ -19,6 +19,7 @@ export default function AuthcontextProvidder({children, token, tokenHandler}) {
 export const userContext = createContext(null)
 export const userContextHandler = createContext(null)
 
+
 export function UsercontextProvidder({children, user, userhandler}) {
     return (
         <userContext.Provider value={user}>
@@ -26,5 +27,18 @@ export function UsercontextProvidder({children, user, userhandler}) {
                 {children}
             </userContextHandler.Provider>
         </userContext.Provider>
+    )
+}
+
+export const friendsContext = createContext(null)
+export const friendsContextHandler = createContext(null)
+
+export function FriendscontextProvidder({children, friends, friendshandler}) {
+    return (
+        <friendsContext.Provider value={friends}>
+            <friendsContextHandler.Provider value={friendshandler}>
+                {children}
+            </friendsContextHandler.Provider>
+        </friendsContext.Provider>
     )
 }

@@ -2,7 +2,7 @@ import { faBell, faCaretDown, faCheck, faTrash, faUserPlus, faCaretUp, faPoo, fa
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
 import { ColorContext, ThemeContext } from "../Contexts/ThemeContext";
-import { authContext, userContext } from "../Contexts/authContext";
+import { authContext, friendsContext, friendsContextHandler, userContext } from "../Contexts/authContext";
 
 
 function NotItem({data}) {
@@ -23,6 +23,48 @@ function NotItem({data}) {
 
 function InviteItem({data}) {
     const color = useContext(ColorContext)
+    const tokens = useContext(authContext)
+    const friendsHandler = useContext(friendsContextHandler)
+
+    function accept_friend_request() {
+		fetch('http://localhost:8000/api/friends/accept_friend/', {
+			method : 'POST',
+			headers : {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${tokens.mytoken}`
+			},
+			credentials: 'include',
+			body : JSON.stringify({data : data.sender})
+		})
+		.then(res => res.json())
+		.then(data => {
+            console.log(data)
+			if (data.status == 200) {
+				friendsHandler(data.data)
+			}
+		})
+		.catch(err => console.log(err))
+	}
+
+    function reject_friend_request() {
+		fetch('http://localhost:8000/api/friends/reject_friend/', {
+			method : 'POST',
+			headers : {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${tokens.mytoken}`
+			},
+			credentials: 'include',
+			body : JSON.stringify({data : data.sender})
+		})
+		.then(res => res.json())
+		.then(data => {
+			if (data.status == 200) {
+				friendsHandler(data.data)
+			}
+		})
+		.catch(err => console.log(err))
+	}
+
     return (
         <li className="flex ml-[50%] translate-x-[-50%] w-full my-6 p-1 h-fit h-[60px]">
             <div className="text text-primaryText ml-4 w-full">
@@ -32,12 +74,12 @@ function InviteItem({data}) {
                         <h1 className="font-bold">{data?.sender?.username}</h1>
                         <p className="text-small mt-1">sent friend request</p>
                     </div>
-                    <div className="ml-4 actions flex  items-center text-primaryText ">
-                        <div  className="flex text-[10px] text-white items-center h-[28px] rounded px-2 cursor-pointer">
+                    <div className="ml-4 actions flex w-[100px] justify-evenly  items-center text-primaryText ">
+                        <div onClick={accept_friend_request}  className="flex text-[12px] text-white items-center h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">accept</p> */}
                             <FontAwesomeIcon icon={faCheck} />
                         </div>
-                        <div style={{borderColor:color}} className="flex text-[10px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
+                        <div onClick={reject_friend_request} style={{borderColor:color}} className="flex text-[12px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">reject</p> */}
                             <FontAwesomeIcon icon={faTrash} />
                         </div>
@@ -95,9 +137,18 @@ export function Invites() {
     if(showInvites === null)
             window.localStorage.setItem('showInvites', false);
     const theme = useContext(ThemeContext)
-    const user = useContext(userContext)
+    const friends = useContext(friendsContext)
     const [invites, setInvites] = useState([])
     const [show, setShow] = useState(showInvites == 'true')
+    const user = useContext(userContext)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setInvites(friends.filter(item => item.status == 'waiting' && item.sender.id != user.id))
+        }, 300)
+
+        return () => clearTimeout(timer)
+    }, [friends])
 
     function handler(value) {
         setShow(value)

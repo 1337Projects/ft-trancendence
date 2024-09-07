@@ -7,12 +7,13 @@ import {Invites} from '../components/Notifications'
 
 import LastMatch from '../components/profile/lastMatch'
 import { useContext, useEffect, useState } from 'react'
-import { authContext, userContextHandler } from '../Contexts/authContext'
+import { authContext, friendsContext, friendsContextHandler, userContextHandler } from '../Contexts/authContext'
 
 export default function DashboardLayout() {
     const location = useLocation()
     const auth = useContext(authContext)
     const userHandler = useContext(userContextHandler)
+    const friendsHandler = useContext(friendsContextHandler)
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -26,12 +27,31 @@ export default function DashboardLayout() {
         .then(res => res.json())
         .then(res => {
           userHandler(res.data)
-          setIsLoading(false)
         })
         .catch(err => console.log(err))
       }, 300)
       return () => clearTimeout(timer)
     }, [])
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        fetch(`http://localhost:8000/api/profile/info/friends/`, {
+          method: 'GET',
+          credentials : 'include',
+          headers : {
+            'Authorization' : `Bearer ${auth.mytoken}`,
+          }
+        })
+        .then(res => res.json())
+        .then(res => {
+          console.log(res)
+          friendsHandler(res.data)
+          setIsLoading(false)
+        })
+        .catch(err => console.log(err))
+      }, 300)
+      return () => clearTimeout(timer)
+    }, [location])
 
     if (isLoading) {
       return (<></>)

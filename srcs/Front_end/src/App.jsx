@@ -26,10 +26,11 @@ import Tournament from './components/game/tournament'
 import PingPong from './components/game/PingPong'
 import NotFound from './components/NotFound'
 import Nav from './components/auth/nav'
-import AuthcontextProvidder, { authContextHandler, userContextHandler, userContext, UsercontextProvidder } from './Contexts/authContext'
+import AuthcontextProvidder, { authContextHandler, userContextHandler, userContext, UsercontextProvidder, FriendscontextProvidder } from './Contexts/authContext'
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
 import  { jwtDecode } from 'jwt-decode'
+import Waiting from './components/game/waiting'
 
 function Home() {
 
@@ -130,6 +131,7 @@ const router = createBrowserRouter(
         <Route path='tournment' element={<Tournament/>} />
         <Route path="game/room/:id" element={<PingPong />}/>
         <Route path='game' element={<Game />} />
+        <Route path='game/waiting' element={<Waiting />} />
         <Route  path='setings' element={<Setings />} />
 
         {/* chat  */}
@@ -168,6 +170,7 @@ function App() {
   const [color, setColor] = useState(appliedColor);
   const [token, setToken] = useState({mytoken:'', username:''})
   const [user, setUser] = useState({})
+  const [friends, setFriends] = useState([])
 
 
   function ThemeHandler(theme) {
@@ -193,16 +196,18 @@ function App() {
 
 
   return (
-    <div style={{backgroundSize:'50px 50px'}} className={`font-pt ${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
+    <div className={` font-pt ${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
       <UsercontextProvidder user={user} userhandler={setUser}>
         <AuthcontextProvidder token={token} tokenHandler={tokenHandler}>
+          <FriendscontextProvidder friends={friends} friendshandler={setFriends}>
             <ThemeProvider theme={theme} handler={ThemeHandler}>
               <ColorProvider color={color} handler={colorHandler}>
-                <div className='container max-w-[1400px] mx-auto'>
+                <div className='container max-w-[1400px]  mx-auto'>
                   <RouterProvider router={router} />
                 </div>
               </ColorProvider>
             </ThemeProvider>
+          </FriendscontextProvidder>
         </AuthcontextProvidder>
       </UsercontextProvidder>
     </div>
