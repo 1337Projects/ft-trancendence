@@ -7,17 +7,17 @@ For more information on this file, see
 https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 """
 
-import os
+# import os
 
-from channels.routing import ProtocolTypeRouter, ChannelNameRouter
-from django.core.asgi import get_asgi_application
-from chat import routing
-from channels.routing import URLRouter, ProtocolTypeRouter
-from channels.security.websocket import AllowedHostsOriginValidator  # new
-from .tokenauth_middleware import TokenAuthMiddleware  # new
+# from channels.routing import ProtocolTypeRouter, ChannelNameRouter
+# from django.core.asgi import get_asgi_application
+# from chat import routing
+# from channels.routing import URLRouter, ProtocolTypeRouter
+# from channels.security.websocket import AllowedHostsOriginValidator  # new
+# from .tokenauth_middleware import TokenAuthMiddleware  # new
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ft_transcendence.settings')
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ft_transcendence.settings')
 # application = get_asgi_application()
 # application = ProtocolTypeRouter({#i added this
 #     "http": get_asgi_application(),
@@ -28,11 +28,38 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ft_transcendence.settings')
 #     ),
 # })
 
+# application = ProtocolTypeRouter({
+#     "http": get_asgi_application(),
+#     "websocket": TokenAuthMiddleware(
+#         URLRouter(
+#             chat_routing.websocket_urlpatterns
+#         )
+#     ),
+# })
+
+# import os
+
+# from channels.routing import ProtocolTypeRouter
+# from django.core.asgi import get_asgi_application
+
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ChatAPI.settings')
+
+# application = ProtocolTypeRouter({
+#     "http": get_asgi_application(),
+# })
+
+import os
+
+from channels.routing import URLRouter, ProtocolTypeRouter
+from channels.security.websocket import AllowedHostsOriginValidator
+from django.core.asgi import get_asgi_application
+from chat import routing
+from .tokenauth_middleware import TokenAuthMiddleware
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat.settings')
+
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": TokenAuthMiddleware(
-        URLRouter(
-            chat_routing.websocket_urlpatterns
-        )
-    ),
+    "websocket": AllowedHostsOriginValidator(
+        TokenAuthMiddleware(URLRouter(routing.websocket_urlpatterns)))
 })

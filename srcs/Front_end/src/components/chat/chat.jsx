@@ -103,7 +103,6 @@ export default function ConversationsList() {
 
     const tokens = useContext(authContext)
     useEffect(() => {
-        console.log("Token: ", tokens.mytoken);
         const timer = setTimeout(() => {
             // console.log(tokens)
             // console.log(tokens.mytoken)
@@ -117,15 +116,14 @@ export default function ConversationsList() {
             })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
+                console.log(data)// ana liktb hadchi
                 // if (data.data) {
                     setCnvs(data.data)
                 // }
             })
         }, 300)
         return () => clearTimeout(timer)
-    }, [tokens])//i updates this
-
+    })
 
     function ListVisibilityHandler(id) {
         id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);
