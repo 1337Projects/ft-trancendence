@@ -235,6 +235,7 @@ function Banner() {
 		.then(res => res.json())
 		.then(data => {
 			if (data.status == 200) {
+				console.log(data)
 				friendsHandler(data.data)
 			}
 		})
@@ -242,6 +243,7 @@ function Banner() {
 
 	}
 
+	// request.data["data"]
 	function accept_friend_request() {
 		fetch('http://localhost:8000/api/friends/accept_friend/', {
 			method : 'POST',

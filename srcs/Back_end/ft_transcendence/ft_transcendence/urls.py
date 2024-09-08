@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/profile/', include('account.urls')),
     path('api/chat/', include('chat.urls')),
     path('users/', include('login.urls')),
+    path('api/friends/', include('account.urls')),
 ]
 
 if settings.DEBUG:
