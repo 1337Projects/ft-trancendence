@@ -22,7 +22,7 @@ function UserMessage({m}) {
     const [time, setTime] = useState('')
     useEffect(() => {
         const timer = setTimeout(() => {
-            let date = new Date(m.created_at);
+            let date = new Date(m?.created_at);
             const hours = date.getUTCHours()
             const mins = date.getUTCMinutes()
             setTime(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`);
@@ -32,8 +32,8 @@ function UserMessage({m}) {
     return (
         <li className="mt-4 flex items-start justify-end">
             <div className="bg-gray-700/90 border-[.2px] border-white/20 text-white min-w-[100px] max-w-[50%] flex-wrap rounded-lg">
-                {m.image != '' && <img src={m.image} className='w-[200px] h-[220px] rounded-t-md' />}
-                <h1 className="text-[16px] font-noto py-1 px-2">{m.message}</h1>
+                {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />}
+                <h1 className="text-[16px] font-noto py-1 px-2">{m?.message}</h1>
                 <p className="text-[10px] pr-2 text-right">{time}</p>
             </div>
             <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
@@ -81,7 +81,9 @@ export default function Conversation() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            Socket.connect("ws://localhost:8000/ws/chat/<int:user_id>/<int:partner_id>/")//i update this
+            const partnerId = user;  // assuming 'user' is the partner ID from useParams()//i update this
+            const userId = tokens.username;  // assuming tokens.username is the user_id
+            Socket.connect(`ws://localhost:8000/ws/chat/${userId}/${partnerId}/`)//i update this
             Socket.addCallback("setData", setMessages)
             Socket.addCallback("setUser", setUserData)
             Socket.sendMessage({
@@ -157,12 +159,12 @@ export default function Conversation() {
                     <FontAwesomeIcon className="text-[12px]" icon={faEllipsisVertical} />
                 </div>
                 <div className="body flex justify-center">
-                    {messages.length ? 
+                    {messages?.length ? 
                         <ul ref={cnv} className="mt-10 px-2 max-w-[600px] w-full overflow-auto" style={{height:'calc(100vh - 300px)'}}>
                         {messages.map(m => {
                                 if (m?.sender?.username !== user)
-                                    return <UserMessage key={m.id} m={m} />
-                                return <FromMessage key={m.id} m={m} />
+                                    return <UserMessage key={m?.id} m={m} />
+                                return <FromMessage key={m?.id} m={m} />
                         })} 
                         </ul>
                     : <h1 className="top-[50%] translate-y-[-50%] text-[15px] capitalize absolute"><span className="text-[20px] mr-2">😕</span>no messages yet</h1>}

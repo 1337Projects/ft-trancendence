@@ -1,3 +1,29 @@
 if you do Message.objects.all(), you'll get all messages, with the most recent one first.
 you can access the messages a user has sent with user.sent_messages.all()
 and the messages a user has received with user.received_messages.all().
+
+
+# what i get from front    
+
+                                    #     const data = {
+                                    #     "from": tokens.username,
+                                     #     "to": user,
+                                    #     "content": text,
+                                    #     "event": "new_message"
+                                    # };
+
+
+
+
+
+
+
+from login.models import User
+from chat.models import Message, Conversation
+
+user1 = User.objects.get(pk=1)
+user2 = User.objects.get(pk=2)
+
+conversation = Conversation.objects.create(initiator=user1, receiver=user2)
+
+Message.objects.create(conversation=conversation, user=user1, text="Hello!")

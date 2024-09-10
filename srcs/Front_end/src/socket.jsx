@@ -65,7 +65,7 @@ class WebSocketService {
         }
     }
 
-    sendMessage(message) {
+    sendMessage(message) { 
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(JSON.stringify(message));
         }else {
