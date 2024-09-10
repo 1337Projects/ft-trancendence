@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -126,7 +127,7 @@ def add_friend(request):
         data = request.data.get('data')
         receiver_id = data.get('id')
         receiver = User.objects.get(id=receiver_id)
-        if Friends.objects.filter(sender=sender, receiver=receiver):
+        if Friends.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)):
             return Response({"message": "there is a relation between him"})
         else:
             Friends.objects.create(status="waiting", sender=sender, receiver=receiver).save()
@@ -143,10 +144,16 @@ def accept_friend(request):
         data = request.data.get('data')
         sender_id = data.get('id')
         sender = User.objects.get(id=sender_id)
-        relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
-        relation_friend.status = "accept"
-        relation_friend.save()
-        return Response({"status": 200, "message": "accept successful"})
+        relationship = Friends.objects.filter(sender=receiver, receiver=sender)
+        if relationship:
+            return Response({"status": 400, "message": "can't serve this request"})
+        try:
+            relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
+            relation_friend.status = "accept"
+            relation_friend.save()
+            return Response({"status": 200, "message": "accept successful"})
+        except ObjectDoesNotExist:
+            return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})
 
 @api_view(['POST'])
@@ -159,10 +166,16 @@ def reject_friend(request):
         data = request.data.get('data')
         sender_id = data.get('id')
         sender = User.objects.get(id=sender_id)
-        relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
-        relation_friend.status = "reject"
-        relation_friend.save()
-        return Response({"status": 200, "message": "reject successful"})
+        relationship = Friends.objects.filter(sender=receiver, receiver=sender)
+        if relationship:
+            return Response({"status": 400, "message": "can't serve this request"})
+        try:
+            relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
+            relation_friend.status = "reject"
+            relation_friend.delete()
+            return Response({"status": 200, "message": "reject successful"})
+        except ObjectDoesNotExist:
+            return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})
 
 @api_view(['POST'])
@@ -170,14 +183,17 @@ def unfriend(request):
     id = get_id(request)
     if not id:
         return Response({"message": "Invalid token"}, status=400)
-    receiver = User.objects.get(id=id)
+    sender = User.objects.get(id=id)
     if 'data' in request.data:
         data = request.data.get('data')
-        sender_id = data.get('id')
-        sender = User.objects.get(id=sender_id)
-        relationship = Friends.objects.get(sender=sender, receiver=receiver)
-        relationship.delete()
-        return Response({"status": 200, "message": "unfriend successul"})
+        receiver_id = data.get('id')
+        receiver = User.objects.get(id=receiver_id)
+        try :
+            relationship = Friends.objects.get(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender))
+            relationship.delete()
+            return Response({"status": 200, "message": "unfriend successul"})
+        except ObjectDoesNotExist:
+            return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})
 
     
