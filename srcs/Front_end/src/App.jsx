@@ -31,6 +31,7 @@ import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
 import  { jwtDecode } from 'jwt-decode'
 import Waiting from './components/game/waiting'
+import {TournmentWaiting} from './components/game/tournament'
 
 function Home() {
 
@@ -128,7 +129,8 @@ const router = createBrowserRouter(
 
 
 		<Route path='/dashboard' element={<DashboardPrivateRoute />}>
-        <Route path='tournment' element={<Tournament/>} />
+        <Route path='game/tournment' element={<Tournament/>} />
+        <Route path='game/tournment/waiting' element={<TournmentWaiting/>} />
         <Route path="game/room/:id" element={<PingPong />}/>
         <Route path='game' element={<Game />} />
         <Route path='game/waiting' element={<Waiting />} />

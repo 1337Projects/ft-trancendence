@@ -194,7 +194,7 @@ function Cards({color, handler}) {
             <div className="cards mt-2 grid place-items-center  py-2 grid-flow-col-1 px-10 sm:grid-cols-2 lg:px-0 xl:grid-cols-3 xl:px-0 gap-4">
                 <Card text="play vs ai" img={<AiImg color={color} />}  color={color} link="room/1"  />
   
-                <Card text="play on tornemnt" img={<TornmentImg color={color} />} color={color} handler={handler} link="waiting" />
+                <Card text="play on tornemnt" img={<TornmentImg color={color} />} color={color} handler={handler} link="tournment/waiting" />
                 <Card text="play vs friend" img={<FriendImg color={color} />} color={color} handler={handler} link="waiting" />
                 <Card text="random match" img={<HeroImg color={color} />} color={color} handler={handler} link="waiting" />
             </div>

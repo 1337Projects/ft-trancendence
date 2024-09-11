@@ -25,7 +25,7 @@ export default function Waiting() {
             let room = searchParam.get("room")
             if (!room)
                 room = "any"
-            Socket.connect(`ws://localhost:8000/ws/game/${room}/`)
+            Socket.connect(`ws://localhost:8000/ws/game/2/${room}/`)
             Socket.addCallback("setRoom", setRoom)
             Socket.addCallback("startGame", startGameHandler)
         })
