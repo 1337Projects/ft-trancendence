@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {faCheck, faCheckDouble, faClock, faCommentDots, faEllipsisV, faRankingStar, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons"
+import {faCheck, faCheckDouble, faClock, faCommentDots, faEllipsisV, faGamepad, faRankingStar, faUserMinus, faUserPlus, faXmark } from "@fortawesome/free-solid-svg-icons"
 import {faTrophy} from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useContext } from "react"
@@ -207,6 +207,7 @@ function Actions({friends, profile_user, handlers}) {
 
 function Banner() {
 	const theme = useContext(ThemeContext)
+	const color = useContext(ColorContext)
 	const userData = useContext(userContext)
 	const {user} = useParams()
 	const [data, setData] = useState(userData)
@@ -338,7 +339,7 @@ function Banner() {
 							<h1 className='mt-2 font-bold'>@{data.username}</h1>
 						</div>
 					</div>
-					<div className='p-2 h-fit text-[12px] py-10 flex items-center'>
+					<div className='p-2 h-fit text-[12px] py-4 flex items-center'>
 						<div className='w-1/2'>
 							{
 								data?.profile?.bio != '' && 
@@ -359,7 +360,13 @@ function Banner() {
 							</div>
 						}
 					</div>
-					<div className='h-fit flex'>
+					<div className='text-white w-full h-[80px] p-2 flex items-start px-10'>
+						<div className='w-full h-[40px] border-b-[.1px] border-white/40 flex items-center capitalize text-[14px]'>
+							<div style={{color : color, borderColor : color}} className='cursor-pointer border-b-[2px] h-full flex items-center'>profile</div>
+							<div className='ml-4 cursor-pointer'>friends</div>
+						</div>
+					</div>
+					<div className='h-fit flex mt-4'>
 						<div className='w-3/5 flex  border-[0px] justify-center h-[380px] border-white/30 rounded-sm'>
 							<div className='w-3/4'>
 								<Level />
@@ -369,8 +376,14 @@ function Banner() {
 						</div>
 						<div className='w-2/5 flex items-center border-[0px] justify-center h-[380px] border-white/30 rounded-sm'>
 							<div className='w-3/4 h-full'>
-								<div className=''>
-									<Avatar />
+								<div className=' flex justify-center'>
+									<div className='w-fit'>
+										<Avatar />
+										{/* <div style={{background:color}} className='flex items-center text-[14px] w-full text-white mt-4 h-[40px] rounded-full px-4 text-center capitalize'>
+											<h1 className='mr-2'>play match</h1>
+											<FontAwesomeIcon className='text-[20px]' icon={faGamepad} />
+										</div> */}
+									</div>
 								</div>
 								<Statistics />
 							</div>
