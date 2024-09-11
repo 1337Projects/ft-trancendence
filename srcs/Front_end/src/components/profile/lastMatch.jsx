@@ -63,7 +63,7 @@ export default function LastMatch() {
 						<ul className='w-full my-2  h-[91%] overflow-scroll'>
 							{
 								matches.map(m => {
-									return (<History key={m.room} data={m} name='Joker'/>)
+									return (<History key={m.id} data={m} name='Joker'/>)
 								})
 							}
 						</ul>
