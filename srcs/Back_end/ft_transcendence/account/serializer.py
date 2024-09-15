@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile
+from .models import Profile, Friends
 from login.serializer import UserSerializer
 from login.models import User
 
@@ -18,3 +18,11 @@ class UserWithProfileSerializer(serializers.ModelSerializer):
     def get_profile(self, obj):
         profile = Profile.objects.get(user_id=obj.id)
         return ProfileSerializers(profile).data
+
+class UserWithFriendsSerializer(serializers.ModelSerializer):
+    sender = UserWithProfileSerializer()
+    receiver = UserWithProfileSerializer()
+
+    class Meta:
+        model = Friends
+        fields = ('id', 'status', 'sender', 'receiver')

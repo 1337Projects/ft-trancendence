@@ -24,5 +24,5 @@ class Profile(AbstractBaseUser):
 
 class Friends(AbstractBaseUser):
     status = models.CharField(default='')
-    sender = models.IntegerField(default=0)
-    receiver = models.IntegerField(default=0)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='send_requests')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_requests')

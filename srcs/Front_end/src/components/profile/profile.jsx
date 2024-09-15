@@ -179,11 +179,11 @@ function Actions({friends, profile_user, handlers}) {
 	}
 
 
-	if (!has_relation(friends, profile_user.id, null)) {
+	if (!has_relation(friends, profile_user?.id, null)) {
 		return (<ActionButton text="Add Friend" icon={faUserPlus} handler={handlers.new} />)
 	}
 
-	if (has_relation(friends, profile_user.id, 'waiting') && !is_receiver(friends, profile_user.id, 'waiting')) {
+	if (has_relation(friends, profile_user?.id, 'waiting') && !is_receiver(friends, profile_user.id, 'waiting')) {
 		return (
 			<div className='flex justify-between w-[220px]'>
 				<ActionButton text="accept friend" icon={faCheckDouble} handler={handlers.accept} />
@@ -191,7 +191,7 @@ function Actions({friends, profile_user, handlers}) {
 			</div>
 		)
 	}
-	if (has_relation(friends, profile_user.id, 'accepted')){
+	if (has_relation(friends, profile_user?.id, 'accepted')){
 		return (
 			<div className='flex justify-between items-center w-[230px]'>
 				<ActionButton text="contact" icon={faCommentDots} handler={null} />
@@ -236,6 +236,7 @@ function Banner() {
 		.then(res => res.json())
 		.then(data => {
 			if (data.status == 200) {
+				console.log(data)
 				friendsHandler(data.data)
 			}
 		})
@@ -243,6 +244,7 @@ function Banner() {
 
 	}
 
+	// request.data["data"]
 	function accept_friend_request() {
 		fetch('http://localhost:8000/api/friends/accept_friend/', {
 			method : 'POST',
@@ -303,7 +305,7 @@ function Banner() {
 	useEffect(() => {
 		const timer = setTimeout(async () => {
 			if (user != undefined) {
-				await fetch(`http://localhost:8000/api/profile/get_user_data/?user=${user}`, {
+				await fetch(`http://localhost:8000/api/profile/${user}/`, {
 					headers : {
 						"Content-Type": "application/json",
 						"Authorization": `Bearer ${tokens.mytoken}`
@@ -335,8 +337,8 @@ function Banner() {
 					<div className='flex items-end px-10'>
 						<img className='w-[90px] border-[.3px] bg-white rounded-full ' src={`${data?.profile?.image}`} alt="" />
 						<div className='ml-4 text-white'>
-							<h1 className='text-[16px] uppercase'>{data.first_name} {data.last_name}</h1>
-							<h1 className='mt-2 font-bold'>@{data.username}</h1>
+							<h1 className='text-[16px] uppercase'>{data?.first_name} {data?.last_name}</h1>
+							<h1 className='mt-2 font-bold'>@{data?.username}</h1>
 						</div>
 					</div>
 					<div className='p-2 h-fit text-[12px] py-4 flex items-center'>
