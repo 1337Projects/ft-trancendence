@@ -360,8 +360,8 @@ function Banner() {
 							</div>
 						}
 					</div>
-					<div className='text-white w-full h-[80px] p-2 flex items-start px-10'>
-						<div className='w-full h-[40px] border-b-[.1px] border-white/40 flex items-center capitalize text-[14px]'>
+					<div className={`${theme == 'light' ? "text-lightText" : "text-darkText"} w-full h-[80px] p-2 flex items-start px-10`}>
+						<div className={`w-full ${theme == 'light' ? "border-lightText" : "border-darkText"} h-[40px] border-b-[.1px] flex items-center capitalize text-[14px]`}>
 							<div style={{color : color, borderColor : color}} className='cursor-pointer border-b-[2px] h-full flex items-center'>profile</div>
 							<div className='ml-4 cursor-pointer'>friends</div>
 						</div>

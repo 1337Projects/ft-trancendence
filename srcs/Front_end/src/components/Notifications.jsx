@@ -193,7 +193,7 @@ export function Invites() {
             </div>
             {
                 show && 
-                <ul className="my-2 border-[1px] m-2 border-darkText/10 rounded-sm">
+                <ul className={`my-2 border-[1px] ${theme == 'light' ? "border-lightText/10" : "border-darkText/10"} m-2 rounded-sm`}>
                     {
                         invites.length ? 
                         invites.map(inv => <InviteItem key={inv.sender.id} data={inv} />)
