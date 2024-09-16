@@ -43,6 +43,7 @@ class WebSocketService {
                         this.callbacks["setInitData"](JSON.parse(data.response.game))
                         break;
                     case 203:
+                        console.log("start game event comes")
                         this.callbacks["startGame"]()
                         break;
                     case 204:

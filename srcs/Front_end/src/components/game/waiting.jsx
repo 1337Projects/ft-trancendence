@@ -109,7 +109,7 @@ export default function Waiting() {
                     <div className="flex items-center mt-20 justify-center">
                         <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
                             <div className='text-center'>
-                                <img src={room?.room?.players[0]?.user?.profile?.image} className='bg-white rounded-full w-[60px]' alt="" />
+                                <img src={room?.room?.players[0]?.user?.profile?.image} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
                                 <h1 className='uppercase mt-4'>{room?.room?.players[0]?.user?.username}</h1>
                                 <h1 className='uppercase mt-2 text-[12px]'>player 1</h1>
                             </div>
@@ -120,7 +120,7 @@ export default function Waiting() {
                         </div>
                         <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
                             <div className=' text-center'>
-                                <img src={room?.room?.players[1] ? room?.room?.players[1]?.user?.profile?.image : ""} className='bg-white rounded-full w-[60px]' alt="" />
+                                <img src={room?.room?.players[1] ? room?.room?.players[1]?.user?.profile?.image : ""} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
                                 <h1 className='uppercase mt-4'>{room?.room?.players[1] ? room?.room?.players[1]?.user?.username : "waiting..."}</h1>
                                 <h1 className='uppercase mt-2 text-[12px]'>player 2</h1>
                             </div>

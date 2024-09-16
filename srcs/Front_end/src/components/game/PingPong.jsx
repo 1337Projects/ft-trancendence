@@ -162,7 +162,7 @@ function PlayerWon({quitHandler, data}) {
             <div className='w-[80%] min-w-[500px]  h-[500px] ml-[50%]  border-white/20 translate-x-[-50%]'>
                 <div className='h-[140px] flex p-4'>
                     {
-                            data.winner.user.username == auth.username ? 
+                            data?.winner?.user?.username == auth?.username ? 
                             <div className='w-full h-fit p-6'>
                                 <h1 className='text-[30px] uppercase font-bold'>congratulations !</h1>
                                 <p className='mt-2 text-[11px] capitalize w-[270px]'>you are the winner you did well, goo game, plase go show them your skills again</p>

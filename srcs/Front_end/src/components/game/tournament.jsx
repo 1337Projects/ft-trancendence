@@ -253,12 +253,14 @@ export default function Tournament() {
 	const color = useContext(ColorContext)
 	const friends = useContext(friendsContext)
 	const user = useContext(authContext)
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			// console.log("connecting again")
 			Socket.connect("ws://localhost:8000/ws/game/tournment/4/any/")
 			Socket.addCallback("setRoom", setRoom)
+			Socket.addCallback("startGame", startGameHandler)
 		}, 300)
 
 		return () => clearTimeout(timer)
@@ -273,6 +275,9 @@ export default function Tournament() {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			console.log(room)
+			if (room.matches.length) {
+				Socket.sendMessage({"event" : "start_game" , "room":room})
+			}
 		}, 300)
 		return () => clearTimeout(timer)
 	}, [room])
@@ -280,6 +285,10 @@ export default function Tournament() {
 	function inviteHandler(user) {
         setInvite(false)
         notsSocket.sendMessage({"event": "game invite", "user" : user, "room" : `http://localhost:5173/dashboard/game/tournment/?room=${room?.room?.name}`})
+    }
+
+	function startGameHandler() {
+        navigate("../game/room/1")
     }
 
 

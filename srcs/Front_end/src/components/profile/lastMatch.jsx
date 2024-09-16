@@ -7,7 +7,7 @@ import { authContext } from '../../Contexts/authContext'
 function History ( {date="01-01-2024 19:30", data}) {
 	const theme = useContext(ThemeContext);
 	const tokens = useContext(authContext)
-	const score = data.winner.user.username == tokens.username ? 100 : 10
+	const score = data?.winner?.user?.username == tokens.username ? 100 : 10
 	return (
 		<div className={`my-4 w-full border-r-[0.5px] px-4 ${score == 10 ? "border-r-[#db4658]" : "border-r-[#00AA30]"} h-[50px] flex justify-between `}>
 			<div className='self-center flex'>
@@ -16,7 +16,7 @@ function History ( {date="01-01-2024 19:30", data}) {
 					<p className={`text-[12px] ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data?.player1_score} - {data?.player2_score}</p>
 					<p className={`mr-[2px] mt-1 text-[10px] font-light ${score == 10 ? "text-[#db4658]" : "text-[#00AA30]"}`}>+{score}</p>
 				</div>
-				<img src={data?.player2?.user?.profile?.image} alt="Description" className=" border-[1px] h-[35px] w-[35px] rounded-full" />
+				<img src={data?.player2?.user?.profile?.image} alt="Description" className=" border-[1px] bg-white h-[35px] w-[35px] rounded-full" />
 			</div>
 			<div className='flex flex-col-reverse h-[85%] ml-1'>
 				<p className={`text-[8px] font-light ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{date}</p>

@@ -37,7 +37,7 @@ export default function DashboardLayout() {
 
     useEffect(() => {
       const timer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/profile/info/friends/`, {
+        fetch(`http://localhost:8000/api/friends/get_friends/`, {
           method: 'GET',
           credentials : 'include',
           headers : {

@@ -211,10 +211,12 @@ function Cards({color, handler}) {
                     <div className="mr-4 w-1/3">
                         <h1 className="capitalize font-kaushan">play on tornemnt</h1>
                         <p className="mt-2 text-[12px]">create a tournment and play with your friends</p>
-                        <button style={{background:color}} className=" px-3 h-[36px] text-white rounded-full w-fit min-w-[100px] mt-4 flex items-center justify-center" >
-                            <h1 className="text-[14px] capitalize">play</h1>
-                            <FontAwesomeIcon icon={faGamepad} className="ml-2 text-[20px]" />
-                        </button>
+                        <Link to="tournment">
+                            <button style={{background:color}} className=" px-3 h-[36px] text-white rounded-full w-fit min-w-[100px] mt-4 flex items-center justify-center" >
+                                <h1 className="text-[14px] capitalize">play</h1>
+                                <FontAwesomeIcon icon={faGamepad} className="ml-2 text-[20px]" />
+                            </button>
+                        </Link>
                     </div>
                     <div className="h-[200px] min-w-[200px] w-1/3">
                         <TornmentImg color={color} />
