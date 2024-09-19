@@ -33,7 +33,7 @@ class WebSocketService {
 
             this.socket.onmessage = (event) => {
                 let data = JSON.parse(event.data)
-                // console.log(data)
+                console.log("Received data:", data);// i added this
                 switch (data.response.status) {
                     case 201:
                         console.log(data.response.room)

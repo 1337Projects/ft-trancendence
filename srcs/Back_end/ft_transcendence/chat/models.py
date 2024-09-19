@@ -5,25 +5,29 @@ from django.conf import settings
 
 
 class Conversation(models.Model):
-    initiator = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_starter"
-    )
-    receiver = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_participant"
-    )
+    initiator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_starter")
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_participant")
     start_time = models.DateTimeField(auto_now_add=True)
+    # name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.initiator} -> {self.receiver}"
 
 class Message(models.Model):
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
     sender = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='sent_messages')#ila drt on_delete=models.CASCADE ya3ni m3a ghanms7 user ghaytms7 kolchi les messages m3ah
+    # receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages')
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
     # conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
-    # receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages')
     # is_read = models.BooleanField(default=False)
     # is_blocked =models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.sender}: {self.text[:50]}"
+
     class Meta:
         ordering = ('-timestamp',)#the last one will apears
+

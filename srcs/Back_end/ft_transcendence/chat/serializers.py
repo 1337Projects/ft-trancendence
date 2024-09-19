@@ -5,10 +5,11 @@ from rest_framework import serializers
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    sender = UserSerializer()
     class Meta:
         model = Message
         exclude = ('conversation',)
-        # fields = ['text', 'timestamp', 'sender']
+        fields = ['text', 'timestamp', 'sender']
 
 
 class ConversationListSerializer(serializers.ModelSerializer):
@@ -22,8 +23,9 @@ class ConversationListSerializer(serializers.ModelSerializer):
 
     def get_last_message(self, instance):
         message = instance.message_set.first()
-        return MessageSerializer(instance=message)
-
+        if message:
+            return MessageSerializer(message).data
+        return None
 
 class ConversationSerializer(serializers.ModelSerializer):
     initiator = UserSerializer()

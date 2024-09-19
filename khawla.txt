@@ -27,3 +27,103 @@ user2 = User.objects.get(pk=2)
 conversation = Conversation.objects.create(initiator=user1, receiver=user2)
 
 Message.objects.create(conversation=conversation, user=user1, text="Hello!")
+
+
+Key Changes:
+Send Message: The send_message method now sends a response that includes message, from, to, and created_at to align with the frontend's structure.
+Receive: The receive method extracts the from, to, and content from the incoming message, creates a message in the database (if needed), and broadcasts it to the group.
+Message Serialization: Message creation is serialized using MessageSerializer, ensuring data consistency.
+Helper Methods: Added helper methods get_user and get_conversation to fetch the relevant User and Conversation objects
+
+
+
+from channels.generic.websocket import AsyncWebsocketConsumer
+import json
+from .models import Message, Conversation
+from login.models import User
+from .serializers import MessageSerializer
+from login.serializer import UserSerializer
+from channels.db import database_sync_to_async
+from django.core.exceptions import ObjectDoesNotExist
+
+class PrivateChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user_id = self.scope['url_route']['kwargs']['user_id']
+        self.partner_id = self.scope['url_route']['kwargs']['partner_id']
+        self.room_name = f'chat_{self.user_id}_{self.partner_id}'
+        self.room_group_name = self.room_name.replace(" ", "_")
+        
+        # Join room group
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+        await self.accept()
+
+    async def send_message(self, event):
+        message = event['message']
+        from_user = event['from_user']
+        to_user = event['to_user']
+        created_at = event.get('created_at', '')
+
+        await self.send(text_data=json.dumps({
+            'response': {
+                'event': 'new_message',
+                'status': 205,
+                'message': {
+                    'content': message,
+                    'from': from_user,
+                    'to': to_user,
+                    'created_at': created_at,
+                }
+            }
+        }))
+        print("Sent message:", message)
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json.get('content')
+        from_username = text_data_json.get('from')
+        to_username = text_data_json.get('to')
+        event = text_data_json.get('event')
+
+        if event == "new_message":
+            from_user = await self.get_user(from_username)
+            to_user = await self.get_user(to_username)
+            if from_user is None or to_user is None:
+                # Handle error or send an error message
+                return
+
+            conversation = await self.get_conversation(from_user, to_user)
+
+            message_instance = await database_sync_to_async(Message.objects.create)(
+                conversation=conversation, sender=from_user, text=message
+            )
+            message_serialized = MessageSerializer(message_instance).data
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'send_message',
+                    'message': message_serialized['text'],
+                    'from_user': message_serialized['sender'],
+                    'to_user': message_instance.conversation.receiver.username,
+                    'created_at': message_serialized['timestamp']  # Use timestamp for created_at
+                }
+            )
+            print("Received and broadcasted message:", message)
+
+    @database_sync_to_async
+    def get_user(self, username):
+        try:
+            return User.objects.get(username=username)
+        except User.DoesNotExist:
+            return None
+
+    @database_sync_to_async
+    def get_conversation(self, from_user, to_user):
+        # Ensure the conversation exists or create a new one
+        conversation, created = Conversation.objects.get_or_create(
+            initiator=from_user, receiver=to_user
+        )
+        return conversation

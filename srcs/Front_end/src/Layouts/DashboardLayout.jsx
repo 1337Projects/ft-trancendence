@@ -26,7 +26,9 @@ export default function DashboardLayout() {
         })
         .then(res => res.json())
         .then(res => {
+          console.log(res)
           userHandler(res.data)
+          setIsLoading(false)
         })
         .catch(err => console.log(err))
       }, 300)

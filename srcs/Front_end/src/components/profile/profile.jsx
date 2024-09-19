@@ -318,6 +318,7 @@ function Banner() {
 				})
 				.catch(err => console.log(err))
 			} else {
+				console.log(userData)
 				setData(userData)
 			}
 			setLoading(false)
