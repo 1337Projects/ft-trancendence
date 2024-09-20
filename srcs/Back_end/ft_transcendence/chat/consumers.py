@@ -8,6 +8,7 @@ from chat.serializers import MessageSerializer
 from .serializers import *
 from asgiref.sync import sync_to_async
 from account.serializer import *
+import logging
 
 def get_user_with_profile(username):
     user = User.objects.get(username=username)
@@ -21,6 +22,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
         self.partner_id = self.scope['url_route']['kwargs']['partner_id']
+        self.user_id, self.partner_id = sorted([self.user_id, self.partner_id])
         self.room_name = f'chat_{self.user_id}_{self.partner_id}'
         self.room_group_name = self.room_name.replace(" ", "_")
         await self.channel_layer.group_add(
@@ -60,14 +62,13 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                     'sender': sender_ser,
                 }
             }))
-        print("send message:", message)
 
 
 
     async def receive(self, text_data):#receive message
         text_data_json = json.loads(text_data)
-        # print("Received message:", text_data_json)
         message_content = text_data_json.get('content')
+        logging.info(f"Received message: {message_content}")
         from_ = text_data_json.get('from')
         to_ = text_data_json.get('to')
         event = text_data_json.get('event')
@@ -115,4 +116,3 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                     'sender': sender_ser,
                 }
             )
-        print("send message1:", message_content)

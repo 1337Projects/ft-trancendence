@@ -33,8 +33,8 @@ pip install daphne channels --upgrade
 
 
 python3 /app/ft_transcendence/manage.py makemigrations login
-python3 /app/ft_transcendence/manage.py makemigrations chat
 python3 /app/ft_transcendence/manage.py makemigrations account
+python3 /app/ft_transcendence/manage.py makemigrations chat
 python /app/ft_transcendence/manage.py makemigrations --noinput
 python3 /app/ft_transcendence/manage.py migrate --noinput
 python3 /app/ft_transcendence/manage.py createsuperuser --noinput || true
