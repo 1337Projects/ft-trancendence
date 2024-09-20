@@ -9,7 +9,15 @@ from .serializers import *
 from asgiref.sync import sync_to_async
 from account.serializer import *
 
+def get_user_with_profile(username):
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user_id=user.id)
+    user_ser = UserWithProfileSerializer(user).data
+    user_ser['profile'] = ProfileSerializers(profile).data
+    return user_ser
+
 class PrivateChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
         self.partner_id = self.scope['url_route']['kwargs']['partner_id']
@@ -55,31 +63,20 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         print("send message:", message)
 
 
+
     async def receive(self, text_data):#receive message
         text_data_json = json.loads(text_data)
-        print("Received message:", text_data_json)
-        message_content = text_data_json.get('content')#kayjib lmsg s7i7
+        # print("Received message:", text_data_json)
+        message_content = text_data_json.get('content')
         from_ = text_data_json.get('from')
         to_ = text_data_json.get('to')
         event = text_data_json.get('event')
 
         sender = await sync_to_async(User.objects.get)(username=from_)
         receiver = await sync_to_async(User.objects.get)(username=to_)
-        # sender_ser= UserSerializer(sender).data
-        # receiver_ser= UserSerializer(receiver).data
 
-
-        # Fetching profile asynchronously in the consumer
-        sender_profile = await sync_to_async(Profile.objects.get)(user_id=sender.id)
-        receiver_profile = await sync_to_async(Profile.objects.get)(user_id=receiver.id)
-        # sender_profile = Profile.objects.get(user_id=sender.id)
-        # receiver_profile = Profile.objects.get(user_id=receiver.id)
-
-        # # Serializing sender and receiver with their profiles
-        sender_ser = UserWithProfileSerializer1(sender).data
-        sender_ser['profile'] = ProfileSerializers(sender_profile).data
-        receiver_ser = UserWithProfileSerializer1(receiver).data
-        receiver_ser['profile'] = ProfileSerializers(receiver_profile).data
+        sender_ser = await sync_to_async(get_user_with_profile)(from_)
+        receiver_ser = await sync_to_async(get_user_with_profile)(to_)
 
         if message_content:
             message = await sync_to_async(Message.objects.create)(
@@ -112,7 +109,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 {
                     'type': 'send_message',
                     'message': message_ser,
-                    # 'user' : sender_ser,
                     'status' :205,
                     'event': event,
                     'receiver': receiver_ser,
