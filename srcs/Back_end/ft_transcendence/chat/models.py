@@ -14,20 +14,18 @@ class Conversation(models.Model):
         return f"{self.initiator} -> {self.receiver}"
 
 class Message(models.Model):
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
     sender = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='sent_messages')#ila drt on_delete=models.CASCADE ya3ni m3a ghanms7 user ghaytms7 kolchi les messages m3ah
-    # receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages')
-    text = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages', null=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
-
+    # conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
     # conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
     # is_read = models.BooleanField(default=False)
     # is_blocked =models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.sender}: {self.text[:50]}"
+        return f"{self.sender}: {self.message[:50]}"
 
     class Meta:
-        ordering = ('-timestamp',)#the last one will apears
-
+        ordering = ('-created_at',)#the last one will apears

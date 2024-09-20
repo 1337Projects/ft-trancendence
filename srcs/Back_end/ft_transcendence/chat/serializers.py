@@ -6,10 +6,11 @@ from rest_framework import serializers
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer()
+    receiver = UserSerializer()
     class Meta:
         model = Message
-        exclude = ('conversation',)
-        fields = ['text', 'timestamp', 'sender']
+        # exclude = ('conversation',)
+        fields = ['id', 'message', 'created_at', 'sender', 'receiver']
 
 
 class ConversationListSerializer(serializers.ModelSerializer):

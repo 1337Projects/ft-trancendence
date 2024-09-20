@@ -1,11 +1,13 @@
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from .models import Message , Conversation
+from chat.models import Message , Conversation
 from login.models import User
 from login.serializer import UserSerializer
+from chat.serializers import MessageSerializer
 from .serializers import *
 from asgiref.sync import sync_to_async
+from account.serializer import *
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -31,7 +33,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'response': {
                     'event': event_type,
-                    'status': event.get('status', 500),
+                    'status': status,
                     'messages': [],
                     # 'messages': message,
                     'user': receiver_ser,
@@ -43,9 +45,9 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'response': {
                     'event': event_type,
-                    'status': event.get('status', 500),
+                    'status': status,
                     'message': message,
-                    'user': receiver_ser,
+                    # 'user': receiver_ser,
                     'receiver': receiver_ser,
                     'sender': sender_ser,
                 }
@@ -55,16 +57,42 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):#receive message
         text_data_json = json.loads(text_data)
-        message = text_data_json.get('content')
+        print("Received message:", text_data_json)
+        message_content = text_data_json.get('content')#kayjib lmsg s7i7
         from_ = text_data_json.get('from')
         to_ = text_data_json.get('to')
         event = text_data_json.get('event')
-        sender = await sync_to_async(User.objects.get)(username=from_)
-        sender_ser= UserSerializer(sender).data
-        receiver = await sync_to_async(User.objects.get)(username=to_)
-        receiver_ser= UserSerializer(receiver).data
 
-        print("Received message:", text_data_json)
+        sender = await sync_to_async(User.objects.get)(username=from_)
+        receiver = await sync_to_async(User.objects.get)(username=to_)
+        # sender_ser= UserSerializer(sender).data
+        # receiver_ser= UserSerializer(receiver).data
+
+
+        # Fetching profile asynchronously in the consumer
+        sender_profile = await sync_to_async(Profile.objects.get)(user_id=sender.id)
+        receiver_profile = await sync_to_async(Profile.objects.get)(user_id=receiver.id)
+        # sender_profile = Profile.objects.get(user_id=sender.id)
+        # receiver_profile = Profile.objects.get(user_id=receiver.id)
+
+        # # Serializing sender and receiver with their profiles
+        sender_ser = UserWithProfileSerializer1(sender).data
+        sender_ser['profile'] = ProfileSerializers(sender_profile).data
+        receiver_ser = UserWithProfileSerializer1(receiver).data
+        receiver_ser['profile'] = ProfileSerializers(receiver_profile).data
+
+        if message_content:
+            message = await sync_to_async(Message.objects.create)(
+                message=message_content,
+                sender=sender,
+                receiver=receiver,
+            )
+            # message.save()
+            message_ser= MessageSerializer(message).data
+
+            message_ser['sender'] = sender_ser
+            message_ser['receiver'] = receiver_ser
+
         if event == "fetch_messages":
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -83,8 +111,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'send_message',
-                    'message': message,
-                    'content': message,
+                    'message': message_ser,
                     # 'user' : sender_ser,
                     'status' :205,
                     'event': event,
@@ -92,7 +119,4 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                     'sender': sender_ser,
                 }
             )
-        print("send message1:", message)
-
-    # async def get_user(self, user_id):
-    #     return await User.objects.aget(id=user_id)
+        print("send message1:", message_content)

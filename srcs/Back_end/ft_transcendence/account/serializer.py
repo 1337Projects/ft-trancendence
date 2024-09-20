@@ -26,3 +26,16 @@ class UserWithFriendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friends
         fields = ('id', 'status', 'sender', 'receiver')
+
+from asgiref.sync import sync_to_async
+
+class UserWithProfileSerializer1(serializers.ModelSerializer):
+    profile = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'profile')
+    
+    async def get_profile(self, obj):
+        profile = await sync_to_async(Profile.objects.get)(user_id=obj.id)
+        return ProfileSerializers(profile).data

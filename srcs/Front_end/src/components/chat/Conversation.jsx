@@ -22,6 +22,7 @@ function UserMessage({m}) {
     const [time, setTime] = useState('')
     useEffect(() => {
         const timer = setTimeout(() => {
+            console.log(m)
             let date = new Date(m?.created_at);
             const hours = date.getUTCHours()
             const mins = date.getUTCMinutes()
@@ -32,7 +33,7 @@ function UserMessage({m}) {
     return (
         <li className="mt-4 flex items-start justify-end">
             <div className="bg-gray-700/90 border-[.2px] border-white/20 text-white min-w-[100px] max-w-[50%] flex-wrap rounded-lg">
-                {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />}
+                {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
                 <h1 className="text-[16px] font-noto py-1 px-2">{m?.message}</h1>
                 <p className="text-[10px] pr-2 text-right">{time}</p>
             </div>
@@ -45,6 +46,7 @@ function FromMessage({m}) {
     const [time, setTime] = useState('')
     useEffect(() => {
         const timer = setTimeout(() => {
+            console.log(m)
             let date = new Date(m.created_at);
             console.log(date.getUTCMinutes())
             const hours = date.getUTCHours()
@@ -103,6 +105,10 @@ export default function Conversation() {
         }, 300)
         return () => clearTimeout(timer)
     }, [])
+
+    useEffect(() => {
+        console.log(messages)
+    }, [messages])
     
     function sendMessage() {
         if (file) {
