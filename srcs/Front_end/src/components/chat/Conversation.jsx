@@ -22,7 +22,7 @@ function UserMessage({m}) {
     const [time, setTime] = useState('')
     useEffect(() => {
         const timer = setTimeout(() => {
-            console.log(m)
+            // console.log(m)
             let date = new Date(m?.created_at);
             const hours = date.getUTCHours()
             const mins = date.getUTCMinutes()
@@ -37,7 +37,7 @@ function UserMessage({m}) {
                 <h1 className="text-[16px] font-noto py-1 px-2">{m?.message}</h1>
                 <p className="text-[10px] pr-2 text-right">{time}</p>
             </div>
-            {/* <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" /> */}
+            <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
         </li>
     )
 }
@@ -46,7 +46,7 @@ function FromMessage({m}) {
     const [time, setTime] = useState('')
     useEffect(() => {
         const timer = setTimeout(() => {
-            console.log(m)
+            // console.log(m)
             let date = new Date(m.created_at);
             console.log(date.getUTCMinutes())
             const hours = date.getUTCHours()
@@ -57,7 +57,7 @@ function FromMessage({m}) {
     }, [])
     return (
         <li className="mt-4 h-fit flex items-start justify-start">
-            {/* <img src={m?.sender?.profile?.image} className="bg-white w-[40px] shadow-sm rounded-full mr-4" alt="" /> */}
+            <img src={m?.sender?.profile?.image} className="bg-white w-[40px] shadow-sm rounded-full mr-4" alt="" />
             <div className="bg-gray-700/90 border-[.2px] border-white/20 text-white min-w-[100px] max-w-[50%] flex-wrap rounded-lg">
                 {/* {m.image != '' && <img src={m.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
                 <h1 className="text-[16px] font-noto py-1 px-2">{m.message}</h1>
