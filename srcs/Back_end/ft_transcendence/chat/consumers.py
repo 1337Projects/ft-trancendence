@@ -49,19 +49,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         messages = event.get('messages', '')
         event_type = event.get('event', None)
         status = event.get('status', 500)
-        print (message)
-        if status == 206:
-            await self.send(text_data=json.dumps({
-                'response': {
-                    'event': event_type,
-                    'status': status,
-                    'messages': messages,
-                    'user': receiver_ser,
-                    'receiver': receiver_ser,
-                    'sender': sender_ser,
-                }
-            }))
-        elif status == 205:
+        if status == 205:
             await self.send(text_data=json.dumps({
                 'response': {
                     'event': event_type,
@@ -76,6 +64,18 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, message):
         message.save()
+
+    @database_sync_to_async
+    def get_or_create_conversation(self, sender, receiver):
+        conversation = Conversation.objects.filter(
+            Q(sender=sender, receiver=receiver) |
+            Q(sender=receiver, receiver=sender)
+        ).first()
+
+        if not conversation:
+            conversation = Conversation.objects.create(sender=sender, receiver=receiver)
+
+        return conversation
 
     async def receive(self, text_data=None, bytes_data=None):#receive message
         if text_data:
@@ -94,19 +94,18 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
             messages = await sync_to_async(get_messages_between_users)(sender_ser['id'], receiver_ser['id'])
             if event == "fetch_messages":
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'send_message',
-                        'messages': messages,
-                        'user' : receiver_ser,
-                        'status' :206,
-                        'event': event,
-                        'receiver': receiver_ser,
-                        'sender': sender_ser,
-                    }
-                )
+                await self.send(text_data=json.dumps({
+                'response': {
+                    'event': event,
+                    'status': 206,
+                    'messages': messages,
+                    'user': receiver_ser,
+                    'receiver': receiver_ser,
+                    'sender': sender_ser,
+                }
+            }))
             elif event == "new_message":
+                conversation = await self.get_or_create_conversation(sender, receiver)
                 message = await sync_to_async(Message.objects.create)(
                     message=message_content,
                     sender=sender,

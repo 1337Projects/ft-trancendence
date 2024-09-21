@@ -4,22 +4,22 @@ from login.models import User
 from django.conf import settings
 
 
+
 class Conversation(models.Model):
-    initiator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_starter")
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_starter")
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_participant")
-    start_time = models.DateTimeField(auto_now_add=True)
-    # name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.initiator} -> {self.receiver}"
+        return f"{self.sender} -> {self.receiver}"
 
 class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True)
     sender = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='sent_messages')#ila drt on_delete=models.CASCADE ya3ni m3a ghanms7 user ghaytms7 kolchi les messages m3ah
     receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages', null=True)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
     # conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
     # is_read = models.BooleanField(default=False)
     # is_blocked =models.BooleanField(default=False)

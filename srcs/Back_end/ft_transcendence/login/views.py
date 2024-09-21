@@ -149,15 +149,6 @@ def google_oauth(request):
             image = user_info.get('picture')
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
-            # user, created = User.objects.update_or_create(
-            #     email=email,
-            #     defaults={
-            #         'username': username,
-            #         'email': email,
-            #         'last_name': username.split()[0] if username else "",
-            #         'first_name': username.split()[1] if username else "",
-            #     }
-            # )
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
