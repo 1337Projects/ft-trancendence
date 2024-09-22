@@ -122,8 +122,8 @@ def google_login(request):
 @api_view(["post"])
 def google_oauth(request):
     code = request.data.get('code')
-    if not code:
-        return Response({'error': 'Authorization code is missing'}, status=400)
+    if not code:#checki m3a abdelhadi
+        return JsonResponse({'error': 'Authorization code is missing'}, status=400)
 
     token_url = 'https://oauth2.googleapis.com/token'
     data = {
@@ -155,8 +155,8 @@ def google_oauth(request):
                 user = User.objects.create_user(
                     username=username,
                     email=email,
-                    last_name= username.split()[0] if username else "",
-                    first_name= username.split()[1] if username else "",
+                    last_name= username.split()[1] if username else "",
+                    first_name= username.split()[0] if username else "",
                 )
                 create_profile(user.id, image)
             try:
@@ -167,9 +167,6 @@ def google_oauth(request):
                 return response
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
-    #         return Response({'status': 200, 'access': jwt_token}, status=200)
-    # else:
-    #     return JsonResponse({'error': 'Failed to retrieve access token'}, status=400)
 
 # #/*******************************************************/
 #3la wd tlister ga3 les iusers likaynin ?
