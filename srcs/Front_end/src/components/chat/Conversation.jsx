@@ -87,16 +87,7 @@ export default function Conversation() {
             const userId = tokens.username;  // assuming tokens.username is the user_id
             Socket.connect(`ws://localhost:8000/ws/chat/${userId}/${partnerId}/`)//i update this
             Socket.addCallback("setData", setMessages)
-            // Socket.addCallback("setData", (messages) => {
-            //     console.log("Messages from backend:", messages); // Log the messages here
-            //     setMessages(messages);
-            // });
             Socket.addCallback("setUser", setUserData)
-    
-            // Socket.addCallback("setUser", (userData) => {
-            //     console.log("User data from backend:", userData); // Log the user data here
-            //     setUserData(userData);
-            // });
             Socket.sendMessage({
                 "from" : tokens.username,
                 "to": user,

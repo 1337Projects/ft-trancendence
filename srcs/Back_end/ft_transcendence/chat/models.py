@@ -10,6 +10,9 @@ class Conversation(models.Model):
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_participant")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ('-created_at',)#the last one will apears# hadui rah normalement khassna nchofo akhir message machi imta tcreate l conversation
+
     def __str__(self):
         return f"{self.sender} -> {self.receiver}"
 
@@ -20,7 +23,6 @@ class Message(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE,)
     # is_read = models.BooleanField(default=False)
     # is_blocked =models.BooleanField(default=False)
 

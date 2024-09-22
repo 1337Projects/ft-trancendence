@@ -1,29 +1,27 @@
 
-# from django.shortcuts import render
-from .models import Conversation
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import status
-from login.models import User
-from .serializers import ConversationListSerializer
-from .serializers import ConversationSerializer
+import jwt
 from django.db.models import Q
-# from django.shortcuts import redirect, reverse
-# from django.http import HttpResponseForbidden
-# from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
+from .models import Conversation
+from rest_framework import status
 from django.http import JsonResponse
-
+from rest_framework.decorators import api_view
+from .serializers import ConversationListSerializer
+from rest_framework.exceptions import AuthenticationFailed
+    
+def get_id(request):
+    auth_header = request.headers.get('Authorization')    
+    try:
+        token = auth_header.split(' ')[1]
+        decoded_data = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_data.get('user_id')
+    except (jwt.PyJWTError):
+        raise AuthenticationFailed('Invalid or expired token')
+    return (user_id)
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
 def conversations(request):
-    print(request.user)
-    print(request.user.id)
-    conversation_list = Conversation.objects.filter(Q(sender=request.user.id) |
-                                                    Q(receiver=request.user.id))
-    print(conversation_list)
+    conversation_list = Conversation.objects.filter(Q(sender=get_id(request)) |
+                                                    Q(receiver=get_id(request)))
     serializer = ConversationListSerializer(instance=conversation_list, many=True)
-    print(serializer)
-    # return Response(serializer.data, status=status.HTTP_200_OK)
-    return JsonResponse(serializer.data, status=200, safe=False)
-
+    return JsonResponse({"data": serializer.data}, status=200)

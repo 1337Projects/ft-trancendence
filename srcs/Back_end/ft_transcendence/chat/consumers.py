@@ -1,16 +1,14 @@
 
-from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from chat.models import Message , Conversation
-from login.models import User
-from login.serializer import UserSerializer
-from chat.serializers import MessageSerializer
 from .serializers import *
-from asgiref.sync import sync_to_async
-from account.serializer import *
-import logging
-from channels.db import database_sync_to_async
+from login.models import User
 from django.db.models import Q
+from account.serializer import *
+from asgiref.sync import sync_to_async
+from login.serializer import UserSerializer
+from channels.db import database_sync_to_async
+from chat.models import Message , Conversation
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 def get_user_with_profile(username):
     user = User.objects.get(username=username)
@@ -71,17 +69,14 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             Q(sender=sender, receiver=receiver) |
             Q(sender=receiver, receiver=sender)
         ).first()
-
         if not conversation:
             conversation = Conversation.objects.create(sender=sender, receiver=receiver)
-
         return conversation
 
     async def receive(self, text_data=None, bytes_data=None):#receive message
         if text_data:
             text_data_json = json.loads(text_data)
             message_content = text_data_json.get('content')
-            logging.info(f"Received message: {message_content}")
             from_ = text_data_json.get('from')
             to_ = text_data_json.get('to')
             event = text_data_json.get('event')
