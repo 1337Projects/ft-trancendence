@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from .serializers import ConversationListSerializer
 from rest_framework.exceptions import AuthenticationFailed
     
-def get_id(request):
+def get_id1(request):
     auth_header = request.headers.get('Authorization')    
     try:
         token = auth_header.split(' ')[1]
@@ -21,7 +21,7 @@ def get_id(request):
 
 @api_view(['GET'])
 def conversations(request):
-    conversation_list = Conversation.objects.filter(Q(sender=get_id(request)) |
-                                                    Q(receiver=get_id(request)))
+    conversation_list = Conversation.objects.filter(Q(sender=get_id1(request)) |
+                                                    Q(receiver=get_id1(request)))
     serializer = ConversationListSerializer(instance=conversation_list, many=True)
     return JsonResponse({"data": serializer.data}, status=200)

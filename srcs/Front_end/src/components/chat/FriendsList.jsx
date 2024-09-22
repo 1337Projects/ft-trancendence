@@ -38,6 +38,7 @@ export default function FriendsList() {
     useEffect(() => {
         const timer = setTimeout(() => {
             fetch('http://localhost:8000/users/list_users/', {
+            // fetch('http://localhost:8000/api/friends/get_friends/', {
                 method : 'GET',
                 headers : {
                     "Content-Type": "application/json",

@@ -34,7 +34,7 @@ function UserMessage({m}) {
         <li className="mt-4 flex items-start justify-end">
             <div className="bg-gray-700/90 border-[.2px] border-white/20 text-white min-w-[100px] max-w-[50%] flex-wrap rounded-lg">
                 {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
-                <h1 className="text-[16px] font-noto py-1 px-2">{m?.message}</h1>
+                <h1 className="text-[16px] py-1 px-2">{m?.message}</h1>
                 <p className="text-[10px] pr-2 text-right">{time}</p>
             </div>
             <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
@@ -60,7 +60,7 @@ function FromMessage({m}) {
             <img src={m?.sender?.profile?.image} className="bg-white w-[40px] shadow-sm rounded-full mr-4" alt="" />
             <div className="bg-gray-700/90 border-[.2px] border-white/20 text-white min-w-[100px] max-w-[50%] flex-wrap rounded-lg">
                 {/* {m.image != '' && <img src={m.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
-                <h1 className="text-[16px] font-noto py-1 px-2">{m.message}</h1>
+                <h1 className="text-[16px] py-1 px-2">{m.message}</h1>
                 <p className="text-[10px] pr-2 text-right">{time}</p>
             </div>
         </li>
@@ -98,7 +98,7 @@ export default function Conversation() {
     }, [])
 
     useEffect(() => {
-        console.log(messages)
+        console.log("my messages" , messages)
     }, [messages])
     
     function sendMessage() {

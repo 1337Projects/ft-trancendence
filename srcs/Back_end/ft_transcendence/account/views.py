@@ -55,6 +55,7 @@ def get_users(request):
     serializer = UserWithProfileSerializer(users, many=True)
     return Response({"data": serializer.data}, status=200)
 
+
 @api_view(['GET'])
 def get_profile(request, username):
     if not User.objects.filter(username=username).exists():

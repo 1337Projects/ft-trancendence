@@ -123,7 +123,7 @@ export default function ConversationsList() {
             })
         }, 300)
         return () => clearTimeout(timer)
-    })
+    }, [])
 
     function ListVisibilityHandler(id) {
         id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);

@@ -7,11 +7,10 @@ from account.serializer import *
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer()
-    receiver = UserSerializer()
+    sender = UserSerializer()#hna error sender = UserWithProfileSerializer()
+    receiver = UserSerializer()#hna error khas ykon  receiver = UserWithProfileSerializer()
     class Meta:
         model = Message
-        # exclude = ('conversation')
         fields = ['id', 'message', 'created_at', 'sender', 'receiver']
 
 
@@ -33,8 +32,10 @@ class ConversationListSerializer(serializers.ModelSerializer):
 
 
 class ConversationSerializer(serializers.ModelSerializer):
-    sender = UserSerializer()
-    receiver = UserSerializer()
+    sender = UserWithProfileSerializer()
+    receiver = UserWithProfileSerializer()
+    # sender = UserSerializer()
+    # receiver = UserSerializer()
     message_ser = MessageSerializer(many=True)
 
     class Meta:
