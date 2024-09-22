@@ -10,6 +10,7 @@ from channels.db import database_sync_to_async
 from chat.models import Message , Conversation
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+@database_sync_to_async
 def get_user_with_profile(username):
     user = User.objects.get(username=username)
     profile = Profile.objects.get(user_id=user.id)
@@ -73,6 +74,10 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             conversation = Conversation.objects.create(sender=sender, receiver=receiver)
         return conversation
 
+    @database_sync_to_async
+    def serialize_message(self, message):
+        return MessageSerializer(message).data
+
     async def receive(self, text_data=None, bytes_data=None):#receive message
         if text_data:
             text_data_json = json.loads(text_data)
@@ -84,8 +89,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             sender = await sync_to_async(User.objects.get)(username=from_)
             receiver = await sync_to_async(User.objects.get)(username=to_)
 
-            sender_ser = await sync_to_async(get_user_with_profile)(from_)
-            receiver_ser = await sync_to_async(get_user_with_profile)(to_)
+            sender_ser = await get_user_with_profile(from_)
+            receiver_ser = await get_user_with_profile(to_)
 
             messages = await sync_to_async(get_messages_between_users)(sender_ser['id'], receiver_ser['id'])
             if event == "fetch_messages":
@@ -107,10 +112,11 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                     receiver=receiver,
                 )
                 await self.save_message(message)
-                message_ser= MessageSerializer(message).data
 
+                message_ser= await self.serialize_message(message)
                 message_ser['sender'] = sender_ser
                 message_ser['receiver'] = receiver_ser
+
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
