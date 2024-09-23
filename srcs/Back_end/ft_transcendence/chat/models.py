@@ -8,10 +8,11 @@ from django.conf import settings
 class Conversation(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_starter")
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="convo_participant")
-    created_at = models.DateTimeField(auto_now_add=True)
+    last_message_time = models.DateTimeField(auto_now_add=True)
+    content_of_last_message = models.TextField(null=True)
 
     class Meta:
-        ordering = ('-created_at',)#the last one will apears# hadui rah normalement khassna nchofo akhir message machi imta tcreate l conversation
+        ordering = ('-last_message_time',)  # the last one will appears
 
     def __str__(self):
         return f"{self.sender} -> {self.receiver}"

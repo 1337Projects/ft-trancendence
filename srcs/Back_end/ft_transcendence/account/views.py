@@ -182,4 +182,12 @@ def unfriend(request):
     return Response({"message": "there is no data recieved", "status": 400})
 
     
-
+@api_view(['GET'])
+def get_friends(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = User.objects.get(id=id)
+    friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept')
+    serializer = UserWithFriendsSerializer(friends, many=True)
+    return Response({"data" : serializer.data})

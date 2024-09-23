@@ -116,7 +116,7 @@ export default function ConversationsList() {
             })
             .then(res => res.json())
             .then(data => {
-                console.log(data)// ana liktb hadchi
+                console.log("conversations :",data)// ana liktb hadchi
                 // if (data.data) {
                     setCnvs(data.data)
                 // }

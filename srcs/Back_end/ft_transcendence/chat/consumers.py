@@ -105,13 +105,15 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 }
             }))
             elif event == "new_message":
-                conversation = await self.get_or_create_conversation(sender, receiver)
                 message = await sync_to_async(Message.objects.create)(
                     message=message_content,
                     sender=sender,
                     receiver=receiver,
                 )
-                await self.save_message(message)
+                conversation = await self.get_or_create_conversation(sender, receiver)
+                conversation.content_of_last_message = message.message
+                conversation.last_message_time = message.created_at
+                await sync_to_async(conversation.save)()
 
                 message_ser= await self.serialize_message(message)
                 message_ser['sender'] = sender_ser
