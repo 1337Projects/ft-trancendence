@@ -50,20 +50,19 @@ export default function LastMatch() {
 	}, [])
 	const theme = useContext(ThemeContext);
 	return (
-		<div className={`mt-2 justify-center flex shadow-sm rounded-sm ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"} h-[370px] w-full `}>
-			<div className='flex flex-col w-[90%] h-full'>
-				<div className={`h-[25%] flex items-center justify-between ${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
+		<div className={`mt-2 p-2 justify-center flex shadow-sm rounded-sm ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"} min-h-[60px] h-fit max-h-[370px] w-full `}>
+			<div className='flex flex-col w-full h-full'>
+				<div className={`h-[60px] flex items-center justify-between ${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
 					<p className={`text-secendary`}>Last Match</p>
-					{/* <div className='text-[10px]'>see all</div> */}
 				</div>
 				{/* <p className={`text-[10px] font-light ${theme === 'light' ? "text-lightText" : "text-darkText"}`}>Date</p> */}
-				<div className='flex overflow-y-auto flex-col items-end'>
+				<div className='flex h-full overflow-y-auto flex-col items-end'>
 					{
-						matches ?
-						<ul className='w-full my-2  h-[91%] overflow-scroll'>
+						matches?.length ?
+						<ul className='w-full my-2 border-[.2px] border-white/20 p-2  h-[260px] overflow-scroll'>
 							{
 								matches.map(m => {
-									return (<History key={m.room} data={m} name='Joker'/>)
+									return (<History key={m.id} data={m} name='Joker'/>)
 								})
 							}
 						</ul>

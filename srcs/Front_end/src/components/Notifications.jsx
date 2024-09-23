@@ -3,18 +3,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
 import { ColorContext, ThemeContext } from "../Contexts/ThemeContext";
 import { authContext, friendsContext, friendsContextHandler, userContext } from "../Contexts/authContext";
-
+import {notsSocket} from '../socket'
+import { Link } from "react-router-dom";
 
 function NotItem({data}) {
     return (
         <li className="flex relative font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
-            <img src={data.img} alt="user" className="h-10 w-10 rounded-[50%]" />
+            <img src={data?.sender?.profile?.image} alt="user" className="h-10 w-10 rounded-[50%]" />
             <div className="text text-primaryText">
-                <h1 className="font-bold">{data.type}</h1>
-                <p className="text-small mt-1">Lorem ipsum dolor sit amet.</p>
+                <Link to={data.action}>
+                    <h1 className="font-bold">{data.title}</h1>
+                </Link>
+                <p className="text-small mt-1">{data.sender.username} {data.description}</p>
             </div>
-            <div className="date">
-                <p className="text-[8px]">{data.date}</p>
+            <div className="date text-center w-[60px] text-[9px]">
+                <p className="">{data.date}</p>
+                <p className="mt-2">{data.time}</p>
             </div>
             
         </li>
@@ -95,8 +99,30 @@ export default function Notifications() {
     if (notifications === null)
         window.localStorage.setItem('showNotifications', false);
     const theme = useContext(ThemeContext)
-    const [nots, setNots] = useState(initNots)
+    const [nots, setNots] = useState([])
     const [show, setShow] = useState(notifications == 'true')
+    const tokens = useContext(authContext)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            notsSocket.connect("ws://localhost:8000/ws/notifications/abc/")
+            notsSocket.addCallback("setNots", setNots)
+            notsSocket.sendMessage({
+                "user" : tokens.username,
+                "event" : "fetch nots"
+            })
+        }, 300)
+        return () => clearTimeout(timer)
+    }, [])
+
+    useEffect (() => {
+        const timer = setTimeout(() => {
+            const res = Object.groupBy(nots, ({date}) => date)
+            // console.log(res)
+        }, 300)
+        return () => clearTimeout(timer)
+    }, [nots])
+
 
     function handler(value) {
         setShow(value)
@@ -104,7 +130,7 @@ export default function Notifications() {
     }
 
     return (
-        <div className={`min-h-[60px] rounded-sm border-[.3px] ${theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
+        <div className={`min-h-[60px]  rounded-sm border-[.3px] ${theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="mr-2 font-popins">Notifications</h1>
@@ -115,7 +141,7 @@ export default function Notifications() {
             </div>
             {
                 show === true && 
-                <ul className="px-4 py-2 border-[.2px] border-darkText/10 rounded-sm m-2">
+                <ul className="px-4 py-2 border-[.2px] max-h-[360px] overflow-scroll border-darkText/10 rounded-sm m-2">
                     {
                         nots.length ? 
                         nots.map(not => <NotItem key={not.id} data={not}/>)
@@ -167,7 +193,7 @@ export function Invites() {
             </div>
             {
                 show && 
-                <ul className="my-2 border-[1px] m-2 border-darkText/10 rounded-sm">
+                <ul className={`my-2 border-[1px] ${theme == 'light' ? "border-lightText/10" : "border-darkText/10"} m-2 rounded-sm`}>
                     {
                         invites.length ? 
                         invites.map(inv => <InviteItem key={inv.sender.id} data={inv} />)
@@ -184,9 +210,3 @@ export function Invites() {
     )
 }
 
-const initNots = [
-    {id:0, type:'new frient request', img:'/aamhamdi1.jpeg', date:'24-02-23 19:33'},
-    {id:1, type:'invite to play', img:'/aamhamdi1.jpeg', date:'24-02-23 19:33'},
-    {id:2, type:'new message', img:'/aamhamdi1.jpeg', date:'24-02-23 19:33'},
-    {id:3, type:'new message', img:'/aamhamdi1.jpeg', date:'24-02-23 19:33'},
-]

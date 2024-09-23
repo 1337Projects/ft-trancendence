@@ -55,6 +55,12 @@ class WebSocketService {
                         this.callbacks["setData"](data.response.messages)
                         this.callbacks["setUser"](data.response.user)
                         break;
+                    case 207:
+                        this.callbacks["setNots"](prev => [data.response.not, ...prev])
+                        break;
+                    case 208:
+                        this.callbacks["setNots"](data.response.nots.reverse())
+                        break;
                     case 400:
                         console.log(data.response.error)
                         break;
@@ -89,5 +95,6 @@ class WebSocketService {
 }
 
 const Socket = new WebSocketService()
+export const notsSocket = new WebSocketService()
 
 export default Socket

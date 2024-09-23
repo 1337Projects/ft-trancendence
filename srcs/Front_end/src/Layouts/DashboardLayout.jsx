@@ -7,7 +7,7 @@ import {Invites} from '../components/Notifications'
 
 import LastMatch from '../components/profile/lastMatch'
 import { useContext, useEffect, useState } from 'react'
-import { authContext, friendsContext, friendsContextHandler, userContextHandler } from '../Contexts/authContext'
+import { authContext, friendsContextHandler, userContextHandler } from '../Contexts/authContext'
 
 export default function DashboardLayout() {
     const location = useLocation()
@@ -48,7 +48,7 @@ export default function DashboardLayout() {
         .then(res => {
           console.log(res)
           friendsHandler(res.data)
-          setIsLoading(false)
+          // setIsLoading(false)
         })
         .catch(err => console.log(err))
       }, 300)
