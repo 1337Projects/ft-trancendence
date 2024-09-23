@@ -170,7 +170,7 @@ export function Invites() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setInvites(friends.filter(item => item.status == 'waiting' && item.sender.id != user.id))
+            setInvites(friends?.filter(item => item.status == 'waiting' && item.sender.id != user.id))
         }, 300)
 
         return () => clearTimeout(timer)

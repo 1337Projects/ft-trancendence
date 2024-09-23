@@ -22,7 +22,6 @@ function UserMessage({m}) {
     const [time, setTime] = useState('')
     useEffect(() => {
         const timer = setTimeout(() => {
-            // console.log(m)
             let date = new Date(m?.created_at);
             const hours = date.getUTCHours()
             const mins = date.getUTCMinutes()

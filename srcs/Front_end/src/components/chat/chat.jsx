@@ -56,8 +56,20 @@ function SetingsList({data}) {
 }
 
 
-function ConvItem({data, id, handler}) {
+function ConvItem({c, id, handler}) {
     const color = useContext(ColorContext)
+    const [time , setTime] = useState("")
+    const tokens = useContext(authContext)
+    const data = Object.filter(c, i => typeof i === "object" && i.username !== tokens?.username)[0]
+    
+    
+    useEffect(() => {
+        let date = new Date(c?.last_message_time);
+        const hours = date.getUTCHours()
+        const mins = date.getUTCMinutes()
+        setTime(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`);
+    }, [])
+
     return (
         <li className="w-full h-[50px] relative mt-3 flex justify-center items-center cursor-pointer" onClick={() => handler(null)}>
             <Link to={`${data.username}`} className="flex justify-start items-center w-[80%]">
@@ -69,13 +81,13 @@ function ConvItem({data, id, handler}) {
                         <h1 className="font-bold ">{data?.username}</h1>
                         <p className="text-[8px] mt-1">
                             <FontAwesomeIcon className="mr-1 text-blue-400" icon={faCheckDouble} />
-                            {/* {data.conv[data?.conv?.length - 1]?.message} */}
+                            {c.content_of_last_message?.substring(0,70)} ...
                         </p>
                     </div>
                 </div>
                 <div className="date flex justify-end w-[70px] items-center relative mr-4">
                     {data.categorie === 'unread' &&  <div style={{background:color}} className="dot flex items-center justify-center w-[20px] h-[20px] text-[9px] font-bold rounded-full text-white">1</div>}
-                    {/* <p className="text-[8px] ml-4">{data.date}</p> */}
+                    <p className="text-[8px] ml-4">{time}</p>
                 </div>
             </Link>
             <div className="">
@@ -145,9 +157,9 @@ export default function ConversationsList() {
                 {/* <ConversationsProvider data={cnvs} dispatch={dispatch}> */}
                     <ul className="mt-10">{
                         cnvs?.map(c => {
-                            const item = Object.filter(c, i => typeof i === "object" && i.username !== tokens?.username)[0];//i add this
+                            // const item = Object.filter(c, i => typeof i === "object" && i.username !== tokens?.username)[0];//i add this
                             // const item = Object.filter(c, i => typeof i == "object" && i.username != tokens.username)[0]
-                            return <ConvItem id={visibleItem} handler={ListVisibilityHandler}  key={c.id} data={item} />
+                            return <ConvItem id={visibleItem} handler={ListVisibilityHandler}  key={c.id} c={c} />
                         })
                         // cnvs?.map(c => (c.categorie === categorie || (categorie === 'all' && c.categorie !== 'archived')) 
                         // && <ConvItem id={visibleItem} handler={ListVisibilityHandler}  key={c.id} data={c} />)
@@ -158,54 +170,3 @@ export default function ConversationsList() {
     )
 }
 
-const iniConvs = [
-    {
-        id:0,
-        display: true, 
-        name: 'aamhamdi unread', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48',
-        categorie: 'unread',
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-            {id:1, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-            {id:2, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-            {id:3, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-            {id:4, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-            {id:5, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        ]
-    },
-    {
-        id:1,
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'}
-        ],
-        display: true, 
-        name: 'aamhamdi group', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48', 
-        categorie: 'groups',
-    },
-    {
-        id:2,
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'}
-        ], 
-        display: true, 
-        name: 'aamhamdi', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48', 
-        categorie: 'user',
-    },
-    {
-        id:3,
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        ], 
-        display: true, 
-        name: 'aamhamdi archived', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48', 
-        categorie: 'archived',
-    },
-]

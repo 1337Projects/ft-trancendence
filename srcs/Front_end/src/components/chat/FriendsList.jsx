@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { authContext } from "../../Contexts/authContext";
-import { chatHandlerContext } from "../../Contexts/ConversationsContext";
 
 
 Object.filter = (obj, predicate) => 
@@ -37,8 +36,7 @@ export default function FriendsList() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            fetch('http://localhost:8000/users/list_users/', {
-            // fetch('http://localhost:8000/api/friends/get_friends/', {
+            fetch('http://localhost:8000/api/friends/get_friends/', {
                 method : 'GET',
                 headers : {
                     "Content-Type": "application/json",
@@ -48,17 +46,14 @@ export default function FriendsList() {
             })
             .then(res => res.json())
             .then(data => {
-                // console.log(data)
-                // if (data.data) {
-                setFriends(data)
-                // setFriends(data.data)
-                // }
+                if (data.data) {
+                    setFriends(data.data)
+                }
             })
             .catch(err => console.log(err))
         }, 300)
         return () => clearTimeout(timer)
     }, [])
-    // console.log(friends)
     return (
         <div className={`
             friends shadow-sm w-[170px] p-1 ml-2 h-full
@@ -69,9 +64,8 @@ export default function FriendsList() {
                 <FontAwesomeIcon icon={faUserGroup} />
             </div>
             <ul>{friends?.map(friend => {
-                // console.log("a",friends)
-                // const user = Object.filter(friend, f => typeof f == "object" && f.username != tokens.username)[0]
-                return <FriendItem key={friend.id} data={friend} />
+                const user = Object.filter(friend, f => typeof f == "object" && f.username != tokens.username)[0]
+                return <FriendItem key={friend.id} data={user} />
             })}</ul>
         </div>
     )
