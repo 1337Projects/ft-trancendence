@@ -49,8 +49,9 @@ export default function FriendsList() {
             .then(res => res.json())
             .then(data => {
                 // console.log(data)
-                setFriends(data)
                 // if (data.data) {
+                setFriends(data)
+                // setFriends(data.data)
                 // }
             })
             .catch(err => console.log(err))
