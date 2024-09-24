@@ -61,7 +61,7 @@ export function GoogleOauth() {
         .then(res => res.json())
         .then(data => {
           if (data.status == 200) {
-            user?.setAuthInfos(data.access)
+            user?.setAuthInfosHandler(data.access)
             navigate('../../dashboard/profile')
           }
         })
@@ -94,7 +94,7 @@ export function IntraOauth() {
         .then(res => res.json())
         .then(data => {
           if (data.status == 200) {
-            user?.setAuthInfos(data.access)
+            user?.setAuthInfosHandler(data.access)
             navigate('../../dashboard/profile')
           }
         })
