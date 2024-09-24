@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react'
+import {jwtDecode} from 'jwt-decode'
 
 type AuthInfosType = {
     accessToken : string,
@@ -20,7 +21,7 @@ type UserType = {
 type UserContextType = {
     authInfos : AuthInfosType | null,
     user : UserType | null,
-    setAuthInfos : React.Dispatch<React.SetStateAction<AuthInfosType | null>>,
+    setAuthInfosHandler : (token : string) => void,
     setUser : React.Dispatch<React.SetStateAction<UserType | null>>
 }
 
@@ -32,10 +33,15 @@ export default function UserContextProvider({children}) {
     const [authInfos, setAuthInfos] = useState<AuthInfosType | null>(null)
     const [user, setUser] = useState<UserType | null>(null)
 
+    function setAuthInfosHandler(token : string) {
+        const pyload = jwtDecode(token)
+        setAuthInfos({accessToken : token, username : pyload.username})
+    }
+
     const value = {
         authInfos,
         user,
-        setAuthInfos,
+        setAuthInfosHandler,
         setUser
     }
 
