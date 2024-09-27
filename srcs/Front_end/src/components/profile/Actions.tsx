@@ -1,7 +1,8 @@
 import React, { useContext } from "react"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
-import { FaCheckDouble, FaCommentDots, FaEllipsisH, FaPlus, FaUserMinus, FaXing } from "react-icons/fa"
-
+import { FaCheckDouble, FaCommentDots, FaEllipsisV, FaPlus, FaUserMinus } from "react-icons/fa"
+import { GiSandsOfTime } from "react-icons/gi";
+import { IoMdClose } from "react-icons/io";
 
 function ActionButton({text, icon, handler}) {
 	const appearence = useContext(ApearanceContext)
@@ -9,7 +10,7 @@ function ActionButton({text, icon, handler}) {
 		<button 
 			onClick={handler} 
 			style={{background: appearence?.color}} 
-			className='text-white p-2 px-4 rounded-2xl flex items-center justify-center'
+			className='text-white mx-2 px-4 rounded-2xl w-fit h-[38px] text-[10pt] flex items-center justify-center'
 		>
 			<h1 className='mr-2 capitalize'>{text}</h1>
 			{icon}
@@ -40,20 +41,18 @@ export function Actions({friends, profile_user, handlers}) {
 		return (
 			<div className='flex justify-between w-[220px]'>
 				<ActionButton text="accept friend" icon={<FaCheckDouble />} handler={handlers.accept} />
-				<ActionButton text="reject" icon={<FaXing />} handler={handlers.reject} />
+				<ActionButton text="reject" icon={<IoMdClose />} handler={handlers.reject} />
 			</div>
 		)
 	}
-	if (has_relation(friends, profile_user?.id, 'accepted')){
+	if (has_relation(friends, profile_user?.id, 'accept')){
 		return (
 			<div className='flex justify-between items-center w-[230px]'>
 				<ActionButton text="contact" icon={<FaCommentDots />} handler={null} />
 				<ActionButton text="unfriend" icon={<FaUserMinus />} handler={handlers.cancle} />
-				<div className='text-white w-[10px] h-[30px] flex justify-end items-center cursor-pointer'>
-					<FaEllipsisH />
-				</div>
+				<FaEllipsisV className="w-[100px]" />
 			</div>
 		)
 	}
-	return (<ActionButton text="cancle the request" icon={<FaXing />} handler={handlers.cancle} />)
+	return (<ActionButton text="cancle the request" icon={<GiSandsOfTime />} handler={handlers.cancle} />)
 }

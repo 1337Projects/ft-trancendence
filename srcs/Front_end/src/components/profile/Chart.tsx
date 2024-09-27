@@ -5,6 +5,8 @@ import { ApearanceContext } from "../../Contexts/ThemeContext"
 export default function Chart() {
 	const appearence = useContext(ApearanceContext)
 	const chartColor = appearence?.theme == 'light' ? "#374151" : "#ffffff"
+
+	
 	return(
 		<div className='h-[100px] w-full'>
 			<LineChart

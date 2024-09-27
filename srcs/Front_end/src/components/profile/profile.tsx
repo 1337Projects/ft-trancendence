@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContext } from "react"
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { Banner } from './Hero';
@@ -7,15 +7,45 @@ import Chart from './Chart'
 import Status from './status';
 import Statistics from './statistics'
 import Achivments from './Achivments'
+import { useParams } from 'react-router-dom';
+import { UserContext } from '../../Contexts/authContext';
+import { UserType } from '../../Contexts/authContext';
 
 
 export default function Profile() {
 	const appearence = useContext(ApearanceContext)
+	const {authInfos, user} = useContext(UserContext) || {}
+	const {user_name} = useParams()
+	const [currentUser, setCurrentUser] = useState<UserType | null>()
+
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			if (user_name) {
+				fetch(`http://localhost:8000/api/profile/${user_name}/`, {
+				  method: 'GET',
+				  credentials : 'include',
+				  headers : {
+					'Authorization' : `Bearer ${authInfos?.accessToken}`,
+				  }
+				})
+				.then(res => res.json())
+				.then(res => {
+					setCurrentUser(res.data)
+				})
+				.catch(err => console.log(err))
+			} else 
+				setCurrentUser(user)
+		}, 300)
+		return () => clearTimeout(timer)
+
+	}, [user_name])
+
 	return (
 		<div className={`w-full backdrop-blur-md ${appearence?.theme == 'light' ? "bg-lightItems border-lightText/10 text-lightText" : "bg-darkItems text-darkText border-darkText/10"}`}>
 			<div className={`w-full p-1 h-[90vh] sm:h-[100vh] overflow-scroll border-[.3px] ${appearence?.theme == 'light' ? "border-lightText/10" : "border-darkText/10"}`}>
 				<div className='h-fit'>
-					<Banner />
+					<Banner user={currentUser} />
 				</div>
 				<div className='mx-10'> 
 					<div className={`${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} w-full h-[80px] flex items-start`}>
