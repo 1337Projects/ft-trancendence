@@ -1,15 +1,13 @@
 
 import { Outlet } from 'react-router-dom'
-import { useContext } from 'react'
-import Nav from '../components/auth/nav'
-import { ThemeContext , ColorContext} from '../Contexts/ThemeContext'
+import React, { useContext } from 'react'
+import { ApearanceContext} from '../Contexts/ThemeContext'
 import Picture from '../components/auth/picture'
 
 
 
 export default function AuthLayout() {
-  const theme = useContext(ThemeContext)
-  const color = useContext(ColorContext)
+  const appearence = useContext(ApearanceContext)
     return (
       <>
         <main>
@@ -19,7 +17,7 @@ export default function AuthLayout() {
                     <div className="hidden lg:flex pic h-full bg-pong bg-cover w-3/4 flex-col items-center p-2 justify-center">
                       <div className='bg-blue-200/10 backdrop-blur-md h-[90vh] w-[40vw] max-h-[500px] max-w-[500px] p-2 rounded-3xl relative border-white/50 border-[.3px]'>
                         <p className='text-white font-bold text-xl mt-6 capitalize w-48 font-kaushan left-20 leading-10 absolute'>welcome to ping pong community. 🎉</p>
-                        <Picture color={color}/>
+                        <Picture color={appearence?.color}/>
                         <div className='bg-white absolute right-[-20px] text-[20px] top-[30vh] w-10 h-10 flex justify-center items-center rounded-full'>
                           💯
                         </div>

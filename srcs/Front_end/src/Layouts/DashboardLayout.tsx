@@ -1,19 +1,17 @@
 
-import { Outlet, useLocation } from 'react-router-dom'
-import SideBar, {LargeSideBar, MobileSideBar} from '../components/sidebar'
+import { Outlet } from 'react-router-dom'
+import SideBar from '../components/sidebar'
 import Search from '../components/Search'
 import Notification from '../components/Notifications'
 import {Invites} from '../components/Notifications'
 
-import LastMatch from '../components/profile/lastMatch'
-import { useContext, useEffect, useState } from 'react'
-import { authContext, friendsContextHandler, userContextHandler } from '../Contexts/authContext'
+import LastMatch from '../components/profile/LastMatch'
+import React, { useContext, useEffect, useState } from 'react'
+import { UserContext } from '../Contexts/authContext'
+
 
 export default function DashboardLayout() {
-    const location = useLocation()
-    const auth = useContext(authContext)
-    const userHandler = useContext(userContextHandler)
-    const friendsHandler = useContext(friendsContextHandler)
+    const user = useContext(UserContext)
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -21,13 +19,12 @@ export default function DashboardLayout() {
           method: 'GET',
           credentials : 'include',
           headers : {
-            'Authorization' : `Bearer ${auth.mytoken}`,
+            'Authorization' : `Bearer ${user?.authInfos?.accessToken}`,
           }
         })
         .then(res => res.json())
         .then(res => {
-          console.log(res)
-          userHandler(res.data)
+          user?.setUser(res.data)
           setIsLoading(false)
         })
         .catch(err => console.log(err))
@@ -37,23 +34,22 @@ export default function DashboardLayout() {
 
     useEffect(() => {
       const timer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/friends/get_friends/`, {
+        fetch(`http://localhost:8000/api/profile/info/friends/`, {
           method: 'GET',
           credentials : 'include',
           headers : {
-            'Authorization' : `Bearer ${auth.mytoken}`,
+            'Authorization' : `Bearer ${user?.authInfos?.accessToken}`,
           }
         })
         .then(res => res.json())
         .then(res => {
           console.log(res)
-          friendsHandler(res.data)
-          // setIsLoading(false)
+          user?.setFriends(res.data)
         })
         .catch(err => console.log(err))
       }, 300)
       return () => clearTimeout(timer)
-    }, [location])
+    }, [])
 
     if (isLoading) {
       return (<></>)
@@ -61,19 +57,8 @@ export default function DashboardLayout() {
     return (
       <>
         <div className="flex justify-between w-full">
-          <div className=''>
-            <div className='hidden sm:block xl:hidden'>
-              <SideBar /> 
-            </div>
-            <div className='hidden xl:block '>
-              <LargeSideBar/>
-            </div>
-            <div className='sm:hidden bg-red-300'>
-              <MobileSideBar />
-            </div>
-          </div>
+          <SideBar /> 
           <main className='w-full sm:ml-2 flex'>
-
             <div className="main flex-grow min-w-[500px] sm:min-w-[500px]">
               <div className="nav w-full flex-grow">
                 <Search />
@@ -84,11 +69,8 @@ export default function DashboardLayout() {
             <div className="side ml-2 flex-grow max-w-[300px] min-w-[300px] hidden lg:block">
               <Notification />
               <Invites />
-              {
-                location.pathname.includes('profile') ? <LastMatch /> : ""
-              }
+              <LastMatch />    
             </div>
-
           </main>
         </div>
       </>

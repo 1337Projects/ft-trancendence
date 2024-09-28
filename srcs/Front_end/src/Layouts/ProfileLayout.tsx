@@ -1,14 +1,13 @@
 import { Outlet } from "react-router-dom"
-import FriendsList from '../components/profile/FriendList'
+import React from "react"
 
 
 
-export default function ChatLayout() {
+export default function ProfileLayout() {
     return (
         <>
             <div className="flex justify-between h-[100vh] mt-2 w-full ">
                 <Outlet />
-                {/* <FriendsList />  */}
             </div>
         </>
     )
