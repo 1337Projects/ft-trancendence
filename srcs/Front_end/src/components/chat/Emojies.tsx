@@ -1,23 +1,22 @@
 
-import {useState, useContext, useEffect} from 'react'
-import { ThemeContext } from '@emotion/react'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faDeleteLeft, faSearch, faSmile } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
+import React, {useState, useContext, useEffect} from 'react'
+import { ApearanceContext } from '../../Contexts/ThemeContext'
+import { FaClock, FaSearch, FaSmile } from 'react-icons/fa'
+import { FaDeleteLeft } from 'react-icons/fa6'
 
 export default function Emojies({TextInputHandler, inputText}) {
     const API = 'https://emoji-api.com/'
     const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
-
+    const {theme} = useContext(ApearanceContext) || {}
     const [query, setQuery] = useState('')
     const [search, setSearch] = useState(false)
-    const theme = useContext(ThemeContext)
+
 
     return (
         <div className={`${theme === 'light' ? "bg-lightBg/20 text-lightText border-lightText/20" : "bg-darkBg/20 text-darkText bottom-[52px] absolute border-darkText/20"} w-full border-[.2px] backdrop-blur-lg mb-1 rounded-sm p-1`}>
             <div className={`${theme === 'light' ? "border-lightText" : "border-darkText"} h-[50px] header flex justify-start items-center text-[12px] px-2 py-2 border-b-[.2px]`}>
                 <div className='mx-2 w-[70%] text-[12px]'>
-                    <FontAwesomeIcon icon={faSearch} />
+                    <FaSearch />
                     <input placeholder='search...' value={query} onChange={(e) => {
                         setQuery(e.target.value)
                         setSearch(true);
@@ -26,13 +25,13 @@ export default function Emojies({TextInputHandler, inputText}) {
                     }} className='px-1 bg-transparent text-[10px] ml-3 focus:outline-none'/>
                 </div>
                 <div className='mx-4'>
-                    <FontAwesomeIcon icon={faSmile} />
+                    <FaSmile />
                 </div>
                 <div className='mx-4'>
-                    <FontAwesomeIcon icon={faClock} />
+                    <FaClock />
                 </div>
                 <div className='mx-4' onClick={() => TextInputHandler(inputText.slice(0, -1))}>
-                    <FontAwesomeIcon icon={faDeleteLeft} />
+                    <FaDeleteLeft />
                 </div>
             </div>
             {
@@ -51,10 +50,11 @@ function EmojiesSearch({query}) {
     useEffect(() => {
         let timer = setTimeout(() => {
             console.log('fetch')
-            axios.get(url)
+            fetch(url)
+            .then(res => res.json())
             .then(res => {
-                if (!res.data.status)
-                    setEmojis(res.data)
+                if (!res.status)
+                    setEmojis(res)
             })
             .catch(err => {
                 console.log(err)
@@ -81,15 +81,16 @@ function EmojesCategories({textHandler, text}) {
     const API = 'https://emoji-api.com/'
     const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
     const [def, setDef] = useState(dataa[0].name)
-    const [emojis, setEmojis] = useState(i)
+    const [emojis, setEmojis] = useState([])
 
 
 
     useEffect(() => {
         let timer = setTimeout(() => {
-            console.log('fetch')
-            axios.get(API + "categories/" + def + "?" + KEY).then(res => {
-                setEmojis(res.data)
+            fetch(API + "categories/" + def + "?" + KEY)
+            .then(res => res.json())
+            .then(res => {
+                setEmojis(res)
             }).catch(err => {
                 console.log(err)
             }) 
@@ -121,12 +122,7 @@ function EmojesCategories({textHandler, text}) {
     )
 }
 
-let i = [
-    {slug: 'e1-0-grinning-face', character: '😀', unicodeName: 'E1.0 grinning face', codePoint: '1F600', group: 'smileys-emotion'},
-    {slug: 'e0-6-grinning-face-with-big-eyes', character: '😃', unicodeName: 'E0.6 grinning face with big eyes', codePoint: '1F603', group: 'smileys-emotion'},
-    {slug: 'e0-6-grinning-face-with-smiling-eyes', character: '😄', unicodeName: 'E0.6 grinning face with smiling eyes', codePoint: '1F604', group: 'smileys-emotion'},
-    {slug: 'e0-6-beaming-face-with-smiling-eyes', character: '😁', unicodeName: 'E0.6 beaming face with smiling eyes', codePoint: '1F601', group: 'smileys-emotion'},
-]
+
 
 const dataa = [
     {name : "smileys-emotion" , character :'😀'},
