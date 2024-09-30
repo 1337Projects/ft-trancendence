@@ -8,5 +8,4 @@ urlpatterns = [
     path('oauth/intra/', views.intra_oauth),
     path('google/', google_login, name='google_login'),
     path('google_callback/', google_oauth, name='google_callback'),
-    path('list_users/', views.user_list, name='user_list'),
 ]
