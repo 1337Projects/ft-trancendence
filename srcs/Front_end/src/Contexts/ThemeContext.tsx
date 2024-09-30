@@ -2,7 +2,7 @@
 import React, { createContext, useState } from 'react'
 
 type ApearanceContextType = {
-    theme : String,
+    theme : string,
     color : string,
     themeHandler : (theme : string) => void,
     colorHandler : (color : string) => void,
@@ -12,29 +12,30 @@ export const ApearanceContext = createContext<ApearanceContextType | null>(null)
 
 export default function ApearanceProvider({children}) {
 
-    const [theme, setTheme] = useState<string>("")
-    const [color, setColor] = useState<string>("")
     let currentTheme = window.localStorage.getItem('theme')
     let currentColor = window.localStorage.getItem('color')
-
+    
     if (!currentColor) {
-        currentColor = '';
-        setColor(currentColor)
+        currentColor = '#C53F3F';
+        window.localStorage.setItem("color", currentColor)
     }
-
+    
     if (!currentTheme) {
         currentTheme = 'dark';
-        setColor(currentTheme)
+        window.localStorage.setItem("theme", currentTheme)
     }
 
+    const [theme, setTheme] = useState<string>(currentTheme)
+    const [color, setColor] = useState<string>(currentColor)
+    
     function themeHandler(theme : string) {
         setTheme(theme)
         window.localStorage.setItem('theme', theme)
     }
-
+    
     function colorHandler(color : string) {
         setColor(color)
-        window.localStorage.setItem('color' , 'color')
+        window.localStorage.setItem('color' , color)
     }
 
     const value = {

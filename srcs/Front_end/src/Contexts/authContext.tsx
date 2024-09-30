@@ -7,22 +7,33 @@ type AuthInfosType = {
 }
 
 type UserProfileType = {
-    photo : string,
+    image : string,
     bio : string,
+    level : number,
+    rank : number
 }
 
-type UserType = {
+export type UserType = {
     username : string,
     first_name : string,
     last_name : string,
     profile : UserProfileType
 }
 
+export type FirendType = {
+    sender : UserType,
+    receiver : UserType,
+    status : string
+}
+
 type UserContextType = {
     authInfos : AuthInfosType | null,
     user : UserType | null,
-    setAuthInfosHandler : (token : string) => void,
+    friends : FirendType[] | null,
+    setAuthInfosHandler : (token : string | null) => void,
     setUser : React.Dispatch<React.SetStateAction<UserType | null>>
+    setFriends : React.Dispatch<React.SetStateAction<FirendType[] | null>>
+
 }
 
 export const UserContext = createContext<UserContextType | null>(null)
@@ -32,8 +43,13 @@ export default function UserContextProvider({children}) {
 
     const [authInfos, setAuthInfos] = useState<AuthInfosType | null>(null)
     const [user, setUser] = useState<UserType | null>(null)
+    const [friends, setFriends] = useState<FirendType[] | null>(null)
 
-    function setAuthInfosHandler(token : string) {
+    function setAuthInfosHandler(token : string | null) {
+        if (!token) {
+            setAuthInfos(null)
+            return
+        }
         const pyload = jwtDecode(token)
         setAuthInfos({accessToken : token, username : pyload.username})
     }
@@ -41,8 +57,10 @@ export default function UserContextProvider({children}) {
     const value = {
         authInfos,
         user,
+        friends,
         setAuthInfosHandler,
-        setUser
+        setUser,
+        setFriends
     }
 
     return (

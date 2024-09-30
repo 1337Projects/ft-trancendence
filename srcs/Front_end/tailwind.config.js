@@ -10,21 +10,23 @@ export default {
         lightBg : '#f7f7f7',
         lightText : '#374151',
         lightItems : 'white',
-        darkBg : '#161b22',
+        darkItems : '#151b23',
         darkText : 'white',
-        darkItems : '#1E292F',
+        darkBg : '#020408',
       },
       backgroundImage: {
         'hero': "url('/Ping.png')",
         'pong': "url('/wallpaperflare.png')",
-        'pat': "url('/14.svg')",
+        'pat': "url('/ccchaos.svg')",
         'banner': "url('/banner.png')",
+        "chat" : "url('/GGG.svg')"
       },
       fontFamily : {
         'kaushan' : ['"kaushan script"', "sans-serif"],
         'noto' : ['"noto color emoji"', "sans-serif"],
         'insp' : ['inspiration', "sans-serif"],
         'pt' : ['"PT Sans"', "sans-serif"],
+        'kav' : ['Kavoon', "sans-serif"],
       },
       fontSize : {
         'primaryText' : '12px',

@@ -1,15 +1,14 @@
 
-import {useContext, useEffect, useState} from 'react'
-import { authContext, authContextHandler } from '../Contexts/authContext'
+import React, {useContext, useEffect, useState} from 'react'
 import { Navigate } from 'react-router-dom'
 import DashboardLayout from '../Layouts/DashboardLayout'
+import { UserContext } from '../Contexts/authContext';
 
 
 export const DashboardPrivateRoute = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
-    const authhandler = useContext(authContextHandler)
-    let accessToken = useContext(authContext);
+    const user = useContext(UserContext)
     useEffect(() => {
             const getTokens = async () => {
                 await fetch('http://localhost:8000/api/auth/refresh/', 
@@ -19,17 +18,16 @@ export const DashboardPrivateRoute = () => {
                 })
                 .then(res => res.json())
                 .then(res => {
-                    authhandler(res.access_token)
+                    user?.setAuthInfosHandler(res.access_token)
                     setIsAuthenticated(res.access_token != null)
                 })
                 .catch(err => console.log(err))
             }
             
             const timer = setTimeout(async () => {
-                if (accessToken.mytoken == '') {
+                if (!user?.authInfos?.accessToken) {
                     await getTokens() 
                 } else {
-                    // console.log(accessToken)
                     setIsAuthenticated(true)
                 }
                 setLoading(false);
