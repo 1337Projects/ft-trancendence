@@ -129,11 +129,14 @@ def add_friend(request):
         receiver_id = data.get('id')
         receiver = User.objects.get(id=receiver_id)
         if Friends.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)):
-            return Response({"message": "there is a relation between him"})
+            return Response({"message": "there is a relation between him"}, status=400)
         else:
-            Friends.objects.create(status="waiting", sender=sender, receiver=receiver).save()
-            return Response({"status": 200, "id": receiver_id})
-    return Response({"message": "there is no data recieved", "status": 400})
+            new_relation = Friends.objects.create(status="waiting", sender=sender, receiver=receiver)
+            new_relation.save()
+            serializer = UserWithFriendsSerializer(new_relation)
+            return Response({"status": 200, "res": serializer.data})
+    else:
+        return Response({"message": "there is no data recieved", "status": 400}, status=400)
 
 @api_view(['POST'])
 def accept_friend(request):
@@ -152,7 +155,8 @@ def accept_friend(request):
             relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
             relation_friend.status = "accept"
             relation_friend.save()
-            return Response({"status": 200, "message": "accept successful"})
+            serializer = UserWithFriendsSerializer(relation_friend)
+            return Response({"status": 200, "message": serializer.data})
         except ObjectDoesNotExist:
             return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})

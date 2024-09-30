@@ -68,7 +68,7 @@ def intra_oauth(request):
             "code": code,
             "client_id": os.getenv("client_id_intra"),
             "client_secret": os.getenv("client_secret_intra"),
-            "redirect_uri": os.getenv("redirect_uri_inta"),
+            "redirect_uri": os.getenv("redirect_uri_intra"),
             "grant_type": os.getenv("grant_type_intra"),
         }
         token_reponse = requests.post(os.getenv("token_url_intra"), data=data)

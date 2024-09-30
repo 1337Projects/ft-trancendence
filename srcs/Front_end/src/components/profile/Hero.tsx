@@ -11,6 +11,8 @@ import {
 } from './ActionsHandlers'
 
 export function Banner({user}) {
+
+	console.log("user", user)
 	const appearence = useContext(ApearanceContext)
 	const {user_name} = useParams()
 	const { friends, authInfos } = useContext(UserContext) || {}
@@ -36,6 +38,10 @@ export function Banner({user}) {
 					</textarea>
 				}
 			</div>
+			{
+				user?.username != authInfos?.username &&
+				<Actions friends={friends} profile_user={user} handlers={handlers} />
+			}
 		</div>
 	)
 }
