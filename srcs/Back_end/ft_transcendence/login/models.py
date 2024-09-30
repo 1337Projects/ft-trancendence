@@ -14,7 +14,6 @@ class User(AbstractBaseUser):
     first_name = models.CharField(default='', max_length=255)
     last_name = models.CharField(default='', max_length=255)
     objects = UserManager()
-    # authenticate=True
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']

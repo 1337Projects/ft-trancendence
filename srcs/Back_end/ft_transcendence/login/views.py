@@ -12,6 +12,7 @@ from django.contrib.auth.signals import user_logged_out
 from urllib.parse import urlencode
 import requests, secrets , jwt, datetime, json, os
 from account.views import create_profile
+import random
  
 load_dotenv()
 
@@ -118,6 +119,17 @@ def google_login(request):
     google_auth_url = f'https://accounts.google.com/o/oauth2/auth?{params}'
     return JsonResponse({'url': google_auth_url})
 
+def check_if_duplicate(username):
+    users = User.objects.filter(username=username)
+    return users.exists()
+
+def generate_username(name):
+    username = name.split()[0][0] + name.split()[1]
+    real_username = username
+    while (check_if_duplicate(username)):
+        username = real_username + str(random.randint(1, 100))
+    return username
+
 @csrf_exempt
 @api_view(["post"])
 def google_oauth(request):
@@ -145,7 +157,8 @@ def google_oauth(request):
         if user_info_response.status_code == 200:
             user_info = user_info_response.json()
             email = user_info.get('email')
-            username = user_info.get('name')
+            name = user_info.get('name')
+            username = generate_username(name)
             image = user_info.get('picture')
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
@@ -155,8 +168,8 @@ def google_oauth(request):
                 user = User.objects.create_user(
                     username=username,
                     email=email,
-                    last_name= username.split()[1] if username else "",
-                    first_name= username.split()[0] if username else "",
+                    last_name= ' '.join(name.split()[1:]) if name else "",
+                    first_name= name.split()[0] if name else "",
                 )
                 create_profile(user.id, image)
             try:
@@ -167,13 +180,3 @@ def google_oauth(request):
                 return response
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
-
-# #/*******************************************************/
-#3la wd tlister ga3 les iusers likaynin ?
-
-from .serializer import UserSerializer
-@api_view(['GET'])
-def user_list(request, ):
-    users = User.objects.all().order_by('username')
-    serializer = UserSerializer(instance=users, many=True)
-    return Response(serializer.data)
