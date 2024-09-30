@@ -1,30 +1,58 @@
 import React, { useContext } from "react"
-import { LineChart } from "@mui/x-charts/LineChart"
+import {Line} from 'react-chartjs-2'
+import {defaults}  from 'chart.js/auto'
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 
+defaults.responsive = true
+
 export default function Chart() {
-	const appearence = useContext(ApearanceContext)
-	const chartColor = appearence?.theme == 'light' ? "#374151" : "#ffffff"
+
+	const {color} = useContext(ApearanceContext) || {}
+
+	function hexToRgb(hex : string, a) {
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		return  `rgba(${parseInt(result![1], 16)},${parseInt(result![2], 16)},${parseInt(result![3], 16)},${a})`;
+	}
 
 	
 	return(
-		<div className='h-[100px] w-full'>
-			<LineChart
-				leftAxis={null}
-				bottomAxis={null}
-				series={
-					[{ 
-						curve: "linear",
-						data: [
-							// 0, 0
-							0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10,0, 1, 6, 3, 9.3, 3, 0, 10, 0, -10, 10, 2, 10,
-						],
-						color: chartColor,
-						showMark:false
-					}]
-				}
-				margin={{left: 10,bottom:10, top:10, right:10}}
-				disableLineItemHighlight={true}
+		<div className=''>
+			<Line
+			className=""
+				data={{
+					labels: ["Jan", "Fev", "Mar", "Avr", "Mai", "Jun"],
+					datasets : [
+						{
+							label : "xp",
+							data : [0, 100, 300, 100, 150, 10],
+							tension : 0.4,
+							fill : "start",
+							backgroundColor : (context) => {
+								const ctx = context.chart.ctx
+								const cc = ctx.createLinearGradient(0,60,0,300);
+								cc.addColorStop(0, hexToRgb(color!, 70));
+        						cc.addColorStop(1, hexToRgb(color!, 0));
+								return cc
+							},
+							borderColor : color
+						},
+					],	
+				}}
+				options={{
+					scales : {
+						x : {
+							grid : {
+								display : false
+							}
+						},
+						y : {
+							grid : {
+								display : false
+							}
+						}
+					}
+				}}
+				
 			/>
 		</div>
 	)

@@ -12,7 +12,7 @@ const achivments = [
 export default function Achivments() {
 	return (
 		<>
-			<div className={`h-[300px] w-full h-fit rounded-sm`} >
+			<div className={`w-full h-fit rounded-sm`} >
 				<ul className='mt-4'>
 					{
 						achivments.map(a => {
