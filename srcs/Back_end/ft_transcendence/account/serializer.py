@@ -6,7 +6,7 @@ from login.models import User
 class ProfileSerializers(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ('bio', 'level', 'image', 'avatar', 'online')
+        fields = ('bio', 'level', 'image', 'banner', 'online')
 
 class UserWithProfileSerializer(serializers.ModelSerializer):
     profile = serializers.SerializerMethodField()

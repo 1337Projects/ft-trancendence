@@ -90,17 +90,11 @@ def set_infos(request):
     if bio is not None:
         Profile.objects.filter(id=user_id).update(bio=bio)
     if 'avatar' in request.FILES:
-        old_image = Profile.objects.filter(user_id=user_id).values('image').first()
-        if old_image:
-            default_storage.delete(old_image['image'])
         name = manage_images(request, f'{username}-profile.jpeg', 'avatar')
         Profile.objects.filter(user_id=user_id).update(
             image=f'http://127.0.0.1:8000/media/{name}'
         )
     if 'banner' in request.FILES:
-        old_banner = Profile.objects.filter(user_id=user_id).values('banner').first()
-        if old_banner:
-            default_storage.delete(old_banner['banner'])
         name = manage_images(request, f'{username}-banner.jpeg', 'banner')
         Profile.objects.filter(user_id=user_id).update(
             banner=f'http://127.0.0.1:8000/media/{name}'
@@ -156,7 +150,7 @@ def accept_friend(request):
             relation_friend.status = "accept"
             relation_friend.save()
             serializer = UserWithFriendsSerializer(relation_friend)
-            return Response({"status": 200, "message": serializer.data})
+            return Response({"status": 200, "message": serializer.da})
         except ObjectDoesNotExist:
             return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})
