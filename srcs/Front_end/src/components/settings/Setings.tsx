@@ -1,11 +1,13 @@
-import { faBell, faGear, faLanguage, faLocation, faMailBulk, faMailReply, faMoon, faPalette, faPassport, faPen, faShieldHalved, faSun, faUser, faXmarksLines } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useEffect, useState } from "react";
-import { ColorContext, ColorToggelContext, ThemeContext, ThemeToggelContext } from "../../Contexts/ThemeContext";
-import {authContext, userContext, userContextHandler} from '../../Contexts/authContext'
+import React, { useContext, useEffect, useState } from "react";
+import { ApearanceContext } from "../../Contexts/ThemeContext";
+import { FaGear, FaShield } from "react-icons/fa6";
+import { FaBell, FaLanguage, FaLocationArrow, FaPalette, FaSun, FaUser } from "react-icons/fa";
+import { UserContext } from "../../Contexts/authContext";
+
 
 function Avatars({user, handler, images}) {
-    const theme = useContext(ThemeContext)
+    let {theme} = useContext(ApearanceContext) || {theme : ""}
+
     return (
         <div className="w-full">
             <div className="w-full h-[100px] bg-banner bg-cover rounded-sm p-2">
@@ -48,13 +50,9 @@ function SettingsInput({theme, value, name, type, handler}) {
 }
 
 function Profile() {
-    const theme = useContext(ThemeContext)
-    const user = useContext(userContext)
-    const userHandler = useContext(userContextHandler)
-    const token = useContext(authContext)
-    const color = useContext(ColorContext)
+    const appearence = useContext(ApearanceContext)
+    const {user, authInfos, setUser} = useContext(UserContext) || {}
     const [disabled, setDisabled] = useState(true)
-    const [alert, setAlert] = useState({})
     const [userData, setUserData] = useState({...user})
     const [images, setImages] = useState({avatar : null, banner: null})
 
@@ -70,7 +68,7 @@ function Profile() {
             credentials:'include',
             body : formdata,
             headers: {
-                "Authorization" : `Bearer ${token.mytoken}`
+                "Authorization" : `Bearer ${authInfos?.accessToken}`
             }
         })
         .then(res => res.json())
@@ -78,35 +76,28 @@ function Profile() {
             console.log("user=> " , user)
             console.log("data =>" , data)
             if (data.status == 200) {
-                // setAlert({"data" : data.res})
-                userHandler(data.res)
+                setUser(data.res)
                 setUserData(data.res)
             } 
-            else if (data.status == 401) {
-                setAlert({"data" : data.err})
-            }
+            // else if (data.status == 401) {
+            //     setAlert({"data" : data.err})
+            // }
         })
         .catch(err => console.log(err))
     }
 
     return (
         <div className="">
-            {
-                alert.data != null &&
-                <div className="bg-red-500 p-2 px-4 w-fit text-[11px] rounded-sm capitalize">
-                    {alert.data}
-                </div>
-            }
             <Avatars user={user} handler={setImages} images={images}/>
             <ul className="mt-8"> 
                 <div>
-                    <SettingsInput theme={theme} value={userData?.username} name="username" type="text" handler={setUserData} />
+                    <SettingsInput theme={appearence?.theme} value={userData?.username} name="username" type="text" handler={setUserData} />
                 </div>
                 <div className="mt-8">
-                    <SettingsInput theme={theme} value={userData?.first_name} name="first_name" type="text" handler={setUserData} />
+                    <SettingsInput theme={appearence?.theme} value={userData?.first_name} name="first_name" type="text" handler={setUserData} />
                 </div>
                 <div className="mt-8">
-                    <SettingsInput theme={theme} value={userData?.last_name} name="last_name" type="text" handler={setUserData} />
+                    <SettingsInput theme={appearence?.theme} value={userData?.last_name} name="last_name" type="text" handler={setUserData} />
                 </div>
                 <li className="mt-8">
                     <label>
@@ -119,23 +110,22 @@ function Profile() {
                                 return {...prev,  profile : {...prev.profile, bio:e.target.value}}
                             })}
                             value={userData?.profile?.bio}
-                            rows="4" className={`p-2 focus:outline-none rounded-sm w-[130px] ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} px-2 w-[230px] text-[10px]`} type="text" />
+                            rows="4" className={`p-2 focus:outline-none rounded-sm w-[130px] ${appearence?.theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} px-2 w-[230px] text-[10px]`} type="text" />
                     </label>
                 </li>
                 
             </ul>
-            <button  onClick={updateDatahandler} style={{background:color}} className="text-white cursor-pointer p-2 mt-8 rounded-sm w-[230px] h-[35px] flex items-center justify-center">save changes</button>
+            <button  onClick={updateDatahandler} style={{background:appearence?.color}} className="text-white cursor-pointer p-2 mt-8 rounded-sm w-[230px] h-[35px] flex items-center justify-center">save changes</button>
         </div>
     )
 }
 
 
-function SecurityItem({children, cmp}) {
+function SecurityItem({children}) {
     const [show, setShow] = useState(false)
     return (
         <li className="flex justify-between items-center text-[10px] w-fit capitalize mt-10" onClick={() => setShow(!show)}>
             {children}
-            {show && cmp}
         </li>
     )
 }
@@ -152,16 +142,16 @@ function Security() {
     return (
         <div>
             <ul>
-                <SecurityItem cmp={<Input />}>
+                <SecurityItem>
                     <p className="mr-1">change password</p>
-                    <FontAwesomeIcon icon={faShieldHalved} />
+                    <FaShield />
                 </SecurityItem>
                 <SecurityItem>
                     <p>two factor authentification?</p>
                 </SecurityItem>
                 <SecurityItem>
                     <p className="mr-1">connection logs</p>
-                    <FontAwesomeIcon icon={faLocation} />
+                    <FaLocationArrow />
                 </SecurityItem>
             </ul>
         </div>
@@ -213,7 +203,7 @@ function Notifications() {
 
 function Select({children, val, handler}) {
     const [value, setValue] = useState(val)
-    const theme = useContext(ThemeContext);
+    const {theme} = useContext(ApearanceContext) || {theme : ""}
     return (
         <select name="selectedFruit" className={`mt-2 px-2 rounded-sm w-[230px] h-[40px] text-[10px] ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} focus:outline-none`} value={value} onChange={(e) => {
             handler(e.target.value);
@@ -237,10 +227,7 @@ const colors = [
 
 function Apperance() {
 
-    const theme = useContext(ThemeContext)
-    const color = useContext(ColorContext)
-    const ThemeHandler = useContext(ThemeToggelContext)
-    const ColorHandler = useContext(ColorToggelContext)
+   const {theme , color , themeHandler, colorHandler} = useContext(ApearanceContext) || {}
 
     return (
         <div className="mt-4">
@@ -249,9 +236,9 @@ function Apperance() {
                     <label className="text-[10px]">
                         <div className="flex justify-between items-center w-[230px]  px-1">
                             <p>color</p>
-                            <FontAwesomeIcon icon={faPalette} />
+                            <FaPalette />
                         </div>
-                        <Select val={color} handler={ColorHandler}>
+                        <Select val={color} handler={colorHandler}>
                             {colors.map(c => <option key={c.id} value={c.color}>{c.name}</option>)}
                         </Select>
                     </label>
@@ -260,9 +247,9 @@ function Apperance() {
                     <label className="text-[10px]">
                         <div className="flex justify-between items-center w-[230px] px-1">
                             <p>theme</p>
-                            <FontAwesomeIcon icon={faSun} />
+                            <FaSun />
                         </div>
-                        <Select val={theme} handler={ThemeHandler}>
+                        <Select val={theme} handler={themeHandler}>
                             <option value="light">light</option>
                             <option value="dark">dark</option>
                         </Select>
@@ -272,7 +259,7 @@ function Apperance() {
                     <label className="text-[10px]">
                         <div className="flex justify-between items-center w-[230px] px-1">
                             <p>language</p>
-                            <FontAwesomeIcon icon={faLanguage} />
+                            <FaLanguage />
                         </div>
                         <Select val="eng" handler={null}>
                             <option value="eng">English</option>
@@ -290,14 +277,13 @@ function Apperance() {
 
 
 function ListItem({text, icon, isActive, handler}) {
-    const color = useContext(ColorContext)
+    const {color, theme} = useContext(ApearanceContext) || {}
     const c = isActive === text ? color : ""
-    const theme = useContext(ThemeContext)
 
     return (
         <li style={{background: c}} className={`${theme === 'light' && isActive !== text ? "text-lightText" : "text-darkText"} cursor-pointer flex mt-2 justify-between text-[10px] px-4 h-[30px] items-center rounded-sm`} onClick={() => handler(text)}>
             <p>{text}</p>
-            <FontAwesomeIcon icon={icon} />
+            {icon}
         </li>
     )
 }
@@ -306,10 +292,10 @@ function ListItem({text, icon, isActive, handler}) {
 function SideList({item, handler}) {
     return (
         <ul>
-            <ListItem text="Profile" icon={faUser} isActive={item} handler={handler}/>
-            <ListItem text="Security" icon={faShieldHalved} isActive={item} handler={handler}/>
-            <ListItem text="Notifications" icon={faBell} isActive={item} handler={handler}/>
-            <ListItem text="Apperance" icon={faPalette} isActive={item} handler={handler}/>
+            <ListItem text="Profile" icon={<FaUser />} isActive={item} handler={handler}/>
+            <ListItem text="Security" icon={<FaBell />} isActive={item} handler={handler}/>
+            <ListItem text="Notifications" icon={<FaBell />} isActive={item} handler={handler}/>
+            <ListItem text="Apperance" icon={<FaPalette />} isActive={item} handler={handler}/>
         </ul>
     )
 }
@@ -319,14 +305,13 @@ function SideList({item, handler}) {
 export default function Setings() {
     
     const [item, setItem] = useState('Profile')
-    const theme = useContext(ThemeContext)
-    const ColorHandler = useContext(ColorToggelContext);
+    const {theme} = useContext(ApearanceContext) || {}
 
     return (
         <div className={`${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} p-1 w-full flex-grow h-[94vh] rounded mt-2`}>
             <div className="header w-full h-[50px] flex justify-between items-center text-[12px] px-4">
                 <h1 className="font-kaushan">settings</h1>
-                <FontAwesomeIcon icon={faGear} />
+                <FaGear />
             </div>
             <div className="px-2 mt-2 flex justify-between">
                 <div className="w-[200px] p-1">
