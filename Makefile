@@ -23,6 +23,8 @@ clean:
 	rm -rf srcs/Back_end/ft_transcendence/account/migrations/*
 	rm -rf srcs/Back_end/ft_transcendence/account/__pycache__
 	rm -rf srcs/Back_end/ft_transcendence/media/*
+	rm -rf srcs/Back_end/ft_transcendence/chat/migrations/*
+	rm -rf srcs/Back_end/ft_transcendence/chat/__pycache__
 	rm -rf .DS_Store
 	rm -rf srcs/.DS_Store
 match: down clear
