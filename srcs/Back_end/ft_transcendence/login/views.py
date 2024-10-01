@@ -111,8 +111,8 @@ def intra_oauth(request):
 def customize_username(name):
     name = name.split()
     length = len(name)
-    if (length <= 1):
-        return name
+    if (length == 1):
+        return name[0]
     elif length == 2:
         return f"{name[0][0]}{name[1][0:]}"
     elif length > 2:

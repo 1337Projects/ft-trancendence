@@ -123,7 +123,7 @@ def accept_friend(request):
             relation_friend.status = "accept"
             relation_friend.save()
             serializer = UserWithFriendsSerializer(relation_friend)
-            return Response({"status": 200, "message": serializer.da})
+            return Response({"status": 200, "message": serializer.data})
         except ObjectDoesNotExist:
             return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})
@@ -143,9 +143,9 @@ def reject_friend(request):
             return Response({"status": 400, "message": "can't serve this request"})
         try:
             relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
-            relation_friend.status = "reject"
+            query_id = relation_friend.id
             relation_friend.delete()
-            return Response({"status": 200, "message": "reject successful"})
+            return Response({"status": 200, "message": "reject successful", "id": query_id})
         except ObjectDoesNotExist:
             return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})
@@ -162,8 +162,9 @@ def unfriend(request):
         receiver = User.objects.get(id=receiver_id)
         try :
             relationship = Friends.objects.get(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender))
+            query_id = relationship.id 
             relationship.delete()
-            return Response({"status": 200, "message": "unfriend successul"})
+            return Response({"status": 200, "message": "unfriend successul", "id": query_id})
         except ObjectDoesNotExist:
             return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})
