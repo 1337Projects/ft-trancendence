@@ -11,8 +11,8 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.signals import user_logged_out
 from urllib.parse import urlencode
 import requests, secrets , jwt, datetime, json, os
-from account.views import create_profile
-import random
+from account.utls import create_profile
+import random, string
  
 load_dotenv()
 
@@ -86,7 +86,7 @@ def intra_oauth(request):
         email = userinfo['email']
         first_name = userinfo['first_name']
         last_name = userinfo['last_name']
-        name = userinfo['login']
+        name = generate_username(customize_username(userinfo['login']))
         image = userinfo['image']['link']
         try:
             user = User.objects.get(email=email)
@@ -108,6 +108,25 @@ def intra_oauth(request):
         except AuthenticationFailed:
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
+def customize_username(name):
+    name = name.split()
+    length = len(name)
+    if (length <= 1):
+        return name
+    elif length == 2:
+        return f"{name[0][0]}{name[1][0:]}"
+    elif length > 2:
+        i = 2
+        username = f"{name[0][0]}{name[1][0:]}-"
+        while (i < length):
+            username += name[i][0:]
+            i += 1
+        return username
+
+def generate_random_string(length):
+    letters = string.ascii_letters
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
 
 def google_login(request):
     params = urlencode({
@@ -123,11 +142,13 @@ def check_if_duplicate(username):
     users = User.objects.filter(username=username)
     return users.exists()
 
-def generate_username(name):
-    username = name.split()[0][0] + name.split()[1]
-    real_username = username
+def generate_username(username):
     while (check_if_duplicate(username)):
-        username = real_username + str(random.randint(1, 100))
+        if (len(username) == 255):
+            username = generate_random_string(15)
+        else:
+            username += str(random.randint(0, 9))
+            
     return username
 
 @csrf_exempt
@@ -158,7 +179,7 @@ def google_oauth(request):
             user_info = user_info_response.json()
             email = user_info.get('email')
             name = user_info.get('name')
-            username = generate_username(name)
+            username = generate_username(customize_username(name))
             image = user_info.get('picture')
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)

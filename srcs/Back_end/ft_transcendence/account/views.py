@@ -5,26 +5,16 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Profile, Friends
 from login.models import User
+from login.views import check_if_duplicate 
 from .serializer import ProfileSerializers, UserWithProfileSerializer, UserWithFriendsSerializer
-import json
-import jwt
+import json, jwt
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from django.core.files.storage import default_storage
 from django.db.models import Q
+from .utls import *
 
-def get_id(request):
-    refresh_token = request.COOKIES.get('refresh_token')
-    if refresh_token is not None:
-        payload = jwt.decode(refresh_token.encode(), settings.SECRET_KEY, algorithms=['HS256'])
-        return payload['user_id']
-    return None
 
-def get_infos(id):
-    user = get_object_or_404(User, id=id)
-    serialiser = UserWithProfileSerializer(user)
-    return serialiser
 
 @api_view(['GET'])
 def get_profile_infos(request):
@@ -35,16 +25,6 @@ def get_profile_infos(request):
         return Response({"message": "this user is not exist", "id": id}, status=400)
     user = get_infos(id)
     return Response({"data": user.data}, status=200)
-
-def create_profile(id, image_link):
-    Profile.objects.create_profile(
-        user_id=id,
-        online=True, 
-        level=8.7,
-        bio="I'm the best player in the world",
-        image=image_link,
-    )
-
 
 @api_view(['GET'])
 def get_users(request):
@@ -65,14 +45,6 @@ def get_profile(request, username):
     serialiser = UserWithProfileSerializer(user)
     return Response({"data": serialiser.data}, status=200)
 
-
-def manage_images(request, file_name, type):
-    if default_storage.exists(file_name):
-        default_storage.delete(file_name)
-    avatar = default_storage.save(file_name, request.FILES[type])
-    return avatar
-   
-
 @api_view(['PUT'])
 def set_infos(request):
     user_infos = request.data.get('user')
@@ -82,6 +54,8 @@ def set_infos(request):
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
     bio = user_infos_dict.get('profile')['bio']
+    if check_if_duplicate(username):
+        return Response({"status": 400, "res": get_infos(user_id).data ,"message": "This username is duplicated"}, status=400)
     User.objects.filter(id=user_id).update(
         username=username,
         first_name=first_name,
@@ -99,8 +73,7 @@ def set_infos(request):
         Profile.objects.filter(user_id=user_id).update(
             banner=f'http://127.0.0.1:8000/media/{name}'
         )
-    new_infos = get_infos(user_id)
-    return Response({"status": 200, "res": new_infos.data}, status=200)
+    return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
 
 @api_view(['GET'])
 def friends_infos(request):
