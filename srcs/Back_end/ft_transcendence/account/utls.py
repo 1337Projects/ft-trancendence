@@ -33,3 +33,13 @@ def get_infos(id):
     user = get_object_or_404(User, id=id)
     serialiser = UserWithProfileSerializer(user)
     return serialiser
+
+def check_duplicate_username(username, id):
+    try:
+        user = User.objects.get(username=username)
+        if id != user.id:
+            return True
+        return False
+    except ObjectDoesNotExist:
+        return False
+        

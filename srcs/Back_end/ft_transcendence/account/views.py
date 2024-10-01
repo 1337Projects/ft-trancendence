@@ -47,6 +47,9 @@ def get_profile(request, username):
 
 @api_view(['PUT'])
 def set_infos(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
     user_id = user_infos_dict.get('id')
@@ -54,7 +57,7 @@ def set_infos(request):
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
     bio = user_infos_dict.get('profile')['bio']
-    if check_if_duplicate(username):
+    if check_duplicate_username(username=username, id=id):
         return Response({"status": 400, "res": get_infos(user_id).data ,"message": "This username is duplicated"}, status=400)
     User.objects.filter(id=user_id).update(
         username=username,
