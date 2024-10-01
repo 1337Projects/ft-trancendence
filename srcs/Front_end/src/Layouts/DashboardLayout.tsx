@@ -1,5 +1,5 @@
 
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import SideBar from '../components/sidebar'
 import Search from '../components/Search'
 import Notification from '../components/Notifications'
@@ -12,6 +12,7 @@ import { UserContext } from '../Contexts/authContext'
 
 export default function DashboardLayout() {
     const user = useContext(UserContext)
+    const location = useLocation()
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -49,7 +50,7 @@ export default function DashboardLayout() {
         .catch(err => console.log(err))
       }, 300)
       return () => clearTimeout(timer)
-    }, [])
+    }, [location])
 
     if (isLoading) {
       return (<></>)

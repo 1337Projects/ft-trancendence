@@ -1,8 +1,7 @@
-import React, { useContext, useState } from "react"
+import React, { useContext,  } from "react"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
-import { useParams } from "react-router-dom"
 import { Actions } from "./Actions"
-import { UserContext } from "../../Contexts/authContext"
+import { FirendType, UserContext } from "../../Contexts/authContext"
 import {
 	accept_friend_request, 
 	send_friend_request,
@@ -14,13 +13,29 @@ export function Banner({user}) {
 
 	console.log("user", user)
 	const appearence = useContext(ApearanceContext)
-	const {user_name} = useParams()
-	const { friends, authInfos } = useContext(UserContext) || {}
+	const { friends, authInfos, setFriends } = useContext(UserContext) || {}
+
+	function AddFriendCallback(data : FirendType) {
+		setFriends!(prev => [...prev!, data])
+	}
+
+	function RejectFriendCallback(id : Number) {
+		setFriends!(prev => prev?.filter(item => item.id != id)!)
+	}
+
+	function AcceptFriendCallback(id : Number) {
+		let friendship = friends?.filter(item => item.id == id)[0]
+		friendship!.status = 'accept'
+		setFriends!(prev => [...prev?.filter(item => item.id != id)!, friendship!])
+	}
+
+	
+
 	const handlers = {
-		"new" : () => send_friend_request(authInfos?.accessToken!, null, user),
-		"reject" : () => reject_friend_request(authInfos?.accessToken!, null, user),
-		"accept" : () => accept_friend_request(authInfos?.accessToken!, null, user),
-		"cancle" : () => cancle_friend_request(authInfos?.accessToken!, null, user)
+		"new" : () => send_friend_request(authInfos?.accessToken!, AddFriendCallback, user),
+		"reject" : () => reject_friend_request(authInfos?.accessToken!, RejectFriendCallback, user),
+		"accept" : () => accept_friend_request(authInfos?.accessToken!, AcceptFriendCallback, user),
+		"cancle" : () => cancle_friend_request(authInfos?.accessToken!, RejectFriendCallback, user)
 	}
 	
 	return (
