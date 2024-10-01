@@ -21,6 +21,7 @@ export type UserType = {
 }
 
 export type FirendType = {
+    id : Number,
     sender : UserType,
     receiver : UserType,
     status : string
