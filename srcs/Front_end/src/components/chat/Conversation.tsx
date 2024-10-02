@@ -4,14 +4,14 @@ import { Link, useParams } from 'react-router-dom';
 import Emojies from './Emojies';
 import Socket from '../../socket'
 import { ApearanceContext } from '../../Contexts/ThemeContext';
-import { UserContext, UserType } from '../../Contexts/authContext';
+import { UserContext } from '../../Contexts/authContext';
 import { FaArrowLeft, FaEllipsisV, FaImages } from 'react-icons/fa';
 import { MdEmojiEmotions } from "react-icons/md";
 import { RiMailSendFill } from "react-icons/ri";
+import { UserType } from '../../Types';
 
 function UserMessage({m}) {
     const [time, setTime] = useState('')
-    const {theme, color} = useContext(ApearanceContext) || {}
     useEffect(() => {
         const timer = setTimeout(() => {
             let date = new Date(m?.created_at);
@@ -24,7 +24,7 @@ function UserMessage({m}) {
     return (
         <li  className="mt-4 flex items-start justify-end">
             <div>
-                <div  className=" border-[.2px] bg-gray-800/50 backdrop-blur-xl border-white/20 text-white rounded-[30px] p-1">
+                <div  className=" border-[.2px] bg-gray-800 backdrop-blur-xl border-white/20 text-white rounded-[30px] p-1">
                     {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
@@ -39,7 +39,6 @@ function FromMessage({m}) {
     const [time, setTime] = useState('')
     useEffect(() => {
         const timer = setTimeout(() => {
-            // console.log(m)
             let date = new Date(m.created_at);
             console.log(date.getUTCMinutes())
             const hours = date.getUTCHours()
@@ -52,7 +51,7 @@ function FromMessage({m}) {
         <li  className="mt-4 flex items-start justify-start">
             <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
             <div>
-                <div  className=" border-[.2px] bg-gray-800/20 backdrop-blur-xl border-white/20 text-white rounded-[30px] p-1">
+                <div  className=" border-[.2px] bg-gray-800 backdrop-blur-xl border-white/20 text-white rounded-[30px] p-1">
                     {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
@@ -89,7 +88,7 @@ export default function Conversation() {
             })
         }, 300)
         return () => clearTimeout(timer)
-    }, [])
+    }, [user])
 
     useEffect(() => {
         console.log("my messages" , messages)
@@ -146,15 +145,15 @@ export default function Conversation() {
     return (
         <div className=''>
             <div className="relative w-full h-full">
-                <div  className="header backdrop-blur-md bg-darkItems/30 px-4 border-b-[1px] border-white/20 py-8 w-full h-[60px] flex justify-between items-center">
+                <div  className={`header backdrop-blur-md  px-4 border-b-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"}  py-8 w-full h-[60px] flex justify-between items-center`}>
                     <div className="avatar w-[95%] h-full flex justify-start items-center">
-                        <Link className="text-white p-2 flex items-center justify-center cursor-pointer" to="/dashboard/chat">
+                        <Link className="p-2 flex items-center justify-center cursor-pointer" to="/dashboard/chat">
                             <FaArrowLeft />
                         </Link>
                         <img src={userData?.profile?.image} className="bg-white w-[35px] h-[35px] rounded-full mx-4" alt="" />
                         <div className="infos text-[12px]">
-                            <h1 className="font-bold">{userData?.username}</h1>
-                            <p className="text-[8px]">last seen</p>
+                            <h1 className="font-bold text-[11pt]">{userData?.username}</h1>
+                            <p className="text-[8pt]">last seen</p>
                         </div>
                     </div>
                     <FaEllipsisV />
@@ -171,11 +170,11 @@ export default function Conversation() {
                     : <h1 className="top-[50%] translate-y-[-50%] text-[15px] capitalize absolute"><span className="text-[20px] mr-2">😕</span>no messages yet</h1>
                     }
                 </div>
-                <div className="w-full h-[40px] my-10 flex justify-center">
+                <div className="w-full h-[40px] my-10 px-10 flex justify-center">
                     <div className=' w-full max-w-[490px] relative' >
                         {showEmoji && <Emojies TextInputHandler={setText} inputText={text} />}
                         
-                        <div className="input w-full h-[50px]  rounded-full px-2  text-[16pt] flex items-center justify-between bg-gray-700/50 text-white">
+                        <div className="input w-full h-[50px]  rounded-full px-2  text-[16pt] flex items-center justify-between bg-gray-800 text-white">
 
                             <input onKeyUp={inputHandler} value={text}  type="text"  placeholder="Message ..." onChange={(e) => setText(e.target.value)} className="pl-4 w-[70%] sm:w-[80%] text-[10pt] bg-transparent focus:outline-none" />
                             

@@ -5,10 +5,10 @@ import { IoIosMailUnread } from "react-icons/io";
 
 
 function CatButton({icon, text, categorie, handler}) {
-    const {color} = useContext(ApearanceContext) || {}
+    const {color, theme} = useContext(ApearanceContext) || {}
     const t = categorie === text ? color : ""
     return (
-        <button style={{color:t, borderColor : t}} className={`border-[.5px] h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} onClick={()=> handler(text)}>
+        <button style={{color:t, borderColor : t}} className={`border-[.1px] ${theme == 'light' ? "border-black" : "border-white"} h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} onClick={()=> handler(text)}>
             <p className="mr-2">{text}</p>
             <div className="text-[12pt]">
                 {icon}

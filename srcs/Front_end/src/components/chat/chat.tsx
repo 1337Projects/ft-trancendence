@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
 import Categories from './Categories'
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { UserContext } from "../../Contexts/authContext";
-import { FaCheckDouble, FaCommentDots } from "react-icons/fa";
+import { FaCheckDouble } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { RiMenuSearchLine } from "react-icons/ri";
 
@@ -79,7 +79,7 @@ Object.filter = (obj, predicate) =>
 
 export default function ConversationsList({menu} : {menu : Boolean}) {
     
-    const { color} = useContext(ApearanceContext) || {}
+    const {theme, color} = useContext(ApearanceContext) || {}
     const [visibleItem, setVisibleItem] = useState(null)
     const [cnvs, setCnvs] = useState([])
     // const [data, dispatch] = useReducer(reducerHandler, cnvs);
@@ -112,8 +112,8 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
     return (
             <div className="">
                 <div className="flex items-center my-8">
-                    <input type="text" placeholder="search ..." className={`w-[80%] ${menu ? "test-style" : "hidden"} xl:block px-4 rounded-full bg-transparent h-[35px] border-white/40 border-[1px]`} />
-                    <div style={{background : color}} className="h-[35px] xl:ml-2 mx-auto flex items-center px-4 rounded-full">
+                    <input type="text" placeholder="search ..." className={`w-[80%] ${menu ? "test-style" : "hidden"} xl:block px-4 rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/40" : "border-white/40"} border-[1px]`} />
+                    <div style={{background : color}} className="h-[35px] text-white xl:ml-2 mx-auto flex items-center px-4 rounded-full">
                         <RiMenuSearchLine />
                     </div>
                 </div>
