@@ -9,12 +9,15 @@ function Avatars({user, handler, images}) {
     let {theme} = useContext(ApearanceContext) || {theme : ""}
 
     return (
-        <div className="w-full">
-            <div className="w-full h-[100px] bg-banner bg-cover rounded-sm p-2">
+        <div className="w-full ">
+            <div className="w-full relative h-[100px] rounded-sm">
+                <div className='top-0 h-[100px] w-full overflow-hidden'>
+					<img src={user?.profile?.banner} className='min-w-full w-fit min-h-full h-fit' alt="" />
+				</div>
                 <input
                     type="file" 
                     onChange={(e) => handler({...images, banner : e.target.files})}
-                    className="bg-darkItems/40 backdrop-blur-lg p-2 w-fit text-[12px]"
+                    className="bg-darkItems/40 backdrop-blur-lg p-2 w-fit absolute top-0 text-[12px]"
                 />
             </div>
             <div className="user w-full flex mt-8">
@@ -73,22 +76,17 @@ function Profile() {
         })
         .then(res => res.json())
         .then(data => {
-            console.log("user=> " , user)
-            console.log("data =>" , data)
             if (data.status == 200) {
-                setUser(data.res)
+                setUser!(data.res)
                 setUserData(data.res)
             } 
-            // else if (data.status == 401) {
-            //     setAlert({"data" : data.err})
-            // }
         })
         .catch(err => console.log(err))
     }
 
     return (
         <div className="">
-            <Avatars user={user} handler={setImages} images={images}/>
+            <Avatars user={userData} handler={setImages} images={images}/>
             <ul className="mt-8"> 
                 <div>
                     <SettingsInput theme={appearence?.theme} value={userData?.username} name="username" type="text" handler={setUserData} />
