@@ -1,41 +1,8 @@
 import React, { createContext, useState } from 'react'
 import {jwtDecode} from 'jwt-decode'
+import { AuthInfosType, FirendType, UserContextType, UserType } from '../Types'
 
-type AuthInfosType = {
-    accessToken : string,
-    username : string,
-}
 
-type UserProfileType = {
-    image : string,
-    bio : string,
-    level : number,
-    rank : number
-}
-
-export type UserType = {
-    username : string,
-    first_name : string,
-    last_name : string,
-    profile : UserProfileType
-}
-
-export type FirendType = {
-    id : Number,
-    sender : UserType,
-    receiver : UserType,
-    status : string
-}
-
-type UserContextType = {
-    authInfos : AuthInfosType | null,
-    user : UserType | null,
-    friends : FirendType[] | null,
-    setAuthInfosHandler : (token : string | null) => void,
-    setUser : React.Dispatch<React.SetStateAction<UserType | null>>
-    setFriends : React.Dispatch<React.SetStateAction<FirendType[] | null>>
-
-}
 
 export const UserContext = createContext<UserContextType | null>(null)
 

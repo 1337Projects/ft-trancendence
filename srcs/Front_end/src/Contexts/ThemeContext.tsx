@@ -1,12 +1,8 @@
 
 import React, { createContext, useState } from 'react'
+import { ApearanceContextType } from '../Types';
 
-type ApearanceContextType = {
-    theme : string,
-    color : string,
-    themeHandler : (theme : string) => void,
-    colorHandler : (color : string) => void,
-}
+
 
 export const ApearanceContext = createContext<ApearanceContextType | null>(null);
 
