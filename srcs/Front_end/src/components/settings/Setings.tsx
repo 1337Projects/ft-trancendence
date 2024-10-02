@@ -28,7 +28,7 @@ function Avatars({user, handler, images}) {
                         onChange={(e) => handler({...images, avatar : e.target.files})}
                         className={`${theme === 'light' ? "bg-lightText text-lightItems" : "bg-black/30"} capitalize p-2 rounded-sm w-[160px]`}
                     />
-                    <p className="mt-2 text-[10px]">JPG, PNG, JPEG, 3MB max.</p>
+                    <p className="mt-2 text-[10pt]">JPG, PNG, JPEG</p>
                 </div>
             </div>
         </div>
@@ -39,9 +39,9 @@ function SettingsInput({theme, value, name, type, handler}) {
 
     return (
         <div className="w-full max-w-[230px] block">
-            <label className="w-full block mb-2 text-[10px] capitalize">{name}</label>
+            <label className="w-full block mb-2 text-[10pt] capitalize">{name}</label>
             <input 
-                className={`focus:outline-none rounded-sm px-2 ${theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} w-full text-[10px] h-[40px]`} 
+                className={`focus:outline-none rounded px-6 ${theme === 'light' ? "border-lightText/10 bg-gray-200" : "bg-gray-700 border-white/10"} border-[.3px] w-full text-[10pt] h-[40px]`} 
                 value={value} type={type} 
                 onChange={(e) => handler(prev => {
                     return {...prev, [name]: e.target.value}
@@ -99,7 +99,7 @@ function Profile() {
                 </div>
                 <li className="mt-8">
                     <label>
-                        <div className="flex text-[10px] capitalize items-center justify-between w-[230px] mb-2">
+                        <div className="flex text-[10pt] capitalize items-center justify-between w-[230px] mb-2">
                             <p>bio</p>
                         </div>
                         <textarea
@@ -108,7 +108,7 @@ function Profile() {
                                 return {...prev,  profile : {...prev.profile, bio:e.target.value}}
                             })}
                             value={userData?.profile?.bio}
-                            rows="4" className={`p-2 focus:outline-none rounded-sm w-[130px] ${appearence?.theme === 'light' ? "border-lightText border-[.3px]" : "bg-darkBg"} px-2 w-[230px] text-[10px]`} type="text" />
+                            rows="4" className={`p-2 focus:outline-none w-[130px] rounded px-6 ${appearence?.theme === 'light' ? "border-lightText/10 bg-gray-200" : "bg-gray-700 border-white/10"} w-[230px] text-[10pt]`} type="text" />
                     </label>
                 </li>
                 
@@ -128,13 +128,6 @@ function SecurityItem({children}) {
     )
 }
 
-function Input() {
-    return (
-        <label>
-            <input type="text" name="" id="" />
-        </label>
-    )
-}
 
 function Security() {
     return (
@@ -156,48 +149,6 @@ function Security() {
     )
 }
 
-function Notifications() {
-    return (
-        <div className="mt-4">
-            <div>
-                <label className="flex items-center justify-between w-fit text-[10px]">
-                    <input className="mr-1 rounded-full w-4" type="checkbox" name="" id="" />
-                    <p>All Notifications</p>
-                </label>
-                <ul className="mt-4 ml-4">
-                    <li className="mt-10">
-                        <label className="flex items-center justify-between w-fit text-[10px]">
-                            <input className="mr-1 w-4" type="checkbox" name="" id="" />
-                            <p>Messages</p>
-                        </label>
-                        <p className="text-[8px] font-light mt-1 ml-3">Get notified when someones send you a message.</p>
-                    </li>
-                    <li className="mt-10">
-                        <label className="flex items-center justify-between w-fit text-[10px]">
-                            <input className="mr-1 w-4" type="checkbox" name="" id="" />
-                            <p>friend request</p>
-                        </label>
-                        <p className="text-[8px] font-ligth mt-1 ml-3">Get notified when someones send you a friend request.</p>
-                    </li>
-                    <li className="mt-10">
-                        <label className="flex items-center justify-between w-fit text-[10px]">
-                            <input className="mr-1 w-4" type="checkbox" name="" id="" />
-                            <p>game invites</p>
-                        </label>
-                        <p className="text-[8px] mt-1 ml-3">Get notified when someones invite you to play.</p>
-                    </li>
-                    <li className="mt-10">
-                        <label className="flex items-center justify-between w-fit text-[10px]">
-                            <input className="mr-1 w-4" type="checkbox" name="" id="" />
-                            <p>authentification</p>
-                        </label>
-                        <p className="text-[8px] mt-1 ml-3">Get notified when you loged-in from another device.</p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    )
-}
 
 function Select({children, val, handler}) {
     const [value, setValue] = useState(val)
@@ -279,9 +230,11 @@ function ListItem({text, icon, isActive, handler}) {
     const c = isActive === text ? color : ""
 
     return (
-        <li style={{background: c}} className={`${theme === 'light' && isActive !== text ? "text-lightText" : "text-darkText"} cursor-pointer flex mt-2 justify-between text-[10px] px-4 h-[30px] items-center rounded-sm`} onClick={() => handler(text)}>
+        <li style={{background: c}} className={`${theme === 'light' && isActive !== text ? "text-lightText" : "text-darkText"} cursor-pointer flex mt-2  text-[10pt] px-4 h-[30px] items-center rounded-sm`} onClick={() => handler(text)}>
             <p>{text}</p>
-            {icon}
+            <div className="ml-2">
+                {icon}
+            </div>
         </li>
     )
 }
@@ -289,10 +242,9 @@ function ListItem({text, icon, isActive, handler}) {
 
 function SideList({item, handler}) {
     return (
-        <ul>
+        <ul className="grid grid-cols-3 sm:grid-cols-1 gap-2">
             <ListItem text="Profile" icon={<FaUser />} isActive={item} handler={handler}/>
             <ListItem text="Security" icon={<FaBell />} isActive={item} handler={handler}/>
-            <ListItem text="Notifications" icon={<FaBell />} isActive={item} handler={handler}/>
             <ListItem text="Apperance" icon={<FaPalette />} isActive={item} handler={handler}/>
         </ul>
     )
@@ -311,15 +263,12 @@ export default function Setings() {
                 <h1 className="font-kaushan">settings</h1>
                 <FaGear />
             </div>
-            <div className="px-2 mt-2 flex justify-between">
-                <div className="w-[200px] p-1">
+            <div className="px-2 w-full mt-2 grid sm:grid-cols-3 gap-4 justify-between">
+                <div className="p-1 col-span-3 sm:col-span-1 w-full">
                     <SideList item={item} handler={setItem} />
                 </div>
-                <div className="w-[60%] p-1">
-                    {
-                        item === 'Profile' && <Profile /> || item === 'Security' && <Security /> ||
-                        item === 'Notifications' && <Notifications /> || item === 'Apperance' && <Apperance /> 
-                    }
+                <div className="p-1 col-span-2">
+                    {item === 'Profile' && <Profile /> || item === 'Security' && <Security /> || item === 'Apperance' && <Apperance />}
                 </div>
             </div>
         </div>
