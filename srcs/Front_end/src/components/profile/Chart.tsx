@@ -4,6 +4,7 @@ import {defaults}  from 'chart.js/auto'
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 
 defaults.responsive = true
+defaults.maintainAspectRatio = false
 
 export default function Chart() {
 
@@ -16,9 +17,9 @@ export default function Chart() {
 
 	
 	return(
-		<div className=''>
+		<div className='w-full' >
 			<Line
-			className=""
+			className="max-w-full w-full"
 				data={{
 					labels: ["Jan", "Fev", "Mar", "Avr", "Mai", "Jun"],
 					datasets : [
@@ -50,6 +51,9 @@ export default function Chart() {
 								display : false
 							}
 						}
+					},
+					layout : {
+						padding : 0
 					}
 				}}
 				
