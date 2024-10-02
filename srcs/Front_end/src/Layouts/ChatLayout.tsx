@@ -16,7 +16,7 @@ export default function ChatLayout() {
                 <div className={`${theme === 'light' ? "text-lightText" : "text-darkText"} shadow-sm h-[100vh] rounded-sm flex-grow overflow-y-auto`}>
                     <div className="flex h-full relative">
                         <div className={`absolute h-[100vh] rounded-sm z-10 bg-chat bg-cover w-[70px] xl:w-[300px]  md:border-r-[.1px] border-gray-700 ${menu ?"active-menu" : "non-active-menu"}`}>
-                            <div className={`backdrop-blur-2xl bg-darkItems/60 w-full h-full xl:px-4 ${menu && "px-4"}`}>
+                            <div className={`backdrop-blur-2xl ${theme == 'light' ? "bg-white/50" : "bg-darkItems/50"} w-full h-full xl:px-4 ${menu && "px-4"}`}>
                                 <div className={`text-[16pt] w-full h-[70px] xl:hidden flex items-center  ${menu ? "justify-end" : "justify-center"}`} onClick={() => setMenu(prev => !prev)}>
                                     {
                                         menu ? 
@@ -26,9 +26,9 @@ export default function ChatLayout() {
                                     }
                                 </div>
                                 <Friends menu={menu} />
-                                <hr className="border-white/20 mx-4 " />
+                                <hr className={` ${theme == 'light' ? "border-black/20" : "border-white/20"} mx-4 `} />
                                 <ConversationsList menu={menu} />
-                                <div className="w-full px-4 bottom-[150px] sm:bottom-[100px]  h-[40px] absolute left-0">
+                                <div className="w-full px-4 bottom-[150px] sm:bottom-[100px] text-white h-[40px] absolute left-0">
                                     <div style={{background:color}} className="w-full flex justify-center items-center h-full rounded-full">
                                         <FaGear className={`${menu && "test-style mr-2"} xl:mr-2`} />
                                         <h1 className={`xl:block ${!menu ? "hidden" : "test-style"}`}>chat settings</h1>
@@ -37,7 +37,7 @@ export default function ChatLayout() {
                             </div>
                         </div>
                         <div className={`ml-[74px] xl:ml-[304px] h-full flex-grow`}>
-                            <div className="bg-pong bg-cover w-full h-full">
+                            <div className={`w-full h-full ${theme == 'light' ? "bg-lightItems" : "bg-darkItems"} `}>
                                 <Outlet />
                             </div>
                         </div>

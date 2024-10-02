@@ -21,10 +21,9 @@ import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 
 
 import Game from './components/game/Game'
-import Profile from './components/profile/profile'
+import Profile, { UserProfile } from './components/profile/profile'
 import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
-import ConversationsList from './components/chat/chat'
 // import Tournament from './components/game/tournament'
 // import PingPong from './components/game/PingPong'
 // import Waiting from './components/game/waiting'
@@ -60,8 +59,10 @@ const router = createBrowserRouter(
         <Route path='game' element={<Game />} />
 
         <Route path='profile' element={<ProfileLayout />}>
-          <Route index element={<Profile />} />
-          <Route path=':user_name' element={<Profile />} />
+          <Route path=':user_name' element={<Profile />}>
+            <Route index element={<UserProfile />} />
+            <Route path='friends' element={<h1>friends</h1>} />
+          </Route>
         </Route>
 
         <Route path='chat' element={<ChatLayout />}>

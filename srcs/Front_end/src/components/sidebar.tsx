@@ -119,7 +119,11 @@ function SideBar() {
 				</div>
 				<div className='flex h-full sm:h-[92vh] sm:grid'>
 					<div className="w-1/2 h-full flex justify-evenly items-center sm:h-[250px] sm:w-full sm:grid sm:grid-cols-1 sm:gap-2">
-						<Link style={{color: location.pathname.includes('profile') && appearence?.color || ''}} to="profile" className={`text-center`}> 
+						<Link 
+							style={{color: location.pathname.includes('profile') && appearence?.color || ''}} 
+							to={`profile/${user?.user?.username}`} 
+							className={`text-center`}
+						> 
 							<FaHome className='text-[22px] text-center w-full' />
 							<p className='text-primaryText mt-2'>Profile</p>
 						</Link>
