@@ -62,7 +62,7 @@ export function GoogleOauth() {
         .then(data => {
           if (data.status == 200) {
             user?.setAuthInfosHandler(data.access)
-            navigate('../../dashboard/profile')
+            navigate('../../dashboard/game')
           }
         })
         .catch(err => console.log(err))
@@ -95,7 +95,7 @@ export function IntraOauth() {
         .then(data => {
           if (data.status == 200) {
             user?.setAuthInfosHandler(data.access)
-            navigate('../../dashboard/profile')
+            navigate('../../dashboard/game')
           }
         })
         .catch(err => console.log(err))
