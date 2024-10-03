@@ -67,12 +67,12 @@ def set_infos(request):
     if bio is not None:
         Profile.objects.filter(id=user_id).update(bio=bio)
     if 'avatar' in request.FILES:
-        name = manage_images(request, f'{username}-profile.jpeg', 'avatar')
+        name = manage_images(user_id, request, 'avatar')
         Profile.objects.filter(user_id=user_id).update(
             image=f'http://127.0.0.1:8000/media/{name}'
         )
     if 'banner' in request.FILES:
-        name = manage_images(request, f'{username}-banner.jpeg', 'banner')
+        name = manage_images(user_id, request, 'banner')
         Profile.objects.filter(user_id=user_id).update(
             banner=f'http://127.0.0.1:8000/media/{name}'
         )

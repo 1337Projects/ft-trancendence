@@ -5,11 +5,18 @@ from django.core.files.storage import default_storage
 from .models import Profile, Friends
 from .serializer import UserWithProfileSerializer
 from login.models import User
-import jwt
+import jwt, uuid, os
+from urllib.parse import urlparse
 
-def manage_images(request, file_name, type):
-    if default_storage.exists(file_name):
-        default_storage.delete(file_name)
+default_banner = "http://127.0.0.1:8000/media/default-banner.jpg"
+
+def manage_images(user_id, request, type):
+    file_url = Profile.objects.filter(user_id=user_id).values('banner').first()
+    if file_url and file_url['banner'] != default_banner:
+        file_name = os.path.basename(urlparse(file_url['banner']).path)
+        if default_storage.exists(file_name):
+            default_storage.delete(file_name)
+    file_name = f"{uuid.uuid4()}-banner.jpeg"
     avatar = default_storage.save(file_name, request.FILES[type])
     return avatar
 
@@ -17,8 +24,9 @@ def create_profile(id, image_link):
     Profile.objects.create_profile(
         user_id=id,
         online=True, 
-        level=8.7,
-        bio="I'm the best player in the world",
+        level=0,
+        bio="Nothing",
+        banner=default_banner,
         image=image_link,
     )
 
