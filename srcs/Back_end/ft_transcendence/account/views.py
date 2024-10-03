@@ -69,7 +69,7 @@ def set_infos(request):
     if 'avatar' in request.FILES:
         name = manage_images(user_id, request, 'avatar')
         Profile.objects.filter(user_id=user_id).update(
-            image=f'http://127.0.0.1:8000/media/{name}'
+            avatar=f'http://127.0.0.1:8000/media/{name}'
         )
     if 'banner' in request.FILES:
         name = manage_images(user_id, request, 'banner')

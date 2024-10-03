@@ -18,7 +18,7 @@ class Profile(AbstractBaseUser):
     bio = models.TextField(default='', blank=True)
     level = models.FloatField(default=0.0)
     banner = models.CharField(default='')
-    image = models.CharField(default='')
+    avatar = models.CharField(default='')
     online = models.BooleanField(default=False)
     objects = ProfileManager()
 
