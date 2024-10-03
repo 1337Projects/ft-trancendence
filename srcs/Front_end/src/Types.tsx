@@ -43,3 +43,12 @@ export type UserContextType = {
     setFriends : React.Dispatch<React.SetStateAction<FirendType[] | null>>
 
 }
+
+export type MessageType = {
+    sender : UserType,
+    receiver : UserType,
+    id : number,
+    message : string,
+    created_at : string
+
+}

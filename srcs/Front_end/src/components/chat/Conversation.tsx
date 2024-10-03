@@ -1,5 +1,5 @@
 
-import React, {useContext, useState, useRef, useEffect} from 'react'
+import React, {useContext, useState, useRef, useEffect, KeyboardEventHandler} from 'react'
 import { Link, useParams } from 'react-router-dom';
 import Emojies from './Emojies';
 import Socket from '../../socket'
@@ -8,7 +8,7 @@ import { UserContext } from '../../Contexts/authContext';
 import { FaArrowLeft, FaEllipsisV, FaImages } from 'react-icons/fa';
 import { MdEmojiEmotions } from "react-icons/md";
 import { RiMailSendFill } from "react-icons/ri";
-import { UserType } from '../../Types';
+import { MessageType, UserType } from '../../Types';
 
 function UserMessage({m}) {
     const [time, setTime] = useState('')
@@ -28,7 +28,7 @@ function UserMessage({m}) {
                     {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
-                <p className="text-[8px] mr-4 py-1 text-right">{time}</p>
+                <p className="text-[8pt] font-bold mr-4 mt-2 py-1 text-right">{time}</p>
             </div>
             <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
         </li>
@@ -64,14 +64,14 @@ function FromMessage({m}) {
 export default function Conversation() {
     const {theme, color} = useContext(ApearanceContext) || {}
     const {authInfos} = useContext(UserContext) || {}
-    const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState<MessageType[]>([])
     const [showEmoji, setShowEmoji] = useState(false)
-    const [showFileInput, setShowFileInput] = useState(false)
+    // const [showFileInput, setShowFileInput] = useState(false)
     const [text, setText] = useState('');
-    const cnv = useRef(null)
+    const cnv = useRef<HTMLUListElement | null>(null)
     const {user} = useParams()
     const [userData, setUserData] = useState<UserType | null>(null)
-    const [file, setFile] = useState(null)
+    const [file, setFile] = useState<FileList | null>(null)
 
     useEffect(() => {
 
@@ -91,11 +91,22 @@ export default function Conversation() {
     }, [user])
 
     useEffect(() => {
-        console.log("my messages" , messages)
+        const timer = setTimeout(() => {
+            if (cnv && cnv.current) {
+                cnv.current.scrollTo({
+                    top : cnv.current.scrollHeight,
+                    behavior : 'smooth'
+                })
+            }
+        }, 400)
+
+        return () => clearTimeout(timer)
+      
     }, [messages])
     
     function sendMessage() {
         if (file) {
+            console.log(file)
             // const reader = new FileReader();
             
             // reader.onload = () => {
@@ -124,27 +135,28 @@ export default function Conversation() {
             // reader.readAsArrayBuffer(file); 
             // setShowFileInput(false)
         } else {
-
-            const data = {
-                "from" : authInfos?.username,
-                "to": user,
-                "content": text,
-                "event" : "new_message"
+            if (text != '') {
+                const data = {
+                    "from" : authInfos?.username,
+                    "to": user,
+                    "content": text,
+                    "event" : "new_message"
+                }
+                Socket.sendMessage(data)
             }
-            Socket.sendMessage(data)
         }
         setShowEmoji(false);
         setText('');
     }
 
-    function inputHandler(e) {
+    function inputHandler(e : React.KeyboardEvent<HTMLInputElement>) {
         if (e.key == 'Enter')
             sendMessage()
     }
 
     return (
-        <div className=''>
-            <div className="relative w-full h-full">
+        <div className='w-full h-full min-h-[600px]'>
+            <div className="relative mx-auto h-full">
                 <div  className={`header backdrop-blur-md  px-4 border-b-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"}  py-8 w-full h-[60px] flex justify-between items-center`}>
                     <div className="avatar w-[95%] h-full flex justify-start items-center">
                         <Link className="p-2 flex items-center justify-center cursor-pointer" to="/dashboard/chat">
@@ -158,34 +170,38 @@ export default function Conversation() {
                     </div>
                     <FaEllipsisV />
                 </div>
-                <div className="body flex w-full px-2 h-[76vh] sm:h-[80vh] justify-center">
+                <div className="body flex-col h-[80vh] w-full  px-2 justify-center">
                     {messages?.length ? 
-                        <ul ref={cnv} className="mt-10 h-full max-w-[600px] w-full overflow-auto">
-                        {messages.map(m => {
-                                if (m?.sender?.username !== user)
-                                    return <UserMessage key={m?.id} m={m} />
-                                return <FromMessage key={m?.id} m={m} />
+                        <ul ref={cnv} className="mt-10 flex-grow h-5/6 overflow-scroll max-w-[600px] w-full">
+                        {messages.map((message) => {
+                            if (message?.sender?.username !== user)
+                                return <UserMessage key={message?.id} m={message} />
+                            return <FromMessage key={message?.id} m={message} />
                         })} 
                         </ul>
                     : <h1 className="top-[50%] translate-y-[-50%] text-[15px] capitalize absolute"><span className="text-[20px] mr-2">😕</span>no messages yet</h1>
                     }
-                </div>
-                <div className="w-full h-[40px] my-10 px-10 flex justify-center">
-                    <div className=' w-full max-w-[490px] relative' >
-                        {showEmoji && <Emojies TextInputHandler={setText} inputText={text} />}
-                        
-                        <div className="input w-full h-[50px]  rounded-full px-2  text-[16pt] flex items-center justify-between bg-gray-800 text-white">
-
-                            <input onKeyUp={inputHandler} value={text}  type="text"  placeholder="Message ..." onChange={(e) => setText(e.target.value)} className="pl-4 w-[70%] sm:w-[80%] text-[10pt] bg-transparent focus:outline-none" />
+                    {
+                        showEmoji && <div className='w-full bottom-[150px] absolute px-10'>
+                        <Emojies TextInputHandler={setText} inputText={text} />
+                        </div>
+                    }
+                    <div className=" w-full h-1/6">
+                        <div className=' w-full max-w-[490px] relative mx-auto mt-10' >
                             
-                            <MdEmojiEmotions onClick={() => setShowEmoji(prev => !prev)}  />
-                            <div>
-                                <input type="file" className='hidden' />
-                                <FaImages className='cursor-pointer' />
-                            </div>
+                            <div className="input w-full h-[50px]  rounded-full px-2  text-[16pt] flex items-center justify-between bg-gray-800 text-white">
 
-                            <div style={{background:color}} className='w-[30px] h-[30px] text-[12pt] rounded-full flex justify-center cursor-pointer items-center'>
-                                <RiMailSendFill />
+                                <input onKeyUp={inputHandler} value={text}  type="text"  placeholder="Message ..." onChange={(e) => setText(e.target.value)} className="pl-4 w-[70%] sm:w-[80%] text-[10pt] bg-transparent focus:outline-none" />
+                                
+                                <MdEmojiEmotions onClick={() => setShowEmoji(prev => !prev)}  />
+                                <div className='w-10 cursor-pointer relative flex items-center justify-center'>
+                                    <input type="file" onChange={(e) => setFile(e.target.files)} className='opacity-0 w-8 absolute '/>
+                                    <FaImages className='cursor-pointer' />
+                                </div>
+
+                                <div style={{background:color}} onClick={sendMessage} className='w-[30px] h-[30px] text-[12pt] rounded-full flex justify-center cursor-pointer items-center'>
+                                    <RiMailSendFill />
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { SetStateAction, useContext, useEffect, useReducer, useState } from "react";
 import Categories from './Categories'
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
@@ -49,7 +49,7 @@ function ConvItem({c, id, handler , menu}) {
     )
 }
 
-export function Friends({menu} : {menu : Boolean}) {
+export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispatch<SetStateAction<Boolean>>}) {
     const {friends, authInfos} = useContext(UserContext) || {}
 
     return (
@@ -57,7 +57,7 @@ export function Friends({menu} : {menu : Boolean}) {
             {friends?.filter(f => f.status == 'accept').map(f => {
                 const data = Object.filter(f, i => typeof i === "object" && i.username !== authInfos?.username)[0]
                 return (
-                    <li className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}>
+                    <li onClick={() => handler(false)}  className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}>
                         <Link to={data.username}>
                             <div className="relative">
                                 <img src={data.profile.image} className="w-[35px] border-2 mx-auto rounded-full" alt="" />
