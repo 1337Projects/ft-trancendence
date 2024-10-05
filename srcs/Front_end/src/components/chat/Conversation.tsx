@@ -1,5 +1,5 @@
 
-import React, {useContext, useState, useRef, useEffect, KeyboardEventHandler} from 'react'
+import React, {useContext, useState, useRef, useEffect} from 'react'
 import { Link, useParams } from 'react-router-dom';
 import Emojies from './Emojies';
 import Socket from '../../socket'
@@ -28,7 +28,7 @@ function UserMessage({m}) {
                     {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
-                <p className="text-[8pt] font-bold mr-4 mt-2 py-1 text-right">{time}</p>
+                <p className="text-[8pt]  mr-4 mt-2 py-1 text-right">{time}</p>
             </div>
             <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
         </li>
@@ -55,7 +55,7 @@ function FromMessage({m}) {
                     {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
-                <p className="text-[8px] ml-4 py-1 text-left">{time}</p>
+                <p className="text-[8pt] ml-4 py-1 mt-2 text-left">{time}</p>
             </div>
         </li>
     )
