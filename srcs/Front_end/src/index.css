@@ -43,7 +43,6 @@ body {
 
 .non-active-menu {
     transition: all .6s ease;
-    width: 70px;
 }
 
 .test-style {
