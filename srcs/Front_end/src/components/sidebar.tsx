@@ -1,94 +1,38 @@
-
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useContext } from 'react'
 import { ApearanceContext } from '../Contexts/ThemeContext';
 import { UserContext } from '../Contexts/authContext';
-import { FaEnvelope, FaHome, FaMoon, FaSun } from 'react-icons/fa'
+
+import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
+import { TbLogout, TbSettings2 } from "react-icons/tb";
+import { PiMoonStars, PiSunDim } from "react-icons/pi";
+import { RiDashboardLine } from "react-icons/ri";
+import { GrGamepad } from "react-icons/gr";
 
 
-// export function LargeSideBar() {
-// 	const location = useLocation();
-// 	const theme = useContext(ThemeContext);
-// 	const color = useContext(ColorContext)
-// 	const themeHanlder = useContext(ThemeToggelContext);
-// 	const navigate = useNavigate()
-// 	const authHandler = useContext(authContextHandler)
 
+function NavItem({text, icon, link}) {
+	const {color} = useContext(ApearanceContext) || {}
+	const location = useLocation();
 
-// 	function logoutHandler() {
-// 		fetch('http://localhost:8000/api/auth/logout/', {
-// 			credentials : 'include',
-// 			method : 'GET'
-// 		}).then(res => res.json())
-// 		.then(data => {
-// 			authHandler(null)
-// 			navigate("/auth/login")
-// 		})
-// 		.catch(err => console.log(err))
-// 	}
-
-// 	return (
-// 		<>
-// 			<div className={`w-[160px] min-h-[667px] h-[100vh] inline-flex items-start justify-start shrink-0`}>
-// 				<header 
-// 					className={`w-full h-full border-[.3px] shadow-sm rounded-sm relative ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/10"}`}>
-// 					<div className="cursor-pointer flex items-center justify-center w-full text-[22px] my-4">
-// 						<div style={{color:color}} className='items-center'>
-// 							<h1  className={`mr-1 text-[28px] font-insp`}>Pong Game</h1>
-// 						</div>
-// 					</div>
-// 							<div className="menu w-full mt-20 h-[160px] text-[20px] flex flex-col items-center justify-between">
-// 								<Link style={{background: location.pathname.includes('profile') && color}} to="profile" className={`flex rounded-sm w-full h-[35px] items-center justify-center`}> 
-// 									<FontAwesomeIcon icon={faHome} />
-// 									<p className='text-primaryText ml-4'>Profile</p>
-// 								</Link>
-// 								<Link style={{background: location.pathname.includes("game") && color}} to="game" className={`flex rounded-sm w-full h-[35px] items-center justify-center`}> 
-// 									<FontAwesomeIcon icon={faGamepad} />
-// 									<p className='text-primaryText ml-4'>Play</p>
-// 								</Link>
-// 								<Link style={{background: location.pathname.includes("chat") && color}} to="chat" className={`flex rounded-sm w-full h-[35px] items-center justify-center`}>
-// 									<FontAwesomeIcon icon={faEnvelope} />
-// 									<p className='text-primaryText ml-4'>Chat</p>
-// 								</Link>
-// 							</div> 
-// 							<div className="menu w-full text-[20px] h-[160px] flex flex-col items-center justify-between bottom-4 absolute">
-// 								<button className='w-full rounded-sm h-[35px] flex justify-center items-center' onClick={() => {
-// 									if (theme == 'light')
-// 										themeHanlder('dark')
-// 									else
-// 									themeHanlder('light');
-// 								}}>
-// 									<FontAwesomeIcon icon={theme === 'dark' ? faMoon : faSun} />
-// 									<p className='text-primaryText ml-4'>Theme</p>
-// 								</button>
-// 								<Link style={{background : location.pathname.includes('setings') && color}} to="setings" className={`rounded-sm h-[35px] flex justify-center items-center w-full`}>
-// 									<FontAwesomeIcon  icon={faGear} />
-// 									<p className='text-primaryText ml-4'>setings</p>
-// 								</Link>
-// 								<div className='w-full'>
-// 									<hr className='border-white/50 w-full'></hr>
-// 									<button className='rounded-sm mt-4 h-[25px] flex justify-center items-center w-full' onClick={logoutHandler} >
-// 										<FontAwesomeIcon icon={faRightToBracket} />
-// 										<p className='text-primaryText ml-4'>Logout</p>
-// 									</button>
-// 								</div>
-// 							</div>
-// 				</header>
-// 			</div>
-//     	</>
-// 	)
-// }
-import { FaGamepad, FaGear } from "react-icons/fa6";
-import { TbLogout } from "react-icons/tb";
+	return (
+		<Link 
+			style={{color: location.pathname.includes(text) && color || ''}} 
+			to={link} 
+			className={`text-center xl:flex xl:justify-center xl:items-center`}
+		>
+			<div className='text-[20pt] text-center w-full xl:w-fit flex justify-center'>
+				{icon}
+			</div>
+			<p className='text-primaryText mt-4 xl:ml-4 xl:mt-0 capitalize'>{text}</p>
+		</Link>
+	)
+}
 
 function SideBar() {
-	const location = useLocation();
-	const appearence = useContext(ApearanceContext)
+	const {theme, themeHandler, color} = useContext(ApearanceContext) || {}
 	const user = useContext(UserContext)
 	const navigate = useNavigate()
-
-
 
 	function logoutHandler() {
 		fetch('http://localhost:8000/api/auth/logout/', {
@@ -104,52 +48,35 @@ function SideBar() {
 	}
 
 	function ThemeHandler() {
-		if (appearence?.theme == 'light')
-			appearence.themeHandler('dark')
-		else
-			appearence?.themeHandler('light');
+		themeHandler!(theme == 'light' ? 'dark' : 'light')
 	}
 
 	return (
-		<div className={`w-[100vw] h-[70px] absolute bottom-0 sm:relative sm:w-[70px] sm:min-h-[667px] sm:h-[100vh] z-20`}>
+		<div className={`w-[100vw] h-[110px] absolute bottom-0  sm:relative  sm:w-[90px] sm:h-[100vh] xl:w-[260px] z-20`}>
 			<header 
-				className={`w-full h-full border-[.3px] shadow-sm rounded-sm relative ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/10"}`}>
-				<div className="hidden sm:block h-[5vh] cursor-pointer  items-center justify-center w-full text-[22px] my-6">
-					<h1 style={{color:appearence?.color}} className={`mx-4 text-[28px] font-insp`}>Pong</h1>
+				className={`w-full h-full border-[.3px]  shadow-sm rounded-sm relative ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/0"}`}>
+				<div className="hidden sm:block h-[5vh] cursor-pointer  items-center justify-center text-center w-full text-[22px] my-6">
+					<h1  className={`mx-auto text-[14pt] w-[80px] capitalize xl:text-[18pt]  font-kav`}>Pong</h1>
 				</div>
-				<div className='flex h-full sm:h-[92vh] sm:grid'>
-					<div className="w-1/2 h-full flex justify-evenly items-center sm:h-[250px] sm:w-full sm:grid sm:grid-cols-1 sm:gap-2">
-						<Link 
-							style={{color: location.pathname.includes('profile') && appearence?.color || ''}} 
-							to={`profile/${user?.user?.username}`} 
-							className={`text-center`}
-						> 
-							<FaHome className='text-[22px] text-center w-full' />
-							<p className='text-primaryText mt-2'>Profile</p>
-						</Link>
-						<Link style={{color: location.pathname.includes("game") && appearence?.color || ''}} to="game" className={`text-center`}> 
-							<FaGamepad className='text-[22px] w-full text-center' />
-							<p className='text-primaryText mt-2'>Play</p>
-						</Link>
-						<Link style={{color: location.pathname.includes("chat") && appearence?.color || ''}} to="chat" className={`text-center`}>
-							<FaEnvelope className='text-[22px] w-full text-center' />
-							<p className='text-primaryText mt-2'>Chat</p>
-						</Link>
-					</div> 
-					<div className="w-1/2 h-full flex items-center justify-evenly sm:w-full sm:h-[250px] sm:grid sm:grid-cols-1 sm:gap-2 sm:place-self-end">
-						<button onClick={ThemeHandler}>
-							{appearence?.theme === 'dark' ? <FaSun className='text-[22px] w-full text-center' /> : <FaMoon className='text-[22px] w-full text-center' />}
-							<p className='text-primaryText mt-2'>Theme</p>
+				<div className='flex h-full sm:h-[91vh] sm:grid'>
+					<div className="w-1/2 h-full flex justify-evenly items-center sm:h-[280px] sm:w-full sm:grid sm:grid-cols-1 sm:gap-2">
+						<NavItem text="profile" icon={<RiDashboardLine />} link={`profile/${user?.user?.username}`} />
+						<NavItem text="game" icon={<GrGamepad />} link="game" />
+						<NavItem text="chat" icon={<HiOutlineChatBubbleLeftRight />} link="chat" />
+					</div>
+
+					<div className="w-1/2 h-full flex items-center justify-evenly sm:w-full sm:h-[280px] sm:grid sm:grid-cols-1 sm:gap-2 sm:place-self-end">
+						<button onClick={ThemeHandler} className='text-center xl:flex justify-center items-center'>
+							<div className='text-[20pt] w-full xl:w-fit flex justify-center'>
+								{theme === 'dark' ? <PiSunDim /> : <PiMoonStars />}
+							</div>
+							<p className='text-primaryText mt-4 xl:mt-0 xl:ml-4'>Theme</p>
 						</button>
-						<div>
-							<Link style={{color : location.pathname.includes('setings') && appearence?.color || ''}} to="setings" className={`text-center`}>
-								<FaGear className='text-[22px] w-full text-center' />
-								<p className='text-primaryText mt-2'>setings</p>
-							</Link>
-						</div>
-						<button className='text-center' onClick={logoutHandler}>
-							<TbLogout className='text-[22px] w-full text-center' />
-							<p className='text-primaryText mt-2'>Logout</p>
+						<NavItem text="setings" icon={<TbSettings2 />} link="setings" />
+						
+						<button className='text-center xl:flex justify-center items-center' onClick={logoutHandler}>
+							<TbLogout className='text-[20pt] w-full xl:w-fit text-center' />
+							<p className='text-primaryText mt-4 xl:mt-0 xl:ml-4'>Logout</p>
 						</button>
 					</div>
 				</div>
