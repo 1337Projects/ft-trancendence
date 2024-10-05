@@ -8,7 +8,6 @@ import ApearanceProvider, { ApearanceContext } from './Contexts/ThemeContext'
 
 import AuthLayout from './Layouts/AuthLayout'
 import ChatLayout from './Layouts/ChatLayout'
-import ProfileLayout from './Layouts/ProfileLayout'
 
 
 import Login from './components/auth/Login'
@@ -58,11 +57,9 @@ const router = createBrowserRouter(
 
         <Route path='game' element={<Game />} />
 
-        <Route path='profile' element={<ProfileLayout />}>
-          <Route path=':user_name' element={<Profile />}>
-            <Route index element={<UserProfile />} />
-            <Route path='friends' element={<h1>friends</h1>} />
-          </Route>
+        <Route path='profile/:user_name' element={<Profile />}>
+          <Route index element={<UserProfile />} />
+          <Route path='friends' element={<h1>friends</h1>} />
         </Route>
 
         <Route path='chat' element={<ChatLayout />}>
