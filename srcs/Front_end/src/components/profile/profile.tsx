@@ -100,7 +100,7 @@ export default function Profile() {
 	}, [user_name])
 
 	return (
-		<div className={`w-full backdrop-blur-md ${appearence?.theme == 'light' ? "bg-lightItems border-lightText/10 text-lightText" : "bg-darkItems text-darkText border-darkText/10"}`}>
+		<div className={`w-full mt-2 backdrop-blur-md ${appearence?.theme == 'light' ? "bg-lightItems border-lightText/10 text-lightText" : "bg-darkItems text-darkText border-darkText/10"}`}>
 			<div className={` w-full p-1 h-[90vh] sm:h-[100vh] overflow-scroll border-[.3px] ${appearence?.theme == 'light' ? "border-lightText/10" : "border-darkText/10"}`}>
 				<div className='top-0 h-[150px] w-full overflow-hidden'>
 					<img src={currentUser?.profile.banner} className='min-w-full w-fit min-h-full h-fit' alt="" />

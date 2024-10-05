@@ -61,7 +61,7 @@ export function Banner({user}) {
 				</div>
 				<div>
 					{
-						user?.username != authInfos?.username &&
+						(user && user?.username != authInfos?.username) &&
 						<Actions friends={friends} profile_user={user} handlers={handlers} />
 					}
 				</div>
