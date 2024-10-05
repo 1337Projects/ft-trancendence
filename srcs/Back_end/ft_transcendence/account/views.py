@@ -13,6 +13,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .utls import *
+from datetime import timedelta
 
 
 
@@ -39,6 +40,9 @@ def get_users(request):
 
 @api_view(['GET'])
 def get_profile(request, username):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
     if not User.objects.filter(username=username).exists():
         return Response({"message": "this user is not exist"}, status=400)
     user = get_object_or_404(User, username=username)
