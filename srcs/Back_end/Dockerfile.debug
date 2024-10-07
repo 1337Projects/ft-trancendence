@@ -1,0 +1,23 @@
+# Dockerfile.debug
+FROM python:3.9-slim
+
+# Set working directory to /app
+WORKDIR /app
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install -r requirements.txt
+
+# Install ptvsd for debugging
+RUN pip install ptvsd
+
+# Copy application code
+COPY ./ft_transcendence /app
+
+# Expose port for debugger
+EXPOSE 5678
+
+# Run command to start debugger
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
