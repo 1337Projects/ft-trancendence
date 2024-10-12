@@ -1,35 +1,35 @@
 
 import { Outlet } from 'react-router-dom'
-import React, { useContext } from 'react'
-import { ApearanceContext} from '../Contexts/ThemeContext'
-import Picture from '../components/auth/picture'
-
+import React from 'react'
 
 
 export default function AuthLayout() {
-  const appearence = useContext(ApearanceContext)
     return (
       <>
         <main>
           <div className="w-full h-screen">
-            <div className={`main w-full bg-lightItems text-lightText h-full`}>
-                <div className="login h-full flex justify-between w-full">
-                    <div className="hidden lg:flex pic h-full bg-pong bg-cover w-3/4 flex-col items-center p-2 justify-center">
-                      <div className='bg-blue-200/10 backdrop-blur-md h-[90vh] w-[40vw] max-h-[500px] max-w-[500px] p-2 rounded-3xl relative border-white/50 border-[.3px]'>
-                        <p className='text-white font-bold text-xl mt-6 capitalize w-48 font-kaushan left-20 leading-10 absolute'>welcome to ping pong community. 🎉</p>
-                        <Picture color={appearence?.color}/>
-                        <div className='bg-white absolute right-[-20px] text-[20px] top-[30vh] w-10 h-10 flex justify-center items-center rounded-full'>
-                          💯
-                        </div>
-                        <div className='bg-white absolute left-[-20px] text-[20px] bottom-[50px] w-10 h-10 flex justify-center items-center rounded-full'>
-                        🔥
-                        </div>
-                      </div>
-                    </div>
-                    <div className="login-form p-1 h-[100vh] sm:h-[95vh] w-full lg:w-2/4 flex items-center relative">
-                        <div className="w-full">
+            <div className={`w-full bg-lightItems text-lightText h-full`}>
+                <div className="h-full w-full flex p-2">
+                    <div className="h-full w-full lg:w-1/2 flex items-center justify-center">
+                        <div className="w-full max-w-[700px]">
                           <Outlet />
                         </div>
+                    </div>
+                    <div className="h-full hidden bg-[#1b1b1f]  w-1/2 p-2 lg:flex items-center">
+                      <div className='w-full'>
+                        <div className='slide'>
+                          <img className='mx-auto max-w-[800px] w-full h-full' src="/485.svg" alt="" />
+                          <div className='text-center'>
+                            <h1 className='mt-16 text-[24pt] font-bold uppercase text-white'>Play ping pong</h1>
+                            <p className='mt-4 text-white'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, perspiciatis.</p>
+                          </div>
+                        </div>
+                        <div className='mt-[100px] flex justify-center'>
+                          <div className='w-[10px] ml-2 h-[10px] bg-white rounded-full'></div>
+                          <div className='w-[10px] ml-2 h-[10px] bg-gray-200 rounded-full'></div>
+                          <div className='w-[10px] ml-2 h-[10px] bg-gray-200 rounded-full'></div>
+                        </div>
+                      </div>
                     </div>
                 </div>
             </div>
