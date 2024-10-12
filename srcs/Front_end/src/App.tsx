@@ -13,7 +13,7 @@ import ChatLayout from './Layouts/ChatLayout'
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
-import { GoogleOauth, IntraOauth } from './components/auth/Oauth'
+import { Oauth } from './components/auth/Oauth'
 
 
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
@@ -46,8 +46,8 @@ const router = createBrowserRouter(
       <Route index element={<Home />} />
       {/* auth */}
       <Route path='auth' element={<AuthLayout />}>
-        <Route path='oauth/google' element={<GoogleOauth />} />
-        <Route path='oauth/42' element={<IntraOauth />} />
+        <Route path='oauth/google' element={<Oauth url='http://localhost:8000/api/auth/google_callback/' />} />
+        <Route path='oauth/42' element={<Oauth url='http://localhost:8000/api/auth/oauth/intra/' />} />
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup/>} />
         <Route path='confirme/:id' element={<ConfirmeEmail/>} />
@@ -86,9 +86,7 @@ function Main() {
   const appearence = useContext(ApearanceContext)
   return (
     <div className={`font-pt ${appearence?.theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
-      <div className={`container max-w-[1400px] mx-auto `}>
-        <RouterProvider router={router} />
-      </div>
+      <RouterProvider router={router} />
     </div>
   )
 }

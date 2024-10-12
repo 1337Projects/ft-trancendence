@@ -10,7 +10,7 @@ export default {
         lightBg : '#f7f7f7',
         lightText : '#374151',
         lightItems : 'white',
-        darkItems : '#151b23',
+        darkItems : '#1b1b1f',
         darkText : 'white',
         darkBg : '#020408',
       },
@@ -48,6 +48,7 @@ export default {
   
         '2xl': '1536px',
       },
+      
     },
   },
   plugins: [],
