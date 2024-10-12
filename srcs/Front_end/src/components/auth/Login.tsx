@@ -1,73 +1,54 @@
-
-import { Link, useNavigate } from "react-router-dom";
-import React, { useContext, useState } from "react";
-import { ApearanceContext } from '../../Contexts/ThemeContext';
-import { Input } from './Signup';
-import { UserContext } from '../../Contexts/authContext';
-import { TbPasswordFingerprint } from "react-icons/tb";
+import React from "react";
+import { Link } from "react-router-dom";
+import { Form, Formik } from 'formik'
 import { OauthProviders } from './Oauth';
-import { FaRegUser } from "react-icons/fa";
+import MyInput from "./Input";
+import * as yup from 'yup'
 
-
-type LoginData = {
-    username? : string,
-    password? : string
-}
+const validate = yup.object({
+    username : yup.string().required('required !').max(15, 'Must be 10 characters or less'),
+    password : yup.string().required('required !').min(10, 'Must be 10 characters or more')
+})
 
 export default function Login() {
-
-    const appearence = useContext(ApearanceContext)
-    const [data, setData] = useState<LoginData | null>(null)
-    const navigate = useNavigate()
-    const user = useContext(UserContext)
-
-    function input_handler(auth_data : {username? : string, password? : string}) {
-        setData({...data, ...auth_data})
-    }
-
-    function login_handler() {
-        fetch('http://localhost:8000/api/auth/login/',
-            {
-                headers : {
-                    "Content-Type": "application/json",
-                },
-                method:'POST',
-                credentials: 'include',
-                body: JSON.stringify(data)
-            },   
-        )
-        .then(res => res.json())
-        .then(data => {
-            if (data.status == 300) {
-                navigate(`../confirme/${data.id}`)
-            }
-            if (data.status == 200) {
-                user?.setAuthInfos(data.access)
-                navigate("../../dashboard/game")
-            }
-        })
-        .catch(err => console.log(err))
-        
-    }
-
     return (
-       <>
+       <div>
         <div className="heading w-full p-1 text-center">
-            <h1 className="text-[40px] font-semibold capitalize">welcome back</h1>
-            <p className="text-[8px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
+            <h1 className="text-[40pt] font-semibold uppercase">welcome back</h1>
+            <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
         </div>
-        <div className="w-1/2 max-w-[500px] mx-auto mt-6">
-            <OauthProviders />
-            <div className="login-form grid mt-6 w-full">
-                <Input icon={<FaRegUser />} label="username" handler={input_handler} placeholder="jhon doe" type="text" />
-                <Input icon={<TbPasswordFingerprint />} label="password" handler={input_handler} placeholder="***********" type="password" />
-            <a className="text-[10px] mt-6" href="#">Forget password ?</a>
-                <div onClick={login_handler} style={{background:appearence?.color}} className="mt-4 text-white rounded text-[10px] h-8 flex w-full justify-center items-center">
-                    LOGIN
+        <div className="w-full max-w-[400px] mx-auto mt-10">
+            <div className="grid mt-6 w-full">
+                <Formik 
+                    initialValues={{
+                        username : '',
+                        password : ''
+                    }}
+                    validationSchema={validate}
+                    onSubmit={(values) => {console.log(values)}}
+                >
+                    <Form>
+                        <MyInput type="text" name="username" label="username" placeholder="jhon deo" />
+                        <MyInput type="password" name="password" label="password" placeholder="*****************" />
+                        <div className="mt-10 flex items-center justify-between">
+                            <div className="flex items-center">
+                                <input type="checkbox" name="remember"  />
+                                <p className="ml-2 lowercase">remember me</p>
+                            </div>
+                            <p className="font-bold capitalize">forget password ?</p>
+                        </div>
+                        <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt]">Login</button>
+                    </Form>
+                </Formik>
+                <div>
+                    <OauthProviders />
                 </div>
-                <p className="text-[14px] mt-6">You already have account <Link style={{color:appearence?.color}} to="../signup" className="uppercase">signup</Link> </p>
+                <p className="mt-10 text-center">
+                    you dont have account ? 
+                    <Link to="../signup" className="font-bold uppercase ml-2">register</Link>
+                </p>
             </div>
         </div>
-       </> 
+       </div> 
     )
 }

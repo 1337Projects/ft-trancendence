@@ -1,84 +1,52 @@
-
 import { OauthProviders } from "./Oauth"
-import { Link, useNavigate } from "react-router-dom"
-import React, { useContext, useState } from "react"
-import { ApearanceContext } from "../../Contexts/ThemeContext"
-import { FaRegUser } from "react-icons/fa"
-import { TbPasswordFingerprint } from "react-icons/tb"
-import { MdAlternateEmail } from "react-icons/md"
+import { Link } from "react-router-dom"
+import React from "react"
+import { Form, Formik } from "formik"
+import MyInput from "./Input"
+import * as yup  from 'yup'
 
-
-export function Input({icon, label, placeholder, type, handler}) {
-    return (
-        <div>
-            <label className="text-[10px] capitalize w-full flex justify-between mb-1 mt-4" htmlFor="email">{label} : {icon} </label>
-            <input
-                className="mt-1 w-full text-lightText outline-none text-[10px] px-2 rounded h-8 border-gray-300 border-[.5px]" 
-                type={type} 
-                id={label} 
-                placeholder={placeholder}
-                onChange={(e) => handler({[label]: e.target.value})}
-            />
-        </div>
-    )
-}
-
-type SignupData = {
-    username : string,
-    email : string,
-    password : string,
-    first_name : string,
-    last_name : string,
-}
 
 export default function Signup() {
-    const appearence = useContext(ApearanceContext)
-    const [data, setData] = useState<SignupData | null>(null)
-    const navigate = useNavigate()
 
-    function dataHandler(auth_data) {
-        setData({...data, ...auth_data})
-    }
-
-    function registerData() {
-        fetch('http://localhost:8000/api/auth/signup/', {
-            headers : {
-                "Content-Type": "application/json",
-            },
-            body : JSON.stringify(data),
-            credentials: 'include',
-            method: 'POST',
-        }).then(res => res.json())
-        .then(data => {
-            if (data.id) {
-                navigate(`../confirme/${data.id}`)
-            }
-        })
-        .catch(err => console.log(err))
-    }
+    const validate = yup.object({
+        username : yup.string().required('required !').max(15, 'Must be 10 characters or less'),
+        password : yup.string().required('required !').min(10, 'Must be 10 characters or more'),
+        email : yup.string().required('required !').email('Invalid email address')
+    })
 
     return (
-        <>
-        <div className="heading w-full p-1 text-center">
-            <h1 className="text-[40px] font-semibold capitalize">Hello</h1>
-            <p className="text-[8px]">Lorem ipsum dolor sit amet elit.</p>
-        </div>
-        <div className="w-1/2 max-w-[500px] mx-auto mt-6">
-            <OauthProviders />
-            <div className="login-form grid mt-6 w-full">
-                <div className="w-full flex justify-between">
-                    <Input handler={dataHandler} icon={<FaRegUser />} label="first_name" placeholder="jhon" type="text" />
-                    <Input handler={dataHandler} icon={<FaRegUser />} label="last_name" placeholder="doe" type="text" />
-                </div>
-                <Input handler={dataHandler} icon={<FaRegUser />} label="username" placeholder="jhon doe" type="text" />
-                <Input handler={dataHandler} icon={<MdAlternateEmail />} label="email" placeholder="example@gmail.com" type="email" />
-                <Input handler={dataHandler} icon={<TbPasswordFingerprint />} label="password" placeholder="***********" type="password" />
-                <button onClick={registerData} style={{background:appearence?.color}} className="mt-6 text-white uppercase rounded text-[10px] h-8 flex w-full justify-center items-center">
-                    Create Account
-                </button>
-                <p className="text-[14px] mt-6">You already have account <Link style={{color:appearence?.color}} to="../login" className=" uppercase ">Login</Link> </p>
+        <div>
+            <div className="heading w-full p-1 text-center">
+                <h1 className="text-[40pt] font-semibold uppercase">welcome back</h1>
+                <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
             </div>
-        </div>
-       </> 
+            <div className="w-full max-w-[400px] mx-auto mt-10">
+                <div className="grid mt-6 w-full">
+                    <Formik 
+                        initialValues={{
+                            username : '',
+                            password : '',
+                            email : '',
+                        }}
+                        validationSchema={validate}
+                        onSubmit={(values) => {console.log(values)}}
+                    >
+                        <Form>
+                            <MyInput type="text" name="username" label="username" placeholder="jhon deo" />
+                            <MyInput type="email" name="email" label="email" placeholder="jhondeo@example.com" />
+                            <MyInput type="password" name="password" label="password" placeholder="*****************" />
+                            <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt] capitalize">create account</button>
+                        </Form>
+                    </Formik>
+                    <div>
+                        <OauthProviders />
+                    </div>
+                    <p className="mt-10 text-center">
+                        already have an account ? 
+                        <Link to="../login" className="font-bold uppercase ml-2">Login</Link>
+                    </p>
+                </div>
+            </div>
+       </div> 
     )
 }

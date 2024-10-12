@@ -1,4 +1,4 @@
-import { Input } from "./Signup";
+// import { Input } from "./Signup";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
@@ -48,7 +48,7 @@ export default function ConfirmeEmail() {
                 </div>
                 <div className="p-4">
                     <div className="w-full">
-                        <Input handler={setCode} icon={<CiBarcode />} label="confirm" placeholder="1234" type="text" />
+                        {/* <Input handler={setCode} icon={<CiBarcode />} label="confirm" placeholder="1234" type="text" /> */}
                     </div>
                     <p className="mt-4 text-[12px] capitalize">i didnt recive an email yet ! 
                         <span style={{color:appearence?.color}} className="uppercase cursor-pointer"> resend 09:00</span>
