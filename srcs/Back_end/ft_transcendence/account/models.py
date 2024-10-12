@@ -18,8 +18,8 @@ class Profile(AbstractBaseUser):
     bio = models.TextField(default='', blank=True)
     level = models.FloatField(default=0.0)
     banner = models.CharField(default='')
-    image = models.CharField(default='')
-    online = models.BooleanField(default=False)
+    avatar = models.CharField(default='')
+    last_activity = models.DateTimeField(auto_now=True)
     objects = ProfileManager()
 
 class Friends(AbstractBaseUser):

@@ -13,6 +13,7 @@ from urllib.parse import urlencode
 import requests, secrets , jwt, datetime, json, os
 from account.utls import create_profile
 import random, string
+from datetime import timedelta
  
 load_dotenv()
 
@@ -201,3 +202,4 @@ def google_oauth(request):
                 return response
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
+   
