@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'channels',
     'daphne',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
