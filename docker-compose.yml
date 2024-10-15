@@ -49,4 +49,6 @@ services:
       - ${PWD}/srcs/Front_end:/app
     networks:
       - ft_transcendence
+    environment:
+      VITE_API_URL: "http://localhost:8000/"
 

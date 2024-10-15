@@ -29,6 +29,7 @@ import Conversation from './components/chat/Conversation'
 // import {TournmentWaiting} from './components/game/tournament'
 
 import NotFound from './components/NotFound'
+import ForgetPassword from './components/auth/ForgetPassword'
 
 
 function Home() {
@@ -50,6 +51,7 @@ const router = createBrowserRouter(
         <Route path='oauth/42' element={<Oauth url='http://localhost:8000/api/auth/oauth/intra/' />} />
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup/>} />
+        <Route path='forgetPassowrd' element={<ForgetPassword />} />
         <Route path='confirme/:id' element={<ConfirmeEmail/>} />
       </Route>
 

@@ -3,9 +3,9 @@ DOCKER_COMPOSE = docker-compose
 WORK_DIR = --project-directory ./srcs
 DOCKER_COMPOSE_FILE = -f docker-compose.yml
 DOCKER_COMPOSE_DEB = -f docker-compose.debug.yml
-ifdef dev
+# ifdef dev
 	DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_DEB)
-endif
+# endif
 DOCKER_COMPOSE_OVERRIDE = -f srcs/docker-compose.override.yml
 BUILD = $(DOCKER_COMPOSE)  build
 REBUILD = $(DOCKER_COMPOSE)  build --no-cache
