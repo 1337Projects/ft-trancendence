@@ -1,8 +1,7 @@
-// import { Input } from "./Signup";
+
 import React, { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
-import { CiBarcode } from "react-icons/ci";
 import { FaArrowLeft } from "react-icons/fa";
 import { UserContext } from "../../Contexts/authContext";
 
