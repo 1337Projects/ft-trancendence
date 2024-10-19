@@ -19,14 +19,13 @@ class UserRegistrationView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             validated_data = serializer.validated_data
-            # validated_data['password'] = make_password(validated_data['password'])
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
+            response = Response({
                 'access': str(refresh.access_token),
-                'user': UserRegistrationSerializer(user).data
             }, status=status.HTTP_201_CREATED)
+            response.set_cookie('refresh_token', str(refresh), httponly=True)
+            return response
         except ValidationError as e:
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -45,10 +44,11 @@ class UserLoginView(generics.GenericAPIView):
             )
             if user:
                 refresh = RefreshToken.for_user(user)
-                return Response({
-                    'refresh': str(refresh),
+                response = Response({
                     'access': str(refresh.access_token),
                 }, status=status.HTTP_200_OK)
+                response.set_cookie('refresh_token', str(refresh), httponly=True)
+                return response
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         except ValidationError as e:
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
