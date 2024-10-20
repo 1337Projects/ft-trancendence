@@ -27,7 +27,7 @@ function ConvItem({c, id, handler , menu}) {
             <Link to={`${data.username}`} className={`flex justify-start items-center w-full xl:px-4 ${menu && "test-style px-4"}`}>
                 <div className={`flex  ${menu ? "test-style" : "justify-center"} xl:justify-start  items-center w-full`}>
                     <div className={`w-[35px] h-[35px] xl:mr-4 ${menu && " test-style mr-4"}`}>
-                        <img src={data?.profile?.image} className="w-full bg-white h-fll rounded-full" alt="img" />
+                        <img src={data?.profile?.avatar} className="w-full bg-white h-full rounded-full" alt="img" />
                     </div>
                     <div className={`content text-[14px] w-fit ${menu ? "test-style" : "hidden"} xl:block`}>
                         <h1 className="font-bold ">{data?.username}</h1>
@@ -60,7 +60,7 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
                     <li onClick={() => handler(false)}  className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}>
                         <Link to={data.username}>
                             <div className="relative">
-                                <img src={data.profile.image} className="w-[35px] border-2 mx-auto rounded-full" alt="" />
+                                <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
                                 <div className={`h-2 w-2 bg-green-400 rounded-full absolute top-[27px]  xl:right-4 ${menu ? "right-4" : "right-0"}`}></div>
                                 <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block test-style" : "hidden"} xl:block`}>{data.username}</h1>
                             </div>

@@ -21,7 +21,7 @@ function Avatars({user, handler, images}) {
                 />
             </div>
             <div className="user w-full flex mt-8">
-                <img src={user?.profile?.image} className="bg-white w-[60px] h-[60px] rounded-sm mr-3" alt="img" />
+                <img src={user?.profile?.avatar} className="bg-white w-[60px] h-[60px] rounded-sm mr-3" alt="img" />
                 <div className="text-[10px]">
                     <input
                         type="file"

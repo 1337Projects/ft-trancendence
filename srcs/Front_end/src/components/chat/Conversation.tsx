@@ -30,7 +30,7 @@ function UserMessage({m}) {
                 </div>
                 <p className="text-[8pt]  mr-4 mt-2 py-1 text-right">{time}</p>
             </div>
-            <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
+            <img src={m?.sender?.profile?.avatar} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
         </li>
     )
 }
@@ -49,7 +49,7 @@ function FromMessage({m}) {
     }, [])
     return (
         <li  className="mt-4 flex items-start justify-start">
-            <img src={m?.sender?.profile?.image} className="w-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
+            <img src={m?.sender?.profile?.avatar} className="w-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
             <div>
                 <div  className=" border-[.2px] bg-gray-800 backdrop-blur-xl border-white/20 text-white rounded-[30px] p-1">
                     {/* {m?.image != '' && <img src={m?.image} className='w-[200px] h-[220px] rounded-t-md' />} */}
@@ -162,7 +162,7 @@ export default function Conversation() {
                         <Link className="p-2 flex items-center justify-center cursor-pointer" to="/dashboard/chat">
                             <FaArrowLeft />
                         </Link>
-                        <img src={userData?.profile?.image} className="bg-white w-[35px] h-[35px] rounded-full mx-4" alt="" />
+                        <img src={userData?.profile?.avatar} className="bg-white w-[35px] h-[35px] rounded-full mx-4" alt="" />
                         <div className="infos text-[12px]">
                             <h1 className="font-bold text-[11pt]">{userData?.username}</h1>
                             <p className="text-[8pt]">last seen</p>

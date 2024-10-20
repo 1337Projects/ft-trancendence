@@ -52,7 +52,7 @@ function SearchResult({query, queryHandler}) {
                                     onClick={() => eventHandler(i?.username)}
                                 >
                                     <div className="flex">
-                                        <img  src={i?.profile?.image} className="w-[44px] h-[44px] bg-white rounded-md mr-4" alt={i?.profile?.image} />
+                                        <img  src={i?.profile?.avatar} className="w-[44px] h-[44px] bg-white rounded-md mr-4" alt={i?.profile?.avatar} />
                                         <div>
                                             <p className="text-[16px] lowercase font-bold">{i.username}</p>
                                             <p className="mt-[4px]">{i?.first_name} {i?.last_name}</p>
@@ -112,7 +112,7 @@ export default function Search() {
                             </div>
                             <h1 className="text-primaryText font-bold">{user?.user?.username}</h1>
                         </div>
-                        <img className="w-[40px] h-[40px] rounded-[50%] h-25px border-[1px] bg-white ml-4" src={user?.user?.profile?.image} alt="avatar" />
+                        <img className="w-[40px] h-[40px] rounded-[50%] h-25px border-[1px] bg-white ml-4" src={user?.user?.profile?.avatar} alt="avatar" />
                     </div>
                     {
                         show && 

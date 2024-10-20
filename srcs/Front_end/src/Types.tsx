@@ -13,7 +13,7 @@ export type AuthInfosType = {
 }
 
 type UserProfileType = {
-    image : string,
+    avatar : string,
     bio : string,
     level : number,
     rank : number,

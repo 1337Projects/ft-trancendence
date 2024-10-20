@@ -39,5 +39,5 @@ export const DashboardPrivateRoute = () => {
     return <div></div>;
   }
 
-  return isAuthenticated ? <DashboardLayout /> : <Navigate to="../../auth/login" />
+  return isAuthenticated ? <div className='max-w-[1600px] mx-auto'><DashboardLayout /></div>  : <Navigate to="../../auth/login" />
 };
