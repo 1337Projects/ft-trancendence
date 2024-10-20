@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, Formik } from 'formik'
 import { OauthProviders } from './Oauth';
 import MyInput, { MyCheckbox } from "../ui/Input";
 import * as yup from 'yup'
 import Alert from "../ui/Alert";
+import { UserContext } from "../../Contexts/authContext";
 
 const validate = yup.object({
     email : yup.string().required('required !').email(),
@@ -12,8 +13,9 @@ const validate = yup.object({
 })
 
 export default function Login() {
-
+    const navigation = useNavigate()
     const [err, setErr] = useState<string[] | null>(null)
+    const { setAuthInfosHandler } = useContext(UserContext) || {}
 
     const loginHandler = async values => {
         try {
@@ -31,7 +33,8 @@ export default function Login() {
             }
 
             const data = await response.json()
-            console.log(data)
+            setAuthInfosHandler!(data.access)
+            navigation("../../dashboard/game")
 
         } catch (error) {
             setErr([error.toString()])

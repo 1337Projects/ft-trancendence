@@ -20,7 +20,7 @@ export default function AuthLayout() {
   const [slide, setSlide] = useState(1)
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log('timer created')
+      // console.log('timer created')
       setSlide(prev => prev < 3 ? prev += 1 : 1)
     }, 1000 * 8)
 

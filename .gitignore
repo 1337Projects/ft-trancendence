@@ -4,3 +4,4 @@ srcs/Back_end/virtualenv
 .env
 venv
 .DS_Store
+*.rest

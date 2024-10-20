@@ -1,5 +1,5 @@
 import { OauthProviders } from "./Oauth"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import React, { useState } from "react"
 import { Form, Formik } from "formik"
 import MyInput from "../ui/Input"
@@ -7,6 +7,8 @@ import * as yup  from 'yup'
 import Alert from "../ui/Alert"
 
 export default function Signup() {
+
+    const navigation = useNavigate()
 
     const validate = yup.object({
         username : yup.string().required('required !').max(15, 'Must be 10 characters or less'),
@@ -28,13 +30,17 @@ export default function Signup() {
                 },
                 body : JSON.stringify(values)
             })
-    
+            
             if (!response.ok) {
+                setErrors(null)
                 const { error } = await response.json()
                 for (const [key, value] of Object.entries(error)) {
                     setErrors(prev => prev ? [...prev, `${key} : ${value}\n`] : [`${key} : ${value}\n`])
                 }
-            }  
+                return;
+            }
+
+            navigation("../login")
         } catch (error) {
             setErrors(prev => prev ? [...prev, error] : [error])
         }

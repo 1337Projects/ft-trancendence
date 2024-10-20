@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import {notsSocket} from '../socket'
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "../Contexts/ThemeContext";
-import { FirendType, UserContext } from "../Contexts/authContext";
+import { UserContext } from "../Contexts/authContext";
 import { FaBell, FaCaretDown, FaCheck, FaTrash, FaUserPlus } from "react-icons/fa";
+import { FirendType } from "../Types";
 
 function NotItem({data}) {
     return (
@@ -149,7 +150,7 @@ export function Invites() {
                 show && 
                 <ul className={`my-2 border-[1px] ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"} m-2 rounded-sm`}>
                     {
-                        invites.length ? 
+                        invites?.length ? 
                         invites.map(inv => <InviteItem key={inv?.sender.id} data={inv} />)
                         :
                         <li className="h-[100px] flex justify-center items-center">
