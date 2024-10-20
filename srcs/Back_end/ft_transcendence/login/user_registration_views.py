@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password
 
 from .models import User
 from .serializer import UserRegistrationSerializer, UserLoginSerializer
-
+from account.utls import create_profile
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
@@ -20,16 +20,16 @@ class UserRegistrationView(generics.CreateAPIView):
             serializer.is_valid(raise_exception=True)
             validated_data = serializer.validated_data
             user = serializer.save()
-            refresh = RefreshToken.for_user(user)
             response = Response({
-                'access': str(refresh.access_token),
+                'message':  'User created successfully',
             }, status=status.HTTP_201_CREATED)
-            response.set_cookie('refresh_token', str(refresh), httponly=True)
+            create_profile(user.id, '../media/avatar.jpeg')
             return response
         except ValidationError as e:
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
 from rest_framework_simplejwt.tokens import RefreshToken
+from .views import  set_refresh_token_cookie
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
@@ -47,7 +47,7 @@ class UserLoginView(generics.GenericAPIView):
                 response = Response({
                     'access': str(refresh.access_token),
                 }, status=status.HTTP_200_OK)
-                response.set_cookie('refresh_token', str(refresh), httponly=True)
+                set_refresh_token_cookie(response, refresh)
                 return response
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         except ValidationError as e:
