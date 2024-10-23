@@ -1,4 +1,3 @@
-version: '3.4'
 
 services:
   be:
@@ -13,5 +12,4 @@ services:
     ports:
       - "8000:8000"
       - "5678:5678"  # for debugger
-    # RUN bash with interactive mode
     command: python -m debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000

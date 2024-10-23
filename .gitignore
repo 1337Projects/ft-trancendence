@@ -1,7 +1,8 @@
 srcs/Front_end/node_modules
 srcs/Back_end/virtualenv
 .VScode
-.env
+.vscode
+*.env
 venv
 .DS_Store
 *.rest

@@ -19,5 +19,10 @@ COPY ./ft_transcendence /app
 # Expose port for debugger
 EXPOSE 5678
 
+COPY ./entry-point.sh /usr/local/bin/
+
+RUN [ "chmod",  "+x", "/usr/local/bin/entry-point.sh" ]
+
+ENTRYPOINT [ "entry-point.sh" ]
 # Run command to start debugger
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
