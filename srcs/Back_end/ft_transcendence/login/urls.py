@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from login.views import google_login, google_oauth
+from login.views import google_login, google_oauth, forget_password, confirm_password
 
 from .user_registration_views import (
     UserRegistrationView,
@@ -15,4 +15,6 @@ urlpatterns = [
     path('oauth/intra/', views.intra_oauth),
     path('google/', google_login, name='google_login'),
     path('google_callback/', google_oauth, name='google_callback'),
+    path('forgetPassword/', forget_password, name='forget_password'),
+    path('confirmPassword/', confirm_password, name='confirm_password'),
 ]

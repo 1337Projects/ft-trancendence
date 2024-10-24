@@ -24,3 +24,8 @@ class User(AbstractBaseUser):
 
     def __str__(self):
        return self.username
+
+class PasswordReset(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(unique=True)
+    is_used = models.BooleanField(default=False)

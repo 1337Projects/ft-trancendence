@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from .models import User
+from .models import User , PasswordReset
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from dotenv import load_dotenv, dotenv_values
@@ -14,6 +14,9 @@ import requests, secrets , jwt, datetime, json, os
 from account.utls import create_profile
 import random, string
 from datetime import timedelta
+
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
  
 load_dotenv()
 
@@ -202,4 +205,48 @@ def google_oauth(request):
                 return response
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
-   
+
+
+@api_view(["post"])
+def forget_password(request):
+    if request.method == 'POST':
+        email = request.data.get('email')
+        try:
+            user = User.objects.get(email=email)
+            token = default_token_generator.make_token(user)
+            PasswordReset.objects.create(user=user, token=token)
+            reset_link = f"http://localhost:5173/users/confirmPassword?token={token}&email={email}"
+            send_mail(
+                'Request : Reset Password',
+                f'A password change has been requested for your account. If this was you, please use the link below to reset your password: {reset_link}',
+                'from@example.com',
+                [email],
+                fail_silently=False,
+            )
+            return JsonResponse({'message': 'Email found'}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Email not found'}, status=404)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@api_view(["post"])
+def confirm_password(request):
+    if request.method == 'POST':
+        email = request.data.get('email')
+        token = request.data.get('token')
+        new_password = request.data.get('new_password')
+        try:
+            password_reset = PasswordReset.objects.get(token=token, user__email=email)
+            if password_reset.is_used:
+                return JsonResponse({'error': 'Token has already been used.'}, status=400)
+            user = password_reset.user
+            if default_token_generator.check_token(user, token):
+                user.set_password(new_password)
+                user.save()
+                password_reset.is_used = True
+                password_reset.save()
+                return JsonResponse({'message': 'Password has been reset'}, status=200)
+            else:
+                return JsonResponse({'error': 'Expired token'}, status=400)
+        except PasswordReset.DoesNotExist:
+            return JsonResponse({'error': 'Invalid token'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
