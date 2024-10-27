@@ -7,7 +7,7 @@ from .models import Profile, Friends
 from login.models import User
 from login.views import check_if_duplicate 
 from .serializer import ProfileSerializers, UserWithProfileSerializer, UserWithFriendsSerializer
-import json, jwt
+import json, jwt, sys
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -56,7 +56,10 @@ def set_infos(request):
         return Response({"message": "Invalid token"}, status=400)
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
-    user_id = user_infos_dict.get('id')
+    # user_id = user_infos_dict.get('id')
+    print(f"{request.user}")
+    sys.stdout.flush()
+    user_id = id
     username = user_infos_dict.get('username')
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
