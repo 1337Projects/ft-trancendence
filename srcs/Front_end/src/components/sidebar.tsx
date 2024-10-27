@@ -8,6 +8,7 @@ import { TbLogout, TbSettings2 } from "react-icons/tb";
 import { PiMoonStars, PiSunDim } from "react-icons/pi";
 import { RiDashboardLine } from "react-icons/ri";
 import { GrGamepad } from "react-icons/gr";
+import { RxDashboard } from "react-icons/rx";
 
 
 
@@ -29,11 +30,34 @@ function NavItem({text, icon, link}) {
 	)
 }
 
+
 function SideBar() {
-	const {theme, themeHandler, color} = useContext(ApearanceContext) || {}
+	const {theme, themeHandler} = useContext(ApearanceContext) || {}
 	const user = useContext(UserContext)
 	const navigate = useNavigate()
-
+	
+	const nav_inks = [
+		{
+			text: 'profile',
+			icon : <RxDashboard />,
+			link : `profile/${user?.user?.username}`
+		},
+		{
+			text: 'game',
+			icon : <GrGamepad />,
+			link : `game`
+		},
+		{
+			text: 'chat',
+			icon : <HiOutlineChatBubbleLeftRight />,
+			link : `chat`
+		},
+		{
+			text: 'settings',
+			icon : <TbSettings2 />,
+			link : `setings`
+		},
+	]
 	function logoutHandler() {
 		fetch('http://localhost:8000/api/auth/logout/', {
 			credentials : 'include',
@@ -60,10 +84,7 @@ function SideBar() {
 				</div>
 				<div className='w-full h-full sm:h-[91vh] sm:grid'>
 					<div className="h-full flex justify-evenly items-center sm:h-[480px] sm:w-full sm:grid sm:grid-cols-1 sm:gap-2">
-						<NavItem text="profile" icon={<RiDashboardLine />} link={`profile/${user?.user?.username}`} />
-						<NavItem text="game" icon={<GrGamepad />} link="game" />
-						<NavItem text="chat" icon={<HiOutlineChatBubbleLeftRight />} link="chat" />
-						<NavItem text="setings" icon={<TbSettings2 />} link="setings" />
+						{ nav_inks.map((item, index) => (<NavItem key={index} icon={item.icon} text={item.text} link={item.link} />)) }
 						<button onClick={ThemeHandler} className='text-center xl:flex justify-center items-center'>
 							<div className='text-[20pt] w-full xl:w-fit flex justify-center'>
 								{theme === 'dark' ? <PiSunDim /> : <PiMoonStars />}
