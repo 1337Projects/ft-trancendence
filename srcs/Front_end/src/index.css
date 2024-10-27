@@ -38,11 +38,11 @@ body {
 
 .active-menu {
     width: 300px;
-    transition: all .6s ease;
+    transition: opacity .6s ease;
 }
 
 .non-active-menu {
-    transition: all .6s ease;
+    transition : opacity .6s ease;
 }
 
 .test-style {
@@ -67,6 +67,7 @@ body {
 .oauth::before {
     margin-right: 10px;
 }
+
 
 
 

@@ -24,13 +24,16 @@ export default function Level() {
 				<LevelImg color={appearence?.color} />
 			</div>
 			<div className="w-3/5">
-				<div className={`pr-4 ${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} flex items-center text-[13pt] justify-between`}>
-					<h1><span style={{color:appearence?.color}} className='text-[20pt]'>{user?.user?.profile?.rank || 1}</span> / 200</h1>
+				<div className={`pr-4 ${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} flex items-center text-[10pt] justify-between`}>
+					<h1>
+						<span style={{color:appearence?.color}} className='text-[20pt] font-extrabold mr-2'>{user?.user?.profile?.rank || 1}</span>
+						/ 200
+					</h1>
 					<h1>{user?.user?.profile?.level} LVL</h1>
 				</div>
 				<div className='relative mt-2 pr-4'>
-					<div className={`${appearence?.theme == 'light' ? "bg-gray-300" : "bg-lightItems"} h-4 rounded-full`}></div>
-					<div style={{background:appearence?.color, width:` 50%`}} className='h-4 top-0 rounded-full absolute'></div>
+					<div className={`${appearence?.theme == 'light' ? "bg-gray-300" : "bg-lightItems"} h-2 rounded-full`}></div>
+					<div style={{background:appearence?.color, width:` 50%`}} className='h-2 top-0 rounded-full absolute'></div>
 				</div>
 			</div>
 		</div>

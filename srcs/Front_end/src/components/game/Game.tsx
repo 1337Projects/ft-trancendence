@@ -27,8 +27,9 @@ function Hero({color}) {
                             </Link>
                         </div>
                     </div>
-                    <div className="img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
-                        <img src="/herro.svg" alt="" />
+                    <div className="relative img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
+                        {/* <img src="/Ellipse.svg" className="absolute  w-[400px]" alt="" /> */}
+                        <img className="absolute" src="/herrrro.svg" alt="" />
                     </div>
                 </div>
             </div>

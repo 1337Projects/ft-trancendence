@@ -84,7 +84,7 @@ export default function Search() {
                     className={`
                     ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/10"}
                     search flex-grow h-full
-                    rounded-sm p-1 px-3 flex items-center shadow-sm border-[.3px] relative
+                    rounded-sm p-1 px-3 flex items-center shadow-sm  relative
                 `}>
                     <FaSearch />
                     <div className="w-full">
@@ -103,7 +103,7 @@ export default function Search() {
                 </div>
                 <div className={`
                     ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/10"}
-                   w-[170px] border-[.3px] h-full z-10 rounded-sm ml-2 shadow-sm cursor-pointer`} onClick={() => setShow(!show)}>
+                   w-[170px] border-[0px] h-full z-10 rounded-sm ml-2 shadow-sm cursor-pointer`} onClick={() => setShow(!show)}>
                     <div className="flex items-center justify-center h-full">
                         <div className="infos">
                             <div className="top flex text-small mb-1 justify-between items-center">
