@@ -10,7 +10,7 @@ function ListItem({item,  isActive, handler}) {
 
     return (
         <li 
-            className={`${theme === 'light' && !isActive ? "text-lightText" : "text-darkText"} border-[.3px] border-white/20 text-[11pt] cursor-pointer justify-center flex px-4 h-[45px] items-center rounded-md`} 
+            className={`${theme === 'light' && !isActive ? "text-lightText" : "text-darkText"} border-white/20 text-[11pt] cursor-pointer justify-center flex px-4 h-[45px] items-center rounded-md`} 
             style={{background : isActive ? color : ""}} 
             onClick={() => handler(item.text)}>
             <p>{item.text}</p>

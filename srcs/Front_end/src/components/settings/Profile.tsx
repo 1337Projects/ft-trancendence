@@ -20,27 +20,28 @@ export default function Profile() {
     }
 
     const submit_handler = async  values => {
-        console.log(values)
+
         try {
             const formdata = new FormData()
-            formdata.append("user", JSON.stringify(values))
+            formdata.append("user", JSON.stringify({username : values.username,  first_name : values.first_name, last_name : values.last_name, profile : {bio : values.bio}}))
             if (images.avatar)
-                formdata.append("avatar" , images.avatar[0])
+                formdata.append("avatar" , images.avatar)
             if (images.banner)
-                formdata.append("banner" , images.banner[0])
-            const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/set_profile_data/`, {
+                formdata.append("banner" , images.banner)
+            const response = await fetch(`http://localhost:8000/api/profile/set_profile_data/`, {
                 method: 'PUT',
                 credentials:'include',
                 body : formdata,
                 headers: {
-                    "Authorization" : `Bearer ${authInfos?.accessToken}`
+                    "Authorization" : `Bearer ${authInfos?.accessToken}`,
                 }
             })
 
             if (!response.ok) {
+                console.log(await response.json())
                 throw Error("");
             }
-            const data = response.json()
+            const data = await response.json()
             console.log(data);
         } catch (err) {
             console.log(err.toString());
