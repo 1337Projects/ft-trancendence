@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { UserContext } from "../../Contexts/authContext";
+import LevelImg from "./assets/LevelImg";
 
 
 export function Avatar() {
@@ -19,17 +20,17 @@ export default function Level() {
 
 	return (
 		<div className="flex items-center">
-			<div className="w-1/5 mr-4">
-				<img src="/jjj.svg" className="w-full" alt="" />
+			<div className="w-2/5 mr-4 flex justify-center">
+				<LevelImg color={appearence?.color} />
 			</div>
-			<div className="w-4/5 px-4">
-				<div className={`${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} flex items-center text-[13px] justify-between`}>
-					<h1><span style={{color:appearence?.color}} className='text-[20px]'>{user?.user?.profile?.rank}</span> / 200</h1>
+			<div className="w-3/5">
+				<div className={`pr-4 ${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} flex items-center text-[13pt] justify-between`}>
+					<h1><span style={{color:appearence?.color}} className='text-[20pt]'>{user?.user?.profile?.rank || 1}</span> / 200</h1>
 					<h1>{user?.user?.profile?.level} LVL</h1>
 				</div>
-				<div className='relative mt-2'>
-					<div className={`${appearence?.theme == 'light' ? "bg-gray-300" : "bg-lightItems"} h-2 rounded-sm`}></div>
-					<div style={{background:appearence?.color, width:`${test(user?.user?.profile?.level)}%`}} className='h-2 top-0 rounded-sm absolute'></div>
+				<div className='relative mt-2 pr-4'>
+					<div className={`${appearence?.theme == 'light' ? "bg-gray-300" : "bg-lightItems"} h-4 rounded-full`}></div>
+					<div style={{background:appearence?.color, width:` 50%`}} className='h-4 top-0 rounded-full absolute'></div>
 				</div>
 			</div>
 		</div>

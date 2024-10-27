@@ -42,7 +42,7 @@ export function Banner({user}) {
 	return (
 		<div className='px-2  w-full'>
 			<div className="flex items-center">
-				<img className='w-[90px]  h-[90px] bg-white border-2 rounded-full' src={`${user?.profile?.avatar}`} alt="" />
+				<img className='w-[90px] h-[90px] bg-white border-2 rounded-full' src={`${user?.profile?.avatar}`} alt="" />
 				<div className="mt-10 ml-4">
 					<h1 className='mt-4 text-[16pt] font-bold'>@{user?.username}</h1>
 					<h1 className='text-[10pt] mt-2 '>{user?.first_name} {user?.last_name}</h1>

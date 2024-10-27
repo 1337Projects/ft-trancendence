@@ -5,7 +5,7 @@ import { Banner } from './Hero';
 import Level from './Level'
 import Chart from './Chart'
 import Achivments from './Achivments'
-import { Link, Outlet, useParams } from 'react-router-dom';
+import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import { UserContext } from '../../Contexts/authContext';
 import { UserType } from '../../Types';
 import { FaUserFriends } from 'react-icons/fa';
@@ -75,6 +75,9 @@ export default function Profile() {
 	const {authInfos, user} = useContext(UserContext) || {}
 	const {user_name} = useParams()
 	const [currentUser, setCurrentUser] = useState<UserType | null>()
+	const location = useLocation()
+
+	const isProfile = !location.pathname.includes('friends')
 
 
 	useEffect(() => {
@@ -101,22 +104,22 @@ export default function Profile() {
 
 	return (
 		<div className={`w-full mt-2 backdrop-blur-md ${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
-			<div className={` w-full p-1 h-[90vh] sm:h-[100vh] overflow-scroll`}>
-				<div className='top-0 h-[150px] w-full overflow-hidden'>
+			<div className={` w-full h-[90vh] sm:h-[100vh] overflow-scroll`}>
+				<div className='top-0 h-[150px] w-full border-b-[1px] overflow-hidden'>
 					<img src={currentUser?.profile.banner} className='min-w-full w-fit min-h-full h-fit' alt="" />
 				</div>
 				<div className='w-full px-2  rounded-sm h-fit mt-[-40px] flex items-center justify-center'>
 					<Banner user={currentUser} />
 				</div>
 				<div className='px-4'>
-					<ul className='flex items-center py-4 text-[10pt]'>
-						<li className='mr-6 cursor-pointer'>
+					<ul className='flex items-center py-4 text-[12pt]'>
+						<li style={{color : isProfile ? appearence?.color : ""}} className={`mr-6 cursor-pointer`} >
 							<Link to={`../profile/${currentUser?.username}`} className='flex items-center'>
 								<RiProfileFill className='mr-2' />
 								Profile
 							</Link>
 						</li>
-						<li className='cursor-pointer '>
+						<li style={{color : isProfile ? "" : appearence?.color}} className='cursor-pointer'>
 							<Link to="friends" className='flex items-center'>
 								<FaUserFriends className='mr-2' />
 								Friends
