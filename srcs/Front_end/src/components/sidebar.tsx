@@ -19,12 +19,12 @@ function NavItem({text, icon, link}) {
 		<Link 
 			style={{color: location.pathname.includes(text) && color || ''}} 
 			to={link} 
-			className={`text-center xl:flex xl:justify-center xl:items-center`}
+			className={`text-center p-2 xl:flex xl:justify-center xl:items-center`}
 		>
 			<div className='text-[20pt] text-center w-full xl:w-fit flex justify-center'>
 				{icon}
 			</div>
-			<p className='text-primaryText mt-4 xl:ml-4 xl:mt-0 capitalize'>{text}</p>
+			<p className='text-primaryText mt-2 xl:ml-4 xl:mt-0 capitalize'>{text}</p>
 		</Link>
 	)
 }
@@ -58,22 +58,21 @@ function SideBar() {
 				<div className="hidden sm:block h-[5vh] cursor-pointer  items-center justify-center text-center w-full text-[22px] my-6">
 					<h1  className={`mx-auto text-[14pt] w-[80px] capitalize xl:text-[18pt]  font-kav`}>Pong</h1>
 				</div>
-				<div className='flex h-full sm:h-[91vh] sm:grid'>
-					<div className="w-1/2 h-full flex justify-evenly items-center sm:h-[280px] sm:w-full sm:grid sm:grid-cols-1 sm:gap-2">
+				<div className='w-full h-full sm:h-[91vh] sm:grid'>
+					<div className="h-full flex justify-evenly items-center sm:h-[480px] sm:w-full sm:grid sm:grid-cols-1 sm:gap-2">
 						<NavItem text="profile" icon={<RiDashboardLine />} link={`profile/${user?.user?.username}`} />
 						<NavItem text="game" icon={<GrGamepad />} link="game" />
 						<NavItem text="chat" icon={<HiOutlineChatBubbleLeftRight />} link="chat" />
-					</div>
-
-					<div className="w-1/2 h-full flex items-center justify-evenly sm:w-full sm:h-[280px] sm:grid sm:grid-cols-1 sm:gap-2 sm:place-self-end">
+						<NavItem text="setings" icon={<TbSettings2 />} link="setings" />
 						<button onClick={ThemeHandler} className='text-center xl:flex justify-center items-center'>
 							<div className='text-[20pt] w-full xl:w-fit flex justify-center'>
 								{theme === 'dark' ? <PiSunDim /> : <PiMoonStars />}
 							</div>
 							<p className='text-primaryText mt-4 xl:mt-0 xl:ml-4'>Theme</p>
 						</button>
-						<NavItem text="setings" icon={<TbSettings2 />} link="setings" />
-						
+					</div>
+
+					<div className="h-full hidden items-center justify-evenly sm:w-full sm:h-[80px] sm:grid sm:grid-cols-1 sm:gap-2 sm:place-self-end mb-2">
 						<button className='text-center xl:flex justify-center items-center' onClick={logoutHandler}>
 							<TbLogout className='text-[20pt] w-full xl:w-fit text-center' />
 							<p className='text-primaryText mt-4 xl:mt-0 xl:ml-4'>Logout</p>
