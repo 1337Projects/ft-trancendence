@@ -54,20 +54,25 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
 
     return (
         <ul className={`w-full max-h-[300px]  xl:h-[100px] xl:p-2  xl:flex xl:items-center ${menu ? "h-[100px] p-2  flex items-center test-style" : "h-fit pb-6 grid grid-cols-1 content-start"}`}>
-            {friends?.filter(f => f.status == 'accept').map(f => {
-                const data = Object.filter(f, i => typeof i === "object" && i.username !== authInfos?.username)[0]
-                return (
-                    <li onClick={() => handler(false)}  className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}>
-                        <Link to={data.username}>
-                            <div className="relative">
-                                <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
-                                <div className={`h-2 w-2 bg-green-400 rounded-full absolute top-[27px]  xl:right-4 ${menu ? "right-4" : "right-0"}`}></div>
-                                <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block test-style" : "hidden"} xl:block`}>{data.username}</h1>
-                            </div>
-                        </Link>
-                    </li>
-                )
-            })}
+            {
+                friends?.length ?
+                friends?.filter(f => f.status == 'accept').map(f => {
+                    const data = Object.filter(f, i => typeof i === "object" && i.username !== authInfos?.username)[0]
+                    return (
+                        <li onClick={() => handler(false)}  className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}>
+                            <Link to={data.username}>
+                                <div className="relative">
+                                    <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
+                                    <div className={`h-2 w-2 bg-green-400 rounded-full absolute top-[27px]  xl:right-4 ${menu ? "right-4" : "right-0"}`}></div>
+                                    <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block test-style" : "hidden"} xl:block`}>{data.username}</h1>
+                                </div>
+                            </Link>
+                        </li>
+                    )
+                })
+                :
+                <div className={`text-sm text-center w-full ${menu ? "block test-style" : "hidden"} border-[.6px] border-white/20 rounded-md p-6`}>no firends yet</div>
+            }
         </ul>
     )
 }
@@ -120,11 +125,16 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
                 <div className={`xl:block ${menu ? "test-style" : "hidden"}`}>
                     <Categories categorie={null} Handler={null} />
                 </div>
-                <ul className="mt-10">{
-                    cnvs?.map(c => {
-                        return <ConvItem id={visibleItem} menu={menu} handler={ListVisibilityHandler}  key={c.id} c={c} />
-                    })
-                }</ul>
+                <ul className="mt-10">
+                    {
+                        cnvs.length ?
+                            cnvs?.map(c => {
+                                return <ConvItem id={visibleItem} menu={menu} handler={ListVisibilityHandler}  key={c.id} c={c} />
+                            })
+                        :
+                        <div className={`text-center border-[.6px] border-white/20 rounded-md p-10 text-sm ${menu ? "block test-style" : "hidden"} `}>no conversations yet</div>
+                    }
+                </ul>
             </div>
     )
 }

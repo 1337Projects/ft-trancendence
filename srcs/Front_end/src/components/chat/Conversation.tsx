@@ -172,7 +172,7 @@ export default function Conversation() {
                 </div>
                 <div className="body flex-col h-[80vh] w-full  px-2 justify-center">
                     {messages?.length ? 
-                        <ul ref={cnv} className="mt-10 flex-grow h-5/6 overflow-scroll max-w-[600px] w-full">
+                        <ul ref={cnv} className="mt-10 flex-grow h-5/6 overflow-scroll w-full">
                         {messages.map((message) => {
                             if (message?.sender?.username !== user)
                                 return <UserMessage key={message?.id} m={message} />
