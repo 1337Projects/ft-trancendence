@@ -6,10 +6,13 @@ import React, { useEffect, useState } from 'react'
 function Slide({text, img}) {
   return (
     <div className='slide'>
-      <img className='mx-auto max-w-[500px] w-full h-full' src={img} alt="" />
+      <div className='relative h-[400px]'>
+        {/* <img src="/Ellipse.svg" alt="" /> */}
+        <img className='absolute top-0 left-[50%] translate-x-[-50%] mx-auto max-w-[400px] w-full h-full' src={img} alt="img" />
+      </div>
       <div className='text-center'>
-        <h1 className='mt-16 text-[24pt] font-bold uppercase font-pt text-white'>{text}</h1>
-        <p className='mt-4 text-white'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, perspiciatis.</p>
+        <h1 className='mt-16 text-[28pt] capitalize font-pt text-white'>{text}</h1>
+        <p className='mt-4 text-white font-light text-sm'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, perspiciatis.</p>
       </div>
     </div>
   )
