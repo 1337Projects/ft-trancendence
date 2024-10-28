@@ -27,18 +27,23 @@ function NotItem({data}) {
 
 function InviteItem({data}) {
     const appearence = useContext(ApearanceContext)
-
+    const { user } = useContext(UserContext) || {}
+    
+    const sender = data.sender.username == user?.username ? data.receiver : data.sender;
+    
     return (
         <li className="flex ml-[50%] translate-x-[-50%] w-full my-2 p-1 h-[50px]">
             <div className="text text-primaryText ml-4 w-full">
                 <div className="flex items-center">
-                    <img src={data?.sender?.profile?.image} alt="user" className="h-10 w-10 rounded-[50%]" />
-                    <div className="ml-2">
-                        <h1 className="font-bold text-[8pt]">{data?.sender?.username}</h1>
-                        <p className="text-small mt-1">sent friend request</p>
-                    </div>
+                    <Link className="flex" to={`/dashboard/profile/${sender.username}`}>
+                        <img src={sender.profile.avatar} alt="user" className="h-10 w-10 rounded-[50%]" />
+                        <div className="ml-2">
+                            <h1 className="font-bold text-[10pt]">{sender.username}</h1>
+                            <p className="text-small mt-1">sent friend request</p>
+                        </div>
+                    </Link>
                     <div className="ml-4 actions flex w-[100px] justify-evenly  items-center text-primaryText ">
-                        <div className="flex text-[12px] text-white items-center h-[28px] rounded px-2 cursor-pointer">
+                        <div className="flex text-[12px]  items-center h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">accept</p> */}
                             <FaCheck />
                         </div>
@@ -122,6 +127,7 @@ export function Invites() {
     const appearence = useContext(ApearanceContext)
     const {friends, user} = useContext(UserContext) || {}
 
+    console.log(friends)
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -148,10 +154,10 @@ export function Invites() {
             </div>
             {
                 show && 
-                <ul className={`my-2 border-[1px] ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"} m-2 rounded-sm`}>
+                <ul className={`my-2 border-[.3px] ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"} m-2 rounded-sm`}>
                     {
                         invites?.length ? 
-                        invites.map(inv => <InviteItem key={inv?.sender.id} data={inv} />)
+                        invites.map((inv, index) => <InviteItem key={index} data={inv} />)
                         :
                         <li className="h-[100px] flex justify-center items-center">
                             <div className="flex items-center">
