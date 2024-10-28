@@ -110,21 +110,27 @@ export default function DashboardLayout() {
 
     return (
       <>
-        <div className="flex justify-between w-full py-2">
-          <div className=''>
-            <div>
-              <div className={`hidden p-8 sm:flex justify-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} rounded sm:block h-[10vh] cursor-pointer  items-center justify-center text-center w-full text-[22px]`}>
+        <div className="flex justify-between w-full">
+          <div className='flex flex-col space-y-2'>
+
+            <div className='h-[100px] flex-shrink-0'>
+              <div className={`hidden p-8 sm:flex justify-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} rounded sm:block h-full cursor-pointer  items-center justify-center text-center w-full text-[22px]`}>
                 <LogoImg />
               </div>
             </div>
-            <div className='mt-2 h-[80vh]'>
+
+            <div
+              className={`overflow-y-auto flex-shrink-1 ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/0"}`}
+              style={{ height: `calc(100vh - 200px)` }}
+            >
               <SideBar />
             </div>
+
             <button
               onClick={logoutHandler}
-              className="hidden cursor-pointer sm:block w-full h-[8vh]"
+              className="hidden cursor-pointer sm:block w-full h-[100px] flex-shrink-0"
             >
-              <div className={`text-center  sm:flex justify-center w-full items-center rounded ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} h-full mt-2`}>
+              <div className={`text-center  sm:flex justify-center w-full items-center rounded ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} h-full`}>
                 <TbLogout className='text-[20pt] w-full sm:w-fit text-center' />
                 <p className='text-xs mt-4 sm:mt-0 sm:ml-4'>Logout</p>
               </div>

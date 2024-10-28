@@ -53,7 +53,7 @@ class WebSocketService {
                         this.callbacks["setData"](prev => [...prev , data.response.message])
                         break;
                     case 206:
-                        this.callbacks["setData"](data.response.messages)
+                        this.callbacks["setData"](data.response.messages.slice(-10, -1))
                         this.callbacks["setUser"](data.response.user)
                         break;
                     case 207:

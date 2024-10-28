@@ -42,7 +42,7 @@ export default function Profile() {
                 throw Error("");
             }
             const data = await response.json()
-            console.log(data);
+            setUser!(data.res);
         } catch (err) {
             console.log(err.toString());
         }
