@@ -4,6 +4,9 @@ import { UserContext } from "../Contexts/authContext";
 import { FaAnglesUp, FaGear, FaRightToBracket } from "react-icons/fa6";
 import { ApearanceContext } from "../Contexts/ThemeContext";
 import { FaCaretDown, FaSearch, FaUser } from "react-icons/fa";
+import { LuBell } from "react-icons/lu";
+import { FiUser } from "react-icons/fi";
+
 
 function SearchResult({query, queryHandler}) {
     const navigate = useNavigate()
@@ -72,6 +75,18 @@ function SearchResult({query, queryHandler}) {
     )
 }
 
+function HeaderItems({icon}) {
+    return (
+        <div className="relative text-[14pt] cursor-pointer ml-6">
+            {icon}
+            <span className="absolute top-0 flex h-2 left-0 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
+            </span>
+        </div>
+    )
+}
+
 export default function Search() {
     const [show, setShow] = useState(false)
     const [searchText, seTSearchText] = useState('')
@@ -87,7 +102,7 @@ export default function Search() {
                     rounded-sm p-1 px-3 flex items-center shadow-sm  relative
                 `}>
                     <FaSearch />
-                    <div className="w-full">
+                    <div className="w-full relative">
                         <input 
                             type="text" 
                             value={searchText} 
@@ -99,6 +114,15 @@ export default function Search() {
                             searchText != '' &&
                             <SearchResult query={searchText} queryHandler={seTSearchText} /> 
                         }
+                        <div className="absolute top-0 right-0 w-fit h-full flex items-center lg:hidden">
+                            <HeaderItems icon={<LuBell />} />
+                            <HeaderItems icon={<FiUser />} />
+                            {
+                                // <div className="w-[220px] h-[300px] right-0 z-10 top-[30px] border-[.1px] border-white/20 backdrop-blur-md absolute rounded">
+
+                                // </div>
+                            }
+                        </div>
                     </div>
                 </div>
                 <div className={`
