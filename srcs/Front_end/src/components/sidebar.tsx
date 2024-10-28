@@ -65,7 +65,7 @@ function SideBar() {
 	return (
 		<div className={`w-[100vw] h-[110px] absolute bottom-0 border-t-[.6px] border-white/40 sm:border-none  sm:relative  sm:w-full sm:h-full xl:w-[260px] z-20`}>
 			<header 
-				className={`w-full h-full border-[.3px]  shadow-sm rounded-sm relative ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/0"}`}>
+				className={`w-full h-full  shadow-sm rounded-sm relative`}>
 				<div className='w-full h-full  sm:grid xl:px-4 px-2'>
 					<div className="h-full sm:h-[400px] sm:w-full grid grid-cols-5 items-center sm:grid-cols-1 sm:gap-2">
 						{ nav_inks.map((item, index) => (<NavItem key={index} icon={item.icon} text={item.text} link={item.link} />)) }
