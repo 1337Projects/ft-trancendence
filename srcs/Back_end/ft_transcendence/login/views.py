@@ -206,7 +206,6 @@ def google_oauth(request):
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
-
 @api_view(["post"])
 def forget_password(request):
     if request.method == 'POST':
@@ -215,7 +214,7 @@ def forget_password(request):
             user = User.objects.get(email=email)
             token = default_token_generator.make_token(user)
             PasswordReset.objects.create(user=user, token=token)
-            reset_link = f"http://localhost:5173/users/confirmPassword?token={token}&email={email}"
+            reset_link = f"http://localhost:5173/auth/forgetPassowrd?token={token}&email={email}"
             send_mail(
                 'Request : Reset Password',
                 f'A password change has been requested for your account. If this was you, please use the link below to reset your password: {reset_link}',
@@ -223,7 +222,7 @@ def forget_password(request):
                 [email],
                 fail_silently=False,
             )
-            return JsonResponse({'message': 'Email found'}, status=200)
+            return JsonResponse({'message': 'the reset link has been send to your email'}, status=200)
         except User.DoesNotExist:
             return JsonResponse({'error': 'Email not found'}, status=404)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
