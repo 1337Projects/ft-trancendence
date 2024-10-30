@@ -52,3 +52,8 @@ export type MessageType = {
     created_at : string
 
 }
+
+export type AlertType = {
+    message: string;
+    type: string;
+}
