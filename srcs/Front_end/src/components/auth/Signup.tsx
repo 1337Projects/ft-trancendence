@@ -42,7 +42,7 @@ export default function Signup() {
 
             navigation("../login")
         } catch (error) {
-            setErrors(prev => prev ? [...prev, error] : [error])
+            setErrors(prev => prev ? [...prev, error.toString()] : [error.toString()])
         }
     }
 

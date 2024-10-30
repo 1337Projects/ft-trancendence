@@ -39,7 +39,7 @@ function Hero({color}) {
 
 function Card({color, img, text}) {
     return (
-        <div className="w-fit">
+        <div className="w-full mx-auto">
             <div className="h-[180px] w-full p-2">
                 <div className="w-full h-full bg-gray-200 rounded" ></div>
             </div>
@@ -126,7 +126,7 @@ function Cards({color}) {
                     </div>
                 }
             </div>
-            <div className="mt-10 grid grid-cols-3 gap-4">
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Card color={color} img="/game1.svg" text="play random match"/>
                 <Card color={color} img="/game1.svg" text="play vs Computer"/>
                 <Card color={color} img="/game1.svg" text="play with friend"/>
