@@ -30,6 +30,7 @@ import Conversation from './components/chat/Conversation'
 
 import NotFound from './components/NotFound'
 import ForgetPassword from './components/auth/ForgetPassword'
+import { DialogContext, DialogContextProvider } from './Contexts/DialogContext'
 
 
 function Home() {
@@ -86,8 +87,14 @@ const router = createBrowserRouter(
 
 function Main() {
   const appearence = useContext(ApearanceContext)
+  const {open} = useContext(DialogContext) || {}
+
   return (
     <div className={`font-pt ${appearence?.theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
+      {
+        open &&
+        <div className={`w-[100vw] h-[100vh] absolute bg-black/40 backdrop-blur-sm z-30`}></div>
+      }
       <RouterProvider router={router} />
     </div>
   )
@@ -98,7 +105,9 @@ function App() {
   return (
       <ApearanceProvider>
         <UserContextProvider>
+          <DialogContextProvider>
             <Main />
+          </DialogContextProvider>
         </UserContextProvider>
       </ApearanceProvider>
   )

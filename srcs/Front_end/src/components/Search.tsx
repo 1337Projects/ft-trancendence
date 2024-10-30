@@ -77,10 +77,10 @@ function SearchResult({query, queryHandler}) {
 
 function HeaderItems({icon}) {
     return (
-        <div className="relative text-[14pt] cursor-pointer ml-6">
+        <div className="relative text-[16pt] cursor-pointer ml-6">
             {icon}
-            <span className="absolute top-0 flex h-2 left-0 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="absolute top-0 flex justify-center items-center h-2 left-0 w-2">
+                <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-600 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
             </span>
         </div>

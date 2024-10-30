@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useState } from "react"
 import HeroImg from "../assets/HeroImg1"
 import FriendImg from '../assets/FriendImg'
 import AiImg from "../assets/AiImg"
@@ -39,14 +39,14 @@ function Hero({color}) {
 
 function Card({color, img, text}) {
     return (
-        <div className="w-full flex items-center mt-16">
-            <div className="h-[180px] w-[180px] p-2">
-                <img className="w-full h-full" src={img} alt="" />
+        <div className="w-fit">
+            <div className="h-[180px] w-full p-2">
+                <div className="w-full h-full bg-gray-200 rounded" ></div>
             </div>
-            <div className="ml-4 w-1/2" >
-                <h1 className="text-[14pt] uppercase font-kav">{text}</h1>
-                <p className="mt-2 text-[8pt]">Lorem ipsum dolor, sit amet elit. Placeat, autem minus deleniti ad quia cupiditate illum reprehenderit. Ipsum, voluptate tempore.</p>
-                <button style={{background:color}} className=" px-3 h-[36px] text-white rounded-full w-[100px] mt-4 flex items-center justify-center" >
+            <div className="mt-2 text-center" >
+                <h1 className="text-lg font-medium uppercase ">{text}</h1>
+                <p className="mt-2 text-xs font-thin">Lorem ipsum dolor, sit amet elit. Placeat, autem minus deleniti ad</p>
+                <button style={{background:color}} className=" px-3 h-[36px] ml-[50%] translate-x-[-50%] text-white rounded-full w-[100px] mt-4 flex items-center justify-center" >
                     <h1 className="text-[14px] capitalize mr-2">play</h1>
                     <FaGamepad className="text-[16pt]" />
                 </button>
@@ -55,9 +55,20 @@ function Card({color, img, text}) {
     )
 }
 
+import { RiGamepadLine } from "react-icons/ri";
+import { DialogContext } from "../../Contexts/DialogContext"
+// import { MdGamepad } from "react-icons/md";
+import { RiGamepadFill } from "react-icons/ri";
+
 
 function Cards({color}) {
     const appearence = useContext(ApearanceContext)
+    const { open, setOpen } = useContext(DialogContext) || {}
+
+    function createHandler() {
+        setOpen!(false)
+    }
+
     return (
         <div className={`pl-7 ${appearence?.theme === 'light' ? "text-lightText" : "text-darkText"}`}>
             <div className={`items-center flex justify-between`}>
@@ -66,10 +77,59 @@ function Cards({color}) {
                     <p className="text-small max-w-[400px] mt-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur rem quia inventore officiis, odio rerum sapiente asperiores earum nobis labore architecto nam qui quae. repudiandae voluptas consequuntur pariatur</p>
                 </div>
             </div>
-            <div className="mt-20">
+            <div className="mt-10 flex justify-end px-10">
+                <button 
+                    style={{background : appearence?.color}} 
+                    className="p-3 px-4 capitalize rounded-full text-white flex items-center"
+                    onClick={() => setOpen!(true)}
+                >
+                    <span className="mr-2 text-sm">create tournment</span>
+                    <RiGamepadLine className="text-[18pt]" />
+                </button>
+                {
+                    open &&
+                    <div className="bg-white rounded-md border-black/10 p-6 border-[.3px] w-[400px] sm:w-[600px] h-fit z-40 left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%] absolute">
+                        <div className="h-fit flex">
+                            <div className="w-[200px] flex  justify-center">
+                                <div className="rounded-full w-[80px] h-[80px] flex items-start justify-center text-[50pt]">
+                                    <RiGamepadFill />
+                                </div>
+                            </div>
+                            <div className="">
+                                <h1 className="font-bold text-lg capitalize">create tournment</h1>
+                                <h1 className="text-sm mt-4">Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone.</h1>
+                                <div className="mt-4">
+                                    <label className="w-full block" htmlFor="members">members</label>
+                                    <input 
+                                        step="4"
+                                        className="rounded px-6 h-[40px] border-[.3px] border-black/20 w-full mt-2" 
+                                        type="number"
+                                        id="members" 
+                                        name="members"
+                                        defaultValue="4"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="h-[40px] mt-6  rounded-b-md flex justify-end items-center">
+                            <button 
+    
+                                className="px-4 mr-2 h-[40px] rounded text-sm border-[.3px] border-black/20"
+                                onClick={() => setOpen(false)}
+                            >cancel</button>
+                            <button 
+                                style={{background: appearence?.color}}
+                                className="px-4 h-[40px] rounded text-sm text-white"
+                                onClick={createHandler}
+                            >create</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div className="mt-10 grid grid-cols-3 gap-4">
                 <Card color={color} img="/game1.svg" text="play random match"/>
-                <Card color={color} img="/game4.svg" text="play vs Computer"/>
-                <Card color={color} img="/game5.svg" text="play with friend"/>
+                <Card color={color} img="/game1.svg" text="play vs Computer"/>
+                <Card color={color} img="/game1.svg" text="play with friend"/>
             </div>
         </div>
     )
@@ -84,6 +144,12 @@ export default function Game() {
                 <div className="mx-auto max-w-[800px] h-full">
                     <Hero color={appearence?.color} />
                     <Cards color={appearence?.color} />
+                    
+                    <div className="mt-16 mx-10">
+                        <div className="rounded border-[1px] border-black/10  h-[100px] flex justify-center items-center">
+                            <h1 className="text-sm">no tournments yet, create a new one !</h1>
+                        </div>
+                    </div>
                 </div>
             </div> 
         </>
