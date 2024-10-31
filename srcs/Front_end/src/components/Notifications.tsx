@@ -5,6 +5,7 @@ import { ApearanceContext } from "../Contexts/ThemeContext";
 import { UserContext } from "../Contexts/authContext";
 import { FaBell, FaCaretDown, FaCheck, FaTrash, FaUserPlus } from "react-icons/fa";
 import { FirendType } from "../Types";
+import { accept_friend_request, reject_friend_request } from "./profile/ActionsHandlers";
 
 function NotItem({data}) {
     return (
@@ -27,7 +28,19 @@ function NotItem({data}) {
 
 function InviteItem({data}) {
     const appearence = useContext(ApearanceContext)
-    const { user } = useContext(UserContext) || {}
+    const { friends, setFriends , user, authInfos } = useContext(UserContext) || {}
+
+    function acceptCallback(id : number) {
+        const friendship = friends?.filter(item => item.id == id)[0]
+        if( friendship ) {
+            friendship.status = 'accept'
+            setFriends!(prev => [...prev?.filter(item => item.id != id)!, friendship!])
+        }
+    }
+
+    function rejectCallback(id : number) {
+        setFriends!(prev => [...prev?.filter(item => item.id != id)!])
+    }
     
     const sender = data.sender.username == user?.username ? data.receiver : data.sender;
     
@@ -43,11 +56,16 @@ function InviteItem({data}) {
                         </div>
                     </Link>
                     <div className="ml-4 actions flex w-[100px] justify-evenly  items-center text-primaryText ">
-                        <div className="flex text-[12px]  items-center h-[28px] rounded px-2 cursor-pointer">
+                        <div
+                            onClick={() => accept_friend_request(authInfos?.accessToken!, acceptCallback, data.sender)} 
+                            className="flex text-[12px]  items-center h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">accept</p> */}
                             <FaCheck />
                         </div>
-                        <div style={{borderColor:appearence?.color}} className="flex text-[12px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
+                        <div 
+                            onClick={() => reject_friend_request(authInfos?.accessToken!, rejectCallback, data.sender)}
+                            style={{borderColor:appearence?.color}} 
+                            className="flex text-[12px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">reject</p> */}
                             <FaTrash />
                         </div>
@@ -127,7 +145,6 @@ export function Invites() {
     const appearence = useContext(ApearanceContext)
     const {friends, user} = useContext(UserContext) || {}
 
-    console.log(friends)
 
     useEffect(() => {
         const timer = setTimeout(() => {
