@@ -25,7 +25,7 @@ export default function Chart() {
 					datasets : [
 						{
 							label : "xp",
-							data : [0, 100, 300, 100, 150, 10],
+							data : [0, 80, 70, 130, 100 , 150, 10],
 							tension : 0.4,
 							fill : "start",
 							backgroundColor : (context) => {

@@ -5,6 +5,7 @@ import { Form, Formik } from "formik"
 import MyInput from "../ui/Input"
 import * as yup  from 'yup'
 import Alert from "../ui/Alert"
+import { AlertType } from "../../Types"
 
 export default function Signup() {
 
@@ -18,7 +19,7 @@ export default function Signup() {
         last_name : yup.string().required('required !')
     })
 
-    const [errors, setErrors] = useState<string[] | null>(null)
+    const [alert, setAlert] = useState<AlertType | null>(null)
 
 
     const signupHandler = async values => {
@@ -32,17 +33,23 @@ export default function Signup() {
             })
             
             if (!response.ok) {
-                setErrors(null)
+                setAlert(null)
                 const { error } = await response.json()
+                console.log("error => ", error)
                 for (const [key, value] of Object.entries(error)) {
-                    setErrors(prev => prev ? [...prev, `${key} : ${value}\n`] : [`${key} : ${value}\n`])
+                    setAlert(prev => prev ? {message : [...prev.message, `${key} : ${value}`], type : 'error'} :  {message : [`${key} : ${value}`], type : 'error'})
                 }
                 return;
             }
 
-            navigation("../login")
+            setAlert({message : ['you  have been registered successfully'], type : 'success'})
+
+            setTimeout(() => {
+                navigation("../login")
+            }, 1000)
+
         } catch (error) {
-            setErrors(prev => prev ? [...prev, error.toString()] : [error.toString()])
+            setAlert(prev => prev ? {message : [...prev.message, error.toString()], type : 'error'} : {message : [error.toString()], type : 'error'})
         }
     }
 
@@ -53,7 +60,7 @@ export default function Signup() {
                 <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
             </div>
             <div className="w-full max-w-[400px] mx-auto mt-10">
-                { errors && <Alert errors={errors} errHandler={setErrors} /> }
+                { alert && <Alert alert={alert} alertHandler={setAlert} /> }
                 <div className="grid mt-6 w-full">
                     <Formik 
                         initialValues={{

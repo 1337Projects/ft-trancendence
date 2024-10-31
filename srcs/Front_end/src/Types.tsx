@@ -54,6 +54,6 @@ export type MessageType = {
 }
 
 export type AlertType = {
-    message: string;
+    message: string[];
     type: string;
 }

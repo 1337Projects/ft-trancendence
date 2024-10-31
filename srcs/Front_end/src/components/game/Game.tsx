@@ -65,10 +65,6 @@ function Cards({color}) {
     const appearence = useContext(ApearanceContext)
     const { open, setOpen } = useContext(DialogContext) || {}
 
-    function createHandler() {
-        setOpen!(false)
-    }
-
     return (
         <div className={`pl-7 ${appearence?.theme === 'light' ? "text-lightText" : "text-darkText"}`}>
             <div className={`items-center flex justify-between`}>
@@ -88,42 +84,7 @@ function Cards({color}) {
                 </button>
                 {
                     open &&
-                    <div className="bg-white rounded-md border-black/10 p-6 border-[.3px] w-[400px] sm:w-[600px] h-fit z-40 left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%] absolute">
-                        <div className="h-fit flex">
-                            <div className="w-[200px] flex  justify-center">
-                                <div className="rounded-full w-[80px] h-[80px] flex items-start justify-center text-[50pt]">
-                                    <RiGamepadFill />
-                                </div>
-                            </div>
-                            <div className="">
-                                <h1 className="font-bold text-lg capitalize">create tournment</h1>
-                                <h1 className="text-sm mt-4">Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone.</h1>
-                                <div className="mt-4">
-                                    <label className="w-full block" htmlFor="members">members</label>
-                                    <input 
-                                        step="4"
-                                        className="rounded px-6 h-[40px] border-[.3px] border-black/20 w-full mt-2" 
-                                        type="number"
-                                        id="members" 
-                                        name="members"
-                                        defaultValue="4"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="h-[40px] mt-6  rounded-b-md flex justify-end items-center">
-                            <button 
-    
-                                className="px-4 mr-2 h-[40px] rounded text-sm border-[.3px] border-black/20"
-                                onClick={() => setOpen(false)}
-                            >cancel</button>
-                            <button 
-                                style={{background: appearence?.color}}
-                                className="px-4 h-[40px] rounded text-sm text-white"
-                                onClick={createHandler}
-                            >create</button>
-                        </div>
-                    </div>
+                    <TournmentDialog  />
                 }
             </div>
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -153,5 +114,90 @@ export default function Game() {
                 </div>
             </div> 
         </>
+    )
+}
+
+import Socket from '../../socket'
+
+function TournmentDialog() {
+    const { color } = useContext(ApearanceContext) || {}
+    const { setOpen } = useContext(DialogContext) || {}
+    const [data, setData] = useState({members : 4, mode : 'local', players : []})
+
+    function createHandler() {
+        Socket.connect(`ws://localhost:8000/ws/tournment/4/`)
+    }
+
+    return (
+        <div className="bg-white rounded-md border-black/10 p-6 border-[.3px] w-[400px] sm:w-[600px] h-fit z-40 left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%] absolute">
+            <div className="h-fit">
+                <div className="">
+                    <h1 className="font-bold text-lg capitalize">create tournment</h1>
+                    <h1 className="text-sm mt-4">Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone.</h1>
+                    <div className="mt-4">
+                        <label className="w-full block" htmlFor="members">members</label>
+                        <input 
+                            step="4"
+                            className="rounded px-6 h-[40px] border-[.3px] border-black/20 w-full mt-2" 
+                            type="number"
+                            id="members" 
+                            name="members"
+                            value={data.members}
+                            onChange={(e) => setData({...data, members : parseInt(e.target.value)})}
+                            max="16"
+                            min="4"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label className="w-full block" htmlFor="mode">mode ( local / remote )</label>
+                        <select 
+                            value={data.mode}
+                            className="w-full block h-[40px] mt-2 px-4 border-[.3px] border-black/20 rounded" 
+                            name="mode" 
+                            id="mode"
+                            onChange={(e) =>  setData({...data, mode : e.target.value})}
+                        >
+                            <option value="remote">remote</option>
+                            <option value="local">local</option>
+                        </select>
+                    </div>
+                    {
+                        data.mode === 'local' && 
+                        <div className="border-[.3px] border-black/20 rounded w-full h-fit max-h-[400px] overflow-auto mt-6 p-6 grid gap-4">
+                            {
+                                [...Array(data.members)].map((player, index) => {
+                  
+                                    return (
+                                    <div key={index} className="text-sm">
+                                        <label htmlFor={`player${index}`} className="">{`player${index + 1}`}</label>
+                                        <input 
+                                            type="text" 
+                                            className="border-[.3px] border-black/20 rounded h-[40px] px-2 mt-2 w-full" 
+                                            placeholder="player name..." 
+                                            id={`player${index}`}
+                                            // onChange={(e) => setData({...data, players[index] = e.target.value})}
+                                        />
+                                    </div>)
+                                })
+
+                            }
+
+                        </div>
+                    }
+                </div>
+            </div>
+            <div className="h-[40px] mt-6  rounded-b-md flex justify-end items-center">
+                <button 
+
+                    className="px-4 mr-2 h-[40px] rounded text-sm border-[.3px] border-black/20"
+                    onClick={() => setOpen!(false)}
+                >cancel</button>
+                <button 
+                    onClick={createHandler}
+                    style={{background: color}}
+                    className="px-4 h-[40px] rounded text-sm text-white"
+                >create</button>
+            </div>
+        </div>
     )
 }

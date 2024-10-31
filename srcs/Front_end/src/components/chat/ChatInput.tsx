@@ -1,11 +1,13 @@
 import React, { useContext, useState } from "react"
-import { FaImages } from "react-icons/fa"
-import { MdEmojiEmotions } from "react-icons/md"
-import { RiMailSendFill } from "react-icons/ri"
+import { FaImages, FaKeyboard } from "react-icons/fa"
+import Emojies from './Emojies';
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import Socket from '../../socket'
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../Contexts/authContext"
+import { FiSend } from "react-icons/fi";
+import { MdEmojiNature, MdOutlineGamepad } from "react-icons/md";
+
 
 export default function ChatInput() {
 
@@ -64,22 +66,37 @@ export default function ChatInput() {
             sendMessage()
     }
 
+    const [emojie, setEmojie] = useState<boolean>(false)
+
     return (
         <div className=" w-full h-full flex items-center">
             <div className=' w-full h-1/2 max-w-[490px] relative mx-auto' >
-                
-                <div className="input w-full h-full rounded-full px-2  text-[16pt] flex items-center justify-between bg-gray-800 text-white">
-
-                    <input onKeyUp={inputHandler} value={text}  type="text"  placeholder="Message ..." onChange={(e) => setText(e.target.value)} className="pl-4 w-[70%] sm:w-[80%] text-[10pt] bg-transparent focus:outline-none" />
-                    
-                    {/* <MdEmojiEmotions onClick={() => setShowEmoji(prev => !prev)}  /> */}
+                {
+                    emojie && <Emojies inputText={text} TextInputHandler={setText} />
+                }
+                <div className="input w-full h-full rounded-full px-4 text-[16pt] flex items-center justify-between bg-gray-800 text-white">
+                    <div onClick={() => setEmojie(prev => !prev)}>
+                        { emojie ? <FaKeyboard /> : <MdEmojiNature /> }
+                    </div>
+                    <div className="mx-2 text-[16pt]">
+                        <MdOutlineGamepad />
+                    </div>
                     {/* <div className='w-10 cursor-pointer relative flex items-center justify-center'>
                         <input type="file" onChange={(e) => setFile(e.target.files)} className='opacity-0 w-8 absolute '/>
                         <FaImages className='cursor-pointer' />
                     </div> */}
+                    <input 
+                        onKeyUp={inputHandler} 
+                        value={text}  
+                        type="text"  
+                        placeholder="Message ..." 
+                        onChange={(e) => setText(e.target.value)} 
+                        className="w-[70%] sm:w-[80%] text-[10pt] bg-transparent focus:outline-none" 
+                    />
+                    
 
                     <div style={{background:color}} onClick={sendMessage} className='w-[30px] h-[30px] text-[12pt] rounded-full flex justify-center cursor-pointer items-center'>
-                        <RiMailSendFill />
+                        <FiSend />
                     </div>
                 </div>
             </div>
