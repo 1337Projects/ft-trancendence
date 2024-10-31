@@ -27,13 +27,13 @@ async function requestLinkHandler(values) {
 
         const { message } = await response.json()
         return {
-            message,
+            message : [message],
             type : "success"
         }
 
     } catch (err) {
         return {
-            message : err.toString(),
+            message : [err.toString()],
             type : "error"
         }
     }
@@ -67,14 +67,14 @@ async function resetPasswordHandler(values) {
 
         const { message } = await response.json()
         return {
-            message,
+            message : [message],
             type : "success"
         }
 
 
     } catch(err) {
         return {
-            message : err.toString(),
+            message : [err.toString()],
             type : "error"
         }
     }
@@ -99,8 +99,10 @@ export default function ForgetPassword() {
                 <h1 className="font-bold uppercase text-[18pt]">Forget your passowrd ?</h1>
                 <p className="mt-4 text-[8pt]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit voluptatum nihil dignissimos?</p>
             </div>
-            
             <div className="mt-14 max-w-[400px] mx-auto">
+                {
+                    alert && <Alert alert={alert} alertHandler={setAlert} />
+                }
                 {
                     token == null ?
                     <Formik

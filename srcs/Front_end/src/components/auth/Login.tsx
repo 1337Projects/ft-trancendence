@@ -6,6 +6,7 @@ import MyInput, { MyCheckbox } from "../ui/Input";
 import * as yup from 'yup'
 import Alert from "../ui/Alert";
 import { UserContext } from "../../Contexts/authContext";
+import { AlertType } from "../../Types";
 
 const validate = yup.object({
     email : yup.string().required('required !').email(),
@@ -14,7 +15,7 @@ const validate = yup.object({
 
 export default function Login() {
     const navigation = useNavigate()
-    const [err, setErr] = useState<string[] | null>(null)
+    const [alert, setAlert] = useState<AlertType | null>(null)
     const { setAuthInfosHandler } = useContext(UserContext) || {}
 
     const loginHandler = async values => {
@@ -38,7 +39,7 @@ export default function Login() {
             navigation("../../dashboard/game")
 
         } catch (error) {
-            setErr([error.toString()])
+            setAlert({message : [error.toString()], type : 'error'})
         }
     }
 
@@ -49,7 +50,7 @@ export default function Login() {
             <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
         </div>
         <div className="w-full max-w-[400px] mx-auto mt-10">
-            { err && <Alert errors={err} errHandler={setErr} /> }
+            { alert && <Alert alert={alert} alertHandler={setAlert} /> }
             <div className="grid mt-6 w-full">
                 <Formik 
                     initialValues={{
