@@ -46,20 +46,24 @@ export function Oauth({url} : {url : string}) {
   const navigate = useNavigate()
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        credentials: 'include',
-        body : JSON.stringify({code : code,})
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status == 200) {
-          user?.setAuthInfosHandler(data.access)
-          navigate('../../dashboard/game')
-        }
-      })
-      .catch(err => console.log(err))
+      if (code) {
+        fetch(url, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          credentials: 'include',
+          body : JSON.stringify({code : code,})
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status == 200) {
+            user?.setAuthInfosHandler(data.access)
+            navigate('../../dashboard/game')
+          }
+        })
+        .catch(err => console.log(err))
+      } else {
+        navigate('/auth/login')
+      }
     }, 100)
     return () => clearTimeout(timer)
   }, [])
