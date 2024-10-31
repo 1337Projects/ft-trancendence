@@ -93,6 +93,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             receiver_ser = await get_user_with_profile(to_)
 
             messages = await sync_to_async(get_messages_between_users)(sender_ser['id'], receiver_ser['id'])
+
             if event == "fetch_messages":
                 await self.send(text_data=json.dumps({
                 'response': {
@@ -105,16 +106,17 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 }
             }))
             elif event == "new_message":
+                conversation = await self.get_or_create_conversation(sender, receiver)
+
                 message = await sync_to_async(Message.objects.create)(
                     message=message_content,
                     sender=sender,
                     receiver=receiver,
+                    conversation=conversation
                 )
-                conversation = await self.get_or_create_conversation(sender, receiver)
                 conversation.content_of_last_message = message.message
                 conversation.last_message_time = message.created_at
                 await sync_to_async(conversation.save)()
-
                 message_ser= await self.serialize_message(message)
                 message_ser['sender'] = sender_ser
                 message_ser['receiver'] = receiver_ser

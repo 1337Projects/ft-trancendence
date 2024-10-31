@@ -104,8 +104,10 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
             .then(data => {
                 if (data.data) {
                     setCnvs(data.data)
+                    console.log("data" ,data.data)
                 }
             })
+            console.log(cnvs)
         }, 300)
         return () => clearTimeout(timer)
     }, [])
@@ -113,7 +115,7 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
     function ListVisibilityHandler(id) {
         id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);
     }
-
+//api/profile/get_friends/
     return (
             <div className="">
                 <div className="flex items-center my-8">
