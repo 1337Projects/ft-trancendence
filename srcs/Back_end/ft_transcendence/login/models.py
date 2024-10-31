@@ -17,6 +17,7 @@ class User(AbstractBaseUser):
     first_name = models.CharField(default='', max_length=255)
     last_name = models.CharField(default='', max_length=255)
     objects = UserManager()
+    google_or_intra = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']

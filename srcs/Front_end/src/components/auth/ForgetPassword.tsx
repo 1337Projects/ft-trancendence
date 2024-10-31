@@ -62,6 +62,7 @@ async function resetPasswordHandler(values) {
 
         if (!response.ok) {
             const { error } =  await response.json()
+            // console.log(error)
             throw Error(error)
         }
 

@@ -10,10 +10,9 @@ from rest_framework.decorators import api_view
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.signals import user_logged_out
 from urllib.parse import urlencode
-import requests, secrets , jwt, datetime, json, os
 from account.utls import create_profile
-import random, string
 from datetime import timedelta
+import requests, secrets , jwt, datetime, json, os, random, string, re
 
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -100,6 +99,7 @@ def intra_oauth(request):
                 email=email,
                 last_name=last_name,
                 first_name=first_name,
+                google_or_intra=True,
             )
             create_profile(user.id, image)
         try:
@@ -195,6 +195,7 @@ def google_oauth(request):
                     email=email,
                     last_name= ' '.join(name.split()[1:]) if name else "",
                     first_name= name.split()[0] if name else "",
+                    google_or_intra=True,
                 )
                 create_profile(user.id, image)
             try:
@@ -212,6 +213,8 @@ def forget_password(request):
         email = request.data.get('email')
         try:
             user = User.objects.get(email=email)
+            if user.google_or_intra:
+                return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
             token = default_token_generator.make_token(user)
             PasswordReset.objects.create(user=user, token=token)
             reset_link = f"http://localhost:5173/auth/forgetPassowrd?token={token}&email={email}"
@@ -227,12 +230,32 @@ def forget_password(request):
             return JsonResponse({'error': 'Email not found'}, status=404)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+def validate_password(password):    
+    errors = []
+    if len(password) < 8:
+        errors.append("Password must be at least 8 characters long.")
+    if not re.search(r'[A-Z]', password):
+        errors.append("Password must contain at least one uppercase letter.")
+    if not re.search(r'[a-z]', password):
+        errors.append("Password must contain at least one lowercase letter.")
+    if not re.search(r'\d', password):
+        errors.append("Password must contain at least one digit.")
+    if not re.search(r'\W', password):
+        errors.append("Password must contain at least one special character.")
+    if errors:
+        print("Your password should meet all those requirements:", errors)
+        return False
+    return True
+
+
 @api_view(["post"])
 def confirm_password(request):
     if request.method == 'POST':
         email = request.data.get('email')
         token = request.data.get('token')
-        new_password = request.data.get('new_password')
+        new_password = request.data.get('password')
+        if not validate_password(new_password):
+            return JsonResponse({'error': 'Password does not meet all the requirements.'}, status=400)
         try:
             password_reset = PasswordReset.objects.get(token=token, user__email=email)
             if password_reset.is_used:
