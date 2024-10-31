@@ -13,9 +13,9 @@ export default function Emojies({TextInputHandler, inputText}) {
 
 
     return (
-        <div className={`${theme === 'light' ? "bg-lightBg/20 text-lightText border-lightText/20" : "bg-darkBg/20 text-darkText bottom-[52px] absolute border-darkText/20"} w-full border-[.2px] backdrop-blur-lg mb-1 rounded-sm p-1`}>
+        <div className={`${theme === 'light' ? "bg-lightBg/20 text-lightText border-lightText/20" : "bg-darkBg/20 text-darkText  border-darkText/20"} bottom-[52px] absolute w-full border-[.2px] backdrop-blur-lg mb-1 rounded-sm p-1`}>
             <div className={`${theme === 'light' ? "border-lightText" : "border-darkText"} h-[50px] header flex justify-start items-center text-[12px] px-2 py-2 border-b-[.2px]`}>
-                <div className='mx-2 w-[70%] text-[12px]'>
+                <div className='mx-2 w-full text-[12px] flex'>
                     <FaSearch />
                     <input placeholder='search...' value={query} onChange={(e) => {
                         setQuery(e.target.value)
@@ -23,15 +23,6 @@ export default function Emojies({TextInputHandler, inputText}) {
                         if (!e.target.value.length)
                                 setSearch(false)
                     }} className='px-1 bg-transparent text-[10px] ml-3 focus:outline-none'/>
-                </div>
-                <div className='mx-4'>
-                    <FaSmile />
-                </div>
-                <div className='mx-4'>
-                    <FaClock />
-                </div>
-                <div className='mx-4' onClick={() => TextInputHandler(inputText.slice(0, -1))}>
-                    <FaDeleteLeft />
                 </div>
             </div>
             {

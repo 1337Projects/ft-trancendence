@@ -1,6 +1,6 @@
 import React, {useContext, useState, useRef, useEffect} from 'react'
 import { Link, useParams } from 'react-router-dom';
-import Emojies from './Emojies';
+
 import Socket from '../../socket'
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { UserContext } from '../../Contexts/authContext';
@@ -12,9 +12,7 @@ import MyUseEffect from '../../hooks/MyUseEffect';
 
 function calc_time(created_at) {
     let date = new Date(created_at);
-    const hours = date.getUTCHours()
-    const mins = date.getUTCMinutes()
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+    return date.toLocaleString('en-US', { hour: 'numeric', minute : '2-digit',  hour12: true })
 }
 
 function UserMessage({m, username}) {
@@ -34,7 +32,7 @@ function UserMessage({m, username}) {
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
                 <p 
-                    className={`text-[8pt] mt-2 py-1 ${m.sender.username != username ? "text-right mr-4" : "ml-4"}`}
+                    className={`text-[8pt] lowercase mt-2 py-1 ${m.sender.username != username ? "text-right mr-4" : "ml-4"}`}
                 >{time}</p>
             </div>
             {
@@ -103,7 +101,7 @@ function MessagesList({data}) {
     const { user } = useContext(UserContext) || {}
 
     return (
-        <ul>
+        <ul className='px-2'>
             { data.map(message => <UserMessage m={message} username={user?.username}  />) }
         </ul>
     )
