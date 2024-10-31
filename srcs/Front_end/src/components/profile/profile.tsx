@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+	import React, { useEffect, useState } from 'react';
 import { useContext } from "react"
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { Banner } from './Hero';
@@ -74,7 +74,7 @@ export default function Profile() {
 	const appearence = useContext(ApearanceContext)
 	const {authInfos, user} = useContext(UserContext) || {}
 	const {user_name} = useParams()
-	const [currentUser, setCurrentUser] = useState<UserType | null>()
+	const [currentUser, setCurrentUser] = useState<UserType | null>(user!)
 	const location = useLocation()
 
 	const isProfile = !location.pathname.includes('friends')
@@ -96,7 +96,7 @@ export default function Profile() {
 				})
 				.catch(err => console.log(err))
 			} else 
-				setCurrentUser(user)
+				setCurrentUser(user!)
 		}, 300)
 		return () => clearTimeout(timer)
 

@@ -4,6 +4,7 @@ import { FaCommentDots, FaEllipsisV, FaPlus, FaUserMinus } from "react-icons/fa"
 import { GiSandsOfTime } from "react-icons/gi";
 import { FiCheckCircle } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 function ActionButton({text, icon, handler}) {
 	const appearence = useContext(ApearanceContext)
@@ -21,6 +22,8 @@ function ActionButton({text, icon, handler}) {
 
 export function Actions({friends, profile_user, handlers}) {
 	
+	const navigate = useNavigate()
+
 	function has_relation(arr, id, status) {
 		let res = arr?.filter(item => (item.receiver.id == id || item.sender.id== id))
 		if (status)
@@ -49,7 +52,7 @@ export function Actions({friends, profile_user, handlers}) {
 	if (has_relation(friends, profile_user?.id, 'accept')){
 		return (
 			<div className='flex justify-between items-center w-[220px]'>
-				<ActionButton text="contact" icon={<FaCommentDots />} handler={null} />
+				<ActionButton text="contact" icon={<FaCommentDots />} handler={() => navigate(`/dashboard/chat/${profile_user.username}`)} />
 				<ActionButton text="unfriend" icon={<FaUserMinus />} handler={handlers.cancle} />
 				<FaEllipsisV className="w-[100px]" />
 			</div>
