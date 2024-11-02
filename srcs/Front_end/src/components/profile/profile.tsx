@@ -83,7 +83,7 @@ export default function Profile() {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			if (user_name) {
-				fetch(`http://localhost:8000/api/profile/${user_name}/`, {
+				fetch(`${import.meta.env.VITE_API_URL}api/profile/${user_name}/`, {
 				  method: 'GET',
 				  credentials : 'include',
 				  headers : {

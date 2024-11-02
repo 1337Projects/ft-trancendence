@@ -11,7 +11,7 @@ export const DashboardPrivateRoute = () => {
     const user = useContext(UserContext)
     useEffect(() => {
             const getTokens = async () => {
-                await fetch('http://localhost:8000/api/auth/refresh/', 
+                await fetch(`${import.meta.env.VITE_API_URL}api/auth/refresh/`, 
                 {
                     method: 'GET',
                     credentials : 'include'

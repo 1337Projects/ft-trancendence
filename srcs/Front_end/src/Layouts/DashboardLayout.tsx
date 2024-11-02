@@ -49,7 +49,7 @@ export default function DashboardLayout() {
 
     useEffect(() => {
       const timer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/profile/profile_data/`, {
+        fetch(`${import.meta.env.VITE_API_URL}api/profile/profile_data/`, {
           method: 'GET',
           credentials : 'include',
           headers : {
@@ -68,7 +68,7 @@ export default function DashboardLayout() {
 
     useEffect(() => {
       const timer = setTimeout(() => {
-        fetch(`http://localhost:8000/api/profile/info/friends/`, {
+        fetch(`${import.meta.env.VITE_API_URL}api/profile/info/friends/`, {
           method: 'GET',
           credentials : 'include',
           headers : {

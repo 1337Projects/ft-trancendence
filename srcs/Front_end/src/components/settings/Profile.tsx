@@ -28,7 +28,7 @@ export default function Profile() {
                 formdata.append("avatar" , images.avatar)
             if (images.banner)
                 formdata.append("banner" , images.banner)
-            const response = await fetch(`http://localhost:8000/api/profile/set_profile_data/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/set_profile_data/`, {
                 method: 'PUT',
                 credentials:'include',
                 body : formdata,

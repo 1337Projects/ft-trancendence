@@ -20,13 +20,13 @@ export function OauthProviders() {
           <p className="oauth flex flex-row capitalize text-[10pt]">or login with</p>
           <div className='mt-10 grid grid-cols-2 gap-10'>
             <button
-              onClick={() => oauth('http://localhost:8000/api/auth/oauth/intra/')}
+              onClick={() => oauth(`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`)}
               className='bg-darkItems w-full h-12 rounded text-white flex justify-center items-center'>
               <Si42 className='mr-2' />
               Intra
             </button>
             <button
-              onClick={() => oauth('http://localhost:8000/api/auth/google/')}
+              onClick={() => oauth(`${import.meta.env.VITE_API_URL}api/auth/google/`)}
               className='border-[.4px] border-black w-full h-12 rounded flex justify-center items-center'>
               <FaGoogle className='mr-2' />
               Google

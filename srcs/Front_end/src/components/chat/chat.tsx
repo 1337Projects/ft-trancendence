@@ -92,7 +92,7 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
     const {authInfos} = useContext(UserContext) || {}
     useEffect(() => {
         const timer = setTimeout(() => {
-            fetch('http://localhost:8000/api/chat/conversations/', {
+            fetch(`${import.meta.env.VITE_API_URL}api/chat/conversations/`, {
                 method : 'GET',
                 credentials : 'include',
                 headers : {
@@ -115,16 +115,61 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
     function ListVisibilityHandler(id) {
         id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);
     }
-//api/profile/get_friends/
+
+    const [query, setQuery] = useState<string>('')
+    const [showFriends, setShowFriends] = useState<boolean>(false)
+    const [ friends, setFriends ] =  useState([])
+
+    async function search_friends() {
+        if (query != '') {
+            // const response = await fetch(`${import.meta.env.VITE_API_URL}???`, {
+            //     method : 'GET',
+            //     credentials  : 'include',
+            // })
+    
+            // if (!response.ok) {
+            //     console.log(await response.json())
+            // }
+            // const { data } = await  response.json()
+            // setFriends(data)
+            // console.log(data)
+            // setShowFriends(true)
+        } else {
+            setShowFriends(false)
+        }
+
+    }
+
     return (
             <div className="">
-                <div className="flex items-center my-8">
-                    <input type="text" placeholder="search ..." className={`w-[80%] ${menu ? "test-style" : "hidden"} xl:block px-4 rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/40" : "border-white/40"} border-[1px]`} />
-                    <div style={{background : color}} className="h-[35px] text-white xl:ml-2 mx-auto flex items-center px-4 rounded-full">
+                <div className="flex items-center mt-4">
+                    <input 
+                        type="text" 
+                        placeholder="search ..." 
+                        className={`w-full ${menu ? "test-style" : "hidden"} xl:block px-4 rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/40" : "border-white/40"} border-[1px]`} 
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
+                    <div
+                        onClick={search_friends}
+                        style={{background : color}} 
+                        className="h-[35px] text-white xl:ml-2 mx-auto flex items-center px-4 rounded-full"
+                    >
                         <RiMenuSearchLine />
                     </div>
                 </div>
-                <div className={`xl:block ${menu ? "test-style" : "hidden"}`}>
+                {
+                    showFriends  && 
+                    <div className="border-[.2px] border-white/30 mt-2 w-full h-[100px] rounded p-2">
+                        {
+                            friends.length != 0 ?
+                                friends.map(fr => <h1>a</h1>)
+                            :
+                            <h1>not found...</h1>
+                        }
+                    </div>
+                }
+                <div className={`mt-10 xl:block ${menu ? "test-style" : "hidden"}`}>
                     <Categories categorie={null} Handler={null} />
                 </div>
                 <ul className="mt-10">
