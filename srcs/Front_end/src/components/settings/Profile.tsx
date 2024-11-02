@@ -86,7 +86,7 @@ export default function Profile() {
                         <SettingsInput type="text" name="username" id="username" placeholder="joedeo" label="username" />
                         <SettingsInput type="text" name="first_name" id="first_name" placeholder="joe" label="first name" />
                         <SettingsInput type="text" name="last_name" id="last_name" placeholder="deo" label="last name" />
-                        <TextArea name="bio" id="bio" label="bio" placeHolder="bio" />
+                        <TextArea name="bio" id="bio" label="bio" placeholder="bio" />
                         <button type="submit" style={{background:appearence?.color}} className="mt-10 w-full h-[45px] text-white capitalize text-md rounded" >save changes</button>
                     </Form>
                 </Formik>

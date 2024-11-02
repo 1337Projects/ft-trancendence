@@ -96,10 +96,10 @@ export default function Table() {
 		// 	<line y1="-0.5" x2="46.2258" y2="-0.5" transform="matrix(0 -1 -1 0 164.357 492.939)" stroke="#464444"/>
 		// 	<line x1="71.9062" y1="325.512" x2="164.358" y2="325.512" stroke="#464444"/>
 		// 	<line x1="164.857" y1="326.013" x2="164.857" y2="372.238" stroke="#464444"/>
-		// 	<line x1="72.4072" y1="35.3183" x2="167.501" y2="35.499" stroke="#464444" stroke-linecap="round"/>
-		// 	<line x1="72.5" y1="199.5" x2="167.5" y2="199.5" stroke="#464444" stroke-linecap="round"/>
-		// 	<path d="M167 154L167.5 199.5" stroke="#464444" stroke-linecap="round"/>
-		// 	<line x1="167.5" y1="35.5" x2="167.5" y2="81.5" stroke="#464444" stroke-linecap="round"/>
+		// 	<line x1="72.4072" y1="35.3183" x2="167.501" y2="35.499" stroke="#464444" strokeLinecap="round"/>
+		// 	<line x1="72.5" y1="199.5" x2="167.5" y2="199.5" stroke="#464444" strokeLinecap="round"/>
+		// 	<path d="M167 154L167.5 199.5" stroke="#464444" strokeLinecap="round"/>
+		// 	<line x1="167.5" y1="35.5" x2="167.5" y2="81.5" stroke="#464444" strokeLinecap="round"/>
 		// 	<line x1="208.014" y1="127.769" x2="269.648" y2="127.769" stroke="#464444"/>
 		// 	<line x1="270.145" y1="128.269" x2="270.145" y2="223.288" stroke="#464444"/>
 		// 	<line y1="-0.5" x2="61.6343" y2="-0.5" transform="matrix(1 0 0 -1 208.014 413.327)" stroke="#464444"/>

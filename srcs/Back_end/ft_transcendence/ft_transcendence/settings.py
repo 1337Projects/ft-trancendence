@@ -34,6 +34,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'account',
+    'login',
+    'chat',
+    'notifications',
+
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,11 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     "corsheaders",
-    'account',
-    'login',
-    'chat',
     'channels',
-    'daphne',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
 ]
