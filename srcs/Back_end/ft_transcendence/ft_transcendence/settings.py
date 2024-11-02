@@ -93,7 +93,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
 
 

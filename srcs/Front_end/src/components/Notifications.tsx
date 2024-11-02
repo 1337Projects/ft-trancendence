@@ -114,6 +114,7 @@ export default function Notifications() {
     //         socket.close();
     //     };
     // }, []);
+
     useEffect(() => {
         const timer = setTimeout(() => {
             notsSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
@@ -122,8 +123,12 @@ export default function Notifications() {
                 "user" : user?.authInfos?.username,
                 "event" : "fetch nots" //  || send_request
             })
+            
         }, 300)
-        return () => clearTimeout(timer)
+        return () => {
+            // notsSocket.close()
+            clearTimeout(timer)
+        }
     }, [user?.authInfos?.username])
 
     function handler(value) {

@@ -32,6 +32,7 @@ import NotFound from './components/NotFound'
 import ForgetPassword from './components/auth/ForgetPassword'
 import { DialogContext, DialogContextProvider } from './Contexts/DialogContext'
 
+import Friends from './components/profile/friend'
 
 function Home() {
 
@@ -62,7 +63,7 @@ const router = createBrowserRouter(
 
         <Route path='profile/:user_name' element={<Profile />}>
           <Route index element={<UserProfile />} />
-          <Route path='friends' element={<h1>friends</h1>} />
+          <Route path='friends' element={<Friends />} />
         </Route>
 
         <Route path='chat' element={<ChatLayout />}>
