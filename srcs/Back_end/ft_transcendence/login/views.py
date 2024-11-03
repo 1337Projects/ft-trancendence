@@ -272,3 +272,20 @@ def confirm_password(request):
         except PasswordReset.DoesNotExist:
             return JsonResponse({'error': 'Invalid token'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@api_view(["post"])
+def change_password(request):
+    old_password = request.data.get('old_password')
+    if not old_password:
+        return JsonResponse({'error': 'Old password is missing'}, status=400)
+    if not check_password(old_password, request.user.password):
+        return JsonResponse({'error': 'Invalid old password'}, status=400)
+    new_password = request.data.get('new_password')
+    if not new_password:
+        return JsonResponse({'error': 'New password is missing'}, status=400)
+    if not validate_password(new_password):
+        return JsonResponse({'error': 'Password does not meet all the requirements.'}, status=400)
+
+    request.user.password = make_password(new_password)
+    request.user.save()
+    return JsonResponse({'message': 'The Password has been changed'}, status=200)
