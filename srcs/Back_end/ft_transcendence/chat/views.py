@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .serializers import ConversationListSerializer
 from rest_framework.exceptions import AuthenticationFailed
+from account.serializer import UserWithProfileSerializer
     
 def get_id1(request):
     auth_header = request.headers.get('Authorization')    
@@ -34,3 +35,28 @@ def delete_conversation(request):
         return JsonResponse({'error': 'the conversation does not exist'}, status=404)
     conversation_list.delete()
     return JsonResponse({'message': 'the conversation has deleted'}, status=200)
+
+
+@api_view(['GET'])
+def search_friends_with_conversation(request):#ask abdelhadi for what he will send
+    name = request.GET.get('name')
+    id = id
+    friends= User.objects.filter(
+        username__startswith=name
+    ).exclude(id=id)
+    if friends.none():
+        return JsonResponse({'message': 'no friend found'}, status=400)
+    conversation_list = Conversation.objects.filter(
+        Q(sender=id) |
+        Q(receiver=id)
+    ).values('sender', 'receiver')
+    if conversation_list.none():
+        return JsonResponse({'message': 'no conversation'}, status=400)
+    friends_in_conversation = []
+    for friend in freinds:
+        if (friend.id, id) in conversation_list or (id, friend.id) in conversation_list:
+            friends_in_conversation.append(friend)
+    if not friends_in_conversation:
+        return JsonResponse({'message': 'no friend with conversation found'}, status=400)
+    serializer = UserWithProfileSerializer(friends_in_conversation, many=True)
+    return JsonResponse({'message': serializer.data}, status=200)
