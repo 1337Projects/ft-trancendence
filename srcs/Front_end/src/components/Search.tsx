@@ -16,7 +16,7 @@ function SearchResult({query, queryHandler}) {
     const {theme} = useContext(ApearanceContext) || {}
     useEffect(() => {
         const timer = setTimeout(async () => {
-            await fetch(`http://localhost:8000/api/profile/users/?query=${query}`, {
+            await fetch(`${import.meta.env.VITE_API_URL}api/profile/users/?query=${query}`, {
                 method : 'GET',
                 headers : {
                     "Content-Type": "application/json",

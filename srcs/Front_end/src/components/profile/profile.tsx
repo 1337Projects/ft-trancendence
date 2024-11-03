@@ -10,7 +10,7 @@ import { UserContext } from '../../Contexts/authContext';
 import { UserType } from '../../Types';
 import { FaUserFriends } from 'react-icons/fa';
 import { RiProfileFill } from 'react-icons/ri';
-
+import Friends from './friend';
 
 
 function St() {
@@ -83,12 +83,12 @@ export default function Profile() {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			if (user_name) {
-				fetch(`http://localhost:8000/api/profile/${user_name}/`, {
-				  method: 'GET',
-				  credentials : 'include',
-				  headers : {
-					'Authorization' : `Bearer ${authInfos?.accessToken}`,
-				  }
+				fetch(`${import.meta.env.VITE_API_URL}api/profile/${user_name}/`, {
+					method: 'GET',
+					credentials : 'include',
+					headers : {
+						'Authorization' : `Bearer ${authInfos?.accessToken}`,
+					}
 				})
 				.then(res => res.json())
 				.then(res => {
@@ -122,7 +122,7 @@ export default function Profile() {
 						<li style={{color : isProfile ? "" : appearence?.color}} className='cursor-pointer'>
 							<Link to="friends" className='flex items-center'>
 								<FaUserFriends className='mr-2' />
-								Friends
+								friends
 							</Link>
 						</li>
 					</ul>

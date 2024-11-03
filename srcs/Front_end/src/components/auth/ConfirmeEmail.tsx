@@ -14,7 +14,7 @@ export default function ConfirmeEmail() {
 
     function ConfirmeHandler() {
         if (!code) return ;
-        fetch('http://localhost:8000/api/auth/confirme/', {
+        fetch(`${import.meta.env.VITE_API_URL}api/auth/confirme/`, {
             headers : {
                 "Content-Type": "application/json",
             },

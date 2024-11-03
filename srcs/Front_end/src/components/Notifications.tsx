@@ -86,17 +86,50 @@ export default function Notifications() {
     const appearence = useContext(ApearanceContext)
 
 
+    // useEffect(() => {
+    //     const socket = new WebSocket(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`);
+
+    //     socket.onopen = () => {
+    //         console.log("WebSocket connected.");
+    //         // You can send a message to the server if needed
+    //         // socket.send(JSON.stringify({ event: "fetch nots" }));
+    //     };
+
+    //     socket.onmessage = (event) => {
+    //         // const data = JSON.parse(event.data);
+    //         // console.log("Received from server:", data);
+    //         console.log("recieved data")
+    //     };
+
+    //     socket.onclose = () => {
+    //         console.log("WebSocket connection closed.");
+    //     };
+
+    //     socket.onerror = (error) => {
+    //         console.error("WebSocket error:", error);
+    //     };
+
+    //     // Cleanup on unmount
+    //     return () => {
+    //         socket.close();
+    //     };
+    // }, []);
+
     useEffect(() => {
         const timer = setTimeout(() => {
-            notsSocket.connect("ws://localhost:8000/ws/notifications/abc/")
+            notsSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
             notsSocket.addCallback("setNots", setNots)
             notsSocket.sendMessage({
                 "user" : user?.authInfos?.username,
-                "event" : "fetch nots"
+                "event" : "fetch nots" //  || send_request
             })
+            
         }, 300)
-        return () => clearTimeout(timer)
-    }, [])
+        return () => {
+            // notsSocket.close()
+            clearTimeout(timer)
+        }
+    }, [user?.authInfos?.username])
 
     function handler(value) {
         setShow(value)
@@ -119,7 +152,7 @@ export default function Notifications() {
                     {
                         nots.length ? 
                         nots.map(not => <NotItem key={not.id} data={not}/>)
-                         : 
+                        : 
                         <li className={`h-[100px] border-[.3px] rounded-sm flex justify-center items-center ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"}`}>
                             <div className="flex items-center">
                                 <h1 className="text-[12px] capitalize">

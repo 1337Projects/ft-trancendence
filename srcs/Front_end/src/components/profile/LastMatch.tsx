@@ -28,26 +28,26 @@ export default function LastMatch() {
 	const user = useContext(UserContext)
 	const appearence = useContext(ApearanceContext)
 	const [matches, setMatches] = useState(null)
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			fetch('http://localhost:8000/api/game/matches/', {
-				method : 'GET',
-				credentials : 'include',
-				headers : {
-					'Authorization' : `Bearer ${user?.authInfos?.accessToken}`,
-				  }
-			})
-			.then(res => res.json())
-			.then(res => {
-				if (res.data) {
-					setMatches(res.data)
-				}
-			})
-			.catch(err => console.log(err))
-		}, 300)
+	// useEffect(() => {
+	// 	const timer = setTimeout(() => {
+	// 		fetch('http://localhost:8000/api/game/matches/', {
+	// 			method : 'GET',
+	// 			credentials : 'include',
+	// 			headers : {
+	// 				'Authorization' : `Bearer ${user?.authInfos?.accessToken}`,
+	// 			}
+	// 		})
+	// 		.then(res => res.json())
+	// 		.then(res => {
+	// 			if (res.data) {
+	// 				setMatches(res.data)
+	// 			}
+	// 		})
+	// 		.catch(err => console.log(err))
+	// 	}, 300)
 
-		return () => clearTimeout(timer)
-	}, [])
+	// 	return () => clearTimeout(timer)
+	// }, [])
 	return (
 		<div className={`mt-2 p-2 justify-center flex shadow-sm rounded-sm ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} min-h-[60px] h-fit max-h-[370px] w-full `}>
 			<div className='flex flex-col w-full h-full'>

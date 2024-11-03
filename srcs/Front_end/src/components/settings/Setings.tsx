@@ -39,7 +39,7 @@ export default function Setings() {
             <div className="w-full md:flex max-w-[800px] mx-auto">
                 <div className="w-full  md:w-[300px] md:mr-4 mt-6">
                     <ul className="grid grid-cols-3 md:grid-cols-1 gap-4 min-h-[45px] px-4">
-                        {listItems.map(it => <ListItem item={it} isActive={it.text == item} handler={setItem}  />)}
+                        {listItems.map(it => <ListItem key={it.text} item={it} isActive={it.text == item} handler={setItem}  />)}
                     </ul>
                 </div>
                 <div className="flex-grow w-full  mt-6">

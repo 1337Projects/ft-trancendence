@@ -12,7 +12,7 @@ import { FirendType } from "../../Types"
 
 export function Banner({user}) {
 
-	console.log("user", user)
+	// console.log("user", user)
 	const appearence = useContext(ApearanceContext)
 	const { friends, authInfos, setFriends } = useContext(UserContext) || {}
 

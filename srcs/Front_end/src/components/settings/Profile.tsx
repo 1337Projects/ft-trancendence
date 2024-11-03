@@ -28,7 +28,7 @@ export default function Profile() {
                 formdata.append("avatar" , images.avatar)
             if (images.banner)
                 formdata.append("banner" , images.banner)
-            const response = await fetch(`http://localhost:8000/api/profile/set_profile_data/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/set_profile_data/`, {
                 method: 'PUT',
                 credentials:'include',
                 body : formdata,
@@ -86,7 +86,7 @@ export default function Profile() {
                         <SettingsInput type="text" name="username" id="username" placeholder="joedeo" label="username" />
                         <SettingsInput type="text" name="first_name" id="first_name" placeholder="joe" label="first name" />
                         <SettingsInput type="text" name="last_name" id="last_name" placeholder="deo" label="last name" />
-                        <TextArea name="bio" id="bio" label="bio" placeHolder="bio" />
+                        <TextArea name="bio" id="bio" label="bio" placeholder="bio" />
                         <button type="submit" style={{background:appearence?.color}} className="mt-10 w-full h-[45px] text-white capitalize text-md rounded" >save changes</button>
                     </Form>
                 </Formik>
