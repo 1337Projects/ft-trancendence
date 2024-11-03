@@ -9,6 +9,8 @@ from login.serializer import UserSerializer
 from channels.db import database_sync_to_async
 from chat.models import Message , Conversation
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.core.paginator import Paginator, EmptyPage
+
 
 @database_sync_to_async
 def get_user_with_profile(username):
@@ -18,13 +20,24 @@ def get_user_with_profile(username):
     user_ser['profile'] = ProfileSerializers(profile).data
     return user_ser
 
+
+# def get_messages_between_users(sender_id, receiver_id):
+#     messages = Message.objects.filter(
+#         (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
+#         (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
+#     ).order_by('created_at')
+    
+#     return MessageSerializer(messages, many=True).data
+
+#comment it to try pagiantion and uncomment th next 
+@database_sync_to_async
 def get_messages_between_users(sender_id, receiver_id):
-    messages = Message.objects.filter(
+    messages = list(Message.objects.filter(
         (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
         (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
-    ).order_by('created_at')
-    
-    return MessageSerializer(messages, many=True).data
+    ).order_by('-created_at'))# - ou nn ?? who knows ? # from the last one to the first one
+    # print(sender_id, receiver_id, "*******\n" ,messages)
+    return messages
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
 
@@ -60,6 +73,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 }
             }))
 
+    
     @database_sync_to_async
     def save_message(self, message):
         message.save()
@@ -85,15 +99,32 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             from_ = text_data_json.get('from')
             to_ = text_data_json.get('to')
             event = text_data_json.get('event')
-
-            sender = await sync_to_async(User.objects.get)(username=from_)
-            receiver = await sync_to_async(User.objects.get)(username=to_)
-
+            try:
+                sender = await sync_to_async(User.objects.get)(username=from_)
+                receiver = await sync_to_async(User.objects.get)(username=to_)
+            except User.DoesNotExist:
+                print(f"Sender user not found")
+                # await self.close()
+                return
             sender_ser = await get_user_with_profile(from_)
             receiver_ser = await get_user_with_profile(to_)
 
-            messages = await sync_to_async(get_messages_between_users)(sender_ser['id'], receiver_ser['id'])
+            #comment this to try pagination and uncomment the comment part below
+            # messages = await sync_to_async(get_messages_between_users)(sender_ser['id'], receiver_ser['id'])
 
+            #get all the messages now as a queryset if you want the old code back uncomment get_messages_between_users
+            all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
+            #handle the pagination
+            page = text_data_json.get('page', 1)
+            limit = text_data_json.get('limit', 10)
+            paginator = Paginator(all_messages, limit)
+            try:
+                messages = paginator.page(page)
+                # print("here ***", messages)
+            except EmptyPage:
+                messages = []
+            messages = [await self.serialize_message(message) for message in messages]
+            # print("here2 ***", messages)
             if event == "fetch_messages":
                 await self.send(text_data=json.dumps({
                 'response': {
@@ -133,6 +164,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                         'sender': sender_ser,
                     }
                 )
+            if event not in ["fetch_messages", "new_message"]:
+                print(f"Unexpected event: {event}")
         elif bytes_data:
             pass
-            
+

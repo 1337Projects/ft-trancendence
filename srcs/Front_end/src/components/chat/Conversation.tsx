@@ -62,6 +62,7 @@ export default function Conversation() {
             "from" : userId,
             "to": partnerId,
             "event" : "fetch_messages"
+            // add here page number and limit or (not if you want to use the ones in backend)
         })
     }, [user])
 
