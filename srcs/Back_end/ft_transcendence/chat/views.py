@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
 from account.serializer import UserWithProfileSerializer
 from .serializers import ConversationListSerializer , ConversationSerializer
+from login.models import User
     
 def get_id1(request):
     auth_header = request.headers.get('Authorization')    
@@ -40,7 +41,7 @@ def delete_conversation(request):
 @api_view(['GET'])
 def search_friends_with_conversation(request):#ask abdelhadi for what he will send
     name = request.GET.get('name')
-    id = request.GET.get('id')
+    id = get_id1(request)
     friends= User.objects.filter(
         username__startswith=name
     ).exclude(id=id)# hadi list dyal l friends dyawli
