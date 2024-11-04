@@ -18,14 +18,14 @@ function NavItem({text, icon, link}) {
 	const isActive = location.pathname.includes(text)
 	return (
 		<Link 
-			style={{background: isActive && color || '', color : isActive && "#ffffff" || '' }} 
+			style={{background: isActive && color || '', color : isActive && "#ffffff" || '', fontWeight : isActive && '700' || '' }} 
 			to={link} 
 			className={`text-center w-full hover:bg-gray-700/20 rounded py-2 sm:flex sm:justify-center sm:items-center`}
 		>
 			<div className='text-[20pt] text-center w-full sm:w-fit flex justify-center'>
 				{icon}
 			</div>
-			<p className='text-xs mt-2 sm:ml-4 sm:mt-0 uppercase hidden sm:block'>{text}</p>
+			<p className='text-xs mt-2 sm:ml-4 sm:mt-0 uppercase hidden md:block'>{text}</p>
 		</Link>
 	)
 }
@@ -73,7 +73,7 @@ function SideBar() {
 							<div className='text-[20pt] w-full sm:w-fit flex justify-center'>
 								{theme === 'dark' ? <PiSunDim /> : <PiMoonStars />}
 							</div>
-							<p className='text-xs mt-4 sm:mt-0 sm:ml-4 hidden sm:block'>Theme</p>
+							<p className='text-xs mt-4 sm:mt-0 sm:ml-4 hidden md:block'>Theme</p>
 						</button>
 					</div>
 				</div>
