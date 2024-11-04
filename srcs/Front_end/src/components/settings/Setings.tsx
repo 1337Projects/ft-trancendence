@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
-import { FaBell, FaPalette,  FaUser } from "react-icons/fa";
+import { FaPalette,  FaUser } from "react-icons/fa";
+import { MdOutlineSecurity } from "react-icons/md";
 import Profile from "./Profile";
 import Apperance from "./Apperance";
 import Security from "./Security";
@@ -24,7 +25,7 @@ function ListItem({item,  isActive, handler}) {
 
 const listItems = [
     {text: "Profile", icon: <FaUser />},
-    {text: "Security", icon: <FaBell />},
+    {text: "Security", icon: <MdOutlineSecurity />},
     {text: "Apperance", icon: <FaPalette />},
 ]
 
