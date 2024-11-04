@@ -10,6 +10,9 @@ from channels.db import database_sync_to_async
 from chat.models import Message , Conversation
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.paginator import Paginator, EmptyPage
+from .models import Conversation, Message
+from rest_framework import status
+from .serializers import ConversationListSerializer, ConversationSerializer
 
 
 @database_sync_to_async
@@ -92,13 +95,33 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     def serialize_message(self, message):
         return MessageSerializer(message).data
 
+    @database_sync_to_async
+    def get_conversations(user_id):
+        conversations_list = list(Conversation.objects.filter(Q(sender=user_id) | Q(receiver=user_id)))
+        return ConversationListSerializer(conversations_list, many=True).data
+
+    async def fetch_conversations(self):
+        conversations = await get_conversations(self.user_id)
+        serialized_conversations = await ConversationSerializer(conversations)
+        # serialized_conversations = await serialize_conversations(conversations)
+
+        await self.send(text_data=json.dumps({
+            'response': {
+                'event': 'fetch_conversations',
+                'status': 209,
+                'conversations': serialized_conversations,
+            }
+        }))
+    
     async def receive(self, text_data=None, bytes_data=None):#receive message
         if text_data:
             text_data_json = json.loads(text_data)
+            event = text_data_json.get('event')
+            if event == "fetch_conversations":
+                await self.fetch_conversations()
             message_content = text_data_json.get('content')
             from_ = text_data_json.get('from')
             to_ = text_data_json.get('to')
-            event = text_data_json.get('event')
             try:
                 sender = await sync_to_async(User.objects.get)(username=from_)
                 receiver = await sync_to_async(User.objects.get)(username=to_)
@@ -138,7 +161,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }))
             elif event == "new_message":
                 conversation = await self.get_or_create_conversation(sender, receiver)
-
                 message = await sync_to_async(Message.objects.create)(
                     message=message_content,
                     sender=sender,
@@ -151,7 +173,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 message_ser= await self.serialize_message(message)
                 message_ser['sender'] = sender_ser
                 message_ser['receiver'] = receiver_ser
-
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -164,8 +185,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                         'sender': sender_ser,
                     }
                 )
-            if event not in ["fetch_messages", "new_message"]:
+            if event not in ["fetch_messages", "new_message", "fetch_conversations"]:
                 print(f"Unexpected event: {event}")
         elif bytes_data:
             pass
-
