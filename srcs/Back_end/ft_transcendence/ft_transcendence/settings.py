@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'account',
     'login',
     'chat',
+    'tournment',
     'channels',
     'daphne',
     'django.contrib.staticfiles',
