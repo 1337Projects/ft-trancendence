@@ -31,6 +31,7 @@ import Conversation from './components/chat/Conversation'
 import NotFound from './components/NotFound'
 import ForgetPassword from './components/auth/ForgetPassword'
 import { DialogContext, DialogContextProvider } from './Contexts/DialogContext'
+import Tournment from './components/game/tournment'
 
 import Friends from './components/profile/friend'
 
@@ -59,7 +60,9 @@ const router = createBrowserRouter(
 
       <Route path='/dashboard' element={<DashboardPrivateRoute />}>
 
-        <Route path='game' element={<Game />} />
+        <Route path='game' element={<Game />} >
+        </Route>
+        <Route path='game/tournment/:id' element={<Tournment />} />
 
         <Route path='profile/:user_name' element={<Profile />}>
           <Route index element={<UserProfile />} />
