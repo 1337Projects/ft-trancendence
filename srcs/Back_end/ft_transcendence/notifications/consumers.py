@@ -4,16 +4,26 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async #, database_sync_to_async
 from .models import GameRequest
 from django.contrib.auth import get_user_model
-
-
+from channels.db import database_sync_to_async
+from account.serializer import *
+from login.serializer import UserSerializer
+from .serializers import GameRequestSerializer
 
 User = get_user_model()
+import sys
+@database_sync_to_async
+def get_user_with_profile(username):
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user_id=user.id)
+    user_ser = UserWithProfileSerializer(user).data
+    user_ser['profile'] = ProfileSerializers(profile).data
+    return user_ser
+
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.username = self.scope['url_route']['kwargs']['username']
         self.group_name = f"user_{self.username}"
-        
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
 
@@ -35,38 +45,50 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         event = data.get("event")
 
         if event == "fetch nots":
-            # Fetch user notifications here
-            notifications = await self.get_user_notifications(self.username)
-            await self.send(text_data=json.dumps({
-                "event": "fetch_nots",
-                "notifications": notifications,
-            }))
-
-        if event == "send_request":
-            sender_username = data["sender"]
-            receiver_username = data["receiver"]
-            message = data.get("message", "You have a new game request!")
-            
-            # Create the game request in the database
-            game_request = await self.create_game_request(sender_username, receiver_username, message)
-
-            # Send the notification to the receiver in real-time
+            user = await sync_to_async(User.objects.get)(username=self.username)
+            notifications = await self.get_user_notifications(user)
             await self.channel_layer.group_send(
-                f"user_{receiver_username}",
+                f"user_{user.username}",
                 {
                     "type": "send_notification",
-                    "notification": {
-                        "sender": game_request.sender.username,
-                        "message": game_request.message,
-                        "created_at": str(game_request.created_at),
-                        "is_accepted": game_request.is_accepted,
-                    },
+                    "data" : {
+                            "response" : {
+                                "nots": notifications,
+                                "status" : 208
+                            }
+                        }
+                    }
+            )
+
+        elif event == "send_request":
+            sender_username = data["sender"]
+            receiver_username = data["receiver"]
+            message = data.get("message")
+            
+            # Create the game request in the database
+            receiverr = await get_user_with_profile(receiver_username)
+            game_request = await self.create_game_request(sender_username, receiver_username, message)
+            # Send the notification to the receiver in real-time
+            await self.channel_layer.group_send(
+                f"user_{sender_username}",
+                {
+                    "type": "send_notification",
+                    "data" : {
+                            "response" : {
+                                "not": {
+                                    "sender": receiverr,
+                                    "message": game_request.message,
+                                    "created_at": str(game_request.created_at),
+                                    "is_accepted": game_request.is_accepted,
+                                },
+                                "status" : 207
+                            }
+                        }
                 }
             )
 
     async def send_notification(self, event):
-        # Send the notification message to WebSocket
-        await self.send(text_data=json.dumps(event["notification"]))
+        await self.send(text_data=json.dumps(event["data"]))
 
     @sync_to_async
     def create_game_request(self, sender_username, receiver_username, message):
@@ -77,9 +99,29 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     @sync_to_async
     def get_unread_requests(self):
         return GameRequest.objects.filter(receiver__username=self.username, is_read=False)
-    async def get_user_notifications(self, username):
-    # Filter by the receiver's username
-        return await sync_to_async(lambda: list(GameRequest.objects.filter(receiver__username=username).values()))()
+
+    @sync_to_async
+    def get_user_notifications(self, user):
+        notifications = GameRequest.objects.filter(sender=user)
+        serializer = GameRequestSerializer(notifications,  many=True)
+        notifications_list = []
+        print(serializer.data)
+        sys.stdout.flush()
+        for notification in serializer.data:
+
+            user = User.objects.get(username=notification["receiver_username"])
+            profile = Profile.objects.get(user_id=notification["receiver"])
+            user_ser = UserWithProfileSerializer(user).data
+            user_ser['profile'] = ProfileSerializers(profile).data
+            notifications_list.append({
+                "id": notification["id"],
+                "sender": user_ser,
+                "message": notification["message"],
+                "is_accepted": notification['is_accepted'],
+                "created_at": notification['created_at'],
+                "is_read": notification['is_read'],
+            })
+        return notifications_list
 
     # async def get_user_notifications(self, user):
     #     # Query for notifications related to the user
@@ -88,16 +130,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     #     )
         
     #     # Prepare the notifications to send
-    #     notifications_list = []
-    #     for notification in notifications:
-    #         notifications_list.append({
-    #             "id": notification.id,
-    #             "sender": notification.sender.username,
-    #             "message": notification.message,
-    #             "is_accepted": notification.is_accepted,
-    #             "created_at": notification.created_at.isoformat(),
-    #             "is_read": notification.is_read,
-    #         })
         
     #     return notifications_list
 
@@ -130,7 +162,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 #             }))
         
 
-#     async def get_user_notifications(self, username):
+#     async def get_user_notifications(self, username): SELECT * FROM notifications_gamerequest WHERE username = 'llolo';
 #         # Fetch notifications for the user from the database
 #         notifications = [
 #             {"message": "Game request from user1", "timestamp": "2024-11-02 10:30:00"},

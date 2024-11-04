@@ -33,7 +33,11 @@ class WebSocketService {
 
             this.socket.onmessage = (event) => {
                 let data = JSON.parse(event.data)
-                console.log("Received datass:", data);// i added this
+                // console.log("Received datass:", data);// i added this
+                if (data.response.status)
+                {
+                    console.log(data.response.status)
+                }
                 switch (data.response.status) {
                     case 201:
                         console.log(data.response.room)
@@ -57,9 +61,11 @@ class WebSocketService {
                         this.callbacks["setUser"](data.response.user)
                         break;
                     case 207:
+                        console.log( "data => " , data)
                         this.callbacks["setNots"](prev => [data.response.not, ...prev])
                         break;
                     case 208:
+                        console.log( "data ==> " , data)
                         this.callbacks["setNots"](data.response.nots.reverse())
                         break;
                     case 400:
@@ -82,10 +88,10 @@ class WebSocketService {
 
     flushQueue() {
         while (this.queue.length > 0) {
-          const message = this.queue.shift();
-          this.socket.send(JSON.stringify(message));
+        const message = this.queue.shift();
+        this.socket.send(JSON.stringify(message));
         }
-      }
+    }
 
     close() {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {

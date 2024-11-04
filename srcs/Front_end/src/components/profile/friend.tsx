@@ -78,6 +78,7 @@ export default function Friends() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null);
     
+    
     useEffect(() => {
 		const timer = setTimeout(() => {
             fetch(`${import.meta.env.VITE_API_URL}api/profile/get_friends/`, {
