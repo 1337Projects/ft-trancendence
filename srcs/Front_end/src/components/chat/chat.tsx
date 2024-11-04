@@ -122,17 +122,20 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
 
     async function search_friends() {
         if (query != '') {
-            // const response = await fetch(`${import.meta.env.VITE_API_URL}???`, {
-            //     method : 'GET',
-            //     credentials  : 'include',
-            // })
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/chat/searchInConversation/?name=${query}`, {
+                method : 'GET',
+                credentials  : 'include',
+                headers : {
+                    "Authorization": `Bearer ${authInfos?.accessToken}`
+                }
+            })
     
-            // if (!response.ok) {
-            //     console.log(await response.json())
-            // }
-            // const { data } = await  response.json()
+            if (!response.ok) {
+                console.log(await response.json())
+            }
+            const { data } = await  response.json()
             // setFriends(data)
-            // console.log(data)
+            console.log(data)
             // setShowFriends(true)
         } else {
             setShowFriends(false)
