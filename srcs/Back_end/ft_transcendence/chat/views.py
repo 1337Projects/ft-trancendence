@@ -6,9 +6,9 @@ from .models import Conversation, Message
 from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from .serializers import ConversationListSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from account.serializer import UserWithProfileSerializer
+from .serializers import ConversationListSerializer , ConversationSerializer
     
 def get_id1(request):
     auth_header = request.headers.get('Authorization')    
@@ -20,12 +20,12 @@ def get_id1(request):
         raise AuthenticationFailed('Invalid or expired token')
     return (user_id)
 
-@api_view(['GET'])
-def conversations(request):
-    conversation_list = Conversation.objects.filter(Q(sender=get_id1(request)) |
-                                                    Q(receiver=get_id1(request)))
-    serializer = ConversationListSerializer(instance=conversation_list, many=True)
-    return JsonResponse({"data": serializer.data}, status=200)
+# @api_view(['GET'])
+# def conversations(request):
+#     conversation_list = Conversation.objects.filter(Q(sender=get_id1(request)) |
+#                                                     Q(receiver=get_id1(request)))
+#     serializer = ConversationListSerializer(instance=conversation_list, many=True)
+#     return JsonResponse({"data": serializer.data}, status=200)
 
 @api_view(['DELETE'])
 def delete_conversation(request):
@@ -40,23 +40,27 @@ def delete_conversation(request):
 @api_view(['GET'])
 def search_friends_with_conversation(request):#ask abdelhadi for what he will send
     name = request.GET.get('name')
-    id = id
+    id = request.GET.get('id')
     friends= User.objects.filter(
         username__startswith=name
-    ).exclude(id=id)
-    if friends.none():
+    ).exclude(id=id)# hadi list dyal l friends dyawli
+    if not friends.exists():
         return JsonResponse({'message': 'no friend found'}, status=400)
     conversation_list = Conversation.objects.filter(
         Q(sender=id) |
         Q(receiver=id)
-    ).values('sender', 'receiver')
+    ).values('sender', 'receiver')#hadi list dyal les conversations li3ndi
     if conversation_list.none():
-        return JsonResponse({'message': 'no conversation'}, status=400)
-    friends_in_conversation = []
-    for friend in freinds:
-        if (friend.id, id) in conversation_list or (id, friend.id) in conversation_list:
-            friends_in_conversation.append(friend)
-    if not friends_in_conversation:
-        return JsonResponse({'message': 'no friend with conversation found'}, status=400)
-    serializer = UserWithProfileSerializer(friends_in_conversation, many=True)
+        return JsonResponse({'message': 'no conversation found'}, status=400)
+    conversation_with_friend = []
+    for friend in friends:
+        conversation = conversation_list.filter(
+            Q(sender=friend.id) |
+            Q(receiver=friend.id)
+        )
+        if conversation.exists():
+            conversation_with_friend.extend(conversation)
+    if not conversation_with_friend:
+        return JsonResponse({'message': 'no conversation with friend is found'}, status=400)
+    serializer = ConversationSerializer(conversation_with_friend, many=True)
     return JsonResponse({'message': serializer.data}, status=200)
