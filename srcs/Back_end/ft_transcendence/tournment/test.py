@@ -1,4 +1,6 @@
 import asyncio
+import sys
+
 class TreeNode:
     def __init__(self, data, depth):
         self.left = None
@@ -50,6 +52,18 @@ class Builder:
 
         return root
 
+    def print(self, msg):
+        print(msg)
+        sys.stdout.flush()
+
+    def get_val(self, root):
+        if isinstance(root.val, Match):
+            return 'unknown'
+        return  root.val.data
+
+    def make_rounds(self):
+        self.rounds = {}
+        self.tree_to_rounds(self.tree)
 
     def tree_to_rounds(self, root):
 
@@ -57,13 +71,13 @@ class Builder:
             self.rounds[f"round{root.depth}"] = []
 
         if len(self.rounds[f"round{root.depth}"]) == 0:
-            self.rounds[f"round{root.depth}"].append({"player1" : root.val})
+            self.rounds[f"round{root.depth}"].append({"player1" : self.get_val(root)})
 
         elif not self.rounds[f"round{root.depth}"][-1].get("player2"):
-            self.rounds[f"round{root.depth}"][-1]["player2"] = root.val
+            self.rounds[f"round{root.depth}"][-1]["player2"] = self.get_val(root)
 
         else:
-            self.rounds[f"round{root.depth}"].append({"player1" : root.val})
+            self.rounds[f"round{root.depth}"].append({"player1" : self.get_val(root)})
 
         if root.left:
             self.tree_to_rounds(root.left)
@@ -107,7 +121,7 @@ class Builder:
         match =  self.get_match_at_given_level(level, self.levels, self.tree)
 
         while match !=  None:
-            asyncio.run(self.start_match(match)) 
+            asyncio.run(self.start_match(match))
             match  = self.get_match_at_given_level(level, self.levels, self.tree)
         print("---------------")
 
@@ -131,7 +145,7 @@ class Builder:
         self.iterate_over_matches(level)
 
 
-    def  play_tournment_remote_mode(self, level):
+    async def  play_tournment_remote_mode(self, level):
         if level == 0:
             return
         self.play_tournment_remote_mode(level - 1)
@@ -141,7 +155,9 @@ class Builder:
 if  __name__ == "__main__":
     tmp = ["1","2","3","4", "5","6","7","8",]
     builder = Builder(tmp)
-    builder.play_tournment_remote_mode(builder.levels)
+    print(builder.get_rounds())
+    sys.stdout.flush()
+    # builder.play_tournment_remote_mode(builder.levels)
     # print(builder.get_rounds())
     
 
