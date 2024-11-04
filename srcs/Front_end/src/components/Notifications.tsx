@@ -8,14 +8,15 @@ import { FirendType } from "../Types";
 import { accept_friend_request, reject_friend_request } from "./profile/ActionsHandlers";
 
 function NotItem({data}) {
+    console.log(data, "++++")
     return (
         <li className="flex relative font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
-            <img src={data?.sender?.profile?.image} alt="user" className="h-10 w-10 rounded-[50%]" />
+            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 rounded-[50%]" />
             <div className="text text-primaryText">
                 <Link to={data.action}>
                     <h1 className="font-bold">{data.title}</h1>
                 </Link>
-                <p className="text-small mt-1">{data.sender.username} {data.description}</p>
+                <p className="text-[14px] mt-1 ml-1">{data.message}</p>
             </div>
             <div className="date text-center w-[60px] text-[9px]">
                 <p className="">{data.date}</p>
@@ -30,20 +31,31 @@ function InviteItem({data}) {
     const appearence = useContext(ApearanceContext)
     const { friends, setFriends , user, authInfos } = useContext(UserContext) || {}
 
+    const notificationAcceptFriendRequest = (data) => {
+        notsSocket.sendMessage({
+            event: "send_request",
+            sender: data?.sender?.username, // Your logged-in user's username
+            receiver: data?.receiver?.username, // Username of the friend to whom the request is sent
+            message: `${data?.receiver?.username} accept your Invitation`,
+        });
+    };
+
     function acceptCallback(id : number) {
         const friendship = friends?.filter(item => item.id == id)[0]
         if( friendship ) {
             friendship.status = 'accept'
             setFriends!(prev => [...prev?.filter(item => item.id != id)!, friendship!])
+            notificationAcceptFriendRequest(data);
         }
     }
 
     function rejectCallback(id : number) {
         setFriends!(prev => [...prev?.filter(item => item.id != id)!])
     }
-    
     const sender = data.sender.username == user?.username ? data.receiver : data.sender;
     
+    
+
     return (
         <li className="flex ml-[50%] translate-x-[-50%] w-full my-2 p-1 h-[50px]">
             <div className="text text-primaryText ml-4 w-full">
@@ -57,7 +69,12 @@ function InviteItem({data}) {
                     </Link>
                     <div className="ml-4 actions flex w-[100px] justify-evenly  items-center text-primaryText ">
                         <div
-                            onClick={() => accept_friend_request(authInfos?.accessToken!, acceptCallback, data.sender)} 
+                            onClick={
+                                () =>
+                                    {
+                                        accept_friend_request(authInfos?.accessToken!, acceptCallback, data.sender);
+                                    }
+                            } 
                             className="flex text-[12px]  items-center h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">accept</p> */}
                             <FaCheck />
@@ -115,6 +132,10 @@ export default function Notifications() {
     //     };
     // }, []);
 
+
+
+    
+
     useEffect(() => {
         const timer = setTimeout(() => {
             notsSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
@@ -136,6 +157,8 @@ export default function Notifications() {
         window.localStorage.setItem('showNotifications', value);
     }
 
+    // console.log(nots)
+
     return (
         <div className={`min-h-[60px]  rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
@@ -151,7 +174,7 @@ export default function Notifications() {
                 <ul className="border-[.2px] max-h-[360px] overflow-scroll border-darkText/10 rounded-sm m-2">
                     {
                         nots.length ? 
-                        nots.map(not => <NotItem key={not.id} data={not}/>)
+                        nots.map((not, index) => <NotItem key={index} data={not}/>)
                         : 
                         <li className={`h-[100px] border-[.3px] rounded-sm flex justify-center items-center ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"}`}>
                             <div className="flex items-center">
