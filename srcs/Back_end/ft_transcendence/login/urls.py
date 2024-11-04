@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from login.views import google_login, google_oauth, forget_password, confirm_password, change_password
+from login.views import google_login, google_oauth, forget_password, confirm_password, change_password, block_user, unblock_user
 
 from .user_registration_views import (
     UserRegistrationView,
@@ -18,4 +18,6 @@ urlpatterns = [
     path('forgetPassword/', forget_password, name='forget_password'),
     path('confirmPassword/', confirm_password, name='confirm_password'),
     path('changePassword/', change_password, name='change_password'),
+    path('blockUser/', block_user, name='block_user'),
+    path('unblockUser/', unblock_user, name='unblock_user'),
 ]

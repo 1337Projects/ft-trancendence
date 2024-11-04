@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from .models import User , PasswordReset
+from .models import User , PasswordReset, BlockedUser
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from dotenv import load_dotenv, dotenv_values
@@ -289,3 +289,44 @@ def change_password(request):
     request.user.password = make_password(new_password)
     request.user.save()
     return JsonResponse({'message': 'The Password has been changed'}, status=200)
+
+@api_view(["post"])
+def block_user(request):# or should i use et_id1(request) instead of request.data.get('id')
+    id = request.data.get('id')#id nghwali ila ayblocki
+    id_to_block = request.data.get('id_to_block')#id nghwali ila ayblocki
+    if not id:
+        return JsonResponse({'error': 'User ID is missing'}, status=400)
+    if not id_to_block:
+        return JsonResponse({'error': 'User to block ID is missing'}, status=400)
+    try:
+        user = User.objects.get(id=id)
+        user_to_block = User.objects.get(id=id_to_block)
+        if user == user_to_block:#khasso mayblokich rasso
+            return JsonResponse({'error': 'You cannot block yourself'}, status=400)
+        BlockedUser.objects.create(blocker=user, blocked=user_to_block)
+        return JsonResponse({'message': 'User has been blocked'}, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+
+@api_view(["post"])
+def unblock_user(request):# or should i use et_id1(request) instead of request.data.get('id')
+    id = request.data.get('id')#id nghwali rayblockin 
+    id_to_unblock = request.data.get('id_to_unblock')#id nghwali raydiblocki
+    if not id:
+        return JsonResponse({'error': 'User ID is missing'}, status=400)
+    if not id_to_unblock:
+        return JsonResponse({'error': 'User to unblock ID is missing'}, status=400)
+    try:
+        user = User.objects.get(id=id)
+        user_to_unblock = User.objects.get(id=id_to_unblock)
+        if user == user_to_unblock:#khasso mayblokich rasso
+            return JsonResponse({'error': 'You cannot unblock yourself'}, status=400)
+        is_he_blocked = BlockedUser.objects.filter(blocker=user, blocked=user_to_unblock)
+        if not is_he_blocked:
+            return JsonResponse({'error': 'User is not blocked'}, status=400)
+        is_he_blocked.delete()
+        return JsonResponse({'message': 'User has been unblocked'}, status=200)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
