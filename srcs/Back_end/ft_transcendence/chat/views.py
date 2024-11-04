@@ -39,29 +39,27 @@ def delete_conversation(request):
 
 
 @api_view(['GET'])
-def search_friends_with_conversation(request):#ask abdelhadi for what he will send
+def search_friends_with_conversation(request):
     name = request.GET.get('name')
     id = get_id1(request)
+    conversation_with_friend = []
     friends= User.objects.filter(
         username__startswith=name
-    ).exclude(id=id)# hadi list dyal l friends dyawli
+    ).exclude(id=id)
     if not friends.exists():
-        return JsonResponse({'message': 'no friend found'}, status=400)
+        return JsonResponse({'data': conversation_with_friend}, status=400)
     conversation_list = Conversation.objects.filter(
-        Q(sender=id) |
-        Q(receiver=id)
-    ).values('sender', 'receiver')#hadi list dyal les conversations li3ndi
+        Q(sender=id) | Q(receiver=id)
+    )
     if conversation_list.none():
-        return JsonResponse({'message': 'no conversation found'}, status=400)
-    conversation_with_friend = []
+        return JsonResponse({'data': conversation_with_friend}, status=400)
     for friend in friends:
         conversation = conversation_list.filter(
-            Q(sender=friend.id) |
-            Q(receiver=friend.id)
+            Q(sender=friend) | Q(receiver=friend)
         )
         if conversation.exists():
             conversation_with_friend.extend(conversation)
     if not conversation_with_friend:
-        return JsonResponse({'message': 'no conversation with friend is found'}, status=400)
+        return JsonResponse({'data': conversation_with_friend}, status=400)
     serializer = ConversationSerializer(conversation_with_friend, many=True)
-    return JsonResponse({'message': serializer.data}, status=200) # UserWithProfileSerializer
+    return JsonResponse({'data': serializer.data}, status=200)
