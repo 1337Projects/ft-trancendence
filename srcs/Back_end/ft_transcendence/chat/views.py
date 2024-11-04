@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
 from account.serializer import UserWithProfileSerializer
-from .serializers import ConversationListSerializer , ConversationSerializer
+from .serializers import ConversationListSerializer , ConversationSerializer 
 from login.models import User
     
 def get_id1(request):
@@ -64,4 +64,4 @@ def search_friends_with_conversation(request):#ask abdelhadi for what he will se
     if not conversation_with_friend:
         return JsonResponse({'message': 'no conversation with friend is found'}, status=400)
     serializer = ConversationSerializer(conversation_with_friend, many=True)
-    return JsonResponse({'message': serializer.data}, status=200)
+    return JsonResponse({'message': serializer.data}, status=200) # UserWithProfileSerializer

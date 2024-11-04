@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('login.urls')),
@@ -26,6 +28,7 @@ urlpatterns = [
     path('api/chat/', include('chat.urls')),
     path('users/', include('login.urls')),
     path('api/friends/', include('account.urls')),
+    path('api/tournment/', include('tournment.urls')),
 ]
 
 if settings.DEBUG:

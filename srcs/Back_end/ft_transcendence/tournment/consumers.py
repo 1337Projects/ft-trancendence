@@ -1,60 +1,60 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-import sys
-
-class TreeNode:
-    def __init__(self, data):
-        self.left = None
-        self.right = None
-        self.val = data
-
-    def insert(self, node):
-        if not self.right:
-            self.right = node
-        else:
-            self.left = node
-
-
-class Tournment:
-
-    def __init__(self, tmp_data):
-        self.data = tmp_data
-        self.three = self.create_tournment_three()
-
-    def create_tournment_three(self):
-
-        pass
-
-
+import sys, asyncio
+from .models import Tournment
+from  asgiref.sync import sync_to_async
+from .serializers import TournmentSerializer
+from .test import Builder, Player
+import json
 
 class TournmentConsumer(AsyncWebsocketConsumer):
     
-    def __init__(self):
-        self.tmp_tour = ["layer1", "player2", "layer3", "player4"]
-        self.tour = Tournment(self.tmp_tour)
+    builder = None
+    data = None
     
+    async def start_match(self, match):
+        match.val.status = 'started'
+        await asyncio.sleep(2)
+        match.val = Player(match.left.val.data)
 
-    async def start_match(self):
-        # go througth the three and  start the match
-        pass
+
+    async def play_tournment_local_mode(self, level):
+        if level == 0:
+            return
+        await self.play_tournment_local_mode(level - 1)
+        match = self.builder.get_match_at_given_level(level, self.builder.levels, self.builder.tree)
+        while match != None:
+            self.builder.make_rounds()
+            tr_data = {
+                "data" : self.data,
+                "rounds" :  self.builder.get_rounds(),
+                "current_round" : level
+            }
+            await self.send(text_data=json.dumps({"response" : tr_data}))
+            await self.start_match(match)
+            match = self.builder.get_match_at_given_level(level, self.builder.levels, self.builder.tree)
+
+
+    def get_tournemnt_data(self, id):
+        tr = Tournment.objects.get(id=id)
+        tr_serializer = TournmentSerializer(tr)
+        return tr_serializer.data
+
 
     async def connect(self):
-
-        # print(self.scope)
-        # sys.stdout.flush()
-        # get members nb
-        # create a room withmax members set to nb
-        # add user to room
-        # send room data to the user
-        # close the room when its full
-        # create the three
-        # dispatsh start event and call start_match
         await self.accept()
+        tournemnt_id = self.scope['url_route']['kwargs']['id']
+        self.data = await sync_to_async(self.get_tournemnt_data)(tournemnt_id)
+        self.builder = Builder(self.data['players'])
+        # await self.send(text_data=json.dumps({"response" : {
+        #     "data" : self.data,
+        #     "rounds" :  self.builder.get_rounds(),
+        #     "current_round" : self.builder.levels
+        # }}))
+        if self.data['mode'] == 'local':
+            await self.play_tournment_local_mode(self.builder.levels)
 
-    async def receive(self, text_data=None):
-        
-        pass
 
-    async def disconnect(self, close_code):
-        # if status == waitng : del from room, close
-        # if status == closed : inform others, close
-        pass
+    async def send_data(self, event):
+        json_data = json.dumps({"response" : event["data"]})
+        await self.send(text_data=json_data)
+

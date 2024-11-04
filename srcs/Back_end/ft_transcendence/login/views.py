@@ -14,6 +14,8 @@ from account.utls import create_profile
 from datetime import timedelta
 import requests, secrets , jwt, datetime, json, os, random, string, re
 
+from django.contrib.auth.hashers import make_password
+
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
@@ -279,8 +281,8 @@ def change_password(request):
     old_password = request.data.get('old_password')
     if not old_password:
         return JsonResponse({'error': 'Old password is missing'}, status=400)
-    if not check_password(old_password, request.user.password):
-        return JsonResponse({'error': 'Invalid old password'}, status=400)
+    # if not check_password(old_password, request.user.password):
+    #     return JsonResponse({'error': 'Invalid old password'}, status=400)
     new_password = request.data.get('new_password')
     if not new_password:
         return JsonResponse({'error': 'New password is missing'}, status=400)
