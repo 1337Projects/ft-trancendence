@@ -103,7 +103,11 @@ function MessagesList({data}) {
 
     return (
         <ul className='px-2'>
-            { data.map(message => <UserMessage m={message} username={user?.username}  />) }
+            { data.map((message, index) => 
+                <div key={index}>
+                    <UserMessage m={message} username={user?.username}  />
+                </div>
+            )}
         </ul>
     )
 }

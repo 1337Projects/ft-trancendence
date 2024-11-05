@@ -6,6 +6,86 @@ import { UserContext } from "../../Contexts/authContext";
 import { FaCheckDouble } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { RiMenuSearchLine } from "react-icons/ri";
+import { CgBlock, CgTrash } from "react-icons/cg";
+
+
+const actions = [
+    {
+        name: 'block user',
+        handler : BlockHandler,
+        icon : <CgBlock />
+    },
+    {
+        name: 'delete conversation',
+        handler : DeleteHandler,
+        icon : <CgTrash />
+    },
+]
+
+
+async function BlockHandler(user_id : number, partner_id : number) {
+
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}users/blockUser/`, {
+            method : 'POST',
+            credentials : 'include',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({id : user_id, id_to_block :  partner_id})
+        })
+    
+        if (!response.ok) {
+            console.log(await response.json())
+            throw new Error("somthing went wrong")
+        }
+
+        console.log(await response.json())
+    } catch(err) {
+        console.log(err.toString())
+    }
+}
+
+async function DeleteHandler(conversation_id : number) {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}api/chat/deleteConversations/`, {
+            method : 'DELETE',
+            credentials : 'include',
+            headers : {
+                "Content-Type" : "application/json"
+            },
+            body :  JSON.stringify({conversation_id})
+        })
+
+        if (!response.ok) {
+            console.log(await response.json())
+            throw new Error("somthing went wrong")
+        }
+
+        console.log(await response.json())
+    } catch (err) {
+
+    }
+}
+
+function ConversationOptions({partner}) {
+    const {user} = useContext(UserContext) || {}
+    return (
+        <div className="rounded w-[180px] h-fit p-2 border-[.3px] border-white/20">
+            {
+                actions.map((action, index) => 
+                <div
+                    key={index}
+                    onClick={() => action.handler(user?.id, partner.id)}
+                    className="flex justify-start hover:bg-red-800/30 rounded p-2 items-center h-[30px] font-thin"
+                >
+                    <p className="text-sm lowercase mr-2">{action.name}</p>
+                    <div className="text-[14pt]"> {action.icon} </div>
+                </div>)
+            }
+        </div>
+    )
+}
 
 
 function ConvItem({c, id, handler , menu}) {
@@ -13,7 +93,7 @@ function ConvItem({c, id, handler , menu}) {
     const {color} = useContext(ApearanceContext) || {}
     const {user} = useContext(UserContext) || {}
     const data = Object.filter(c, i => typeof i === "object" && i.username !== user?.username)[0]
-    
+    const [open, setOpen] = useState<Boolean>(false)
     
     useEffect(() => {
         let date = new Date(c?.last_message_time);
@@ -42,8 +122,14 @@ function ConvItem({c, id, handler , menu}) {
                     <p className="text-[8px] ml-4">{time}</p>
                 </div>
             </Link>
-            <div className={`xl:block ${menu ? "test-style" : "hidden"}`}>
+            <div 
+                className={`xl:block relative ${menu ? "test-style" : "hidden"}`}
+                onClick={() => setOpen(prev => !prev)}    
+            >
                 <BsThreeDotsVertical />
+                <div className="absolute right-0 top-4 backdrop-blur-md">
+                    { open && <ConversationOptions partner={data} /> }
+                </div>
             </div>
         </li>
     )
@@ -56,10 +142,14 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
         <ul className={`w-full max-h-[300px]  xl:h-[100px] xl:p-2  xl:flex xl:items-center ${menu ? "h-[100px] p-2  flex items-center test-style" : "h-fit pb-6 grid grid-cols-1 content-start"}`}>
             {
                 friends?.length ?
-                friends?.filter(f => f.status == 'accept').map(f => {
+                friends?.filter(f => f.status == 'accept').map((f, index) => {
                     const data = Object.filter(f, i => typeof i === "object" && i.username !== authInfos?.username)[0]
                     return (
-                        <li onClick={() => handler(false)}  className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}>
+                        <li 
+                            key={index}
+                            onClick={() => handler(false)}  
+                            className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}
+                        >
                             <Link to={data.username}>
                                 <div className="relative">
                                     <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
