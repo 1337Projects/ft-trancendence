@@ -12,4 +12,5 @@ urlpatterns = [
     path('reject_friend/', views.reject_friend),
     path('cancle_friend/', views.unfriend),
     path('<str:username>/', views.get_profile),
+    path('getOthersFriends/<str:username>/', views.get_others_friends),
 ]

@@ -81,7 +81,7 @@ export default function Friends() {
     
     useEffect(() => {
 		const timer = setTimeout(() => {
-            fetch(`${import.meta.env.VITE_API_URL}api/profile/get_friends/`, {
+            fetch(`${import.meta.env.VITE_API_URL}api/profile/getOthersFriends/${user_name}/`, {
                 method: 'GET',
                 credentials : 'include',
                 headers : {
@@ -91,13 +91,14 @@ export default function Friends() {
             .then(res => res.json())
             .then(res => {
                 setFriends(res.data)
+                console.log("loooool", res)
             })
             .catch(err => console.log(err))
 
 		}, 1300)
 		return () => clearTimeout(timer)
 
-	})
+	},[])
     // console.log(friends)
     return (
         <div className=' w-full h-full flex'>
