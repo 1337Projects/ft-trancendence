@@ -1,7 +1,8 @@
 export type PlayerType = {
     id : number,
     name? : string,
-    user_id? : {}
+    user_id? : {},
+    avatar? : string
 }
 
 export type MatchType = {
