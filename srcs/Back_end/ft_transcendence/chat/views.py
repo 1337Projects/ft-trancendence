@@ -21,12 +21,12 @@ def get_id1(request):
         raise AuthenticationFailed('Invalid or expired token')
     return (user_id)
 
-# @api_view(['GET'])
-# def conversations(request):
-#     conversation_list = Conversation.objects.filter(Q(sender=get_id1(request)) |
-#                                                     Q(receiver=get_id1(request)))
-#     serializer = ConversationListSerializer(instance=conversation_list, many=True)
-#     return JsonResponse({"data": serializer.data}, status=200)
+@api_view(['GET'])
+def conversations(request):
+    conversation_list = Conversation.objects.filter(Q(sender=get_id1(request)) |
+                                                    Q(receiver=get_id1(request)))
+    serializer = ConversationListSerializer(instance=conversation_list, many=True)
+    return JsonResponse({"data": serializer.data}, status=200)
 
 @api_view(['DELETE'])
 def delete_conversation(request):
