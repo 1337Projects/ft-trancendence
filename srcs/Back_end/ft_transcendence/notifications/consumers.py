@@ -44,20 +44,23 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         event = data.get("event")
 
         if event == "fetch nots":
-            user = await sync_to_async(User.objects.get)(username=self.username)
-            notifications = await self.get_user_notifications(user)
-            await self.channel_layer.group_send(
-                f"user_{user.username}",
-                {
-                    "type": "send_notification",
-                    "data" : {
-                            "response" : {
-                                "nots": notifications,
-                                "status" : 208
+            try:
+                user = await sync_to_async(User.objects.get)(username=self.username)
+                notifications = await self.get_user_notifications(user)
+                await self.channel_layer.group_send(
+                    f"user_{user.username}",
+                    {
+                        "type": "send_notification",
+                        "data" : {
+                                "response" : {
+                                    "nots": notifications,
+                                    "status" : 208
+                                }
                             }
                         }
-                    }
-            )
+                )
+            except Exception as e:
+                return
 
         elif event == "send_request":
             sender_username = data["sender"]
