@@ -33,11 +33,6 @@ class WebSocketService {
 
             this.socket.onmessage = (event) => {
                 let data = JSON.parse(event.data)
-                // console.log("Received datass:", data);// i added this
-                if (data.response.status)
-                {
-                    console.log(data.response.status)
-                }
                 switch (data.response.status) {
                     case 201:
                         console.log(data.response.room)
@@ -68,6 +63,8 @@ class WebSocketService {
                         console.log( "data ==> " , data)
                         this.callbacks["setNots"](data.response.nots.reverse())
                         break;
+                    case 210:
+                        this.callbacks["tr_data"](data.response)
                     case 400:
                         console.log(data.response.error)
                         break;

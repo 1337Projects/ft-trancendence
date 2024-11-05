@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {notsSocket} from '../socket'
+import { notsSocket } from "../socket";
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "../Contexts/ThemeContext";
 import { UserContext } from "../Contexts/authContext";

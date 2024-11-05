@@ -43,7 +43,7 @@ export default function Tournment() {
                         rounds &&
                         rounds?.rounds[r - 1].filter(r => r.status != 'ended').map((r, index) => {
                             return (
-                                <div className="">
+                                <div key={index} className="">
                                     <h1 className="my-4 uppercase">match {index + 1}</h1>
                                     <div key={index} className="w-full h-[80px] px-16 relative flex items-center border-[1px] rounded justify-center">
                                         <div className="absolute top-[-10px] left-[-10px] px-4 py-2 rounded text-xs bg-green-200">{r?.status}</div>
