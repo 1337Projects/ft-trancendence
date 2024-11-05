@@ -37,37 +37,39 @@ export default function Tournment() {
                     <div className="flex justify-center mx-auto" dangerouslySetInnerHTML={{ __html : svg}} />
                 </div>
             }
-            <div className="w-fit mx-auto h-fit mt-4 p-2 grid grid-cols-1 gap-2">
-                {  
-                    rounds &&
-                    rounds?.rounds[r - 1].map((r, index) => {
-                        return (
-                            <div className="">
-                                <h1 className="my-4 uppercase">match {index + 1}</h1>
-                                <div key={index} className="w-full h-[80px] px-16 relative flex items-center border-[1px] rounded justify-center">
-                                    <div className="absolute top-[-10px] left-[-10px] px-4 py-2 rounded text-xs bg-green-200">waiting</div>
-                                    <div className="flex w-fit">
-                                        <div className="flex items-center w-full p-2">
-                                            <div className="bg-[#5c6bc0] text-white w-[50px] h-[50px] rounded-full flex justify-center items-center">{r.player1.name}</div>
-                                            <div className="ml-4 ">
-                                                <p className="uppercase text-sm">player</p> 
-                                                <span>{r.player1.name}</span>
+            <div className="mt-10 p-2 border-[1px]">
+                <div className="w-fit mx-auto h-fit mt-4 p-2 grid grid-cols-1 gap-2 max-h-[500px] overflow-auto">
+                    {  
+                        rounds &&
+                        rounds?.rounds[r - 1].filter(r => r.status != 'ended').map((r, index) => {
+                            return (
+                                <div className="">
+                                    <h1 className="my-4 uppercase">match {index + 1}</h1>
+                                    <div key={index} className="w-full h-[80px] px-16 relative flex items-center border-[1px] rounded justify-center">
+                                        <div className="absolute top-[-10px] left-[-10px] px-4 py-2 rounded text-xs bg-green-200">{r?.status}</div>
+                                        <div className="flex w-fit">
+                                            <div className="flex items-center w-full p-2">
+                                                <img src={r?.player1?.avatar} className="text-white w-[50px] h-[50px] rounded-full flex justify-center items-center" />
+                                                <div className="ml-4 ">
+                                                    <p className="uppercase text-sm">player</p> 
+                                                    <span>{r?.player1?.name}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <h1 className="mx-10 text-3xl"> vs </h1>
-                                        <div className="flex w-full items-center p-2">
-                                            <div className="mr-4 ">
-                                                <p className="uppercase text-sm">player</p> 
-                                                <span>{r.player2.name}</span>
+                                            <h1 className="mx-10 text-3xl"> vs </h1>
+                                            <div className="flex w-full items-center p-2">
+                                                <div className="mr-4 ">
+                                                    <p className="uppercase text-sm">player</p> 
+                                                    <span>{r?.player2?.name}</span>
+                                                </div>
+                                                <img src={r?.player2?.avatar} className="text-white w-[50px] h-[50px] rounded-full flex justify-center items-center" />
                                             </div>
-                                            <div className="bg-[#5c6bc0] text-white w-[50px] h-[50px] rounded-full flex justify-center items-center">{r.player2.name}</div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    })
-                }
+                            )
+                        })
+                    }
+                </div>
             </div>
         </div>
     )
