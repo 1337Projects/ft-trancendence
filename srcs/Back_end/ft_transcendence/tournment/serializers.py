@@ -8,7 +8,7 @@ from login.serializer import UserSerializer
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ["id", "name", "user_id"]
+        fields = ["id", "name", "user_id", "avatar"]
 
 class TournmentSerializer(serializers.ModelSerializer):
 

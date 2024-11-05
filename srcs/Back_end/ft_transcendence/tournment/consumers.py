@@ -14,6 +14,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
     async def start_match(self, match):
         match.val.status = 'started'
         await asyncio.sleep(2)
+        match.val.status = 'ended'
         match.val = Player(match.left.val.data)
 
 
@@ -27,7 +28,8 @@ class TournmentConsumer(AsyncWebsocketConsumer):
             tr_data = {
                 "data" : self.data,
                 "rounds" :  self.builder.get_rounds(),
-                "current_round" : level
+                "current_round" : level,
+                "status" : 210
             }
             await self.send(text_data=json.dumps({"response" : tr_data}))
             await self.start_match(match)
@@ -48,7 +50,8 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         # await self.send(text_data=json.dumps({"response" : {
         #     "data" : self.data,
         #     "rounds" :  self.builder.get_rounds(),
-        #     "current_round" : self.builder.levels
+        #     "current_round" : self.builder.levels,
+        #     "status" : 210
         # }}))
         if self.data['mode'] == 'local':
             await self.play_tournment_local_mode(self.builder.levels)

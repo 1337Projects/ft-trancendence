@@ -2,9 +2,10 @@ import asyncio
 import sys
 
 class TreeNode:
-    def __init__(self, data, depth):
+    def __init__(self, data, depth, parent):
         self.left = None
         self.right = None
+        self.parent = parent
         self.val = data
         self.depth = depth
 
@@ -30,7 +31,7 @@ class Builder:
         self.data = data
         self.rounds = {}
         self.levels =  self.count_levels(len(data)) - 1
-        self.tree = self.build_tree(self.levels)
+        self.tree = self.build_tree(self.levels, None)
         self.tree_to_rounds(self.tree)
 
 
@@ -40,15 +41,15 @@ class Builder:
         return (self.count_levels(list_len / 2) + 1)
 
 
-    def build_tree(self, index):
+    def build_tree(self, index, parent):
 
         if index == 0:
             my_player = Player(self.data.pop())
-            return TreeNode(my_player, index)
+            return TreeNode(my_player, index, parent)
         my_match = Match()
-        root = TreeNode(my_match, index)
-        root.left = self.build_tree(index-1)
-        root.right = self.build_tree(index-1)
+        root = TreeNode(my_match, index, parent)
+        root.left = self.build_tree(index-1, my_match)
+        root.right = self.build_tree(index-1, my_match)
 
         return root
 
@@ -73,11 +74,14 @@ class Builder:
         if len(self.rounds[f"round{root.depth}"]) == 0:
             self.rounds[f"round{root.depth}"].append({"player1" : self.get_val(root)})
 
+
         elif not self.rounds[f"round{root.depth}"][-1].get("player2"):
             self.rounds[f"round{root.depth}"][-1]["player2"] = self.get_val(root)
+            self.rounds[f"round{root.depth}"][-1]["status"] = root.parent.status
 
         else:
             self.rounds[f"round{root.depth}"].append({"player1" : self.get_val(root)})
+
 
         if root.left:
             self.tree_to_rounds(root.left)
