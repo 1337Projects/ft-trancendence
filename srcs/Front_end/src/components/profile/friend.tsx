@@ -11,30 +11,8 @@ import { FaUserFriends } from 'react-icons/fa';
 import { UserType } from '../../Types';
 import { FirendType } from '../../Types';
 import { RiProfileFill } from 'react-icons/ri';
+import MyUseEffect from '../../hooks/MyUseEffect';
 
-// function FriendCard({data}) {
-// 	const theme = useContext(ThemeContext);
-//     const color = useContext(ColorContext).substring(6,13)
-// 	return (
-// 		<div className='h-[160px]rounded-sm bg-cover mb-2 w-[190px]'>
-			// <div className={`mb-2 shadow-sm flex w-full h-[200px] backdrop-blur-md rounded-sm ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"} `}> 
-			// 		<div className=" w-[56%] flex flex-col">
-			// 			<div style={{background:color}} className="rounded-sm h-[20px] w-[65%] flex items-center justify-center ">
-			// 				<p className={`text-[10px] mt-[2px] text-darkText capitalize`}>friend</p>
-			// 			</div>
-			// 			<div className="flex-col flex items-center justify-center grow">
-			// 				<p className={`text-[15px] font-kaushan  mb-2 ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data.name}</p>
-			// 				<p className={`text-[10px]  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>win rate</p>
-			// 				<p className={`text-[10px] mt-2  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data.rate} %</p>
-			// 			</div>
-			// 		</div>
-			// 		<div className="">
-			// 			<img src={data.avatar} alt="Description" className=" h-[160px] mt-[-10px]" />
-			// 		</div>
-			// </div>
-// 		</div>
-// 	);
-// }
 function FriendCard({friend}) {
 	const appearence = useContext(ApearanceContext)
 
@@ -62,11 +40,7 @@ function FriendCard({friend}) {
 		</div>
 	);
 }
-{/* <div className={`mb-2 shadow-sm flex w-full h-[200px] backdrop-blur-md rounded-sm 
-${appearence?.theme == 'light' ? "bg-lightItems border-lightText/10 text-lightText" 
-: "bg-darkItems text-darkText border-darkText/10"} `}> 
 
-</div> */}
 
 
 export default function Friends() {
@@ -79,33 +53,27 @@ export default function Friends() {
     const [error, setError] = useState(null);
     
     
-    useEffect(() => {
-		const timer = setTimeout(() => {
-            fetch(`${import.meta.env.VITE_API_URL}api/profile/getOthersFriends/${user_name}/`, {
-                method: 'GET',
-                credentials : 'include',
-                headers : {
+    MyUseEffect(() => {
+        fetch(`${import.meta.env.VITE_API_URL}api/profile/getOthersFriends/${user_name}/`, {
+            method: 'GET',
+            credentials : 'include',
+            headers : {
                 'Authorization' : `Bearer ${authInfos?.accessToken}`,
-                }
-            })
-            .then(res => res.json())
-            .then(res => {
-                setFriends(res.data)
-                console.log("loooool", res)
-            })
-            .catch(err => console.log(err))
+            }
+        })
+        .then(res => res.json())
+        .then(res => {
+            setFriends(res.data)
+        })
+        .catch(err => console.log(err))
+    }, [])
 
-		}, 1300)
-		return () => clearTimeout(timer)
-
-	},[])
-    // console.log(friends)
     return (
         <div className=' w-full h-full flex'>
             {friends?.map((friend, index) => (
                 <FriendCard
                 key={index}
-                friend={friend.sender.username === user?.username ? friend.receiver : friend.sender}
+                friend={friend.sender.username === user_name ? friend.receiver : friend.sender}
                 />
             ))}
         </div>

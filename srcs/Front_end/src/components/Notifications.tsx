@@ -8,7 +8,7 @@ import { FirendType } from "../Types";
 import { accept_friend_request, reject_friend_request } from "./profile/ActionsHandlers";
 
 function NotItem({data}) {
-    console.log(data, "++++")
+    // console.log(data, "++++")
     return (
         <li className="flex relative font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
             <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 rounded-[50%]" />

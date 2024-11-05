@@ -37,7 +37,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         #     }))
 
     async def disconnect(self, close_code):
-        # Remove the user from their group
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -65,10 +64,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             receiver_username = data["receiver"]
             message = data.get("message")
             
-            # Create the game request in the database
             receiverr = await get_user_with_profile(receiver_username)
             game_request = await self.create_game_request(sender_username, receiver_username, message)
-            # Send the notification to the receiver in real-time
             await self.channel_layer.group_send(
                 f"user_{sender_username}",
                 {
@@ -105,8 +102,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         notifications = GameRequest.objects.filter(sender=user)
         serializer = GameRequestSerializer(notifications,  many=True)
         notifications_list = []
-        print(serializer.data)
-        sys.stdout.flush()
+        # print(serializer.data)
+        # sys.stdout.flush()
         for notification in serializer.data:
 
             user = User.objects.get(username=notification["receiver_username"])
@@ -122,77 +119,3 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "is_read": notification['is_read'],
             })
         return notifications_list
-
-    # async def get_user_notifications(self, user):
-    #     # Query for notifications related to the user
-    #     notifications = await sync_to_async(GameRequest.objects.filter)(
-    #         receiver=user
-    #     )
-        
-    #     # Prepare the notifications to send
-        
-    #     return notifications_list
-
-
-# import json
-# from channels.generic.websocket import AsyncWebsocketConsumer
-
-# class NotificationConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         self.username = self.scope['url_route']['kwargs']['username']
-
-#         self.group_name = f"user_{self.username}"
-        
-#         await self.channel_layer.group_add(self.group_name, self.channel_name)
-#         await self.accept()
-
-#     async def disconnect(self, close_code):
-#         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-
-#     async def receive(self, text_data):
-#         data = json.loads(text_data)
-#         event = data.get("event")
-
-#         if event == "fetch nots":
-#             # Fetch user notifications here
-#             notifications = await self.get_user_notifications(self.username)
-#             await self.send(text_data=json.dumps({
-#                 "event": "fetch_nots",
-#                 "notifications": notifications,
-#             }))
-        
-
-#     async def get_user_notifications(self, username): SELECT * FROM notifications_gamerequest WHERE username = 'llolo';
-#         # Fetch notifications for the user from the database
-#         notifications = [
-#             {"message": "Game request from user1", "timestamp": "2024-11-02 10:30:00"},
-#             {"message": "Game request from user2", "timestamp": "2024-11-02 11:00:00"},
-#         ]
-#         return notifications
-
-#     async def send_notification(self, event):
-#         await self.send(text_data=json.dumps(event["notification"]))
-
-# # import json
-# # from channels.generic.websocket import AsyncWebsocketConsumer
-
-# # class NotificationConsumer(AsyncWebsocketConsumer):
-# #     async def connect(self):
-# #         print(self.scope['user'], "++++")
-# #         self.user = self.scope['user']
-# #         if self.user.is_authenticated:
-# #             self.group_name = f"user_{self.user.id}"
-# #             await self.channel_layer.group_add(self.group_name, self.channel_name)
-# #             await self.accept()
-# #         else:
-# #             await self.close()
-
-# #     async def disconnect(self, close_code):
-# #         if self.user.is_authenticated:
-# #             await self.channel_layer.group_discard(self.group_name, self.channel_name)
-
-# #     async def receive(self, text_data):
-# #         pass
-
-# #     async def send_notification(self, event):
-# #         await self.send(text_data=json.dumps(event["notification"]))

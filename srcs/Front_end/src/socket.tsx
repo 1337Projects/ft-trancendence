@@ -56,11 +56,11 @@ class WebSocketService {
                         this.callbacks["setUser"](data.response.user)
                         break;
                     case 207:
-                        console.log( "data => " , data)
+                        // console.log( "data => " , data)
                         this.callbacks["setNots"](prev => [data.response.not, ...prev])
                         break;
                     case 208:
-                        console.log( "data ==> " , data)
+                        // console.log( "data ==> " , data)
                         this.callbacks["setNots"](data.response.nots.reverse())
                         break;
                     case 210:
