@@ -189,3 +189,47 @@ def get_friends(request):
     friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept')
     serializer = UserWithFriendsSerializer(friends, many=True)
     return Response({"data" : serializer.data})
+
+
+# @api_view(['GET'])
+# def get_others_friends(request, username):
+#     id = get_id(request)
+#     if not id:
+#         return Response({"message": "Invalid token"}, status=400)
+#     try:
+#         user = User.objects.get(username=username)# user you are viewing his friends
+#         current_user = User.objects.get(id=id) # iuser who is logging in
+#     except User.DoesNotExist:
+#         return Response({"message": "this user is not exist"}, status=404)
+
+#     friends_filter  = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept')
+
+#     friend_ids = list(friends_filter.values_list('sender', flat=True)) + list(friends_filter.values_list('receiver', flat=True))
+#     friend_ids = list(set(friend_ids))  # Convert to set to remove duplicates
+
+#     if current_user.id in friend_ids:
+#         friend_ids.remove(current_user.id)
+
+#     print("my_id :", id, "other's_id:" ,current_user.id , "friends:", friend_ids)
+#     friends = User.objects.filter(id__in=friend_ids)
+#     serializer = UserWithProfileSerializer(friends  , many=True)
+
+#     return Response({"data" : serializer.data})
+
+#?query=${query
+@api_view(['GET'])
+def get_others_friends(request, username):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    try:
+        user = User.objects.get(username=username)# user you are viewing his friends
+        current_user = User.objects.get(id=id) # iuser who is logging in
+    except User.DoesNotExist:
+        return Response({"message": "this user is not exist"}, status=404)
+
+    friends_filter  = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept').exclude(
+        Q(sender=current_user, receiver=user)  | Q(sender=user, receiver=current_user)
+    )
+    serializer = UserWithFriendsSerializer(friends_filter , many=True)
+    return Response({"data" : serializer.data})

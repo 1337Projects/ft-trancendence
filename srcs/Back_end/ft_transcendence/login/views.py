@@ -18,6 +18,7 @@ from django.contrib.auth.hashers import make_password
 
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.contrib.auth.hashers import make_password, check_password
  
 load_dotenv()
 

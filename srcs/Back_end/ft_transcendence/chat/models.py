@@ -18,7 +18,7 @@ class Conversation(models.Model):
         return f"{self.sender} -> {self.receiver}"
 
 class Message(models.Model):
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True)
+    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE, null=True)
     sender = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages', null=True)
     message = models.TextField()
