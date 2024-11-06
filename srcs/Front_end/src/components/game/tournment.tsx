@@ -41,7 +41,7 @@ export default function Tournment() {
                 <div className="w-fit mx-auto h-fit mt-4 p-2 grid grid-cols-1 gap-2 max-h-[500px] overflow-auto">
                     {  
                         rounds &&
-                        rounds?.rounds[r - 1].filter(r => r.status != 'ended').map((r, index) => {
+                        rounds?.rounds[r - 1].map((r, index) => {
                             return (
                                 <div key={index} className="">
                                     <h1 className="my-4 uppercase">match {index + 1}</h1>
