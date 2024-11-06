@@ -53,14 +53,11 @@ export default function Conversation() {
 
 
     MyUseEffect(() => {
-        const partnerId = user;
-        const userId = authInfos?.username;
-        Socket.connect(`ws://localhost:8000/ws/chat/${userId}/${partnerId}/`)
         Socket.addCallback("setData", setMessages)
         Socket.addCallback("setUser", setUserData)
         Socket.sendMessage({
-            "from" : userId,
-            "to": partnerId,
+            "partner": user,
+            "from": authInfos?.username,
             "event" : "fetch_messages"
             // add here page number and limit or (not if you want to use the ones in backend)
         })
@@ -76,7 +73,6 @@ export default function Conversation() {
         }
     } , [messages])
 
-    
     
     
 

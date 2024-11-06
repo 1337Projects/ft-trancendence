@@ -172,69 +172,16 @@ Object.filter = (obj, predicate) =>
           .filter( key => predicate(obj[key]) )
           .map(key => obj[key]);
 
-export default function ConversationsList({menu} : {menu : Boolean}) {
+export default function ConversationsList({menu, data} : {menu : Boolean, data : any}) {
     
     const {theme, color} = useContext(ApearanceContext) || {}
     const [visibleItem, setVisibleItem] = useState(null)
-    const [cnvs, setCnvs] = useState([])
-    // const [data, dispatch] = useReducer(reducerHandler, cnvs);
+    const [cnvs, setCnvs] = useState(data)
 
     const {authInfos} = useContext(UserContext) || {}
-    // useEffect(() => {
-    //     const timer = setTimeout(() => {
-    //         fetch(`${import.meta.env.VITE_API_URL}api/chat/conversations/`, {
-    //             method : 'GET',
-    //             credentials : 'include',
-    //             headers : {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${authInfos?.accessToken}`
-    //             }
-    //         })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             if (data.data) {
-    //                 setCnvs(data.data)
-    //                 console.log("data" ,data.data)
-    //             }
-    //         })
-    //         console.log(cnvs)
-    //     }, 300)
-    //     return () => clearTimeout(timer)
-    // }, [])
-
-    // function ListVisibilityHandler(id) {
-    //     id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);
-    // }
 
     const [query, setQuery] = useState<string>('')
     const [showFriends, setShowFriends] = useState<boolean>(false)
-    const [ friends, setFriends ] =  useState([])
-
-    async function search_friends() {
-        if (query != '') {
-            try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}api/chat/searchInConversation/?name=${query}`, {
-                    method : 'GET',
-                    credentials  : 'include',
-                    headers : {
-                        "Authorization": `Bearer ${authInfos?.accessToken}`
-                    }
-                })
-        
-                if (!response.ok) {
-                    console.log(await response.json())
-                    throw new Error("something went wrong")
-                }
-                const { data } = await  response.json()
-                console.log("lool", data)
-            } catch (error) {
-                console.log(error.toString())
-            }
-        } else {
-            setShowFriends(false)
-        }
-
-    }
 
     return (
             <div className="">
@@ -246,13 +193,6 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
-                    <div
-                        onClick={search_friends}
-                        style={{background : color}} 
-                        className="h-[35px] text-white xl:ml-2 mx-auto flex items-center px-4 rounded-full"
-                    >
-                        <RiMenuSearchLine />
-                    </div>
                 </div>
                 {
                     showFriends  && 

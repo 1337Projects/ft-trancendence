@@ -50,7 +50,7 @@ export default function ChatInput() {
         if (text != '') {
             const data = {
                 "from" : authInfos?.username,
-                "to": user,
+                "partner": user,
                 "content": text,
                 "event" : "new_message"
             }

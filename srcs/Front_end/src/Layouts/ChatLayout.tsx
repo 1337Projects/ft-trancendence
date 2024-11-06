@@ -25,6 +25,7 @@ export default function ChatLayout() {
         })
 
     }, [])
+
     return (
         <>
             <div className={`${theme === 'light' ? "text-lightText" : "text-darkText"} w-full h-full mt-2 shadow-sm rounded-sm flex-grow`}>
@@ -41,7 +42,7 @@ export default function ChatLayout() {
                             </div>
                             <Friends menu={menu} handler={setMenu} />
                             <hr className={` ${theme == 'light' ? "border-black/20" : "border-white/20"} mx-4 `} />
-                            <ConversationsList menu={menu} />
+                            <ConversationsList menu={menu} data={cnvs} />
                         </div>
                     </div>
                     <div className={`flex-grow w-full`}>
