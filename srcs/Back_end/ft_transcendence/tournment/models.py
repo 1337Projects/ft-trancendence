@@ -6,7 +6,7 @@ from login.models import User
 class Player(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255, blank=True)
-    avatar = models.CharField(max_length=200, blank=True, default='http://localhost:8000/media/you.png')
+    avatar = models.CharField(max_length=200, blank=True, default='http://localhost:8000/media/default-banner.jpg')
 
 
 class Tournment(models.Model):

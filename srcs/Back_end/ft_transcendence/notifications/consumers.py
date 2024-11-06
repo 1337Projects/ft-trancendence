@@ -8,9 +8,11 @@ from channels.db import database_sync_to_async
 from account.serializer import *
 from login.serializer import UserSerializer
 from .serializers import GameRequestSerializer
+from channels.layers import get_channel_layer
+from django.core.cache import cache
+import sys
 
 User = get_user_model()
-import sys
 @database_sync_to_async
 def get_user_with_profile(username):
     user = User.objects.get(username=username)
@@ -23,21 +25,11 @@ def get_user_with_profile(username):
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.username = self.scope['url_route']['kwargs']['username']
-        self.group_name = f"user_{self.username}"
-        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        cache.set(f"channel_{self.username}", self.channel_name, timeout=None)
         await self.accept()
 
-        # unread_requests = await self.get_unread_requests()
-        # for request in unread_requests:
-        #     await self.send(text_data=json.dumps({
-        #         "sender": request.sender.username,
-        #         "message": request.message,
-        #         "created_at": str(request.created_at),
-        #         "is_accepted": request.is_accepted
-        #     }))
-
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        cache.delete(f"channel_{self.username}")
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -47,18 +39,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             try:
                 user = await sync_to_async(User.objects.get)(username=self.username)
                 notifications = await self.get_user_notifications(user)
-                await self.channel_layer.group_send(
-                    f"user_{user.username}",
-                    {
-                        "type": "send_notification",
-                        "data" : {
-                                "response" : {
-                                    "nots": notifications,
-                                    "status" : 208
-                                }
+
+                await self.send(text_data=json.dumps({
+                    "data" : {
+                            "response" : {
+                                "nots": notifications,
+                                "status" : 208
                             }
                         }
-                )
+                }))
             except Exception as e:
                 return
 
@@ -69,23 +58,25 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             
             receiverr = await get_user_with_profile(receiver_username)
             game_request = await self.create_game_request(sender_username, receiver_username, message)
-            await self.channel_layer.group_send(
-                f"user_{sender_username}",
-                {
-                    "type": "send_notification",
-                    "data" : {
-                            "response" : {
-                                "not": {
-                                    "sender": receiverr,
-                                    "message": game_request.message,
-                                    "created_at": str(game_request.created_at),
-                                    "is_accepted": game_request.is_accepted,
-                                },
-                                "status" : 207
+            sender_channel_name = self.get_user_channel_name(sender_username)
+            if sender_channel_name:
+                await self.channel_layer.send(
+                    sender_channel_name,
+                    {
+                        "type": "send_notification",
+                        "data" : {
+                                "response" : {
+                                    "not": {
+                                        "sender": receiverr,
+                                        "message": game_request.message,
+                                        "created_at": str(game_request.created_at),
+                                        "is_accepted": game_request.is_accepted,
+                                    },
+                                    "status" : 207
+                                }
                             }
-                        }
-                }
-            )
+                    }
+                )
 
     async def send_notification(self, event):
         await self.send(text_data=json.dumps(event["data"]))
@@ -105,8 +96,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         notifications = GameRequest.objects.filter(sender=user)
         serializer = GameRequestSerializer(notifications,  many=True)
         notifications_list = []
-        # print(serializer.data)
-        # sys.stdout.flush()
+
         for notification in serializer.data:
 
             user = User.objects.get(username=notification["receiver_username"])
@@ -122,3 +112,5 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "is_read": notification['is_read'],
             })
         return notifications_list
+    def get_user_channel_name(self, username):
+        return cache.get(f"channel_{username}")
