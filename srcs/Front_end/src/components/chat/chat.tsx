@@ -180,31 +180,31 @@ export default function ConversationsList({menu} : {menu : Boolean}) {
     // const [data, dispatch] = useReducer(reducerHandler, cnvs);
 
     const {authInfos} = useContext(UserContext) || {}
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            fetch(`${import.meta.env.VITE_API_URL}api/chat/conversations/`, {
-                method : 'GET',
-                credentials : 'include',
-                headers : {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${authInfos?.accessToken}`
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.data) {
-                    setCnvs(data.data)
-                    console.log("data" ,data.data)
-                }
-            })
-            console.log(cnvs)
-        }, 300)
-        return () => clearTimeout(timer)
-    }, [])
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         fetch(`${import.meta.env.VITE_API_URL}api/chat/conversations/`, {
+    //             method : 'GET',
+    //             credentials : 'include',
+    //             headers : {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${authInfos?.accessToken}`
+    //             }
+    //         })
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             if (data.data) {
+    //                 setCnvs(data.data)
+    //                 console.log("data" ,data.data)
+    //             }
+    //         })
+    //         console.log(cnvs)
+    //     }, 300)
+    //     return () => clearTimeout(timer)
+    // }, [])
 
-    function ListVisibilityHandler(id) {
-        id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);
-    }
+    // function ListVisibilityHandler(id) {
+    //     id !== visibleItem ? setVisibleItem(id) : setVisibleItem(null);
+    // }
 
     const [query, setQuery] = useState<string>('')
     const [showFriends, setShowFriends] = useState<boolean>(false)

@@ -5,10 +5,26 @@ import ConversationsList, {Friends} from '../components/chat/chat'
 import { ApearanceContext } from "../Contexts/ThemeContext"
 import { FaBars } from "react-icons/fa"
 import { TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
+import { UserContext } from "../Contexts/authContext"
+import MyUseEffect from '../hooks/MyUseEffect'
+import Socket from '../socket'
+
 
 export default function ChatLayout() {
     const { theme } = useContext(ApearanceContext) || {}
     const [menu, setMenu] = useState<Boolean>(false)
+
+    const { user } = useContext(UserContext) || {}
+    const [cnvs, setCnvs] = useState([])
+
+    MyUseEffect(() => {
+        Socket.connect(`ws://localhost:8000/ws/chat/${user?.id}/`)
+        Socket.addCallback('cnvsHandler', setCnvs)
+        Socket.sendMessage({
+            "event" : "fetch_conversations"
+        })
+
+    }, [])
     return (
         <>
             <div className={`${theme === 'light' ? "text-lightText" : "text-darkText"} w-full h-full mt-2 shadow-sm rounded-sm flex-grow`}>
