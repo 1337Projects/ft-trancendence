@@ -1,5 +1,6 @@
 
 import json
+import sys
 from .serializers import *
 from login.models import *
 from django.db.models import Q
@@ -13,7 +14,7 @@ from django.core.paginator import Paginator, EmptyPage
 from .models import Conversation, Message
 from rest_framework import status
 from .serializers import ConversationListSerializer, ConversationSerializer
-from login.views import check_if_blocked
+# from login.views import check_if_blocked
 
 
 @database_sync_to_async
@@ -116,18 +117,44 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         if text_data:
             text_data_json = json.loads(text_data)
             event = text_data_json.get('event')
+
             if event == "fetch_conversations":
                 await self.fetch_conversations()
-            else:
-                message_content = text_data_json.get('content')
+
+            elif event == "fetch_messages":
+                to_ = text_data_json.get('partner')
                 from_ = text_data_json.get('from')
-                to_ = text_data_json.get('to')
                 try:
                     sender = await sync_to_async(User.objects.get)(username=from_)
                     receiver = await sync_to_async(User.objects.get)(username=to_)
                 except User.DoesNotExist:
                     await self.send(text_data=json.dumps({
-                        'error': f"user not found: {str(e)}"
+                        'error': f"user not found"
+                    }))
+                    # await self.close()
+                    return
+                sender_ser = await get_user_with_profile(from_)
+                receiver_ser = await get_user_with_profile(to_)
+                all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
+                await self.send(text_data=json.dumps({
+                    'response': {
+                        'status': 206,
+                        'messages': all_messages,
+                        'user': receiver_ser,
+                    }
+                }))
+
+
+            elif event == 'new_message':
+                message_content = text_data_json.get('content')
+                to_ = text_data_json.get('partner')
+                from_ = text_data_json.get('from')
+                try:
+                    sender = await sync_to_async(User.objects.get)(username=from_)
+                    receiver = await sync_to_async(User.objects.get)(username=to_)
+                except User.DoesNotExist:
+                    await self.send(text_data=json.dumps({
+                        'error': f"user not found"
                     }))
                     # await self.close()
                     return
@@ -145,55 +172,43 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 # messages = await sync_to_async(get_messages_between_users)(sender_ser['id'], receiver_ser['id'])
 
                 #get all the messages now as a queryset if you want the old code back uncomment get_messages_between_users
-                all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
-                #handle the pagination
-                page = text_data_json.get('page', 1)
-                limit = text_data_json.get('limit', 10)
-                paginator = Paginator(all_messages, limit)
-                try:
-                    messages = paginator.page(page)
-                    # print("here ***", messages)
-                except EmptyPage:
-                    messages = []
-                messages = [await self.serialize_message(message) for message in messages]
-                # print("here2 ***", messages)
-                if event == "fetch_messages":
-                    await self.send(text_data=json.dumps({
-                    'response': {
+                # all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
+                # #handle the pagination
+                # page = text_data_json.get('page', 1)
+                # limit = text_data_json.get('limit', 10)
+                # paginator = Paginator(all_messages, limit)
+                # try:
+                #     messages = paginator.page(page)
+                #     # print("here ***", messages)
+                # except EmptyPage:
+                #     messages = []
+                # messages = [await self.serialize_message(message) for message in messages]
+
+                conversation = await self.get_or_create_conversation(sender, receiver)
+                message = await sync_to_async(Message.objects.create)(
+                    message=message_content,
+                    sender=sender_ser,
+                    receiver=receiver_ser,
+                    conversation=conversation
+                )
+                conversation.content_of_last_message = message.message
+                conversation.last_message_time = message.created_at
+                await sync_to_async(conversation.save)()
+                message_ser= await self.serialize_message(message)
+                message_ser['sender'] = sender_ser
+                message_ser['receiver'] = receiver_ser
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'send_message',
+                        'message': message_ser,
+                        'user' : receiver_ser,
+                        'status' :205,
                         'event': event,
-                        'status': 206,
-                        'messages': messages,
-                        'user': receiver_ser,
-                        'receiver': receiver_ser,
-                        'sender': sender_ser,
+                        'receiver': receiver,
+                        'sender': sender,
                     }
-                }))
-                elif event == "new_message":
-                    conversation = await self.get_or_create_conversation(sender, receiver)
-                    message = await sync_to_async(Message.objects.create)(
-                        message=message_content,
-                        sender=sender,
-                        receiver=receiver,
-                        conversation=conversation
-                    )
-                    conversation.content_of_last_message = message.message
-                    conversation.last_message_time = message.created_at
-                    await sync_to_async(conversation.save)()
-                    message_ser= await self.serialize_message(message)
-                    message_ser['sender'] = sender_ser
-                    message_ser['receiver'] = receiver_ser
-                    await self.channel_layer.group_send(
-                        self.room_group_name,
-                        {
-                            'type': 'send_message',
-                            'message': message_ser,
-                            'user' : receiver_ser,
-                            'status' :205,
-                            'event': event,
-                            'receiver': receiver_ser,
-                            'sender': sender_ser,
-                        }
-                    )
+                )
                 # if event not in ["fetch_messages", "new_message", "fetch_conversations"]:
                 #     await self.send(text_data=json.dumps({
                 #         'error': f"Unexpected event: {event}"
