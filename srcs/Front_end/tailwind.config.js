@@ -19,7 +19,8 @@ export default {
         'pong': "url('/wallpaperflare.png')",
         'pat': "url('/ccchaos.svg')",
         'banner': "url('/banner.png')",
-        "chat" : "url('/GGG.svg')"
+        "chat" : "url('/GGG.svg')",
+        "blackG" : "linear-gradient(0deg, rgba(0,0,0,1), rgba(0,0,0,.5), rgba(0,0,0,0) 90%)"
       },
       fontFamily : {
         'kaushan' : ['"kaushan script"', "sans-serif"],
