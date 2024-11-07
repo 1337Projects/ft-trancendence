@@ -5,6 +5,7 @@ import sys
 from rest_framework.response import Response
 from .serializers import TournmentSerializer, PlayerSerializer
 from login.models import User
+from .models import Tournment
 
 
 class TournmentViews(viewsets.ViewSet):
@@ -42,7 +43,9 @@ class TournmentViews(viewsets.ViewSet):
     
     @action(detail=False, methods=['GET'])
     def get_tournemts(self, request):
-        pass
+        tournments = Tournment.objects.all()
+        data = TournmentSerializer(tournments, many=True)
+        return Response({"data" : data.data}, status=200)
 
 
 
