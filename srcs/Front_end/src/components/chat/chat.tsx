@@ -7,6 +7,8 @@ import { FaCheckDouble } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { RiMenuSearchLine } from "react-icons/ri";
 import { CgBlock, CgTrash } from "react-icons/cg";
+import MyUseEffect from "../../hooks/MyUseEffect";
+import Socket from "../../socket";
 
 
 const actions = [
@@ -176,12 +178,13 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
     
     const {theme, color} = useContext(ApearanceContext) || {}
     const [visibleItem, setVisibleItem] = useState(null)
-    const [cnvs, setCnvs] = useState(data)
 
     const {authInfos} = useContext(UserContext) || {}
 
     const [query, setQuery] = useState<string>('')
     const [showFriends, setShowFriends] = useState<boolean>(false)
+   
+    
 
     return (
             <div className="">
@@ -210,9 +213,9 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
                 </div>
                 <ul className="mt-10">
                     {
-                        cnvs.length ?
-                            cnvs?.map(c => {
-                                return <ConvItem id={visibleItem} menu={menu} handler={ListVisibilityHandler}  key={c.id} c={c} />
+                        data.length ?
+                            data?.map(c => {
+                                return <ConvItem id={visibleItem} menu={menu}   key={c.id} c={c} />
                             })
                         :
                         <div className={`text-center border-[.6px] border-white/20 rounded-md p-10 text-sm ${menu ? "block test-style" : "hidden"} `}>no conversations yet</div>

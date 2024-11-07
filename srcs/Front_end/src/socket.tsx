@@ -50,10 +50,12 @@ class WebSocketService {
                         this.callbacks["resultHandler"](data.response.match)
                         break;
                     case 205:
-                        console.log('user ==== > ',  data.response)
+                        console.log("i am here")
+                        console.log('205 ==== > ',  data.response)
                         this.callbacks["setData"](prev => [...prev , data.response.message])
                         break;
                     case 206:
+                        console.log('206 ==== > ',  data.response)
                         this.callbacks["setData"](data.response.messages)
                         this.callbacks["setUser"](data.response.user)
                         break;
