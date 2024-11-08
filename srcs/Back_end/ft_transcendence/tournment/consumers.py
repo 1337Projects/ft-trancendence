@@ -2,14 +2,22 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import sys, asyncio
 from .models import Tournment
 from  asgiref.sync import sync_to_async
-from .serializers import TournmentSerializer
+from .serializers import TournmentSerializer, PlayerSerializer
 from .test import Builder, Player
 import json
 
+from channels.db import database_sync_to_async 
+
 class TournmentConsumer(AsyncWebsocketConsumer):
     
-    builder = None
-    data = None
+    tournments = {}
+    def __init__(self):
+        super().__init__()
+        self.user = None
+        self.tournment = None
+        self.builder = None
+        self.data = None
+
     
     async def start_match(self, match):
         match.val.status = 'started'
@@ -37,24 +45,43 @@ class TournmentConsumer(AsyncWebsocketConsumer):
 
 
     def get_tournemnt_data(self, id):
-        tr = Tournment.objects.get(id=id)
-        tr_serializer = TournmentSerializer(tr)
-        return tr_serializer.data
+        try:
+            self.tournment = Tournment.objects.get(id=id)
+            tr_serializer = TournmentSerializer(self.tournment)
+            return tr_serializer.data
+        except :
+            pass
 
+    def add_user_to_trournment(self):
+        self.user = self.scope['user']
+        if self.user:
+            current = self.tournments.get(self.data['id'], None)
+            print(current)
+            sys.stdout.flush()
+            if current:
+                current['players'][self.user.id] = self.user
+                print(current)
+                sys.stdout.flush()
+            
 
     async def connect(self):
         await self.accept()
         tournemnt_id = self.scope['url_route']['kwargs']['id']
         self.data = await sync_to_async(self.get_tournemnt_data)(tournemnt_id)
-        self.builder = Builder(self.data['players'])
-        # await self.send(text_data=json.dumps({"response" : {
-        #     "data" : self.data,
-        #     "rounds" :  self.builder.get_rounds(),
-        #     "current_round" : self.builder.levels,
-        #     "status" : 210
-        # }}))
+
+        if not self.tournments.get(tournemnt_id, None) and self.data['mode'] != 'local':
+            self.tournments[tournemnt_id] = {"data" : self.data, "players" : {}}
+
         if self.data['mode'] == 'local':
+            self.builder = Builder(self.data['players'])
             await self.play_tournment_local_mode(self.builder.levels)
+
+        elif self.data['mode'] == 'remote':
+            self.add_user_to_trournment()
+            # print("remote")
+            # sys.stdout.flush()
+            # if self.data['players'] == self.data['max_players'] - 1:
+            #     pass
 
 
     async def send_data(self, event):
