@@ -11,6 +11,7 @@ import MyUseEffect from '../../hooks/MyUseEffect';
 
 
 function calc_time(created_at) {
+    if (!created_at) return ''
     let date = new Date(created_at);
     return date.toLocaleString('en-US', { hour: 'numeric', minute : '2-digit',  hour12: true })
 }
@@ -19,7 +20,7 @@ function UserMessage({m, username}) {
 
     const [time, setTime] = useState<string>('')
 
-    MyUseEffect(() => setTime(calc_time(m.created_at)), [m.created_at])
+    MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
 
     return (
         <li  className={`mt-4 flex items-start  ${m.sender.username == username ? "justify-end" : "justify-start"}`}>

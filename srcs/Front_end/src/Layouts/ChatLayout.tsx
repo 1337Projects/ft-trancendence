@@ -23,8 +23,9 @@ export default function ChatLayout() {
         Socket.sendMessage({
             "event" : "fetch_conversations"
         })
-
     }, [])
+
+    console.log(cnvs)
 
     return (
         <>
