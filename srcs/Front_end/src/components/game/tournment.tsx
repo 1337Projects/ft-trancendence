@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import MyUseEffect from '../../hooks/MyUseEffect'
 import Socket from "../../socket";
 import drawTournment from '../../libs/svg'
+import { UserContext } from '../../Contexts/authContext'
 
 export default function Tournment() {
 
@@ -10,6 +11,7 @@ export default function Tournment() {
     const [svg, setSvg] = useState<null | string>(null)
     const [rounds, setRounds] = useState(null)
     const [r, setR] = useState(0)
+    const { authInfos } = useContext(UserContext) || {}
 
     function DataHandler(data) {
         setRounds(data)
@@ -23,7 +25,7 @@ export default function Tournment() {
     }
 
     MyUseEffect(() => {
-        Socket.connect(`ws://localhost:8000/ws/tournment/${id}/`)
+        Socket.connect(`ws://localhost:8000/ws/tournment/${id}/?token=${authInfos?.accessToken}`)
         Socket.addCallback("tr_data", DataHandler)
     }, [])
 

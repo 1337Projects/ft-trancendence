@@ -8,8 +8,6 @@ import { FaGamepad } from "react-icons/fa6"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
 import MyUseEffect from '../../hooks/MyUseEffect'
-
-
 function Hero({color}) {
     
     return (
@@ -148,7 +146,7 @@ export default function Game() {
                                                     >{t.mode}</div>
 
                                                     <div className="absolute bottom-0 w-full bg-blackG p-2 h-[100px]">
-                                                        <button className="text-white border-[1px] cursor-pointer uppercase border-white/40 px-4 py-1 right-2 rounded absolute bottom-2 text-xs">join</button>
+                                                        <Link to={`tournment/${t.id}`} className="text-white border-[1px] cursor-pointer uppercase border-white/40 px-4 py-1 right-2 rounded absolute bottom-2 text-xs">join</Link>
                                                     </div>
                                                 </div>
                                             </div>
