@@ -28,8 +28,9 @@ class ConversationListSerializer(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
     sender = UserWithProfileSerializer()
     receiver = UserWithProfileSerializer()
-    message_ser = MessageSerializer(many=True, read_only=True, source='messages')
+    last_message_time = serializers.DateTimeField()
+    content_of_last_message = serializers.CharField()
 
     class Meta:
         model = Conversation
-        fields = ['id', 'sender', 'receiver', 'message_ser']
+        fields = ['id', 'sender', 'receiver', 'last_message_time', 'content_of_last_message']
