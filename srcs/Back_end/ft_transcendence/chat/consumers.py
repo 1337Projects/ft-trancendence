@@ -6,14 +6,10 @@ from login.models import *
 from django.db.models import Q
 from account.serializer import *
 from asgiref.sync import sync_to_async
-from login.serializer import UserSerializer
 from channels.db import database_sync_to_async
-from chat.models import Message , Conversation
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.paginator import Paginator, EmptyPage
 from .models import Conversation, Message
-from rest_framework import status
-
 
 
 @database_sync_to_async
@@ -24,36 +20,26 @@ def get_user_with_profile(username):
     user_ser['profile'] = ProfileSerializers(profile).data
     return user_ser
 
-
-# def get_messages_between_users(sender_id, receiver_id):
-#     messages = Message.objects.filter(
-#         (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
-#         (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
-#     ).order_by('created_at')
-    
-#     return MessageSerializer(messages, many=True).data 
-
-#comment it to try pagiantion and uncomment th next 
 @database_sync_to_async
 def get_messages_between_users(sender_id, receiver_id):
     messages = list(Message.objects.filter(
         (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
         (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
-    ).order_by('created_at')) #for pagination add -
-    # print(sender_id, receiver_id, "*******\n" ,messages)
+    ).order_by('-created_at'))
     return messages
 
-channel_name_grp = []
+channel_name_grp = {}
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
-        for item in channel_name_grp:
-            if str(self.user_id) in item[0]:
+        for key, value in channel_name_grp.items():
+            if channel_name_grp[key] == str(self.user_id):
+                channel_name_grp[value] = self.channel_name
                 await self.accept()
                 return
-        channel_name_grp.append((self.user_id, self.channel_name))
+        channel_name_grp.update({ self.user_id : self.channel_name})
         await self.accept()
 
     async def send_message(self, event):
@@ -68,7 +54,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }
         }))
         
-
     @database_sync_to_async
     def save_message(self, message):
         message.save()
@@ -112,7 +97,18 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         sender_ser = await get_user_with_profile(from_)
         receiver_ser = await get_user_with_profile(to_)
         all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
-        serialized_messages = [await self.serialize_message(msg) for msg in all_messages]
+
+        # #handle the pagination
+        page = text_data_json.get('page', 1)
+        limit = text_data_json.get('limit', 10)
+        paginator = Paginator(all_messages, limit)
+        try:
+            messages = paginator.page(page)
+        except EmptyPage:
+            messages = []
+
+        serialized_messages = [await self.serialize_message(message) for message in messages]
+
         await self.send(text_data=json.dumps({
             'response': {
                 'status': 206,
@@ -160,29 +156,24 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         tmp_user_id, tmp_partner_id = sorted([sender_ser['id'], receiver_ser['id']])
         self.room_name = f'chat_{tmp_user_id}_{tmp_partner_id}'
         self.room_group_name = self.room_name.replace(" ", "_")
-        # for user_ser in [sender_ser, receiver_ser]:
-        #     channel_name = next(item[1] for item in channel_name_grp if str(user_ser['id']) in item[0])
-        #     await self.channel_layer.group_add(self.room_group_name, channel_name)
 
         channel_name = None
-        for item in channel_name_grp:
-            if str(sender_ser['id']) in item[0]:
-                channel_name = item[1]
+        for key, value in channel_name_grp.items():
+            if str(sender_ser['id']) == key:
+                channel_name = value
                 break
         await self.channel_layer.group_add(
             self.room_group_name,
             channel_name,
         )
-
-        for item in channel_name_grp:
-            if str(receiver_ser['id']) in item[0]:
-                channel_name = item[1]
+        for key, value in channel_name_grp.items():
+            if str(receiver_ser['id']) == key:
+                channel_name = value
                 break
         await self.channel_layer.group_add(
             self.room_group_name,
             channel_name,
         )
-
         await self.channel_layer.group_send(
             self.room_group_name,
             {
