@@ -115,8 +115,6 @@ export default function Game() {
 
             const { data } = await response.json()
             setTournments(data)
-            console.log(data)
-
         } catch(err) {
             console.log(err)
         }
@@ -133,12 +131,12 @@ export default function Game() {
                         <h1 className="my-4 capitalize">played tournments :</h1>
                         {
                             tournments.length ?
-                            <div className="h-fit min-h-[200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4">
+                            <div className="h-fit min-h-[200px] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3  gap-4">
                                 {
                                     tournments.map(t => {
                                         return (
                                             <div key={t.id} className="w-full">
-                                                <div className="w-full h-[140px] relative rounded overflow-hidden">
+                                                <div className="w-full h-[180px] relative rounded overflow-hidden">
                                                     <img className="" src="/tour.webp" alt="img" />
                                                     <div 
                                                         style={{background : appearence?.color}} 
@@ -146,7 +144,7 @@ export default function Game() {
                                                     >{t.mode}</div>
 
                                                     <div className="absolute bottom-0 w-full bg-blackG p-2 h-[100px]">
-                                                        <Link to={`tournment/${t.id}`} className="text-white border-[1px] cursor-pointer uppercase border-white/40 px-4 py-1 right-2 rounded absolute bottom-2 text-xs">join</Link>
+                                                        <Link to={`tournment/waiting/${t.id}`} className="text-white border-[1px] cursor-pointer uppercase border-white/40 px-4 py-1 right-2 rounded absolute bottom-2 text-xs">join</Link>
                                                     </div>
                                                 </div>
                                             </div>
@@ -199,6 +197,16 @@ function TournmentDialog() {
         setCreated(id)
     }
 
+    function randomize() {
+        const players = {}
+        
+        for (let i = 0; i < data.members; i++) {
+            let r = (Math.random() + 1).toString(36).substring(2);
+            players[`player${i}`] = r
+        }
+        setPlayers(players)
+    }
+
     return (
         <div className="bg-white rounded-md border-black/10 p-6 border-[.3px] w-[400px] sm:w-[600px] h-fit z-40 left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%] absolute">
             <div className="h-fit">
@@ -242,25 +250,32 @@ function TournmentDialog() {
                                 </div>
                                 {
                                     data.mode === 'local' && 
-                                    <div className="border-[.3px] border-black/20 rounded w-full h-fit max-h-[400px] overflow-auto mt-6 p-6 grid gap-4">
-                                        {
-                                            [...Array(data.members)].map((player, index) => {
-                            
-                                                return (
-                                                <div key={index} className="text-sm">
-                                                    <label htmlFor={`player${index}`} className="">{`player${index + 1}`}</label>
-                                                    <input 
-                                                        type="text" 
-                                                        className="border-[.3px] border-black/20 rounded h-[40px] px-2 mt-2 w-full" 
-                                                        placeholder="player name..."
-                                                        id={`player${index}`}
-                                                        onChange={(e) => setPlayers({...players , [`player${index}`] : e.target.value})}
-                                                    />
-                                                </div>)
-                                            })
+                                    <div className="mt-2">
+                                        <button 
+                                            onClick={randomize}
+                                            className="my-4 p-2 text-sm px-4 rounded text-white ml-[100%] translate-x-[-100%]"
+                                            style={{background : color}}
+                                        >randomize</button>     
+                                        <div className="border-[.3px] border-black/20 rounded w-full h-fit max-h-[400px] overflow-auto p-6 grid gap-4">
+                                            {
+                                                [...Array(data.members)].map((player, index) => {
+                                
+                                                    return (
+                                                    <div key={index} className="text-sm">
+                                                        <label htmlFor={`player${index}`} className="">{`player${index + 1}`}</label>
+                                                        <input 
+                                                            type="text" 
+                                                            className="border-[.3px] border-black/20 rounded h-[40px] px-2 mt-2 w-full" 
+                                                            placeholder="player name..."
+                                                            value={players[`player${index}`]}
+                                                            id={`player${index}`}
+                                                            onChange={(e) => setPlayers({...players , [`player${index}`] : e.target.value})}
+                                                        />
+                                                    </div>)
+                                                })
 
-                                        }
-
+                                            }
+                                        </div>
                                     </div>
                                 }
                         </div>
@@ -287,10 +302,16 @@ function TournmentDialog() {
                     <div>
                         <button 
                             onClick={() => setOpen!(false)}
+                            className="px-4 h-[40px] border-[1px] mr-4 border-black/20 rounded text-sm"
+                        >
+                            close
+                        </button>   
+                        <button 
+                            onClick={() => setOpen!(false)}
                             style={{background: color}}
                             className="px-4 h-[40px] rounded text-sm text-white"
                         >
-                            <Link to={`tournment/${created}`}>
+                            <Link to={data.mode == 'local' ? `tournment/${created}/local` : `tournment/waiting/${created}/`}>
                                 luanch tournment
                             </Link>
                         </button>

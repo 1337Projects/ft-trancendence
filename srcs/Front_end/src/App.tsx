@@ -34,6 +34,9 @@ import { DialogContext, DialogContextProvider } from './Contexts/DialogContext'
 import Tournment from './components/game/tournment'
 
 import Friends from './components/profile/friend'
+import WaitingTournment from './components/game/Waiting_tr'
+import GameLayout from './Layouts/GameLayout'
+
 
 function Home() {
 
@@ -60,9 +63,13 @@ const router = createBrowserRouter(
 
       <Route path='/dashboard' element={<DashboardPrivateRoute />}>
 
-        <Route path='game' element={<Game />} >
+        {/* <Route path='game' element={<Game />} / > */}
+        <Route path='game' element={<Game />} />
+        <Route path='game/tournment' element={<GameLayout />}>
+          <Route path=':id/:type' element={<Tournment />} />
+          <Route path='waiting/:id' element={<WaitingTournment />} />
         </Route>
-        <Route path='game/tournment/:id' element={<Tournment />} />
+
 
         <Route path='profile/:user_name' element={<Profile />}>
           <Route index element={<UserProfile />} />
