@@ -77,7 +77,6 @@ export default function DashboardLayout() {
         })
         .then(res => res.json())
         .then(res => {
-          console.log(res)
           user?.setFriends(res.data)
         })
         .catch(err => console.log(err))

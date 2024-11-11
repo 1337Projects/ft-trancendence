@@ -90,7 +90,7 @@ function ConversationOptions({partner}) {
 }
 
 
-function ConvItem({c, id, handler , menu}) {
+function ConvItem({c, id, menu}) {
     const [time , setTime] = useState("")
     const {color} = useContext(ApearanceContext) || {}
     const {user} = useContext(UserContext) || {}
@@ -105,7 +105,7 @@ function ConvItem({c, id, handler , menu}) {
     }, [])
 
     return (
-        <li className="w-full h-[60px] rounded xl:p-2 border-white/30  relative mt-3 flex justify-center items-center cursor-pointer" onClick={() => handler(null)}>
+        <li className="w-full h-[60px] rounded xl:p-2 border-white/30  relative mt-3 flex justify-center items-center cursor-pointer">
             <Link to={`${data.username}`} className={`flex justify-start items-center w-full xl:px-4 ${menu && "test-style px-4"}`}>
                 <div className={`flex  ${menu ? "test-style" : "justify-center"} xl:justify-start  items-center w-full`}>
                     <div className={`w-[35px] h-[35px] xl:mr-4 ${menu && " test-style mr-4"}`}>
@@ -176,49 +176,43 @@ Object.filter = (obj, predicate) =>
 
 export default function ConversationsList({menu, data} : {menu : Boolean, data : any}) {
     
-    const {theme, color} = useContext(ApearanceContext) || {}
+    const {theme} = useContext(ApearanceContext) || {}
     const [visibleItem, setVisibleItem] = useState(null)
 
-    const {authInfos} = useContext(UserContext) || {}
-
     const [query, setQuery] = useState<string>('')
-    const [showFriends, setShowFriends] = useState<boolean>(false)
-   
-    
+
+    const [cnvs, setcnvs] = useState(data)
+
+    MyUseEffect(() => {
+        if (query != '') {
+            setcnvs(prev => prev.filter(cnv => cnv.sender.username.includes(query) || cnv.receiver.username.includes(query)))
+        } else {
+            setcnvs(data)
+        }
+    }, [data, query])
 
     return (
             <div className="">
                 <div className="flex items-center mt-4">
                     <input 
                         type="text" 
-                        placeholder="search ..." 
-                        className={`w-full ${menu ? "test-style" : "hidden"} xl:block px-4 rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/40" : "border-white/40"} border-[1px]`} 
+                        placeholder="search..." 
+                        className={`w-full ${menu ? "test-style" : "hidden"} xl:block px-4 text-xs rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.5px]`} 
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
                 </div>
-                {
-                    showFriends  && 
-                    <div className="border-[.2px] border-white/30 mt-2 w-full h-[100px] rounded p-2">
-                        {
-                            friends.length != 0 ?
-                                friends.map(fr => <h1>a</h1>)
-                            :
-                            <h1>not found...</h1>
-                        }
-                    </div>
-                }
                 <div className={`mt-10 xl:block ${menu ? "test-style" : "hidden"}`}>
                     <Categories categorie={null} Handler={null} />
                 </div>
                 <ul className="mt-10">
                     {
-                        data.length ?
-                            data?.map(c => {
-                                return <ConvItem id={visibleItem} menu={menu}   key={c.id} c={c} />
+                        cnvs.length ?
+                            cnvs?.map(c => {
+                                return <ConvItem id={visibleItem} menu={menu}  key={c.id} c={c} />
                             })
                         :
-                        <div className={`text-center border-[.6px] border-white/20 rounded-md p-10 text-sm ${menu ? "block test-style" : "hidden"} `}>no conversations yet</div>
+                        <div className={`text-center border-[.6px] border-white/20 rounded-md p-10 text-sm ${menu ? "block test-style" : "hidden"} `}>no conversations found</div>
                     }
                 </ul>
             </div>
