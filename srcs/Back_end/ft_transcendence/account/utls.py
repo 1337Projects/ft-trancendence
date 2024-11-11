@@ -54,7 +54,10 @@ def check_duplicate_username(username, id):
         return False
 
 def update_time_activity(user_id):
-    profile = Profile.objects.get(user_id=user_id)
-    profile.last_activity = timezone.now()
-    profile.save()
+    try:
+        profile = Profile.objects.get(user_id=user_id)
+        profile.last_activity = timezone.now()
+        profile.save()
+    except ObjectDoesNotExist:  
+        print(f"Profile with user_id {user_id} does not exist.")
         

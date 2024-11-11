@@ -1,6 +1,6 @@
 
 import { Outlet } from "react-router-dom"
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import ConversationsList, {Friends} from '../components/chat/chat'
 import { ApearanceContext } from "../Contexts/ThemeContext"
 import { FaBars } from "react-icons/fa"
@@ -23,6 +23,12 @@ export default function ChatLayout() {
         Socket.sendMessage({
             "event" : "fetch_conversations"
         })
+    }, [])
+
+    useEffect(() => {
+        return () => {
+            Socket.close();
+        }
     }, [])
 
     console.log(cnvs)
