@@ -101,8 +101,8 @@ export default function Search() {
                     search flex-grow h-full
                     rounded-sm p-1 px-3 flex items-center shadow-sm  relative
                 `}>
-                    <FaSearch />
-                    <div className="w-full relative">
+                    <FaSearch className="text-xl" />
+                    <div className="w-full ml-2 relative">
                         <input 
                             type="text" 
                             value={searchText} 
