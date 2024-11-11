@@ -53,9 +53,6 @@ class Builder:
 
         return root
 
-    def print(self, msg):
-        print(msg)
-        sys.stdout.flush()
 
     def get_val(self, root):
         if isinstance(root.val, Match):

@@ -14,7 +14,6 @@ class MyMiddelware:
     @database_sync_to_async
     def get_user(self, user_id):
         try:
-            
             user = User.objects.get(id=user_id)
             return user
         except:
@@ -26,16 +25,13 @@ class MyMiddelware:
         token = query_params.get("token", [None])[0]
 
         if token:
-            # print(settings.SECRET_KEY)
-            # print(token)
-            # sys.stdout.flush()
             try:
-                # payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-                user_id = 1
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"], options={"verify_signature": False})
+                user_id = payload['user_id']
                 scope['user'] = await self.get_user(user_id)
-            except:
-                # print("exeption has been throwen")
-                # sys.stdout.flush()
+            except Exception as e:
+                print(e)
+                sys.stdout.flush()
                 scope['user'] = None
         else:
             scope['user'] = None
