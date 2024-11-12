@@ -43,7 +43,7 @@ export default function Setings() {
                         {listItems.map(it => <ListItem key={it.text} item={it} isActive={it.text == item} handler={setItem}  />)}
                     </ul>
                 </div>
-                <div className="flex-grow w-full  mt-6">
+                <div className="flex-grow w-full px-10 md:p-0 py-4">
                     {item === 'Profile' && <Profile /> || item === 'Security' && <Security /> || item === 'Apperance' && <Apperance />}
                 </div>
             </div>

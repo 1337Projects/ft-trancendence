@@ -49,7 +49,7 @@ export default function Profile() {
     }
 
     return (
-        <div className="px-4 max-w-[500px] mx-auto">
+        <div className="p-2 md:px-6 w-full">
             <div className="w-full ">
                 <div className="w-full relative h-[140px] rounded-sm">
                     <div className='top-0 h-[140px] w-full overflow-hidden rounded-md'>
