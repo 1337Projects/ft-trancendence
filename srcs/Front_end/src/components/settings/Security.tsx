@@ -9,7 +9,7 @@ import TwoFImg from "./TwoFImg"
 function SecurityItem({children}) {
     return (
         <li 
-            className="flex h-[40px] cursor-pointer justify-between items-center text-[10pt] mt-10 w-fit capitalize"
+            className="flex h-[40px] cursor-pointer justify-between items-center text-[10pt] w-fit capitalize"
         >
             {children}
         </li>
@@ -62,12 +62,12 @@ function ChangePassword() {
 
 
 export default function Security() {
-    const [changePass, setChangePass] = useState(false)
-    const [twoF, setTwoF] = useState(false)
+    const [changePass, setChangePass] = useState(true)
+    const [twoF, setTwoF] = useState(true)
     const { color, theme } = useContext(ApearanceContext) || {}
     return (
-        <div className="">
-            <ul>
+        <div className="h-full">
+            <ul className="">
                 <div onClick={() => setChangePass(prev => !prev)}>
                     <SecurityItem >
                         <p className="mr-1">change password</p>
@@ -75,7 +75,7 @@ export default function Security() {
                     </SecurityItem>
                 </div>
                 { changePass && <ChangePassword /> }
-                <div onClick={() => setTwoF(prev => !prev)}>
+                <div onClick={() => setTwoF(prev => !prev)} className="mt-6">
                     <SecurityItem>
                         <p className="mr-1">two factor authentification?</p>
                         { twoF ? <FaAngleUp /> :  <FaAngleDown /> }
