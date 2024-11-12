@@ -55,11 +55,13 @@ class WebSocketService {
                         break;
                     case 205:
                         console.log("msg => " ,  data.response)
+                        console.log(this.callbacks)
                         this.callbacks["setData"](prev => [...prev , data.response.message])
+                        this.callbacks["cnvsUpdate"](data.response.conversation)
                         break;
                     case 206:
                         console.log("206 => ", data.response)
-                        this.callbacks["setData"](data.response.messages)
+                        this.callbacks["setData"](data.response.messages.reverse())
                         this.callbacks["setUser"](data.response.user)
                         break;
                     case 207:

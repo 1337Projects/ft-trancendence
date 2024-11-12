@@ -102,7 +102,7 @@ function ConvItem({c, id, menu}) {
         const hours = date.getUTCHours()
         const mins = date.getUTCMinutes()
         setTime(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`);
-    }, [])
+    }, [c])
 
     return (
         <li className="w-full h-[60px] rounded xl:p-2 border-white/30  relative mt-3 flex justify-center items-center cursor-pointer">
@@ -152,10 +152,10 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
                             onClick={() => handler(false)}  
                             className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}
                         >
-                            <Link to={data.username}>
-                                <div className="relative">
+                            <Link to={data.username} className="w-full">
+                                <div className="relative w-full">
                                     <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
-                                    <div className={`h-2 w-2 bg-green-400 rounded-full absolute top-[27px]  xl:right-4 ${menu ? "right-4" : "right-0"}`}></div>
+                                    <div className={`h-2 w-2 ${data.profile.online ? "bg-green-400" : "bg-red-400"}  rounded-full absolute top-[27px]  xl:right-4 right-6`}></div>
                                     <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block test-style" : "hidden"} xl:block`}>{data.username}</h1>
                                 </div>
                             </Link>
@@ -176,18 +176,22 @@ Object.filter = (obj, predicate) =>
 
 export default function ConversationsList({menu, data} : {menu : Boolean, data : any}) {
     
-    const {theme} = useContext(ApearanceContext) || {}
+    const { theme } = useContext(ApearanceContext) || {}
+    const { authInfos } = useContext(UserContext) || {}
     const [visibleItem, setVisibleItem] = useState(null)
 
     const [query, setQuery] = useState<string>('')
 
     const [cnvs, setcnvs] = useState(data)
 
+
     MyUseEffect(() => {
+        setcnvs(data)
         if (query != '') {
-            setcnvs(prev => prev.filter(cnv => cnv.sender.username.includes(query) || cnv.receiver.username.includes(query)))
-        } else {
-            setcnvs(data)
+            setcnvs(prev => prev.filter(cnv => {
+                const partner = Object.filter(cnv, i =>  typeof i === "object" && i.username !== authInfos?.username)[0]
+                return partner.username.includes(query)
+            }))
         }
     }, [data, query])
 
@@ -203,7 +207,7 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
                     />
                 </div>
                 <div className={`mt-10 xl:block ${menu ? "test-style" : "hidden"}`}>
-                    <Categories categorie={null} Handler={null} />
+                    <Categories categorie="all" Handler={null} />
                 </div>
                 <ul className="mt-10">
                     {

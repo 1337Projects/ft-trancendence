@@ -35,6 +35,10 @@ export default function ChatInput() {
             sendMessage()
     }
 
+    function sendGameInvite() {
+        console.log('invite')
+    }
+
     const [emojie, setEmojie] = useState<boolean>(false)
 
     return (
@@ -47,7 +51,7 @@ export default function ChatInput() {
                     <div onClick={() => setEmojie(prev => !prev)}>
                         { emojie ? <FaKeyboard /> : <FaRegSmile /> }
                     </div>
-                    <div className="mx-4 text-[20pt]">
+                    <div className="mx-4 text-[20pt]" onClick={sendGameInvite}>
                         <IoGameControllerOutline />
                     </div>
                     <input 
