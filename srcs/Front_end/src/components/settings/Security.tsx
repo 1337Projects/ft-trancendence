@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react"
-import { FaAngleDown, FaAngleUp, FaLocationArrow } from "react-icons/fa"
+import { FaAngleDown, FaAngleUp } from "react-icons/fa"
 import { Formik, Form } from 'formik'
 import SettingsInput from "./Input"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
+import TwoFImg from "./TwoFImg"
 
 function SecurityItem({children}) {
     return (
@@ -85,10 +86,12 @@ export default function Security() {
                         <div className="w-full h-full p-2">
                             <h1 className="capitalize text-md">turn on two-factor authentification</h1>
                             <p className="text-xs mt-4 lowercase leading-5">Prevent hackers from accessing your account with an additional layer of security.</p>
-                            <button style={{background : color}} className="mt-10 text-white p-3 px-6 text-xs rounded">turn on 2-f authentification</button>
+                            <button style={{background : color}} className="mt-10 text-white  p-3 px-6 text-xs rounded">turn on 2-f authentification</button>
                         </div>
                         <div className="w-full h-full p-4 flex justify-center items-center">
-                            <img src="/2f.svg" className="w-[160px] h-auto" alt="" />
+                            <div className="w-[160px] ">
+                                <TwoFImg color={color} theme={theme} />
+                            </div>
                         </div>
                     </div>
                 }
@@ -96,3 +99,4 @@ export default function Security() {
         </div>
     )
 }
+
