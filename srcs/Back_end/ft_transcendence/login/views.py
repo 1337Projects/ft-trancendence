@@ -165,7 +165,7 @@ def generate_username(username):
 @api_view(["post"])
 def google_oauth(request):
     code = request.data.get('code')
-    if not code:#checki m3a abdelhadi
+    if not code:
         return JsonResponse({'error': 'Authorization code is missing'}, status=400)
 
     token_url = 'https://oauth2.googleapis.com/token'
@@ -248,10 +248,7 @@ def validate_password(password):
         errors.append("Password must contain at least one digit.")
     if not re.search(r'\W', password):
         errors.append("Password must contain at least one special character.")
-    if errors:
-        print("Your password should meet all those requirements:", errors)
-        return False
-    return True
+    return errors
 
 
 @api_view(["post"])
@@ -260,8 +257,9 @@ def confirm_password(request):
         email = request.data.get('email')
         token = request.data.get('token')
         new_password = request.data.get('password')
-        if not validate_password(new_password):
-            return JsonResponse({'error': 'Password does not meet all the requirements.'}, status=400)
+        errors = validate_password(new_password)
+        if errors:
+            return JsonResponse({'error': errors}, status=400)
         try:
             password_reset = PasswordReset.objects.get(token=token, user__email=email)
             if password_reset.is_used:
