@@ -1,6 +1,5 @@
 
-import json
-import sys
+import json , sys, math
 from .serializers import *
 from login.models import *
 from django.db.models import Q
@@ -11,6 +10,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.paginator import Paginator, EmptyPage
 from .models import Conversation, Message
 
+nbr_msgs = 0
 
 @database_sync_to_async
 def get_user_with_profile(username):
@@ -26,6 +26,7 @@ def get_messages_between_users(sender_id, receiver_id):
         (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
         (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
     ).order_by('-created_at'))
+    nbr_msgs = len(messages)
     return messages
 
 channel_name_grp = {}
@@ -96,13 +97,10 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         from_ = text_data_json.get('from')
         sender_ser = await get_user_with_profile(from_)
         receiver_ser = await get_user_with_profile(to_)
-        #set all the messages as seen not yet implemented
         all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
         for message in all_messages:
             message.seen = True
             await sync_to_async(message.save)()
-
-        #handle the pagination
         page = text_data_json.get('page', 1)
         limit = text_data_json.get('limit', 10)
         paginator = Paginator(all_messages, limit)
@@ -110,14 +108,14 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             messages = paginator.page(page)
         except EmptyPage:
             messages = []
-
         serialized_messages = [await self.serialize_message(message) for message in messages]
-
+        nbr_pages = math.ceil(nbr_msgs/limit)
         await self.send(text_data=json.dumps({
             'response': {
                 'status': 206,
                 'messages': serialized_messages,
                 'user': receiver_ser,
+                'nbr_pages': nbr_pages,
             }
         }))
 
@@ -154,8 +152,9 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         try:
             conversation_ser = await self.serialize_conversation(conversation)
         except Exception as e:
-            print(e, "ok i see")
-            sys.stdout.flush()
+            await self.send(text_data=json.dumps({
+                'error': 'Error serializing conversation'
+            }))
             return
         tmp_user_id, tmp_partner_id = sorted([sender_ser['id'], receiver_ser['id']])
         self.room_name = f'chat_{tmp_user_id}_{tmp_partner_id}'
@@ -206,7 +205,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         #     message.seen = True
         #     await sync_to_async(message.save)()
 
-        #or you can use 
+        #or you can use
         sender_id = text_data_json.get('sender_id')
         receiver_id = text_data_json.get('receiver_id')
         all_messages = await get_messages_between_users(sender_id, receiver_id)
@@ -217,9 +216,13 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     
         #khassni l id dyalo bach nl9a smyto f channel_name_grp so i can send him the event
         # for key, value in channel_name_grp.items():
-        #     if str(id_sender) == key:
+        #     if str(id_receiver) == key:
         #         channel_name = value
         #         break
+        # await self.channel_layer.group_add(
+        #     self.room_group_name,
+        #     channel_name,
+        # )
         await self.send(text_data=json.dumps({
             'response': {
                 'event': 'seen_message',
@@ -231,7 +234,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data=None):
-        print("text data", text_data)
+        # print("text data", text_data)
         sys.stdout.flush()
         text_data_json = json.loads(text_data)
         event = text_data_json.get('event')
