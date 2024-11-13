@@ -1,13 +1,14 @@
-import React, {useContext, useState, useRef, useEffect} from 'react'
+import React, {useContext, useState, useRef} from 'react'
 import { Link, useParams } from 'react-router-dom';
 
 import Socket from '../../socket'
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { UserContext } from '../../Contexts/authContext';
 import { FaArrowLeft, FaEllipsisV } from 'react-icons/fa';
-import { MessageType, UserType } from '../../Types';
 import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
+import { ChatContext } from '../../Contexts/ChatContext';
+import { RiCheckDoubleFill } from 'react-icons/ri';
 
 
 function calc_time(created_at) {
@@ -17,24 +18,24 @@ function calc_time(created_at) {
 }
 
 function UserMessage({m, username}) {
-
     const [time, setTime] = useState<string>('')
-
     MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
 
     return (
         <li  className={`mt-4 flex items-start  ${m.sender.username == username ? "justify-end" : "justify-start"}`}>
             {
                 m.sender.username != username &&
-                <img src={m?.sender?.profile?.avatar} className="w-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
+                <Link to={`/dashboard/profile/${m?.sender?.username}`}>
+                    <img src={m?.sender?.profile?.avatar} className="w-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
+                </Link>
             }
             <div>
                 <div className={`backdrop-blur-xl text-white bg-gray-800 rounded-[30px] p-1`} >
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
                 <p 
-                    className={`text-[8pt] lowercase mt-2 py-1 ${m.sender.username != username ? "text-right mr-4" : "ml-4"}`}
-                >{time}</p>
+                    className={`text-[8pt] flex items-center lowercase mt-2 py-1 ${m.sender.username != username ? "text-right ml-10" : "ml-2"}`}
+                >{time}<RiCheckDoubleFill className='ml-2 text-blue-500 text-[10pt]' /></p>
             </div>
             {
                 m.sender.username == username &&
@@ -47,15 +48,12 @@ function UserMessage({m, username}) {
 
 export default function Conversation() {
     const {authInfos} = useContext(UserContext) || {}
-    const [messages, setMessages] = useState<MessageType[]>([])
     const cnv = useRef<HTMLDivElement | null>(null)
     const {user} = useParams()
-    const [userData, setUserData] = useState<UserType | null>(null)
 
+    const { messages, userData } = useContext(ChatContext) || {}
 
     MyUseEffect(() => {
-        Socket.addCallback("setData", setMessages)
-        Socket.addCallback("setUser", setUserData)
         Socket.sendMessage({
             "partner": user,
             "from": authInfos?.username,
@@ -63,7 +61,9 @@ export default function Conversation() {
             // add here page number and limit or (not if you want to use the ones in backend)
         })
     }, [user])
-
+    
+    
+    
     
     MyUseEffect(() => {
         if (cnv && cnv.current) {
@@ -72,6 +72,11 @@ export default function Conversation() {
                 behavior : 'instant'
             })
         }
+        cnv.current?.addEventListener('scroll', () => {
+            if ( cnv.current && cnv.current.scrollTop <= 0) {
+                // send neew fetch event with page number + 1
+            }
+        })
     } , [messages])
 
     
@@ -82,7 +87,7 @@ export default function Conversation() {
             <div className='w-full h-[60px]'>
                 <ConversationHeader userData={userData}  />
             </div>
-            <div ref={cnv} className='w-full max-w-[500px] mx-auto overflow-y-auto'
+            <div ref={cnv} className='w-full max-w-[700px] mx-auto overflow-y-auto'
                 style={{height : `calc(100vh - 260px)`}}
             >
                 <MessagesList data={messages} />
@@ -99,7 +104,7 @@ function MessagesList({data}) {
     const { user } = useContext(UserContext) || {}
 
     return (
-        <ul className='px-2'>
+        <ul className='p-2'>
             { data.map((message, index) => 
                 <div key={index}>
                     <UserMessage m={message} username={user?.username}  />
@@ -125,7 +130,7 @@ function ConversationHeader({userData}) {
                     <img src={userData?.profile?.avatar} className="bg-white w-[35px] h-[35px] rounded-full mx-4" alt="" />
                     <div className="infos text-[12px]">
                         <h1 className="font-bold text-[11pt]">{userData?.username}</h1>
-                        <p className="text-[8pt]">last seen</p>
+                        <p className="text-[8pt]">{userData?.profile?.online ? "online" : "offline"}</p>
                     </div>
                 </Link>
             </div>

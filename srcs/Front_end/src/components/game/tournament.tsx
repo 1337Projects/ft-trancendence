@@ -1,93 +1,9 @@
 
 import React, { useContext, useEffect, useState } from 'react';
-import { ColorContext, ThemeContext } from '../../Contexts/ThemeContext';
 import Socket from '../../socket';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGamepad } from '@fortawesome/free-solid-svg-icons';
-import { authContext, friendsContext, userContext } from '../../Contexts/authContext';
 import { useNavigate } from 'react-router-dom';
 import {notsSocket} from '../../socket'
 
-const myroom = {
-    "id": 119,
-    "status": "ready",
-    "name": "7bfa33c193c665fc95d83f7f",
-    "players": [
-        {
-            "id": 1,
-            "user": {
-                "id": 1,
-                "username": "aamhamdi",
-                "email": "aamhamdi@student.1337.ma",
-                "first_name": "Abdelhadi",
-                "last_name": "Amhamdi",
-                "profile": {
-                    "image": "https://cdn.intra.42.fr/users/a60d6e59c8e25f00d89f55621023e181/aamhamdi.jpg",
-                    "bio": "rank number #1 in ping pong\naamhamdi.com",
-                    "level": 0.7,
-                    "rank": 1,
-                    "notification_channel_name": "specific..inmemory!ANHddxJcPPML"
-                }
-            },
-            "channel_name": "specific..inmemory!zDMwQcRNKKNd"
-        },
-        {
-            "id": 2,
-            "user": {
-                "id": 3,
-                "username": "tahaexo",
-                "email": "taha@email.com",
-                "first_name": "taha",
-                "last_name": "exo",
-                "profile": {
-                    "image": "http://localhost:8000/static/you.png",
-                    "bio": "rank number #1 in ping pong\ntahaexo.com",
-                    "level": 0.7,
-                    "rank": 3,
-                    "notification_channel_name": "specific..inmemory!uofVYIDPFDhx"
-                }
-            },
-            "channel_name": "specific..inmemory!aJBlpEuVCZHg"
-        },
-        {
-            "id": 3,
-            "user": {
-                "id": 2,
-                "username": "testuser",
-                "email": "testuser@example.com",
-                "first_name": "testuser",
-                "last_name": "testuser",
-                "profile": {
-                    "image": "http://localhost:8000/static/you.png",
-                    "bio": "",
-                    "level": 0.7,
-                    "rank": 2,
-                    "notification_channel_name": "specific..inmemory!WtgXHfPtULmM"
-                }
-            },
-            "channel_name": "specific..inmemory!rbUgMExkAOpi"
-        },
-        {
-            "id": 4,
-            "user": {
-                "id": 4,
-                "username": "admin",
-                "email": "admin@example.com",
-                "first_name": "admin",
-                "last_name": "admin",
-                "profile": {
-                    "image": "http://localhost:8000/static/you.png",
-                    "bio": "",
-                    "level": 0.7,
-                    "rank": 4,
-                    "notification_channel_name": "specific..inmemory!TEpssiDAJLVX"
-                }
-            },
-            "channel_name": "specific..inmemory!ZvOicnnFGkBq"
-        }
-    ],
-    "max_members": 4
-}
 
 export function TournmentWaiting() {
 	const theme = useContext(ThemeContext)
@@ -185,74 +101,11 @@ export function TournmentWaiting() {
 	)
 }
 
-function Tt({ room }) {
-	const theme = useContext(ThemeContext)
-	const chartColor = theme == 'dark' ?  "#ffffff" : "#000000"
-	return (
-		<svg width="90%" height="400" viewBox="0 0 620 321" fill="none">
-			<g clipPath="url(#clip0_134_255)">
-
-				{/* winner player */}
-				<rect x="-0.5" y="0.5" width="123" height="124" rx="9.5" transform="matrix(-1 0 0 1 369 101)" stroke={chartColor}/>
-
-				{/* right lines */}
-				<g>
-					<line x1="548" y1="300.976" x2="448" y2="300.976" stroke={chartColor}/>
-					<line x1="448.647" y1="301" x2="448.647" y2="201" stroke={chartColor}/>
-					<line y1="-0.5" x2="100" y2="-0.5" transform="matrix(-1 0 0 1 548 30.5239)" stroke={chartColor}/>
-					<line x1="130.5" y1="140.0239" x2="180" y2="140.0239" transform="matrix(-1 0 0 1 548 30.5239)" stroke={chartColor}/>
-					<line y1="-0.5" x2="100" y2="-0.5" transform="matrix(-3.43279e-10 1 1 1.29538e-09 449.147 30)" stroke={chartColor}/>
-				</g>
-
-				{/* left lines */}
-				<g>
-					<line y1="-0.5" x2="100" y2="-0.5" transform="matrix(1 0 0 -1 72 300.476)" stroke={chartColor}/>
-					<line y1="-0.5" x2="100" y2="-0.5" transform="matrix(3.43279e-10 -1 -1 -1.29538e-09 170.853 301)" stroke={chartColor}/>
-					<line x1="72" y1="30.0239" x2="172" y2="30.0239" stroke={chartColor}/>
-					<line x1="202" y1="170.0239" x2="245" y2="170.0239" stroke={chartColor}/>
-					<line x1="171.353" y1="30" x2="171.353" y2="130" stroke={chartColor}/>
-				</g>
-
-				{/* left players */}
-				<g>
-					<rect x="0.5" y="0.5" width="70.7772" height="70.9067" rx="9.5" stroke={chartColor}/>
-					<rect x="0.5" y="248.839" width="70.7772" height="70.9067" rx="9.5" stroke={chartColor}/>
-					<rect x="132.5" y="130.5" width="70.7772" height="70.9067" rx="9.5" stroke={chartColor}/>
-					<image clipPath="inset(0% round 10px)" href={room?.players[0]?.user?.profile?.image} height="70.9067"  width="70.7772" x="0.5" y="0.5"/>
-					<text x="0.5" y="100.5" fill={chartColor}>{room?.players[0]?.user?.username}</text>
-					<image clipPath="inset(0% round 10px)" href={room?.players[1]?.user?.profile?.image} height="70.9067" width="70.9067" x="0.5" y="248.839"/>
-					<text x="0.5" y="230.5" fill={chartColor}>{room?.players[1]?.user?.username}</text>
-				</g>
-
-				{/* right players */}
-				<g>
-					<rect x="-0.5" y="0.5" width="70.9067" height="70.9067" rx="9.5" transform="matrix(-1 0 0 1 619.015 0)" stroke={chartColor}/>
-					<rect x="-0.5" y="0.5" width="70.9067" height="70.9067" rx="9.5" transform="matrix(-1 0 0 1 618.903 248.382)" stroke={chartColor}/>
-					<rect x="-0.5" y="0.5" width="70.9067" height="70.9067" rx="9.5" transform="matrix(-1 0 0 1 486.907 130)" stroke={chartColor}/>
-					<image clipPath="inset(0% round 10px)" href={room?.players[2]?.user?.profile?.image} height="70.9067" transform="matrix(-1 0 0 1 619.015 0)" width="70.9067" x="-0.5" y="0.5"/>
-					<text x="-67.5" y="100.5" fill={chartColor} transform="translate(618.903 0) scale(1, 1)">{room?.players[2]?.user?.username}</text>
-					<image clipPath="inset(0% round 10px)" href={room?.players[3]?.user?.profile?.image} x="-0.5" y="0.5" transform="matrix(-1 0 0 1 618.903 248.382)" width="70.9067" height="70.9067"/>
-					<text x="-60.5" y="-15" transform="translate(618.903 248.382) scale(1, 1)" width="70.9067" height="70.9067" fill={chartColor} >{room?.players[3]?.user?.username}</text>
-				</g>
-			
-			</g>
-			<defs>
-				<clipPath id="clip0_134_255">
-					<rect width="620" height="321" fill="white"/>
-				</clipPath>
-			</defs>
-		</svg>
-	)
-}
-
 
 export default function Tournament() {
-	const theme = useContext(ThemeContext);
+
 	const [room, setRoom] = useState(null)
 	const [invite, setInvite] = useState(null)
-	const color = useContext(ColorContext)
-	const friends = useContext(friendsContext)
-	const user = useContext(authContext)
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -355,4 +208,86 @@ export default function Tournament() {
 			</ul>
 		</div>
 	)
+}
+
+
+const myroom = {
+    "id": 119,
+    "status": "ready",
+    "name": "7bfa33c193c665fc95d83f7f",
+    "players": [
+        {
+            "id": 1,
+            "user": {
+                "id": 1,
+                "username": "aamhamdi",
+                "email": "aamhamdi@student.1337.ma",
+                "first_name": "Abdelhadi",
+                "last_name": "Amhamdi",
+                "profile": {
+                    "image": "https://cdn.intra.42.fr/users/a60d6e59c8e25f00d89f55621023e181/aamhamdi.jpg",
+                    "bio": "rank number #1 in ping pong\naamhamdi.com",
+                    "level": 0.7,
+                    "rank": 1,
+                    "notification_channel_name": "specific..inmemory!ANHddxJcPPML"
+                }
+            },
+            "channel_name": "specific..inmemory!zDMwQcRNKKNd"
+        },
+        {
+            "id": 2,
+            "user": {
+                "id": 3,
+                "username": "tahaexo",
+                "email": "taha@email.com",
+                "first_name": "taha",
+                "last_name": "exo",
+                "profile": {
+                    "image": "http://localhost:8000/static/you.png",
+                    "bio": "rank number #1 in ping pong\ntahaexo.com",
+                    "level": 0.7,
+                    "rank": 3,
+                    "notification_channel_name": "specific..inmemory!uofVYIDPFDhx"
+                }
+            },
+            "channel_name": "specific..inmemory!aJBlpEuVCZHg"
+        },
+        {
+            "id": 3,
+            "user": {
+                "id": 2,
+                "username": "testuser",
+                "email": "testuser@example.com",
+                "first_name": "testuser",
+                "last_name": "testuser",
+                "profile": {
+                    "image": "http://localhost:8000/static/you.png",
+                    "bio": "",
+                    "level": 0.7,
+                    "rank": 2,
+                    "notification_channel_name": "specific..inmemory!WtgXHfPtULmM"
+                }
+            },
+            "channel_name": "specific..inmemory!rbUgMExkAOpi"
+        },
+        {
+            "id": 4,
+            "user": {
+                "id": 4,
+                "username": "admin",
+                "email": "admin@example.com",
+                "first_name": "admin",
+                "last_name": "admin",
+                "profile": {
+                    "image": "http://localhost:8000/static/you.png",
+                    "bio": "",
+                    "level": 0.7,
+                    "rank": 4,
+                    "notification_channel_name": "specific..inmemory!TEpssiDAJLVX"
+                }
+            },
+            "channel_name": "specific..inmemory!ZvOicnnFGkBq"
+        }
+    ],
+    "max_members": 4
 }

@@ -10,7 +10,8 @@ export default {
         lightBg : '#f7f7f7',
         lightText : '#374151',
         lightItems : 'white',
-        darkItems : '#1b1b1f',
+        darkItems : '#0d1216',
+        // darkItems : '#1b1b1f',
         darkText : 'white',
         darkBg : '#020408',
       },
@@ -19,7 +20,9 @@ export default {
         'pong': "url('/wallpaperflare.png')",
         'pat': "url('/ccchaos.svg')",
         'banner': "url('/banner.png')",
-        "chat" : "url('/GGG.svg')"
+        "chat" : "url('/GGG.svg')",
+        "blackG" : "linear-gradient(0deg, rgba(0,0,0,1), rgba(0,0,0,.5), rgba(0,0,0,0) 90%)",
+        "blackGT" : "linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.5), rgba(0,0,0,0) 100%)"
       },
       fontFamily : {
         'kaushan' : ['"kaushan script"', "sans-serif"],

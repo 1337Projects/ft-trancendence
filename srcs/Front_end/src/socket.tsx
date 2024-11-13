@@ -1,7 +1,8 @@
 
-
-
 class WebSocketService {
+    callbacks: any[];
+    socket: null | WebSocket;
+    queue: never[];
 
     constructor() {
         this.socket = null
@@ -13,7 +14,7 @@ class WebSocketService {
         this.callbacks[key] = callback
     }
 
-    connect(url) {
+    connect(url : string) {
         if (this.socket && this.socket.readyState == WebSocket.OPEN)
             this.close()
         if (!this.socket || this.socket.readyState == WebSocket.CLOSED) {
@@ -35,6 +36,9 @@ class WebSocketService {
                 let data = JSON.parse(event.data)
                 console.log("this is it => " , data)
                 switch (data.response.status) {
+                    case 100:
+                        this.callbacks["roomDataHandler"](data.response.data)
+                        break;
                     case 201:
                         console.log(data.response.room)
                         this.callbacks["setRoom"](data.response.room)
@@ -50,12 +54,14 @@ class WebSocketService {
                         this.callbacks["resultHandler"](data.response.match)
                         break;
                     case 205:
-                        console.log('205 ==== > ',  data.response)
+                        console.log("msg => " ,  data.response)
+                        console.log(this.callbacks)
                         this.callbacks["setData"](prev => [...prev , data.response.message])
+                        this.callbacks["cnvsUpdate"](data.response.conversation)
                         break;
                     case 206:
-                        console.log('206 ==== > ',  data.response)
-                        this.callbacks["setData"](data.response.messages)
+                        console.log("206 => ", data.response)
+                        this.callbacks["setData"](data.response.messages.reverse())
                         this.callbacks["setUser"](data.response.user)
                         break;
                     case 207:
@@ -70,6 +76,7 @@ class WebSocketService {
                         this.callbacks["cnvsHandler"](data.response.conversations)
                         break;
                     case 210:
+                        console.log('aaaa')
                         this.callbacks["tr_data"](data.response)
                     case 400:
                         console.log(data.response.error)

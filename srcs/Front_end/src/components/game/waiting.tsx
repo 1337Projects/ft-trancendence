@@ -1,22 +1,20 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {ThemeContext, ColorContext} from '../../Contexts/ThemeContext'
-import { useContext, useEffect, useState } from "react"
-import { faGamepad } from '@fortawesome/free-solid-svg-icons'
+
+
+import React, { useContext, useEffect, useState } from "react"
 import Socket from '../../socket'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { friendsContext, userContext } from '../../Contexts/authContext'
 import {notsSocket} from '../../socket'
 
 
 export default function Waiting() {
-    const theme = useContext(ThemeContext)
-    const color = useContext(ColorContext)
+    // const theme = useContext(ThemeContext)
+    // const color = useContext(ColorContext)
     const [room, setRoom] = useState(null)
     const [invite, setInvite] = useState(false)
     const navigate = useNavigate()
     const [searchParam, setSearchParam] = useSearchParams()
-    const friends = useContext(friendsContext)
-    const user = useContext(userContext)
+    // const friends = useContext(friendsContext)
+    // const user = useContext(userContext)
 
 
     

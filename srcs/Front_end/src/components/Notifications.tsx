@@ -8,15 +8,16 @@ import { FirendType } from "../Types";
 import { accept_friend_request, reject_friend_request } from "./profile/ActionsHandlers";
 
 function NotItem({data}) {
+
     // console.log(data, "++++")
     return (
         <li className="flex relative font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
-            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 rounded-[50%]" />
+            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 mx-2 border-[1px] border-black/20 rounded-[50%]" />
             <div className="text text-primaryText">
                 <Link to={data.action}>
-                    <h1 className="font-bold">{data.title}</h1>
+                    <h1 className="font-bold text-sm">{data.sender.username}</h1>
                 </Link>
-                <p className="text-[14px] mt-1 ml-1">{data.message}</p>
+                <p className="mt-1 text-[8pt]">{data.message}</p>
             </div>
             <div className="date text-center w-[60px] text-[9px]">
                 <p className="">{data.date}</p>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import HeroImg from "../assets/HeroImg1"
 import FriendImg from '../assets/FriendImg'
 import AiImg from "../assets/AiImg"
@@ -7,15 +7,14 @@ import { json, Link } from "react-router-dom"
 import { FaGamepad } from "react-icons/fa6"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
-
-
+import MyUseEffect from '../../hooks/MyUseEffect'
 function Hero({color}) {
     
     return (
         <div className="h-2/3 sm:h-1/2 max-h-[400px] sm:max-h-[400px]">
             <div className="flex items-center justify-center h-full w-full rounded-sm p-1">
                 <div className="place-items-center flex items-center justify-center w-full">
-                    <div className="centent w-[50%] h-full leading-snug pl-7 flex justify-between items-center">
+                    <div className="centent w-[50%] h-full leading-snug px-8 flex justify-between items-center">
                         <div className="">
                             <p style={{color : color}} >Play Ping Pong</p>
                             <h3 className="text-[2rem] mt-2 font-kav max-w-[270px] font-bold capitalize">its time to play ping pong</h3>
@@ -59,7 +58,7 @@ function Card({color, img, text}) {
 import { RiGamepadLine } from "react-icons/ri";
 import { DialogContext } from "../../Contexts/DialogContext"
 // import { MdGamepad } from "react-icons/md";
-import { RiGamepadFill } from "react-icons/ri";
+
 
 
 function Cards({color}) {
@@ -67,7 +66,7 @@ function Cards({color}) {
     const { open, setOpen } = useContext(DialogContext) || {}
 
     return (
-        <div className={`pl-7 ${appearence?.theme === 'light' ? "text-lightText" : "text-darkText"}`}>
+        <div className={`px-8 ${appearence?.theme === 'light' ? "text-lightText" : "text-darkText"}`}>
             <div className={`items-center flex justify-between`}>
                 <div>
                     <h1 className="text-secondary capitalize ">game modes:</h1>
@@ -88,7 +87,7 @@ function Cards({color}) {
                     <TournmentDialog  />
                 }
             </div>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 <Card color={color} img="/game1.svg" text="play random match"/>
                 <Card color={color} img="/game1.svg" text="play vs Computer"/>
                 <Card color={color} img="/game1.svg" text="play with friend"/>
@@ -100,20 +99,64 @@ function Cards({color}) {
 
 export default function Game() {
     const appearence = useContext(ApearanceContext)
+    const [tournments, setTournments] = useState([])
 
+    MyUseEffect(async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/get_all/`, {
+                method : 'GET',
+                credentials : 'include'
+            })
 
+            if (!response.ok) {
+                const { error } = await response.json()
+                throw  new Error(error)
+            }
+
+            const { data } = await response.json()
+            setTournments(data)
+        } catch(err) {
+            console.log(err)
+        }
+    }, [])
 
     return (
         <>
-            <div className={`${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} mt-2 w-full h-[100vh] overflow-scroll p-2`}>
+            <div className={`${appearence?.theme == 'light' ? "bg-lightItems text-lightText " : "bg-darkItems text-darkText"} mt-2 w-full h-[100vh] overflow-scroll p-2`}>
                 <div className="mx-auto max-w-[800px] h-full">
                     <Hero color={appearence?.color} />
                     <Cards color={appearence?.color} />
                     
-                    <div className="mt-16 mx-10 h-[200px]">
-                        <div className="rounded border-[1px] border-black/10  h-[100px] flex justify-center items-center">
-                            <h1 className="text-sm">no tournments yet, create a new one !</h1>
-                        </div>
+                    <div className="mt-16 w-full h-[600px] px-8">
+                        <h1 className="my-4 capitalize">played tournments :</h1>
+                        {
+                            tournments.length ?
+                            <div className="h-fit min-h-[200px] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3  gap-4">
+                                {
+                                    tournments.map(t => {
+                                        return (
+                                            <div key={t.id} className="w-full">
+                                                <div className="w-full h-[180px] relative rounded overflow-hidden">
+                                                    <img className="" src="/tour.webp" alt="img" />
+                                                    <div 
+                                                        style={{background : appearence?.color}} 
+                                                        className="absolute top-1 left-1 px-4 text-xs py-2 text-white rounded"
+                                                    >{t.mode}</div>
+
+                                                    <div className="absolute bottom-0 w-full bg-blackG p-2 h-[100px]">
+                                                        <Link to={`tournment/waiting/${t.id}`} className="text-white border-[1px] cursor-pointer uppercase border-white/40 px-4 py-1 right-2 rounded absolute bottom-2 text-xs">join</Link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                            :
+                            <div className={`rounded border-[1px] ${appearence?.theme == 'light' ? "border-black/10" : "border-white/10"}  h-[100px] flex justify-center items-center`}>
+                                <h1 className="text-sm">no tournments yet, create a new one !</h1>
+                            </div>
+                        }
                     </div>
                 </div>
             </div> 
@@ -152,6 +195,16 @@ function TournmentDialog() {
 
         const { id } = await response.json()
         setCreated(id)
+    }
+
+    function randomize() {
+        const players = {}
+        
+        for (let i = 0; i < data.members; i++) {
+            let r = (Math.random() + 1).toString(36).substring(2);
+            players[`player${i}`] = r
+        }
+        setPlayers(players)
     }
 
     return (
@@ -197,25 +250,32 @@ function TournmentDialog() {
                                 </div>
                                 {
                                     data.mode === 'local' && 
-                                    <div className="border-[.3px] border-black/20 rounded w-full h-fit max-h-[400px] overflow-auto mt-6 p-6 grid gap-4">
-                                        {
-                                            [...Array(data.members)].map((player, index) => {
-                            
-                                                return (
-                                                <div key={index} className="text-sm">
-                                                    <label htmlFor={`player${index}`} className="">{`player${index + 1}`}</label>
-                                                    <input 
-                                                        type="text" 
-                                                        className="border-[.3px] border-black/20 rounded h-[40px] px-2 mt-2 w-full" 
-                                                        placeholder="player name..."
-                                                        id={`player${index}`}
-                                                        onChange={(e) => setPlayers({...players , [`player${index}`] : e.target.value})}
-                                                    />
-                                                </div>)
-                                            })
+                                    <div className="mt-2">
+                                        <button 
+                                            onClick={randomize}
+                                            className="my-4 p-2 text-sm px-4 rounded text-white ml-[100%] translate-x-[-100%]"
+                                            style={{background : color}}
+                                        >randomize</button>     
+                                        <div className="border-[.3px] border-black/20 rounded w-full h-fit max-h-[400px] overflow-auto p-6 grid gap-4">
+                                            {
+                                                [...Array(data.members)].map((player, index) => {
+                                
+                                                    return (
+                                                    <div key={index} className="text-sm">
+                                                        <label htmlFor={`player${index}`} className="">{`player${index + 1}`}</label>
+                                                        <input 
+                                                            type="text" 
+                                                            className="border-[.3px] border-black/20 rounded h-[40px] px-2 mt-2 w-full" 
+                                                            placeholder="player name..."
+                                                            value={players[`player${index}`]}
+                                                            id={`player${index}`}
+                                                            onChange={(e) => setPlayers({...players , [`player${index}`] : e.target.value})}
+                                                        />
+                                                    </div>)
+                                                })
 
-                                        }
-
+                                            }
+                                        </div>
                                     </div>
                                 }
                         </div>
@@ -242,10 +302,16 @@ function TournmentDialog() {
                     <div>
                         <button 
                             onClick={() => setOpen!(false)}
+                            className="px-4 h-[40px] border-[1px] mr-4 border-black/20 rounded text-sm"
+                        >
+                            close
+                        </button>   
+                        <button 
+                            onClick={() => setOpen!(false)}
                             style={{background: color}}
                             className="px-4 h-[40px] rounded text-sm text-white"
                         >
-                            <Link to={`tournment/${created}`}>
+                            <Link to={data.mode == 'local' ? `tournment/${created}/local` : `tournment/waiting/${created}/`}>
                                 luanch tournment
                             </Link>
                         </button>

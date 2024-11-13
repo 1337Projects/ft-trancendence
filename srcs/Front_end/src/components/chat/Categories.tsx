@@ -27,26 +27,3 @@ export default function Categories({categorie, Handler}) {
         </div>
     )
 }
-
-// export function reducerHandler(state, action) {
-//     switch (action.type) {
-//         case 'seen':
-//             return state.map(item => {
-//                 if (item.id === action.id && item.categorie === 'unread')
-//                     return {...item, categorie : ''}
-//                 return item
-//             })
-//         case 'archive':
-//             return state.map(item => {
-//                 if (item.id === action.id) {
-//                     return {...item, categorie : 'archived'}
-//                 }
-//                 return item
-//             })
-//         case 'delete':
-//             return state.filter(item => item.id !== action.id)
-
-//         default:
-//             throw new Error('Error: unknown action');
-//     }
-// }
