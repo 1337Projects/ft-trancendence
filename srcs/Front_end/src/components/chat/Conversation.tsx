@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef} from 'react'
+import React, {useContext, useState, useRef, useEffect} from 'react'
 import { Link, useParams } from 'react-router-dom';
 
 import Socket from '../../socket'
@@ -9,6 +9,7 @@ import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
 import { RiCheckDoubleFill } from 'react-icons/ri';
+import { flushSync } from 'react-dom'
 
 
 function calc_time(created_at) {
@@ -50,49 +51,70 @@ export default function Conversation() {
     const {authInfos} = useContext(UserContext) || {}
     const cnv = useRef<HTMLDivElement | null>(null)
     const {user} = useParams()
-
-    const { messages, userData } = useContext(ChatContext) || {}
+    
+    const [loading, setLoading] = useState(false)
+    const { messages, setMessages, userData } = useContext(ChatContext) || {}
+    let page = 1;
 
     MyUseEffect(() => {
-        Socket.sendMessage({
-            "partner": user,
-            "from": authInfos?.username,
-            "event" : "fetch_messages"
-            // add here page number and limit or (not if you want to use the ones in backend)
+        cnv.current?.addEventListener('scroll', () => {
+            if ( cnv.current && cnv.current.scrollTop == 0) {
+                page += 1
+                send_fetch_event(page)
+            }
         })
+    }, [])
+
+    MyUseEffect(() => {
+        setMessages!([])
+        send_fetch_event(page)
     }, [user])
     
-    
-    
-    
+
     MyUseEffect(() => {
+        page = Math.ceil(messages?.length! / 10) + 1
+        console.log(page)
         if (cnv && cnv.current) {
             cnv.current.scrollTo({
-                top : cnv.current.scrollHeight + 100,
-                behavior : 'instant'
+                top : 14 * 10,
+                behavior : 'smooth'
             })
         }
-        cnv.current?.addEventListener('scroll', () => {
-            if ( cnv.current && cnv.current.scrollTop <= 0) {
-                // send neew fetch event with page number + 1
-            }
+        
+        Socket.sendMessage({
+            "event" : "seen_messages",
+            "sender" : user,
+            "receiver" : authInfos?.username
         })
     } , [messages])
 
-    
-    
+    function send_fetch_event(page) {
+        setLoading(true)
+        setTimeout(() => {
+            Socket.sendMessage({
+                "partner": user,
+                "from": authInfos?.username,
+                "event" : "fetch_messages",
+                page
+            })
+            setLoading(false)
+        }, 1000)
+    }
+
 
     return (
         <div className='w-full h-full flex flex-col space-y-2'>
             <div className='w-full h-[60px]'>
                 <ConversationHeader userData={userData}  />
             </div>
-            <div ref={cnv} className='w-full max-w-[700px] mx-auto overflow-y-auto'
+            <div ref={cnv} className='w-full relative max-w-[700px] mx-auto overflow-y-auto'
                 style={{height : `calc(100vh - 260px)`}}
             >
+                {loading && <h1 className=' sticky text-center w-full top-2 text-sm p-2'>loading messages</h1>}
+               
                 <MessagesList data={messages} />
             </div>
-            <div className='w-full h-[100px]'>
+            <div className='w-full px-10 h-[100px]'>
                 <ChatInput />
             </div>
         </div>
@@ -104,9 +126,9 @@ function MessagesList({data}) {
     const { user } = useContext(UserContext) || {}
 
     return (
-        <ul className='p-2'>
+        <ul className='p-2 flex-row-reverse'>
             { data.map((message, index) => 
-                <div key={index}>
+                <div className='w-full' key={index}>
                     <UserMessage m={message} username={user?.username}  />
                 </div>
             )}

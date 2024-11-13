@@ -23,6 +23,8 @@ export default function ChatLayout() {
     const [ messages, setMessages ] = useState<MessageType[]>([])
     const [ userData, setUserData ] = useState<UserType | null>(null)
 
+
+
     const value = {
         messages,
         setMessages,
@@ -54,11 +56,11 @@ export default function ChatLayout() {
 
     return (
         <>
-            <div className={`${theme === 'light' ? "text-lightText" : "text-darkText"} w-full h-full mt-2 shadow-sm rounded-sm flex-grow`}>
-                <div className="flex w-full h-full">
-                    <div className={`h-full ${theme == 'light' ? "bg-white border-black/20" : "bg-darkItems border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px] xl:w-[400px]  ${menu ? "active-menu" : "non-active-menu"}`}>
-                        <div className={`w-full h-fit xl:px-4 ${menu && "px-4"}`}>
-                            <div className={`text-[16pt] w-full h-[70px] xl:hidden flex items-center  ${menu ? "justify-end" : "justify-center"}`} onClick={() => setMenu(prev => !prev)}>
+            <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-full mt-2 shadow-sm rounded-sm flex-grow`}>
+                <div className="flex w-full h-full ">
+                    <div className={`h-full backdrop-blur-md ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px] md:w-[400px]  ${menu ? "active-menu" : "non-active-menu"}`}>
+                        <div className={`w-full h-fit  md:px-4 ${menu && "px-4"}`}>
+                            <div className={`text-[16pt] w-full h-[70px] md:hidden flex items-center  ${menu ? "justify-end" : "justify-center"}`} onClick={() => setMenu(prev => !prev)}>
                                 {
                                     menu ? 
                                     <TbLayoutSidebarRightExpandFilled />
@@ -72,7 +74,7 @@ export default function ChatLayout() {
                         </div>
                     </div>
                     <div className={`flex-grow w-full`}>
-                        <div className={`w-full h-full ${theme == 'light' ? "bg-lightItems" : "bg-darkItems"} p-2 `}>
+                        <div className={`w-full h-full p-2 `}>
                             <ChatContextProvider value={value}>
                                 <Outlet />
                             </ChatContextProvider>
