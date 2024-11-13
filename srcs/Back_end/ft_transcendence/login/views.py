@@ -19,8 +19,11 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
- 
+from django.contrib.auth import get_user_model
+from chat.views import get_id1
+
 load_dotenv()
+User = get_user_model()
 
 def generate_refresh_token(user):
     payload = {
@@ -276,21 +279,23 @@ def confirm_password(request):
             return JsonResponse({'error': 'Invalid token'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+
 @api_view(["post"])
 def change_password(request):
+    id = get_id1(request)
     old_password = request.data.get('old_password')
     if not old_password:
         return JsonResponse({'error': 'Old password is missing'}, status=400)
-    # if not check_password(old_password, request.user.password):
-    #     return JsonResponse({'error': 'Invalid old password'}, status=400)
+    if not check_password(old_password, request.user.password):
+        return JsonResponse({'error': 'Invalid old password'}, status=400)
     new_password = request.data.get('new_password')
     if not new_password:
         return JsonResponse({'error': 'New password is missing'}, status=400)
     if not validate_password(new_password):
         return JsonResponse({'error': 'Password does not meet all the requirements.'}, status=400)
-
-    request.user.password = make_password(new_password)
-    request.user.save()
+    user = User.objects.get(id=id)
+    user.password = make_password(new_password)
+    user.save()
     return JsonResponse({'message': 'The Password has been changed'}, status=200)
 
 @api_view(["post"])
