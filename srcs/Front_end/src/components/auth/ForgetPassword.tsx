@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import MyInput from "../ui/Input"
 import { Form, Formik } from "formik"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import * as Yup from 'yup' 
 import { AlertType } from "../../Types"
 import Alert from "../ui/Alert"
@@ -62,7 +62,6 @@ async function resetPasswordHandler(values) {
 
         if (!response.ok) {
             const { error } =  await response.json()
-            // console.log(error)
             throw Error(error)
         }
 
@@ -88,10 +87,9 @@ export default function ForgetPassword() {
     const token = params.get('token')
     const email = params.get('email')
     const [alert, setAlert] = useState<AlertType | null>(null)
+
+    const navigate = useNavigate()
     
-    useEffect(() => {
-        console.log(alert)
-    }, [alert])
 
     return (
        <div className="px-10">
@@ -120,10 +118,13 @@ export default function ForgetPassword() {
                     <Formik
                         initialValues={{ password : '' }}
                         validationSchema={PasswordvalidationSchema}
-                        onSubmit={(values) => resetPasswordHandler({...values, token , email})}
+                        onSubmit={async (values) => {
+                            setAlert(await resetPasswordHandler({...values, token , email}))
+                            setTimeout(() => navigate('/auth/login') , 1000 * 3)
+                        }}
                     >
                         <Form>
-                            <MyInput type="password" id="password" label="password" name="password" placeholder="***************" />
+                            <MyInput type="password" id="password" label="new password" name="password" placeholder="***************" />
                             <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt] capitalize">reset</button>
                         </Form>
                     </Formik>
