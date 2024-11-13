@@ -96,9 +96,13 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         from_ = text_data_json.get('from')
         sender_ser = await get_user_with_profile(from_)
         receiver_ser = await get_user_with_profile(to_)
+        #set all the messages as seen not yet implemented
         all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
+        for message in all_messages:
+            message.seen = True
+            await sync_to_async(message.save)()
 
-        # #handle the pagination
+        #handle the pagination
         page = text_data_json.get('page', 1)
         limit = text_data_json.get('limit', 10)
         paginator = Paginator(all_messages, limit)
@@ -186,7 +190,49 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+    async def seen_message(self,text_data_json):
+        # conversation_id = text_data_json.get('conversation_id')
+        # print("hello")
+        # sys.stdout.flush()
+        # conversation = await sync_to_async(Conversation.objects.get)(id=conversation_id)
+        # print("hello2")
+        # sys.stdout.flush()
+        # messages = conversation.messages.all()
+        # print("hello3")
+        # sys.stdout.flush()
+        # for message in messages:
+        #     print("message is :", message)
+        #     sys.stdout.flush()
+        #     message.seen = True
+        #     await sync_to_async(message.save)()
+
+        #or you can use 
+        sender_id = text_data_json.get('sender_id')
+        receiver_id = text_data_json.get('receiver_id')
+        all_messages = await get_messages_between_users(sender_id, receiver_id)
+        for message in all_messages:
+            message.seen = True
+            await sync_to_async(message.save)()
+
+    
+        #khassni l id dyalo bach nl9a smyto f channel_name_grp so i can send him the event
+        # for key, value in channel_name_grp.items():
+        #     if str(id_sender) == key:
+        #         channel_name = value
+        #         break
+        await self.send(text_data=json.dumps({
+            'response': {
+                'event': 'seen_message',
+                'status': 212,
+            }
+        }))
+
+    
+
+
     async def receive(self, text_data=None):
+        print("text data", text_data)
+        sys.stdout.flush()
         text_data_json = json.loads(text_data)
         event = text_data_json.get('event')
         if event == "fetch_conversations":
@@ -195,5 +241,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             await self.fetch_messages(text_data_json)
         elif event == 'new_message':
             await self.new_message(text_data_json)
+        elif event == 'seen_messages':
+            await self.seen_message(text_data_json)
                 
 
