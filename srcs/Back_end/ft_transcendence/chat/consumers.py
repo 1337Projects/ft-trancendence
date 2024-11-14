@@ -29,6 +29,11 @@ def get_messages_between_users(sender_id, receiver_id):
     nbr_msgs = len(messages)
     return messages
 
+@database_sync_to_async
+def check_if_blocked(blocker_id, blocked_id):
+    is_blocked = BlockedUser.objects.filter(Q(blocker_id=blocker_id, blocked_id=blocked_id) | Q(blocker_id=blocked_id, blocked_id=blocker_id))
+    return is_blocked.exists()
+
 channel_name_grp = {}
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
@@ -126,6 +131,11 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         try:
             sender = await sync_to_async(User.objects.get)(username=from_)
             receiver = await sync_to_async(User.objects.get)(username=to_)
+            if (await check_if_blocked(sender.id, receiver.id)) == True:
+                await self.send(text_data=json.dumps({
+                    'error': 'you are blocked'
+                }))
+                return
         except User.DoesNotExist:
             await self.send(text_data=json.dumps({
                 'error': 'user not found'
