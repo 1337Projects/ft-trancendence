@@ -31,7 +31,10 @@ def get_messages_between_users(sender_id, receiver_id):
 
 @database_sync_to_async
 def check_if_blocked(blocker_id, blocked_id):
-    is_blocked = BlockedUser.objects.filter(Q(blocker_id=blocker_id, blocked_id=blocked_id) | Q(blocker_id=blocked_id, blocked_id=blocker_id))
+    is_blocked = BlockedUser.objects.filter(
+        Q(blocker_id=blocker_id, blocked_id=blocked_id) |
+        Q(blocker_id=blocked_id, blocked_id=blocker_id)
+    )
     return is_blocked.exists()
 
 channel_name_grp = {}
@@ -239,8 +242,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 'status': 212,
             }
         }))
-
-    
 
 
     async def receive(self, text_data=None):
