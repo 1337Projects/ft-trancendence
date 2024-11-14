@@ -1,6 +1,6 @@
 
 import { Outlet } from "react-router-dom"
-import React, { useContext, useEffect, useState } from "react"
+import React, { Suspense, useContext, useEffect, useState } from "react"
 import ConversationsList, {Friends} from '../components/chat/chat'
 import { ApearanceContext } from "../Contexts/ThemeContext"
 import { FaBars } from "react-icons/fa"
@@ -17,19 +17,18 @@ export default function ChatLayout() {
     const [menu, setMenu] = useState<Boolean>(false)
 
     const { user } = useContext(UserContext) || {}
-    const [ cnvs , setCnvs ] = useState<any>([])
+    const [ cnvs , setCnvs ] = useState<any>(null)
 
 
-    const [ messages, setMessages ] = useState<MessageType[]>([])
+    const [ messages, setMessages ] = useState<MessageType[] | null>(null)
     const [ userData, setUserData ] = useState<UserType | null>(null)
-
 
 
     const value = {
         messages,
         setMessages,
         userData,
-        setUserData
+        setUserData,
     }
 
     function UpdateConversationsHandler(cnv) {
@@ -76,7 +75,9 @@ export default function ChatLayout() {
                     <div className={`flex-grow w-full`}>
                         <div className={`w-full h-full p-2 `}>
                             <ChatContextProvider value={value}>
-                                <Outlet />
+                                <Suspense fallback={<div>loading ...</div>}>
+                                    <Outlet />
+                                </Suspense>
                             </ChatContextProvider>
                         </div>
                     </div>

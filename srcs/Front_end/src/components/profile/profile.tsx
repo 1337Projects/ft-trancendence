@@ -74,7 +74,7 @@ export default function Profile() {
 	const appearence = useContext(ApearanceContext)
 	const {authInfos, user} = useContext(UserContext) || {}
 	const {user_name} = useParams()
-	const [currentUser, setCurrentUser] = useState<UserType | null>(user!)
+	const [currentUser, setCurrentUser] = useState<UserType | null>(null)
 	const location = useLocation()
 
 	const isProfile = !location.pathname.includes('friends')
@@ -105,12 +105,7 @@ export default function Profile() {
 	return (
 		<div className={`w-full mt-2 backdrop-blur-md ${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
 			<div className={` w-full h-[90vh] sm:h-[100vh] overflow-scroll`}>
-				<div className='top-0 h-[150px] w-full border-b-[1px] overflow-hidden'>
-					<img src={currentUser?.profile.banner} className='min-w-full w-fit min-h-full h-fit' alt="" />
-				</div>
-				<div className='w-full px-2  rounded-sm h-fit mt-[-40px] flex items-center justify-center'>
-					<Banner user={currentUser} />
-				</div>
+				<Banner user={currentUser} />
 				<div className='px-4'>
 					<ul className='flex items-center py-4 text-[12pt]'>
 						<li style={{color : isProfile ? appearence?.color : ""}} className={`mr-6 cursor-pointer`} >

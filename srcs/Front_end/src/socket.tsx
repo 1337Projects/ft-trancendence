@@ -58,11 +58,10 @@ class WebSocketService {
                         this.callbacks["setData"](prev => [...prev, data.response.message])
                         this.callbacks["cnvsUpdate"](data.response.conversation)
                         break;
-                    case 206:
-                        // console.log("206 => ", data.response)
-                        this.callbacks["setData"](prev => [...[...data.response.messages].reverse(), ...prev, ])
-                        // console.log("reversed => ", [...data.response.messages].reverse())
-                        this.callbacks["setUser"](data.response.user)
+                        case 206:
+                            // console.log(data.response)
+                            this.callbacks["setData"](prev => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
+                            this.callbacks["setUser"](data.response)
                         break;
                     case 207:
                         // console.log( "data => " , data)

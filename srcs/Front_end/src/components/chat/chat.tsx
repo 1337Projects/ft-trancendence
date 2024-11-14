@@ -5,10 +5,8 @@ import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { UserContext } from "../../Contexts/authContext";
 import { FaCheckDouble } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { RiMenuSearchLine } from "react-icons/ri";
 import { CgBlock, CgTrash } from "react-icons/cg";
 import MyUseEffect from "../../hooks/MyUseEffect";
-import Socket from "../../socket";
 
 
 const actions = [
@@ -90,7 +88,7 @@ function ConversationOptions({partner}) {
 }
 
 
-function ConvItem({c, id, menu}) {
+function ConvItem({c, menu}) {
     const [time , setTime] = useState("")
     const {color} = useContext(ApearanceContext) || {}
     const {user} = useContext(UserContext) || {}
@@ -178,13 +176,12 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
     
     const { theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
-    const [visibleItem, setVisibleItem] = useState(null)
 
     const [query, setQuery] = useState<string>('')
 
-    const [cnvs, setcnvs] = useState(data)
+    const [cnvs, setcnvs] = useState(null)
 
-
+    
     MyUseEffect(() => {
         setcnvs(data)
         if (query != '') {
@@ -194,6 +191,27 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
             }))
         }
     }, [data, query])
+    
+    if (!cnvs) {
+        return (
+            <div className="px-2">
+                <div className="flex items-center mt-4">
+                    <div className="h-8 rounded-full animate-pulse w-full bg-gray-300" />
+                </div>
+                <div className={`mt-10 md:block ${menu ? "test-style" : "hidden"}`}>
+                    <div className="flex">
+                        <div className="w-[60px] mr-4 h-8 bg-gray-300 rounded animate-pulse"></div>
+                        <div className="w-[60px] h-8 bg-gray-300 rounded animate-pulse"></div>
+                    </div>
+                </div>
+                <ul className="mt-10">
+                    <div className="w-full h-8 bg-gray-300 rounded animate-pulse"></div>
+                    <div className="w-full h-8 bg-gray-300 mt-4 rounded animate-pulse"></div>
+                    <div className="w-full h-8 bg-gray-300 mt-4 rounded animate-pulse"></div>
+                </ul>
+            </div>
+        )
+    }
 
     return (
             <div className="">
@@ -213,7 +231,7 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
                     {
                         cnvs.length ?
                             cnvs?.map(c => {
-                                return <ConvItem id={visibleItem} menu={menu}  key={c.id} c={c} />
+                                return <ConvItem menu={menu}  key={c.id} c={c} />
                             })
                         :
                         <div className={`text-center border-[.6px] border-white/20 rounded-md p-10 text-sm ${menu ? "block test-style" : "hidden"} `}>no conversations found</div>
