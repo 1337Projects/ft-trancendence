@@ -85,7 +85,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_conversations(self,user_id):
         conversations_list = list(Conversation.objects.filter(Q(sender=user_id) | Q(receiver=user_id)))
-        return ConversationListSerializer(conversations_list, many=True).data
+        return ConversationSerializer(conversations_list, many=True).data
 
     async def fetch_conversations(self):
         conversations = await self.get_conversations(self.user_id)
