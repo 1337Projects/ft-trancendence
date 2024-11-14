@@ -10,8 +10,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.paginator import Paginator, EmptyPage
 from .models import Conversation, Message
 
-nbr_msgs = 0
-
 @database_sync_to_async
 def get_user_with_profile(username):
     user = User.objects.get(username=username)
@@ -117,6 +115,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         except EmptyPage:
             messages = []
         serialized_messages = [await self.serialize_message(message) for message in messages]
+        nbr_msgs = len(all_messages)
         nbr_pages = math.ceil(nbr_msgs/limit)
         await self.send(text_data=json.dumps({
             'response': {
