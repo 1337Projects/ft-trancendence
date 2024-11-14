@@ -28,6 +28,11 @@ def get_messages_between_users(sender_id, receiver_id):
     return messages
 
 @database_sync_to_async
+def get_last(all_messages):
+    last_message = all_messages[0] if len(all_messages) > 0 else None
+    return last_message
+
+@database_sync_to_async
 def check_if_blocked(blocker_id, blocked_id):
     is_blocked = BlockedUser.objects.filter(
         Q(blocker_id=blocker_id, blocked_id=blocked_id) |
@@ -104,9 +109,14 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         sender_ser = await get_user_with_profile(from_)
         receiver_ser = await get_user_with_profile(to_)
         all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
-        for message in all_messages:
-            message.seen = True
-            await sync_to_async(message.save)()
+        last_message = await get_last(all_messages)
+        if last_message:
+            receiver_id = await sync_to_async(lambda: last_message.receiver.id)()
+            last_message_seen = await sync_to_async(lambda: last_message.seen)()
+            if receiver_id == sender_ser['id'] and last_message_seen == False:
+                for message in all_messages:
+                    message.seen = True
+                    await sync_to_async(message.save)()
         page = text_data_json.get('page', 1)
         limit = text_data_json.get('limit', 10)
         paginator = Paginator(all_messages, limit)
@@ -254,7 +264,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             await self.fetch_messages(text_data_json)
         elif event == 'new_message':
             await self.new_message(text_data_json)
-        elif event == 'seen_messages':
+        elif event == 'seen_messages':#check if the receiver get the message and he is in the conversation so you can change the state of seen to true
             await self.seen_message(text_data_json)
                 
 
