@@ -1,5 +1,4 @@
 
-from login.serializer import UserSerializer
 from .models import Conversation, Message
 from rest_framework import serializers
 from account.serializer import *
