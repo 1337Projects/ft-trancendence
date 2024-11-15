@@ -8,7 +8,8 @@ import { FaGamepad } from "react-icons/fa6"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
 import MyUseEffect from '../../hooks/MyUseEffect'
-function Hero({color}) {
+
+export function Hero({color, img}) {
     
     return (
         <div className="h-2/3 sm:h-1/2 max-h-[400px] sm:max-h-[400px]">
@@ -29,7 +30,7 @@ function Hero({color}) {
                     </div>
                     <div className="relative img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
                         {/* <img src="/Ellipse.svg" className="absolute  w-[400px]" alt="" /> */}
-                        <img className="absolute" src="/herrrro.svg" alt="" />
+                        <img className="absolute" src={`${img != null ? img : "/herrrro.svg"}`} alt="" />
                     </div>
                 </div>
             </div>
