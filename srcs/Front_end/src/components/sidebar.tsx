@@ -21,12 +21,12 @@ function NavItem({text, icon, link}) {
 		<Link 
 			style={{background: isActive && color || '', color : isActive && "#ffffff" || '', fontWeight : isActive && '700' || '' }} 
 			to={link} 
-			className={`text-center w-full hover:bg-gray-700/20 rounded py-2 sm:flex sm:justify-center sm:items-center`}
+			className={`text-center w-full hover:bg-gray-700/20 rounded py-2 sm:flex sm:justify-start px-6 sm:items-center`}
 		>
 			<div className='text-[20pt] text-center w-full sm:w-fit flex justify-center'>
 				{icon}
 			</div>
-			<p className='text-xs mt-2 sm:ml-4 sm:mt-0 uppercase hidden md:block'>{text}</p>
+			<p className='text-xs mt-2 sm:ml-4 sm:mt-0 uppercase hidden sm:block'>{text}</p>
 		</Link>
 	)
 }
@@ -75,11 +75,11 @@ function SideBar() {
 				<div className='w-full h-full  sm:grid xl:px-4 px-2'>
 					<div className="h-full sm:h-[400px] sm:w-full grid grid-cols-5 items-center sm:grid-cols-1 sm:gap-2">
 						{ nav_inks.map((item, index) => (<NavItem key={index} icon={item.icon} text={item.text} link={item.link} />)) }
-						<button onClick={ThemeHandler} className='text-center sm:flex justify-center items-center'>
+						<button onClick={ThemeHandler} className='text-center sm:flex justify-start px-6 items-center'>
 							<div className='text-[20pt] w-full sm:w-fit flex justify-center'>
 								{theme === 'dark' ? <PiSunDim /> : <PiMoonStars />}
 							</div>
-							<p className='text-xs mt-4 sm:mt-0 sm:ml-4 hidden md:block'>Theme</p>
+							<p className='text-xs mt-4 sm:mt-0 sm:ml-4 hidden sm:block'>Theme</p>
 						</button>
 					</div>
 				</div>
