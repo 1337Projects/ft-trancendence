@@ -36,6 +36,9 @@ export default function Login() {
 
             const data = await response.json()
             setAuthInfosHandler!(data.access)
+            // if has 2fa enabke
+            // navigation("../2faCheck")
+            // else navigation("../../dashboard/game")
             navigation("../../dashboard/game")
 
         } catch (error) {

@@ -14,7 +14,8 @@ import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
 import { Oauth } from './components/auth/Oauth'
-
+import TwoFactor from './components/auth/2fa'
+import TwoFacCheck from './components/auth/2faCheck'
 
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 
@@ -58,6 +59,8 @@ const router = createBrowserRouter(
         <Route path='oauth/42' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`} />} />
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup/>} />
+        <Route path='2fa' element={<TwoFactor/>} />
+        <Route path='2faCheck' element={<TwoFacCheck/>} />
         <Route path='forgetPassowrd' element={<ForgetPassword />} />
         <Route path='confirme/:id' element={<ConfirmeEmail/>} />
       </Route>
