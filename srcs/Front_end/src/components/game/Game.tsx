@@ -8,7 +8,8 @@ import { FaGamepad } from "react-icons/fa6"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
 import MyUseEffect from '../../hooks/MyUseEffect'
-function Hero({color}) {
+
+export function Hero({color, img}) {
     
     return (
         <div className="h-2/3 sm:h-1/2 max-h-[400px] sm:max-h-[400px]">
@@ -29,7 +30,7 @@ function Hero({color}) {
                     </div>
                     <div className="relative img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
                         {/* <img src="/Ellipse.svg" className="absolute  w-[400px]" alt="" /> */}
-                        <img className="absolute" src="/herrrro.svg" alt="" />
+                        <img className="absolute" src={`${img != null ? img : "/herrrro.svg"}`} alt="" />
                     </div>
                 </div>
             </div>
@@ -166,7 +167,7 @@ export default function Game() {
 
 
 function TournmentDialog() {
-    const { color } = useContext(ApearanceContext) || {}
+    const { color, theme } = useContext(ApearanceContext) || {}
     const { setOpen } = useContext(DialogContext) || {}
     const { user } = useContext(UserContext) || {}
     const [data, setData] = useState({members : 4, mode : 'local'})
@@ -208,7 +209,7 @@ function TournmentDialog() {
     }
 
     return (
-        <div className="bg-white rounded-md border-black/10 p-6 border-[.3px] w-[400px] sm:w-[600px] h-fit z-40 left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%] absolute">
+        <div className={`${theme == 'light' ? "bg-white border-black/10" : "bg-darkItems border-white/20"}  rounded-md  p-6 border-[.3px] w-[400px] sm:w-[600px] h-fit z-40 left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%] absolute`}>
             <div className="h-fit">
                 <div className="">
                     <h1 className="font-bold text-lg capitalize">create tournment</h1>
@@ -225,7 +226,7 @@ function TournmentDialog() {
                                     <label className="w-full block" htmlFor="members">members</label>
                                     <input 
                                         step="4"
-                                        className="rounded px-6 h-[40px] border-[.3px] border-black/20 w-full mt-2" 
+                                        className={`rounded px-6 bg-transparent ${theme == 'light' ? "border-black/20" : "border-white/20"} h-[40px] border-[.3px] w-full mt-2`}
                                         type="number"
                                         id="members" 
                                         name="members"
@@ -239,7 +240,7 @@ function TournmentDialog() {
                                     <label className="w-full block" htmlFor="mode">mode ( local / remote )</label>
                                     <select 
                                         value={data.mode}
-                                        className="w-full block h-[40px] mt-2 px-4 border-[.3px] border-black/20 rounded" 
+                                        className={`w-full block h-[40px] mt-2 px-4 border-[.3px] bg-transparent ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded`}
                                         name="mode" 
                                         id="mode"
                                         onChange={(e) =>  setData({...data, mode : e.target.value})}
@@ -256,7 +257,7 @@ function TournmentDialog() {
                                             className="my-4 p-2 text-sm px-4 rounded text-white ml-[100%] translate-x-[-100%]"
                                             style={{background : color}}
                                         >randomize</button>     
-                                        <div className="border-[.3px] border-black/20 rounded w-full h-fit max-h-[400px] overflow-auto p-6 grid gap-4">
+                                        <div className={`border-[.3px] ${theme == 'light' ? "border-black/20" : "border-white/20"}  rounded w-full h-fit max-h-[400px] overflow-auto p-6 grid gap-4`}>
                                             {
                                                 [...Array(data.members)].map((player, index) => {
                                 
@@ -265,7 +266,7 @@ function TournmentDialog() {
                                                         <label htmlFor={`player${index}`} className="">{`player${index + 1}`}</label>
                                                         <input 
                                                             type="text" 
-                                                            className="border-[.3px] border-black/20 rounded h-[40px] px-2 mt-2 w-full" 
+                                                            className={`border-[.3px] bg-transparent ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded h-[40px] px-2 mt-2 w-full`}
                                                             placeholder="player name..."
                                                             value={players[`player${index}`]}
                                                             id={`player${index}`}
@@ -289,7 +290,7 @@ function TournmentDialog() {
                     <div>
                         <button 
         
-                            className="px-4 mr-2 h-[40px] rounded text-sm border-[.3px] border-black/20"
+                            className={`px-4 mr-2 h-[40px] rounded text-sm border-[.3px] ${theme == 'light' ? "border-black/20" : "border-white/20"}`}
                             onClick={() => setOpen!(false)}
                         >cancel</button>
                         <button 
@@ -302,7 +303,7 @@ function TournmentDialog() {
                     <div>
                         <button 
                             onClick={() => setOpen!(false)}
-                            className="px-4 h-[40px] border-[1px] mr-4 border-black/20 rounded text-sm"
+                            className={`px-4 h-[40px] border-[1px] mr-4 ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded text-sm`}
                         >
                             close
                         </button>   

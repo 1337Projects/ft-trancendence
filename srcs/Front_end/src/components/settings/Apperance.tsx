@@ -46,8 +46,9 @@ export default function Apperance() {
                             <p className="text-xs mt-4">Lorem ipsum dolor sit amet consectetur adipisicing.</p>
                             <div className="grid grid-cols-4 mt-6 gap-4 w-[140px]">
                                 {
-                                    colors.map(c => 
+                                    colors.map((c, index) => 
                                         <div 
+                                            key={index}
                                             style={{background : c.color}} 
                                             className="w-full h-[23px] cursor-pointer rounded-full"
                                             onClick={() => colorHandler!(c.color)}
