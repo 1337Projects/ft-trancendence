@@ -34,7 +34,6 @@ class WebSocketService {
 
             this.socket.onmessage = (event) => {
                 let data = JSON.parse(event.data)
-                // console.log("this is it => " , data)
                 switch (data.response.status) {
                     case 100:
                         this.callbacks["roomDataHandler"](data.response.data)
@@ -58,18 +57,18 @@ class WebSocketService {
                         this.callbacks["setData"](prev => [...prev, data.response.message])
                         this.callbacks["cnvsUpdate"](data.response.conversation)
                         break;
-                        case 206:
-                            // console.log(data.response)
-                            this.callbacks["setData"](prev => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
-                            this.callbacks["setUser"](data.response)
-                        break;
+                    case 206:
+                        // console.log(data.response)
+                        this.callbacks["setData"](prev => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
+                        this.callbacks["setUser"](data.response)
+                    break;
                     case 207:
                         // console.log( "data => " , data)
                         this.callbacks["setNots"](prev => [data.response.not, ...prev])
                         break;
                     case 208:
                         // console.log( "data ==> " , data)
-                        this.callbacks["setNots"](data.response.nots.reverse())
+                        this.callbacks["FirstSetNots"](data.response.nots.reverse())
                         break;
                     case 209:
                         this.callbacks["cnvsHandler"](data.response.conversations)

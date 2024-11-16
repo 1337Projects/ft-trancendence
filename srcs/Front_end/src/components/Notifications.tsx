@@ -9,7 +9,11 @@ import { accept_friend_request, reject_friend_request } from "./profile/ActionsH
 
 function NotItem({data}) {
 
-    // console.log(data, "++++")
+    const createdAt = new Date(data.created_at);
+
+    const date :string = `${createdAt.getFullYear()}-${(createdAt.getMonth() + 1).toString().padStart(2, '0')}-${createdAt.getDate().toString().padStart(2, '0')}`;
+    const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
+
     return (
         <li className="flex relative font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
             <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 mx-2 border-[1px] border-black/20 rounded-[50%]" />
@@ -20,8 +24,8 @@ function NotItem({data}) {
                 <p className="mt-1 text-[8pt]">{data.message}</p>
             </div>
             <div className="date text-center w-[60px] text-[9px]">
-                <p className="">{data.date}</p>
-                <p className="mt-2">{data.time}</p>
+                <p className="">{date}</p>
+                <p className="mt-2">{time}</p>
             </div>
             
         </li>
@@ -103,52 +107,17 @@ export default function Notifications() {
     const [show, setShow] = useState(notifications == 'true')
     const appearence = useContext(ApearanceContext)
 
-
-    // useEffect(() => {
-    //     const socket = new WebSocket(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`);
-
-    //     socket.onopen = () => {
-    //         console.log("WebSocket connected.");
-    //         // You can send a message to the server if needed
-    //         // socket.send(JSON.stringify({ event: "fetch nots" }));
-    //     };
-
-    //     socket.onmessage = (event) => {
-    //         // const data = JSON.parse(event.data);
-    //         // console.log("Received from server:", data);
-    //         console.log("recieved data")
-    //     };
-
-    //     socket.onclose = () => {
-    //         console.log("WebSocket connection closed.");
-    //     };
-
-    //     socket.onerror = (error) => {
-    //         console.error("WebSocket error:", error);
-    //     };
-
-    //     // Cleanup on unmount
-    //     return () => {
-    //         socket.close();
-    //     };
-    // }, []);
-
-
-
-    
-
     useEffect(() => {
         const timer = setTimeout(() => {
             notsSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
-            notsSocket.addCallback("setNots", setNots)
+            notsSocket.addCallback("FirstSetNots", setNots)
             notsSocket.sendMessage({
-                "user" : user?.authInfos?.username,
-                "event" : "fetch nots" //  || send_request
+                event : "fetch nots",
+                sender : user?.authInfos?.username
             })
             
         }, 300)
         return () => {
-            // notsSocket.close()
             clearTimeout(timer)
         }
     }, [user?.authInfos?.username])
