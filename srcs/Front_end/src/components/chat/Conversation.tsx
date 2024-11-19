@@ -38,7 +38,7 @@ function UserMessage({m, username}) {
                 </div>
                 <p 
                     className={`text-[8pt] flex items-center lowercase mt-2 py-1 ${m.sender.username != username ? "text-right ml-10" : "ml-2"}`}
-                >{time}<RiCheckDoubleFill style={{color : color}} className='ml-2 text-[10pt]' /></p>
+                >{time} <RiCheckDoubleFill style={{color : m.seen ? color : ""}} className='ml-2 text-[10pt]' /></p>
             </div>
             {
                 m.sender.username == username &&
@@ -86,6 +86,11 @@ function MessagesList() {
             setSHeight(cnvRef.current!.scrollHeight)
             cnvRef!.current!.scrollTop = (cnvRef!.current!.scrollHeight - sheight),
             setLoading(false)
+            Socket.sendMessage(JSON.stringify({
+                "event" : "seen_messages",
+                "sender" : authInfos?.username,
+                "receiver" : user
+            }))
         }
     }, [messages])
 

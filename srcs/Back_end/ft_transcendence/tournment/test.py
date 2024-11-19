@@ -86,10 +86,16 @@ class Builder:
             self.tree_to_rounds(root.right)
 
 
+    def get_player_match(self):
+        pass
+
+
     def get_rounds(self):
         ret = []
         for key, value in self.rounds.items():
             ret.append(value)
+        ret.reverse()
+        ret.pop()
         return ret
 
     def get_match_at_given_level(self, level, start, root):

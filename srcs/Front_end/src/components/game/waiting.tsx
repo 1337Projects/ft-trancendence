@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react"
 import Socket from '../../socket'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 
 
@@ -34,7 +34,7 @@ export default function Waiting() {
                     <h1 className='text-[20px] capitalize'>room not found!</h1>
                     <p className="text-xs mt-4 w-[400px]">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere odit sapiente totam nihil accusamus dolores!</p>
                     <div className='w-full mt-4 flex justify-center'>
-                        <button style={{background:color}} className='p-2 rounded w-[100px] text-white text-[16px] capitalize'>back</button>
+                        <Link to="../game" style={{background:color}} className='p-2 rounded w-[100px] text-white text-[16px] capitalize'>back</Link>
                     </div>
                 </div>
             </div>

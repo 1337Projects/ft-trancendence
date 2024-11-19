@@ -6,7 +6,7 @@ from .serializers import TournmentSerializer, PlayerSerializer
 from .test import Builder, Player
 import json, copy
 from account.serializer import UserWithProfileSerializer
-
+import threading
 from .utils import debug
 
 
@@ -117,16 +117,36 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
             return None
 
 
+
+
+
+
+
+
 class Tournament:
 
     def __init__(self, data):
         self.data = data
         self.builder = Builder(data['data']['players'])
 
+
+
     def run(self):
         pass
 
-import threading
+
+
+    async def start(self):
+        debug('start')
+        pass
+
+
+
+
+
+
+
+
 class TournmentConsumer(AsyncWebsocketConsumer):
     
     tournments = {}
@@ -167,6 +187,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                     },
                 }
             )
+            await self.builder.start()
 
 
     async def send_data(self, event):
