@@ -26,7 +26,7 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 // import Tournament from './components/game/tournament'
 // import PingPong from './components/game/PingPong'
-// import Waiting from './components/game/waiting'
+import Waiting from './components/game/waiting'
 // import {TournmentWaiting} from './components/game/tournament'
 
 import NotFound from './components/NotFound'
@@ -71,6 +71,7 @@ const router = createBrowserRouter(
 
         {/* <Route path='game' element={<Game />} / > */}
         <Route path='game' element={<Game />} />
+        <Route path='game/waiting' element={<Waiting />} />
         <Route path='game/tournment' element={<GameLayout />}>
           <Route path=':id/:type' element={<Tournment />} >
             <Route index element={<Schema />} />
