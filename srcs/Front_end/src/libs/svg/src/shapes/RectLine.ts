@@ -43,8 +43,9 @@ export class RectLine implements SvgElm   {
         this._group.append(path.getElm())
 
         let image;
+        console.log(player)
         if (typeof(player) !=  'string') {
-            image = new Image(x, y, w, h, player?.profile?.avatar)
+            image = new Image(x, y, w, h, player?.user_id.profile?.avatar)
         } else if (player != 'unknown') {
             image = new Image(x, y, w, h, player.avatar!)
         }
