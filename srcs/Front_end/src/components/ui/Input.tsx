@@ -37,7 +37,7 @@ export default function MyInput({label , ...props} : InputPropsType) {
                     ${meta.touched && meta.error ? "outline outline-red-500 border-none" : "outline-black border-[.5px]"}
                     `}
                     {...field} {...props}
-                    type={see ? "text" : "password"}
+                    type={label.includes('password') ? see ? "text" : "password" : "text"}
                 />
             </div>
             {meta.touched && meta.error ? <div className="text-red-500 lowercase mt-2">{meta.error}</div> : null}

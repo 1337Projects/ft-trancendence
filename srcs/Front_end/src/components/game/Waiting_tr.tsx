@@ -1,9 +1,10 @@
 
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import MyUseEffect from "../../hooks/MyUseEffect"
 import { useNavigate, useParams } from "react-router-dom"
 import Socket from "../../socket"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
+import { UserContext } from "../../Contexts/authContext"
 
 export default function WaitingTournment() {
 
@@ -11,24 +12,45 @@ export default function WaitingTournment() {
     const { id } = useParams()
     const [ roomData, setRoomData ] = useState({})
     const navigate = useNavigate()
+    const [ loading, setLoading ] = useState(false)
+    const [ num, setNum ] = useState(3)
+    const { authInfos } = useContext( UserContext ) || {}
+
+    
+
 
     MyUseEffect(() => {
+        Socket.connect(`ws://localhost:8000/ws/join/tournment/${id}/?token=${authInfos?.accessToken}`)
         Socket.addCallback('roomDataHandler', roomDataHandler)
     }, [])
+
+    useEffect(() => {
+        return () => Socket.close()
+    }, [])
+
+    MyUseEffect(() => {
+        if (loading) {
+            setInterval(() => {
+                setNum(prev => prev - 1)
+            }, 1000)
+        }
+    }, [loading])
 
     function roomDataHandler(data) {
         setRoomData(data)
         if (data.players.length == data.data.max_players) {
+            setLoading(true)
             setTimeout(() => {
                 Socket.sendMessage({"event" : "start_tournament"})
                 navigate(`/dashboard/game/tournment/${id}/remote`)
-            }, 1000 * 2)
+            }, 1000 * 3)
         }
     }
     
 
     return (
-        <div style={{height : `calc(100vh - 60px)`}} className={`mt-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full rounded p-2 flex items-center`}>
+        <div style={{height : `calc(100vh - 60px)`}} className={`relative mt-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full rounded p-2 flex items-center`}>
+            {loading && <div className="absolute left-[50%] translate-x-[-50%] text-xl uppercase p-2">tournament start on {num}</div>}
             <div className="max-w-[600px] mx-auto h-fit">
                 <div className="text-center p-2 w-fit ml-[50%] translate-x-[-50%]">
                     <h1 className={`text-3xl font-bold uppercase`}>Waiting for tournament to start</h1>

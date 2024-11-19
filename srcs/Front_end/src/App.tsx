@@ -38,6 +38,8 @@ import Friends from './components/profile/friend'
 import WaitingTournment from './components/game/Waiting_tr'
 import GameLayout from './Layouts/GameLayout'
 import Events from './components/game/Events'
+import Players from './components/game/Players'
+import Schema from './components/game/Schema'
 
 
 function Home() {
@@ -70,7 +72,12 @@ const router = createBrowserRouter(
         {/* <Route path='game' element={<Game />} / > */}
         <Route path='game' element={<Game />} />
         <Route path='game/tournment' element={<GameLayout />}>
-          <Route path=':id/:type' element={<Tournment />} />
+          <Route path=':id/:type' element={<Tournment />} >
+            <Route index element={<Schema />} />
+            <Route path='leaderboard' element={<div>loaderboard</div>} />
+            <Route path='players' element={<Players />} />
+            <Route path='matches' element={<div>matches</div>} />
+          </Route>
           <Route path='waiting/:id' element={<WaitingTournment />} />
         </Route>
 
