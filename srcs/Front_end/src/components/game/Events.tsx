@@ -10,7 +10,7 @@ export function TrItem() {
 
     const { theme, color } = useContext(ApearanceContext) || {}
     return (
-        <div className={`border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} w-full h-[200px] p-2 rounded mt-4`}>
+        <div className={`border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} w-full h-[200px] p-2 rounded mb-4`}>
             <div className="w-full h-[180px] flex items-center relative">
                 <img src="/_5.jpeg" className={`mr-4 border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded w-[200px] h-full`} />
                 <div style={{background : color}} className="absolute text-white top-[-10px] w-[80px] flex items-center justify-center left-[-10px] h-[35px] rounded text-xs">waiting</div>
@@ -65,7 +65,7 @@ export default function Events() {
     }, [])
 
     return (
-        <div className={`${theme === 'dark' ? 'bg-darkItems text-darkText' : 'bg-lightItems text-lightText'} h-full mt-2 rounded p-2`}>
+        <div className={`overflow-scroll ${theme === 'dark' ? 'bg-darkItems text-darkText' : 'bg-lightItems text-lightText'} h-full mt-2 rounded p-2`}>
             <div>
                 <Hero color={color} img="/Tennis-bro.svg" />
             </div>
@@ -74,15 +74,17 @@ export default function Events() {
                     <h1 className="capitalize text-lg">avaliable tournaments :</h1>
                     <p className="text-xs mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, non.</p>
                 </div>
-                {
-                    tournments.length ?
-                    tournments.map((item, index) => <TrItem />)
-                    :
-                    <div className="w-full h-[200px] rounded border-[1px] border-white/20 text-sm flex justify-center items-center">
-                        <p>not tournaments yet, create one</p>
-                        <span style={{color : color}} className="ml-2 font-bold text-md cursor-pointer">Create !</span>
-                    </div>
-                }
+                <div  className="w-full h-fit px-4">
+                    {
+                        tournments.length ?
+                        tournments.map((item, index) => <TrItem />)
+                        :
+                        <div className="w-full h-[200px] rounded border-[1px] border-white/20 text-sm flex justify-center items-center">
+                            <p>not tournaments yet, create one</p>
+                            <span style={{color : color}} className="ml-2 font-bold text-md cursor-pointer">Create !</span>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     )

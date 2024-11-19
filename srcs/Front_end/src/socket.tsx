@@ -36,6 +36,12 @@ class WebSocketService {
                 let data = JSON.parse(event.data)
                 switch (data.response.status) {
                     case 100:
+                        console.log(data.response)
+                        const players : any = []
+                        for (const [key, value] of Object.entries(data.response.data.players)) {
+                            players.push(value)
+                        }
+                        data.response.data.players = players
                         this.callbacks["roomDataHandler"](data.response.data)
                         break;
                     case 201:
@@ -74,7 +80,8 @@ class WebSocketService {
                         this.callbacks["cnvsHandler"](data.response.conversations)
                         break;
                     case 210:
-                        this.callbacks["tr_data"](data.response)
+                        console.log(data.response)
+                        this.callbacks["tr_data"](data.response.data)
                     case 400:
                         console.log(data.response.error)
                         break;
