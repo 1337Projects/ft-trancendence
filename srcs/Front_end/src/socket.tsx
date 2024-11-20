@@ -85,6 +85,9 @@ class WebSocketService {
                     case 400:
                         console.log(data.response.error)
                         break;
+                    case 212:
+                        console.log(data.response)
+                        break;
                     default:
                         break;
                 }

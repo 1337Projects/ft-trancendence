@@ -86,11 +86,11 @@ function MessagesList() {
             setSHeight(cnvRef.current!.scrollHeight)
             cnvRef!.current!.scrollTop = (cnvRef!.current!.scrollHeight - sheight),
             setLoading(false)
-            Socket.sendMessage(JSON.stringify({
+            Socket.sendMessage({
                 "event" : "seen_messages",
                 "sender" : authInfos?.username,
                 "receiver" : user
-            }))
+            })
         }
     }, [messages])
 
