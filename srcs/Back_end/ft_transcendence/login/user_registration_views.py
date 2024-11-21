@@ -30,6 +30,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
 from rest_framework_simplejwt.tokens import RefreshToken
 from .views import  set_refresh_token_cookie
+   
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
@@ -43,11 +44,14 @@ class UserLoginView(generics.GenericAPIView):
                 password=serializer.validated_data['password']
             )
             if user:
-                refresh = RefreshToken.for_user(user)
-                response = Response({
-                    'access': str(refresh.access_token),
-                }, status=status.HTTP_200_OK)
-                set_refresh_token_cookie(response, refresh)
+                if user.twofa :
+                    response = Response({"2fa": "True"}, status=status.HTTP_200_OK)
+                else:    
+                    refresh = RefreshToken.for_user(user)
+                    response = Response({
+                        'access': str(refresh.access_token),
+                    }, status=status.HTTP_200_OK)
+                    set_refresh_token_cookie(response, refresh)
                 return response
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         except ValidationError as e:
