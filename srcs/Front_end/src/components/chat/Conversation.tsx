@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef, useEffect} from 'react'
+import React, {useContext, useState, useRef, useEffect, useCallback} from 'react'
 import { Link, useParams } from 'react-router-dom';
 
 import Socket from '../../socket'
@@ -9,7 +9,6 @@ import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
 import { RiCheckDoubleFill } from 'react-icons/ri';
-import { flushSync } from 'react-dom'
 
 
 function calc_time(created_at) {
@@ -67,151 +66,128 @@ export default function Conversation() {
     )
 }
 
+
+
 function MessagesList() {
 
-    const cnvRef = useRef<HTMLDivElement | null>(null)
+    const [ page, setPage ] = useState(1)
     const { authInfos } = useContext(UserContext) || {}
     const { user } = useParams()
-    const { messages , setMessages } = useContext(ChatContext) || {}
-    
-
-    const [page, setPage] = useState(1)
-    const [ loading, setLoading ] = useState(false)
-    const lastItemRef = useRef<null | HTMLDivElement>(null)
-    const observer = useRef<null | IntersectionObserver>(null)
-    const [sheight, setSHeight] = useState(0)
+    const { messages , userData } = useContext(ChatContext) || {}
+    const observer = useRef<IntersectionObserver | null>(null);
+    const lastItem = useRef(null)
+    const [hasMore, setHasMore] = useState(true)
 
     MyUseEffect(() => {
-        if (messages && cnvRef.current) {
-            setSHeight(cnvRef.current!.scrollHeight)
-            cnvRef!.current!.scrollTop = (cnvRef!.current!.scrollHeight - sheight),
-            setLoading(false)
-            Socket.sendMessage({
-                "event" : "seen_messages",
-                "sender" : authInfos?.username,
-                "receiver" : user
-            })
-        }
-    }, [messages])
-
-    
-    MyUseEffect(() => {
-        setMessages!(null)
         send_fetch_event(page)
-    }, [user])
+        if (userData) setHasMore(page < userData.nbr_pages)
+    }, [page])
+    
+    
+    const topitem = useCallback(() => {
+        if (observer.current) observer.current.disconnect()
 
+        observer.current = new IntersectionObserver(entries => {  
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prev => prev + 1)
+            }
+        })
+
+        if (lastItem.current) observer.current.observe(lastItem.current)
+    }, [lastItem, hasMore])
 
 
     useEffect(() => {
-
-        setTimeout(() => {
-            if (loading) return;
-    
-            const observerCallback = (entries: IntersectionObserverEntry[]) => {
-                if (entries[0].isIntersecting && cnvRef.current?.scrollHeight != sheight) {
-                    setPage(prev => prev + 1)
-                    send_fetch_event(page + 1)
-                }
-            }
-    
-            observer.current = new IntersectionObserver(observerCallback)
-            if (lastItemRef.current) {
-                observer.current.observe(lastItemRef.current)
-            }
-        }, 100)
-
         return () => {
-            if (lastItemRef.current) {
-                observer.current?.unobserve(lastItemRef.current)
-            }
+            if (observer.current) observer.current.disconnect()
         }
+    }, [])
 
+    MyUseEffect(() => {
+        if (lastItem.current && messages) {
+            setTimeout(() => {
+                topitem()
+            }, 1000)
+        }
+    }, [messages])
 
-    }, [loading, lastItemRef])
-
-  
-
-
-    function send_fetch_event(page) {
-        setLoading(true)
-        setTimeout(() => {
-            Socket.sendMessage({
-                "partner": user,
-                "from": authInfos?.username,
-                "event" : "fetch_messages",
-                page
-            })
-        }, 10)
+function send_fetch_event(page) {
+        Socket.sendMessage({
+            "partner": user,
+            "from": authInfos?.username,
+            "event" : "fetch_messages",
+            page
+        })
     }
 
-    if (!messages) { 
+    if (!messages) {
         return (
+            
             <ul style={{height : `calc(100vh - 260px)`}}>
                 <div className='w-full h-[50px] flex items-center p-2 mt-4'>
                     <div className='bg-gray-300 animate-pulse  w-[40px] rounded-full h-[40px]' />
                     <div className='ml-4'>
-                        <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                        <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                    </div>
+                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
                 </div>
+            </div>
                 <div className='w-full h-[50px] flex items-center justify-end p-2 mt-4'>
                     <div className='mr-4'>
                         <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
                         <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
                     </div>
-                    <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
                 </div>
-                <div className='w-full h-[50px] flex items-center justify-end p-2 mt-4'>
-                    <div className='mr-4'>
-                        <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                        <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                    </div>
-                    <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+            <div className='w-full h-[50px] flex items-center justify-end p-2 mt-4'>
+                <div className='mr-4'>
+                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
                 </div>
-                <div className='w-full h-[50px] flex items-center p-2 mt-4'>
+                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+                </div>
+            <div className='w-full h-[50px] flex items-center p-2 mt-4'>
                     <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+                <div className='ml-4'>
+                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
+                </div>
+            </div>
+            <div className='w-full h-[50px] flex items-center p-2 mt-4'>
+                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
                     <div className='ml-4'>
                         <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
                         <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                    </div>
                 </div>
-                <div className='w-full h-[50px] flex items-center p-2 mt-4'>
-                    <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
-                    <div className='ml-4'>
-                        <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                        <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                    </div>
                 </div>
             </ul>
         )
     }
 
-
     return (
-        <div ref={cnvRef} className='chat-message p-2 overflow-y-auto relative' style={{height : `calc(100vh - 260px)`}}>
-            {loading && <div className='w-full absolute text-xs h-10 flex items-center justify-center top-0'>loading...</div>}
-            { messages.map((message, index) => {
-                if (index == 0) {
-                    return (
-                        <div ref={lastItemRef} className='w-full' key={index}>
-                            <UserMessage m={message} username={authInfos?.username}  />
-                        </div>
-                    )
-                } else {
-                    return (
-                        
-                        <div className='w-full' key={index}>
-                            <UserMessage m={message} username={authInfos?.username}  />
-                        </div>
-                    )
-                }
-            }
-            )}
+        <div>
+            <div style={{height : `calc(100vh - 260px)`}} className='px-10 overflow-y-auto scroll-bottom flex flex-col-reverse'>
+                <div className='flex flex-col '>
+                    {
+                        messages.map((message, index) => {
+                            if (index === 0) {
+                                return (
+                                    <div className='w-full' ref={lastItem} key={index}>
+                                        <UserMessage m={message} username={authInfos?.username}  />
+                                    </div>
+                                )
+                            }
+                            return (
+                                <div className='w-full' key={index}>
+                                    <UserMessage m={message} username={authInfos?.username}  />
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
         </div>
     )
 }
-
-
 
 function ConversationHeader({userData}) {
     

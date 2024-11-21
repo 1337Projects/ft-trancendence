@@ -22,7 +22,7 @@ body {
 
 ::-webkit-scrollbar {
     width: 4px;
-    display: none;
+    /* display: none; */
 }
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
@@ -90,3 +90,7 @@ table th:last-child{
 table td:last-child{
     border-radius:0 10px 10px 0;
 } */
+
+.scroll-bottom {
+    overflow-anchor: none;
+}

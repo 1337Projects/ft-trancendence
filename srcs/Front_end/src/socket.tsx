@@ -60,7 +60,7 @@ class WebSocketService {
                         break;
                     case 205:
                         // console.log("msg => " ,  data.response)
-                        this.callbacks["setData"](prev => [...prev, data.response.message])
+                        this.callbacks["setData"](prev => prev ? [...prev, data.response.message] : [data.response.message])
                         this.callbacks["cnvsUpdate"](data.response.conversation)
                         break;
                     case 206:
