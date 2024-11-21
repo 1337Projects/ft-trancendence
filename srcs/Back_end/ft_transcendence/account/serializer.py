@@ -15,7 +15,7 @@ class ProfileSerializers(serializers.ModelSerializer):
     def get_online(self, obj):
         user_activity = Profile.objects.filter(user=obj.user).first()
         if user_activity:
-            return user_activity.last_activity >= timezone.now() - timedelta(minutes=1)
+            return user_activity.last_activity >= timezone.now() - timedelta(minutes=15)
         return False
 
 class UserWithProfileSerializer(serializers.ModelSerializer):

@@ -1,4 +1,4 @@
-# Variables
+Variables
 DOCKER_COMPOSE = docker-compose
 WORK_DIR = --project-directory ./srcs
 DOCKER_COMPOSE_FILE = -f docker-compose.yml
