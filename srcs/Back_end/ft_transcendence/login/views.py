@@ -1,33 +1,29 @@
 from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from .models import User , PasswordReset, BlockedUser
-from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
-from dotenv import load_dotenv, dotenv_values
-from rest_framework.decorators import api_view
-from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.signals import user_logged_out
 from urllib.parse import urlencode
 from account.utls import create_profile
 from datetime import timedelta
+from .models import User , PasswordReset, BlockedUser
+from dotenv import load_dotenv, dotenv_values
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth import get_user_model
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.signals import user_logged_out
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.hashers import make_password, check_password
 import requests, secrets , jwt, datetime, json, os, random, string, re
 
-from django.contrib.auth.hashers import make_password
-
-from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.contrib.auth.hashers import make_password, check_password
+from chat.views import get_id1
 
-from django_otp.plugins.otp_totp.models import TOTPDevice
-from django.contrib.auth import get_user_model
-
-
- 
-User = get_user_model()  
+from django.db.models import Q
 
 load_dotenv()
+User = get_user_model()
 
 def generate_refresh_token(user):
     payload = {
@@ -171,7 +167,7 @@ def generate_username(username):
 @api_view(["post"])
 def google_oauth(request):
     code = request.data.get('code')
-    if not code:#checki m3a abdelhadi
+    if not code:
         return JsonResponse({'error': 'Authorization code is missing'}, status=400)
 
     token_url = 'https://oauth2.googleapis.com/token'
@@ -254,10 +250,7 @@ def validate_password(password):
         errors.append("Password must contain at least one digit.")
     if not re.search(r'\W', password):
         errors.append("Password must contain at least one special character.")
-    if errors:
-        print("Your password should meet all those requirements:", errors)
-        return False
-    return True
+    return errors
 
 import sys
 @api_view(["post"])
@@ -266,8 +259,9 @@ def confirm_password(request):
         email = request.data.get('email')
         token = request.data.get('token')
         new_password = request.data.get('password')
-        if not validate_password(new_password):
-            return JsonResponse({'error': 'Password does not meet all the requirements.'}, status=400)
+        errors = validate_password(new_password)
+        if errors:
+            return JsonResponse({'error': errors}, status=400)
         try:
             password_reset = PasswordReset.objects.get(token=token, user__email=email)
             if password_reset.is_used:
@@ -285,27 +279,34 @@ def confirm_password(request):
             return JsonResponse({'error': 'Invalid token'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+
 @api_view(["post"])
 def change_password(request):
+    id = get_id1(request)
     old_password = request.data.get('old_password')
     if not old_password:
         return JsonResponse({'error': 'Old password is missing'}, status=400)
-    # if not check_password(old_password, request.user.password):
-    #     return JsonResponse({'error': 'Invalid old password'}, status=400)
+    if not check_password(old_password, request.user.password):
+        return JsonResponse({'error': 'Invalid old password'}, status=400)
     new_password = request.data.get('new_password')
     if not new_password:
         return JsonResponse({'error': 'New password is missing'}, status=400)
     if not validate_password(new_password):
         return JsonResponse({'error': 'Password does not meet all the requirements.'}, status=400)
-
-    request.user.password = make_password(new_password)
-    request.user.save()
+    user = User.objects.get(id=id)
+    user.password = make_password(new_password)
+    user.save()
     return JsonResponse({'message': 'The Password has been changed'}, status=200)
 
+
+# def check_if_blocked(blocker_id, blocked_id):
+#     is_blocked = BlockedUser.objects.filter(Q(blocker_id=blocker_id, blocked_id=blocked_id) | Q(blocker_id=blocked_id, blocked_id=blocker_id))
+#     return is_blocked.exists()
+
 @api_view(["post"])
-def block_user(request):# or should i use et_id1(request) instead of request.data.get('id')
-    id = request.data.get('id')#id nghwali ila ayblocki
-    id_to_block = request.data.get('id_to_block')#id nghwali ila ayblocki
+def block_user(request):
+    id = request.data.get('id')
+    id_to_block = request.data.get('id_to_block')
     if not id:
         return JsonResponse({'error': 'User ID is missing'}, status=400)
     if not id_to_block:
@@ -313,7 +314,7 @@ def block_user(request):# or should i use et_id1(request) instead of request.dat
     try:
         user = User.objects.get(id=id)
         user_to_block = User.objects.get(id=id_to_block)
-        if user == user_to_block:#khasso mayblokich rasso
+        if user == user_to_block:
             return JsonResponse({'error': 'You cannot block yourself'}, status=400)
         BlockedUser.objects.create(blocker=user, blocked=user_to_block)
         return JsonResponse({'message': 'User has been blocked'}, status=200)
@@ -322,9 +323,9 @@ def block_user(request):# or should i use et_id1(request) instead of request.dat
 
 
 @api_view(["post"])
-def unblock_user(request):# or should i use et_id1(request) instead of request.data.get('id')
-    id = request.data.get('id')#id nghwali rayblockin 
-    id_to_unblock = request.data.get('id_to_unblock')#id nghwali raydiblocki
+def unblock_user(request):
+    id = request.data.get('id')
+    id_to_unblock = request.data.get('id_to_unblock')
     if not id:
         return JsonResponse({'error': 'User ID is missing'}, status=400)
     if not id_to_unblock:
@@ -332,7 +333,7 @@ def unblock_user(request):# or should i use et_id1(request) instead of request.d
     try:
         user = User.objects.get(id=id)
         user_to_unblock = User.objects.get(id=id_to_unblock)
-        if user == user_to_unblock:#khasso mayblokich rasso
+        if user == user_to_unblock:
             return JsonResponse({'error': 'You cannot unblock yourself'}, status=400)
         is_he_blocked = BlockedUser.objects.filter(blocker=user, blocked=user_to_unblock)
         if not is_he_blocked:

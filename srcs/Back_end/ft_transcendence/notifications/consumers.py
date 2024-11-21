@@ -37,16 +37,16 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         if event == "fetch nots":
             try:
-                user = await sync_to_async(User.objects.get)(username=self.username)
+                usernamo = data["sender"]
+                user = await sync_to_async(User.objects.get)(username=usernamo)
                 notifications = await self.get_user_notifications(user)
-
+                # print(notifications)
+                # sys.stdout.flush()
                 await self.send(text_data=json.dumps({
-                    "data" : {
-                            "response" : {
-                                "nots": notifications,
-                                "status" : 208
-                            }
-                        }
+                    "response" : {
+                        "nots": notifications,
+                        "status" : 208,
+                    }
                 }))
             except Exception as e:
                 return

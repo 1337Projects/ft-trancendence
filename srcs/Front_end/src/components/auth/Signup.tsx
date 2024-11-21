@@ -45,7 +45,7 @@ export default function Signup() {
             setAlert({message : ['you  have been registered successfully'], type : 'success'})
 
             setTimeout(() => {
-                navigation("../login")
+                navigation("../2fa")
             }, 1000)
 
         } catch (error) {

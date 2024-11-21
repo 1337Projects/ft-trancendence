@@ -34,7 +34,7 @@ class Builder {
         
         for (const [key, value ] of Object.entries(match)) {
             if (key.includes('player')) {
-                const rect = new Rect(startx, starty + 120, 70, 70)
+                const rect = new Rect(startx, starty + 110, 70, 70)
                 this._root.append(rect)
                 if (typeof(value) != 'string') {
                     const image = new Image(startx, starty + 120, 70, 70, value.avatar!)
@@ -52,6 +52,7 @@ class Builder {
         let d = 1;
         for (const [key, value] of Object.entries(match)) {
             if (key.includes('player')) {
+                // console.log(value)
                 const rect = new RectLine(
                     startx,
                     starty + ((h - 80) / 2),

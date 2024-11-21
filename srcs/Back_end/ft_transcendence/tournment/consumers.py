@@ -2,101 +2,112 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 from .models import Tournment
 from  asgiref.sync import sync_to_async
-from .serializers import TournmentSerializer
+from .serializers import TournmentSerializer, PlayerSerializer
 from .test import Builder, Player
 import json, copy
 from account.serializer import UserWithProfileSerializer
-
+import threading
 from .utils import debug
 
-class TournmentConsumer(AsyncWebsocketConsumer):
-    
-    tournments = {}
+
+class MatchMakeingConsumer(AsyncWebsocketConsumer):
+
+    tournaments = {}
+
     def __init__(self):
         super().__init__()
-        self.serialized_user = None
-        self.builder = None
         self.tournment_id = None
-        self.tournment_data = None
-        self.task = None
+        self.group_name = None
+        self.serialized_user = None
 
+    async def connect(self):
+        await self.accept()
+        self.tournment_id = self.scope['url_route']['kwargs']['id']
+        self.group_name = f"tournament_{self.tournment_id}"
 
-    async def start_match(self, match):
-        match.val.status = 'started'
-        await asyncio.sleep(2)
-        match.val.status = 'ended'
-        match.val = Player(match.left.val.data)
-
-    
-    async def play_tournment_local_mode(self, level):
-        if level == 0:
+        self.serialized_user = await sync_to_async(self.serialize_user)()
+        if not self.serialized_user:
             return
-        await self.play_tournment_local_mode(level - 1)
-        match = self.builder.get_match_at_given_level(level, self.builder.levels, self.builder.tree)
-        while match != None:
-            self.builder.make_rounds()
-            tr_data = {
-                "data" : self.tournment_data,
-                "rounds" :  self.builder.get_rounds(),
-                "current_round" : level,
-                "status" : 210
-            }
-            await self.send(text_data=json.dumps({"response" : tr_data}))
-            await self.start_match(match)
-            match = self.builder.get_match_at_given_level(level, self.builder.levels, self.builder.tree)
-    
 
-    async def play_tournment_remote_mode(self, lvl):
-        if lvl == 0:
-            return
-        await self.play_tournment_remote_mode(lvl - 1)
-        match = self.builder.get_match_at_given_level(lvl, self.builder.levels, self.builder.tree)
-        while match is not None:
-            self.builder.make_rounds()
-            tr_data = {
-                "data" : self.tournment_data,
-                "rounds" :  self.builder.get_rounds(),
-                "current_round" : lvl,
-                "status" : 210
-            }
-            await self.start_match(match)
+        await self.channel_layer.group_add( self.group_name, self.channel_name )
+
+        if not self.tournaments.get(self.tournment_id, None):
+
+            current_turnament = await sync_to_async(self.get_tournemnt_data)(self.tournment_id)
+
+            if current_turnament:
+                self.tournaments[self.tournment_id] = {"data" : current_turnament, "players" : {}}
+            
+        current_turnament = self.tournaments.get(self.tournment_id, None)
+        if current_turnament:
+            current_turnament['players'][self.serialized_user['id']] = self.serialized_user
+
             await self.channel_layer.group_send(
                 self.group_name,
                 {
                     "type" : "send_data",
-                    "data" : tr_data
-                }
-            )
-            match = self.builder.get_match_at_given_level(lvl, self.builder.levels, self.builder.tree)
-
-
-
-    def get_tournemnt_data(self, id):
-        try:
-            self.tournment = Tournment.objects.get(id=id)
-            tr_serializer = TournmentSerializer(self.tournment)
-            return tr_serializer.data
-        except :
-            pass
-
-
-    async def add_user_to_trournment(self):
-        current = self.tournments.get(self.tournment_id, None)
-        if current:
-            current['players'][self.serialized_user['id']] = self.serialized_user
-            data = copy.deepcopy(current)
-            data['players'] = self.formatePlayyers()
-            await self.channel_layer.group_send(
-                self.group_name, 
-                {
-                    "type": "send_data",
-                    "data": {
-                        "data" : data,
+                    "data" : {
+                        "data" : current_turnament,
                         "status" : 100
                     }
                 }
             )
 
+        if len(current_turnament['players']) == current_turnament['data']['max_players']:
+            ret  = await sync_to_async(self.add_players_to_db)()
+            
+
+    async def send_data(self, event):
+        await self.send(text_data= json.dumps({"response" : event["data"]}))
+
+
+    async def disconnect(self, code):
+        current_tournament = self.tournaments[self.tournment_id]
+        del current_tournament['players'][self.scope['user'].id]
+
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type" : "send_data",
+                "data" : {
+                    "status" : 100,
+                    "data" : current_tournament
+                }
+            }
+        )
+
+    def add_players_to_db(self):
+        try:
+            current_tournament = self.tournaments[self.tournment_id]
+            tournment = Tournment.objects.get(id=self.tournment_id)
+            for player in current_tournament['players'].values():
+                try:
+                    current_player = Player.objects.get(user_id=player['id'])
+                except:
+                    player_serializer = PlayerSerializer(data={"user_id" : player['id']})
+                    if player_serializer.is_valid():
+                        player_serializer.save()
+                        current_player = player_serializer.instance
+                try:
+                    tournment.players.add(current_player)
+                except Exception as e:
+                    # debug(e)
+                    continue
+            return True
+        except Exception as e:
+            # debug(e)
+            return False
+
+
+    def get_tournemnt_data(self, id):
+        try:
+            tournment = Tournment.objects.get(id=id)
+            tr_serializer = TournmentSerializer(tournment)
+            return tr_serializer.data
+        except :
+            return None
+        
 
     def serialize_user(self):
         try:
@@ -106,51 +117,77 @@ class TournmentConsumer(AsyncWebsocketConsumer):
             return None
 
 
-    def formatePlayyers(self):
-        players = []
-        for player in self.tournments[self.tournment_id]['players'].values():
-            players.append(player)
-        return players
+
+
+
+
+
+
+class Tournament:
+
+    def __init__(self, data):
+        self.data = data
+        self.builder = Builder(data['data']['players'])
+
+
+
+    def run(self):
+        pass
+
+
+
+    async def start(self):
+        debug('start')
+        pass
+
+
+
+
+
+
+
+
+class TournmentConsumer(AsyncWebsocketConsumer):
     
+    tournments = {}
+    lock = threading.Lock()
+
+    def __init__(self):
+        super().__init__()
+        self.serialized_user = None
+        self.builder = None
+        self.tournment_id = None
+
 
     async def connect(self):
 
         await self.accept()
-
         self.tournment_id = self.scope['url_route']['kwargs']['id']
-
-        # serialize user && get tournament data
-        self.serialized_user = await sync_to_async(self.serialize_user)()
-        self.tournment_data = await sync_to_async(self.get_tournemnt_data)(self.tournment_id)
-
         self.group_name = f"tournment_{self.tournment_id}"
         await self.channel_layer.group_add(self.group_name, self.channel_name)
 
-        # add tournament to static var if not exist
-        if not self.tournments.get(self.tournment_id, None) and self.tournment_data['mode'] != 'local':
-            self.tournments[self.tournment_id] = {"data" : self.tournment_data, "players" : {}}
-
-        # play local mode
-        if self.tournment_data['mode'] == 'local':
-            self.tournments[self.tournment_data['id']] = self.tournment_data
-            debug(self.tournments)
-            self.builder = Builder(self.tournment_data['players'])
-            self.play_tournment_local_mode(self.builder.levels)
-
-        # add user to tournament
-        elif self.tournment_data['mode'] == 'remote':
-            await self.add_user_to_trournment()
-
-
-           
-    async def receive(self, text_data=None):
-        json_data = json.loads(text_data)
-        if (json_data["event"] == 'start_tournament'):
-            current = self.tournments.get(self.tournment_id, None)
-            data = copy.deepcopy(current)
-            data['players'] = self.formatePlayyers()
-            self.builder = Builder(data['players'])
-            self.task = asyncio.create_task(self.play_tournment_remote_mode(self.builder.levels))
+        if not self.tournments.get(self.tournment_id, None):
+            current_tourament = await sync_to_async(self.get_tournemnt_data)(self.tournment_id)
+            if current_tourament is None:
+                return
+    
+            self.tournments[self.tournment_id] = {"data" : current_tourament, "users_count" : 0}
+        with self.lock:
+            self.tournments[self.tournment_id]['users_count'] += 1
+        if self.tournments[self.tournment_id]['users_count'] == self.tournments[self.tournment_id]['data']['max_players']:
+            self.builder = Tournament(copy.deepcopy(self.tournments[self.tournment_id]))
+            self.tournments[self.tournment_id]["rounds"] = self.builder.builder.get_rounds()
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type" : "send_data",
+                    "data" : {
+                        "data" : self.tournments[self.tournment_id],
+                        "status" : 210
+                    },
+                }
+            )
+            await self.builder.start()
 
 
     async def send_data(self, event):
@@ -159,11 +196,16 @@ class TournmentConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        if self.task != None:
-            self.task.cancel()
-        if self.tournment_data['mode'] == 'remote':
-            del self.tournments[str(self.tournment_id)]['players'][self.scope['user'].id]
-            await self.channel_layer.group_discard(self.group_name, self.channel_name)
-            data = copy.deepcopy(self.tournments[self.tournment_id])
-            data['players'] = self.formatePlayyers()
-            await self.channel_layer.group_send(self.group_name, {"type": "send_data", "data": {"data" : data, "status" : 100}})
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        self.tournments[self.tournment_id]['users_count'] -= 1
+        if self.tournments[self.tournment_id]['users_count'] == 0:
+            del self.tournments[self.tournment_id]
+
+
+    def get_tournemnt_data(self, id):
+        try:
+            tournment = Tournment.objects.get(id=id)
+            tr_serializer = TournmentSerializer(tournment)
+            return tr_serializer.data
+        except :
+            return None

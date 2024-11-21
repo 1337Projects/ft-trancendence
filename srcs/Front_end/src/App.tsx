@@ -14,7 +14,8 @@ import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import ConfirmeEmail from './components/auth/ConfirmeEmail'
 import { Oauth } from './components/auth/Oauth'
-
+import TwoFactor from './components/auth/2fa'
+import TwoFacCheck from './components/auth/2faCheck'
 
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 
@@ -25,7 +26,7 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 // import Tournament from './components/game/tournament'
 // import PingPong from './components/game/PingPong'
-// import Waiting from './components/game/waiting'
+import Waiting from './components/game/waiting'
 // import {TournmentWaiting} from './components/game/tournament'
 
 import NotFound from './components/NotFound'
@@ -36,6 +37,9 @@ import Tournment from './components/game/tournment'
 import Friends from './components/profile/friend'
 import WaitingTournment from './components/game/Waiting_tr'
 import GameLayout from './Layouts/GameLayout'
+import Events from './components/game/Events'
+import Players from './components/game/Players'
+import Schema from './components/game/Schema'
 
 
 function Home() {
@@ -57,6 +61,8 @@ const router = createBrowserRouter(
         <Route path='oauth/42' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`} />} />
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup/>} />
+        <Route path='2fa' element={<TwoFactor/>} />
+        <Route path='2faCheck' element={<TwoFacCheck/>} />
         <Route path='forgetPassowrd' element={<ForgetPassword />} />
         <Route path='confirme/:id' element={<ConfirmeEmail/>} />
       </Route>
@@ -65,10 +71,18 @@ const router = createBrowserRouter(
 
         {/* <Route path='game' element={<Game />} / > */}
         <Route path='game' element={<Game />} />
+        <Route path='game/waiting' element={<Waiting />} />
         <Route path='game/tournment' element={<GameLayout />}>
-          <Route path=':id/:type' element={<Tournment />} />
+          <Route path=':id/:type' element={<Tournment />} >
+            <Route index element={<Schema />} />
+            <Route path='leaderboard' element={<div>loaderboard</div>} />
+            <Route path='players' element={<Players />} />
+            <Route path='matches' element={<div>matches</div>} />
+          </Route>
           <Route path='waiting/:id' element={<WaitingTournment />} />
         </Route>
+
+        <Route path="tournaments" element={<Events />} />
 
 
         <Route path='profile/:user_name' element={<Profile />}>

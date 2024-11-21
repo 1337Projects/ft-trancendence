@@ -5,10 +5,8 @@ import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { UserContext } from "../../Contexts/authContext";
 import { FaCheckDouble } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { RiMenuSearchLine } from "react-icons/ri";
 import { CgBlock, CgTrash } from "react-icons/cg";
 import MyUseEffect from "../../hooks/MyUseEffect";
-import Socket from "../../socket";
 
 
 const actions = [
@@ -90,7 +88,7 @@ function ConversationOptions({partner}) {
 }
 
 
-function ConvItem({c, id, menu}) {
+function ConvItem({c, menu}) {
     const [time , setTime] = useState("")
     const {color} = useContext(ApearanceContext) || {}
     const {user} = useContext(UserContext) || {}
@@ -105,13 +103,13 @@ function ConvItem({c, id, menu}) {
     }, [c])
 
     return (
-        <li className="w-full h-[60px] rounded xl:p-2 border-white/30  relative mt-3 flex justify-center items-center cursor-pointer">
-            <Link to={`${data.username}`} className={`flex justify-start items-center w-full xl:px-4 ${menu && "test-style px-4"}`}>
-                <div className={`flex  ${menu ? "test-style" : "justify-center"} xl:justify-start  items-center w-full`}>
-                    <div className={`w-[35px] h-[35px] xl:mr-4 ${menu && " test-style mr-4"}`}>
+        <li className="w-full h-[60px] rounded md:p-2 border-white/30  relative mt-3 flex justify-center items-center cursor-pointer">
+            <Link to={`${data.username}`} className={`flex justify-start items-center w-full md:px-4 ${menu && "test-style px-4"}`}>
+                <div className={`flex  ${menu ? "test-style" : "justify-center"} md:justify-start  items-center w-full`}>
+                    <div className={`w-[35px] h-[35px] md:mr-4 ${menu && " test-style mr-4"}`}>
                         <img src={data?.profile?.avatar} className="w-full bg-white h-full rounded-full" alt="img" />
                     </div>
-                    <div className={`content text-[14px] w-fit ${menu ? "test-style" : "hidden"} xl:block`}>
+                    <div className={`content text-[14px] w-fit ${menu ? "test-style" : "hidden"} md:block`}>
                         <h1 className="font-bold ">{data?.username}</h1>
                         <p className="text-[8px] mt-1 flex items-center">
                             <FaCheckDouble className="mr-2 text-sky-400" />
@@ -119,13 +117,13 @@ function ConvItem({c, id, menu}) {
                         </p>
                     </div>
                 </div>
-                <div className={`date ${menu ? "test-style" : "hidden"} xl:flex justify-end w-[70px] items-center relative mr-4`}>
+                <div className={`date ${menu ? "test-style" : "hidden"} md:flex justify-end w-[70px] items-center relative mr-4`}>
                     {data.categorie === 'unread' &&  <div style={{background:color}} className="dot flex items-center justify-center w-[20px] h-[20px] text-[9px] font-bold rounded-full text-white">1</div>}
                     <p className="text-[8px] ml-4">{time}</p>
                 </div>
             </Link>
             <div 
-                className={`xl:block relative ${menu ? "test-style" : "hidden"}`}
+                className={`md:block relative ${menu ? "test-style" : "hidden"}`}
                 onClick={() => setOpen(prev => !prev)}    
             >
                 <BsThreeDotsVertical />
@@ -141,7 +139,7 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
     const {friends, authInfos} = useContext(UserContext) || {}
 
     return (
-        <ul className={`w-full max-h-[300px]  xl:h-[100px] xl:p-2  xl:flex xl:items-center ${menu ? "h-[100px] p-2  flex items-center test-style" : "h-fit pb-6 grid grid-cols-1 content-start"}`}>
+        <ul className={`w-full max-h-[300px]  md:h-[100px] md:p-2  md:flex md:items-center ${menu ? "h-[100px] p-2  flex items-center test-style" : "h-fit pb-6 grid grid-cols-1 content-start"}`}>
             {
                 friends?.length ?
                 friends?.filter(f => f.status == 'accept').map((f, index) => {
@@ -150,13 +148,13 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
                         <li 
                             key={index}
                             onClick={() => handler(false)}  
-                            className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}
+                            className={`md:w-[80px] md:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}
                         >
                             <Link to={data.username} className="w-full">
                                 <div className="relative w-full">
                                     <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
-                                    <div className={`h-2 w-2 ${data.profile.online ? "bg-green-400" : "bg-red-400"}  rounded-full absolute top-[27px]  xl:right-4 right-6`}></div>
-                                    <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block test-style" : "hidden"} xl:block`}>{data.username}</h1>
+                                    <div className={`h-2 w-2 ${data.profile.online ? "bg-green-400" : "bg-red-400"}  rounded-full absolute top-[27px]  md:right-4 right-6`}></div>
+                                    <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block test-style" : "hidden"} md:block`}>{data.username}</h1>
                                 </div>
                             </Link>
                         </li>
@@ -178,13 +176,12 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
     
     const { theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
-    const [visibleItem, setVisibleItem] = useState(null)
 
     const [query, setQuery] = useState<string>('')
 
-    const [cnvs, setcnvs] = useState(data)
+    const [cnvs, setcnvs] = useState(null)
 
-
+    
     MyUseEffect(() => {
         setcnvs(data)
         if (query != '') {
@@ -194,6 +191,27 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
             }))
         }
     }, [data, query])
+    
+    if (!cnvs) {
+        return (
+            <div className="px-2">
+                <div className="flex items-center mt-4">
+                    <div className="h-8 rounded-full animate-pulse w-full bg-gray-300" />
+                </div>
+                <div className={`mt-10 md:block ${menu ? "test-style" : "hidden"}`}>
+                    <div className="flex">
+                        <div className="w-[60px] mr-4 h-8 bg-gray-300 rounded animate-pulse"></div>
+                        <div className="w-[60px] h-8 bg-gray-300 rounded animate-pulse"></div>
+                    </div>
+                </div>
+                <ul className="mt-10">
+                    <div className="w-full h-8 bg-gray-300 rounded animate-pulse"></div>
+                    <div className="w-full h-8 bg-gray-300 mt-4 rounded animate-pulse"></div>
+                    <div className="w-full h-8 bg-gray-300 mt-4 rounded animate-pulse"></div>
+                </ul>
+            </div>
+        )
+    }
 
     return (
             <div className="">
@@ -201,19 +219,19 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
                     <input 
                         type="text" 
                         placeholder="search..." 
-                        className={`w-full ${menu ? "test-style" : "hidden"} xl:block px-4 text-xs rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.5px]`} 
+                        className={`w-full ${menu ? "test-style" : "hidden"} md:block px-4 text-xs rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.5px]`} 
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
                 </div>
-                <div className={`mt-10 xl:block ${menu ? "test-style" : "hidden"}`}>
+                <div className={`mt-10 md:block ${menu ? "test-style" : "hidden"}`}>
                     <Categories categorie="all" Handler={null} />
                 </div>
                 <ul className="mt-10">
                     {
                         cnvs.length ?
                             cnvs?.map(c => {
-                                return <ConvItem id={visibleItem} menu={menu}  key={c.id} c={c} />
+                                return <ConvItem menu={menu}  key={c.id} c={c} />
                             })
                         :
                         <div className={`text-center border-[.6px] border-white/20 rounded-md p-10 text-sm ${menu ? "block test-style" : "hidden"} `}>no conversations found</div>
