@@ -267,17 +267,6 @@ def check_topt(request):
     else:
         return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
 
-
-# def generate_qr_code(request):
-#     id = get_id(request)
-#     if not id:
-#         return Response({"message": "Invalid token"}, status=400)
-#     user = User.objects.get(id=id)
-#     device = TOTPDevice.objects.get_or_create(user=user)
-#     qr_code = device.qr_code_url
-#     return Response({"qr_code_url": qr_code}, status=200)
-
-
 # @api_view(['GET'])
 # def get_others_friends(request, username):
 #     id = get_id(request)
