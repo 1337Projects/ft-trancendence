@@ -8,6 +8,10 @@ from login.models import User
 import jwt, uuid, os
 from urllib.parse import urlparse
 from django.utils import timezone
+import pyotp
+from functools import wraps
+from django.http import JsonResponse
+
 
 default_banner = "http://127.0.0.1:8000/media/default-banner.jpg"
 
@@ -58,6 +62,15 @@ def update_time_activity(user_id):
         profile = Profile.objects.get(user_id=user_id)
         profile.last_activity = timezone.now()
         profile.save()
-    except ObjectDoesNotExist:  
+    except ObjectDoesNotExist:
         print(f"Profile with user_id {user_id} does not exist.")
-        
+
+def validate_totp(user, otp):
+    secret_key = user.secret_key
+    totp = pyotp.TOTP(secret_key)
+    return totp.verify(otp)
+
+
+
+
+

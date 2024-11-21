@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.conf import settings
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -17,6 +18,8 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=255, unique=True, default='')
     first_name = models.CharField(default='', max_length=255)
     last_name = models.CharField(default='', max_length=255)
+    twofa = models.BooleanField(default=False)
+    secret_key = models.CharField(max_length=64, default='')
     objects = UserManager()
     google_or_intra = models.BooleanField(default=False)
 

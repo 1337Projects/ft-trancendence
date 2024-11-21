@@ -10,12 +10,16 @@ from .serializer import ProfileSerializers, UserWithProfileSerializer, UserWithF
 import json, jwt, sys
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
+from login.views import generate_access_token, generate_refresh_token, set_refresh_token_cookie
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .utls import *
 from datetime import timedelta
 
-
+import qrcode
+import pyotp, os, io
+from django.core.files.base import ContentFile
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 @api_view(['GET'])
 def get_profile_infos(request):
@@ -189,6 +193,89 @@ def get_friends(request):
     friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept')
     serializer = UserWithFriendsSerializer(friends, many=True)
     return Response({"data" : serializer.data})
+
+@api_view(['POST'])
+def set_2fa(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = User.objects.get(id=id)
+    if 'data' in request.data:
+        data = request.data.get('data')
+        if '2fa' in data:
+            user.twofa = data.get('2fa')
+            user.save()
+            return Response({"status": 200, "message": "Successful"}, status=200)
+        else:
+            return Response({"status": 400, "message": "Emty data"}, status=400)
+    else:
+        return Response({"status": 400, "message": "Emty data"}, status=400)
+
+
+
+@csrf_exempt
+@api_view(['GET'])
+def generate_2fa_qr_code(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = User.objects.get(id=id)
+    totp = pyotp.TOTP(pyotp.random_base32())
+    user.secret_key = totp.secret
+    user.save()
+    uri = totp.provisioning_uri(name=user.email, issuer_name="FT_TRANCANDENCE")
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(uri)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    img_io = io.BytesIO()
+    img.save(img_io, format='PNG')
+    img_io.seek(0)
+  
+    file_name = f"{uuid.uuid4()}-qr_code_image.png"
+    default_storage.save(file_name, ContentFile(img_io.read()))
+
+    return Response({"qr_code_image": file_name}, status=200)  
+
+
+@api_view(['POST'])
+def check_topt(request):
+    id = get_id(request)
+    if not id:
+        return JsonResponse({"message": "Invalid token"}, status=400)
+    if 'data' in request.data:
+        data = request.data.get('data')
+        if 'topt' in data:
+            opt = data.get('topt')
+            user = User.objects.get(id=id)
+            if validate_totp(user=user, otp=opt):
+                access_token = generate_access_token(user)
+                refresh_token = generate_refresh_token(user)
+                response = JsonResponse({"access": access_token, "message": "Successful", "status":200}, status=200)
+                set_refresh_token_cookie(response, refresh_token)
+                return response
+            else:
+                return JsonResponse({"status": 400, "message": "Invalid TOPT",}, status=400)
+        else:
+            return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
+    else:
+        return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
+
+
+# def generate_qr_code(request):
+#     id = get_id(request)
+#     if not id:
+#         return Response({"message": "Invalid token"}, status=400)
+#     user = User.objects.get(id=id)
+#     device = TOTPDevice.objects.get_or_create(user=user)
+#     qr_code = device.qr_code_url
+#     return Response({"qr_code_url": qr_code}, status=200)
 
 
 # @api_view(['GET'])

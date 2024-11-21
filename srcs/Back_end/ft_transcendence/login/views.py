@@ -19,7 +19,14 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
+
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from django.contrib.auth import get_user_model
+
+
  
+User = get_user_model()  
+
 load_dotenv()
 
 def generate_refresh_token(user):
@@ -104,13 +111,15 @@ def intra_oauth(request):
                 first_name=first_name,
                 google_or_intra=True,
             )
-            create_profile(user.id, image)
+            create_profile(user.id, image)  
         try:
-            access_token = generate_access_token(user)
-            refresh_token = generate_refresh_token(user)
-            response = JsonResponse({'access': access_token, "userinfo": userinfo, "status":200})
-            set_refresh_token_cookie(response, refresh_token)
-
+            if user.twofa:
+                response = JsonResponse({"2fa": "True", "status": 200})
+            else:
+                access_token = generate_access_token(user)
+                response = JsonResponse({'access': access_token, "userinfo": userinfo, "2fa": "False", "status": 200})
+                refresh_token = generate_refresh_token(user)
+                set_refresh_token_cookie(response, refresh_token)
             return response
         except AuthenticationFailed:
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
@@ -250,7 +259,7 @@ def validate_password(password):
         return False
     return True
 
-
+import sys
 @api_view(["post"])
 def confirm_password(request):
     if request.method == 'POST':
@@ -332,4 +341,3 @@ def unblock_user(request):# or should i use et_id1(request) instead of request.d
         return JsonResponse({'message': 'User has been unblocked'}, status=200)
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
-

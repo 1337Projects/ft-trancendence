@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'channels',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
 ]
 
 MIDDLEWARE = [
@@ -155,6 +157,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
+    'django_otp.backends.OTPBackend',
 )
 
 

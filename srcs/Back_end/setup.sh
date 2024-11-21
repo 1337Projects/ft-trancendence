@@ -20,6 +20,9 @@ pip install cryptography
 pip install django-cors-headers
 pip install requests
 pip install djangorestframework-simplejwt
+pip install django-otp
+pip install qrcode[pil] pyotp
+pip install pyotp
 
 #khawla
 pip install dj-rest-auth
@@ -35,6 +38,8 @@ pip install daphne channels --upgrade
 python3 /app/ft_transcendence/manage.py makemigrations login
 python3 /app/ft_transcendence/manage.py makemigrations account
 python3 /app/ft_transcendence/manage.py makemigrations chat
+python3 /app/ft_transcendence/manage.py makemigrations notifications
+python3 /app/ft_transcendence/manage.py makemigrations tournment
 python /app/ft_transcendence/manage.py makemigrations --noinput
 python3 /app/ft_transcendence/manage.py migrate --noinput
 python3 /app/ft_transcendence/manage.py createsuperuser --noinput || true

@@ -11,6 +11,9 @@ urlpatterns = [
     path('accept_friend/', views.accept_friend),
     path('reject_friend/', views.reject_friend),
     path('cancle_friend/', views.unfriend),
+    path('2fa/', views.set_2fa),
+    path('2fa/qr/', views.generate_2fa_qr_code),
+    path('2fa/topt/', views.check_topt),
     path('<str:username>/', views.get_profile),
     path('getOthersFriends/<str:username>/', views.get_others_friends),
 ]
