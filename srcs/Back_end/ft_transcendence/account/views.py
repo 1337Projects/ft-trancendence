@@ -202,14 +202,18 @@ def set_2fa(request):
     user = User.objects.get(id=id)
     if 'data' in request.data:
         data = request.data.get('data')
-        if '2fa' in data:
-            user.twofa = data.get('2fa')
-            user.save()
-            return Response({"status": 200, "message": "Successful"}, status=200)
+        if 'topt' in data:
+            code = data.get('topt')
+            if validate_totp(user=user, otp=code):
+                user.twofa = True
+                user.save()
+                return Response({"status": 200, "message": "Successful"}, status=200)
+            else:
+                return Response({"status": 401, "message": "Invalid TOPT"}, status=401)
         else:
-            return Response({"status": 400, "message": "Emty data"}, status=400)
+            return Response({"status": 400, "message": "Invalild data"}, status=400)
     else:
-        return Response({"status": 400, "message": "Emty data"}, status=400)
+        return Response({"status": 400, "message": "Invalild data"}, status=400)
 
 
 
@@ -241,7 +245,7 @@ def generate_2fa_qr_code(request):
     file_name = f"{uuid.uuid4()}-qr_code_image.png"
     default_storage.save(file_name, ContentFile(img_io.read()))
 
-    return Response({"qr_code_image": file_name}, status=200)  
+    return Response({"qr_code_image": file_name}, status=200)
 
 
 @api_view(['POST'])
