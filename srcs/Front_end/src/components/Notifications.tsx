@@ -130,7 +130,7 @@ export default function Notifications() {
     // console.log(nots)
 
     return (
-        <div className={`min-h-[60px]  rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
+        <div className={`min-h-[70px]  rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="mr-2 font-popins">Notifications</h1>
@@ -141,7 +141,7 @@ export default function Notifications() {
             </div>
             {
                 show === true && 
-                <ul className="border-[.2px] max-h-[360px] overflow-scroll border-darkText/10 rounded-sm m-2">
+                <span className="list-none border-[.2px] max-h-[360px] overflow-scroll border-darkText/10 rounded-sm m-2">
                     {
                         nots.length ? 
                         nots.map((not, index) => <NotItem key={index} data={not}/>)
@@ -155,7 +155,7 @@ export default function Notifications() {
                             </div>
                         </li>
                     }
-                </ul>
+                </span>
             }
         </div>
     )
