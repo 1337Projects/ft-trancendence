@@ -3,9 +3,7 @@ DOCKER_COMPOSE = docker-compose
 WORK_DIR = --project-directory ./srcs
 DOCKER_COMPOSE_FILE = -f docker-compose.yml
 DOCKER_COMPOSE_DEB = -f docker-compose.debug.yml
-# ifdef dev
-	DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_DEB)
-# endif
+DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_DEB)
 DOCKER_COMPOSE_OVERRIDE = -f srcs/docker-compose.override.yml
 BUILD = $(DOCKER_COMPOSE)  build
 REBUILD = $(DOCKER_COMPOSE)  build --no-cache
@@ -52,19 +50,27 @@ clean:
 	$(DOWN)
 	docker system prune -f
 
-fclean:
-	$(DOWN)
-	docker system prune --all
+vclean:
+	$(DOWN) --volumes
+	docker system prune -f
 
+fclean:
+	$(DOWN) --volumes
+	docker system prune --all -f
 
 back_end_sevice=be
+test:
+	docker-compose exec $(back_end_sevice) pytest game/tests.py
+
 bash:
 	docker-compose exec $(back_end_sevice) bash
+
+freeze:
+	docker-compose exec $(back_end_sevice) pip freeze > srcs/Back_end/requirements.txt
+
 migrate:
 	docker-compose exec $(back_end_sevice) python manage.py makemigrations
 	docker-compose exec $(back_end_sevice) python manage.py migrate
-
-
 
 # all:
 # 	docker-compose up -d

@@ -14,7 +14,7 @@ class MatchMaking:
     async def check_for_match(self, player: User, channel_name: str):
         if len(self.waiting_players) >= 1:
             waited_player, channel2 = self.waiting_players.popleft()
-            game_id = await self.create_match(player, waited_player)
+            game_id = await self.create_match(waited_player, player)
             await self.game_start_message(channel_name, game_id)
             await self.game_start_message(channel2, game_id)
         else:
