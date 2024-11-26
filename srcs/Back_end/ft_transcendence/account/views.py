@@ -250,14 +250,14 @@ def generate_2fa_qr_code(request):
 
 @api_view(['POST'])
 def check_topt(request):
-    id = get_id(request)
-    if not id:
-        return JsonResponse({"message": "Invalid token"}, status=400)
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'error': 'User ID not found in session'}, status=400)
     if 'data' in request.data:
         data = request.data.get('data')
         if 'topt' in data:
             opt = data.get('topt')
-            user = User.objects.get(id=id)
+            user = User.objects.get(id=user_id)
             if validate_totp(user=user, otp=opt):
                 access_token = generate_access_token(user)
                 refresh_token = generate_refresh_token(user)
@@ -270,6 +270,7 @@ def check_topt(request):
             return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
     else:
         return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
+
 
 # @api_view(['GET'])
 # def get_others_friends(request, username):
