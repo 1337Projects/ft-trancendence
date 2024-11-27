@@ -73,15 +73,33 @@ function MessagesList() {
     const [ page, setPage ] = useState(1)
     const { authInfos } = useContext(UserContext) || {}
     const { user } = useParams()
-    const { messages , userData } = useContext(ChatContext) || {}
+    const { messages, setMessages , userData } = useContext(ChatContext) || {}
     const observer = useRef<IntersectionObserver | null>(null);
     const lastItem = useRef(null)
     const [hasMore, setHasMore] = useState(true)
 
-    MyUseEffect(() => {
-        send_fetch_event(page)
-        if (userData) setHasMore(page < userData.nbr_pages)
+    useEffect(() => {
+        // const timer = setTimeout(() => {
+
+        // }, 300)
+        return () => {
+            console.log(messages)
+            setMessages!([])
+        }
+    }, [])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            send_fetch_event(page)
+            if (userData) setHasMore(page < userData.nbr_pages)
+        }, 300)
+
+        return () => {
+            clearTimeout(timer)
+        }
     }, [page])
+
+ 
     
     
     const topitem = useCallback(() => {

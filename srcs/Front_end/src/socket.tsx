@@ -34,6 +34,7 @@ class WebSocketService {
 
             this.socket.onmessage = (event) => {
                 let data = JSON.parse(event.data)
+                // console.log(data)
                 switch (data.response.status) {
                     case 100:
                         console.log(data.response)
@@ -44,12 +45,16 @@ class WebSocketService {
                         data.response.data.players = players
                         this.callbacks["roomDataHandler"](data.response.data)
                         break;
+                    case 200:
+                        console.log(JSON.parse(data.response.game))
+                        // this.callbacks["setRoom"](data.response.room)
+                        break;
                     case 201:
                         // console.log(data.response.room)
                         this.callbacks["setRoom"](data.response.room)
                         break;
                     case 202:
-                        this.callbacks["setInitData"](JSON.parse(data.response.game))
+                        this.callbacks["setInitData"](data.response.game)
                         break;
                     case 203:
                         // console.log("start game event comes")
