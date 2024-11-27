@@ -4,11 +4,19 @@ import { Touramentcontext } from "../../Contexts/TournamentContext";
 import MyUseEffect from '../../hooks/MyUseEffect'
 import  drawTournment  from '../../libs/svg'
 
+import Socket from '../../socket'
+
 export default function Schema() {
 
 
     const { data } = useContext(Touramentcontext) || {}
     const [svg, setSvg] = useState("")
+
+    MyUseEffect(() => {
+        setTimeout(() => {
+            Socket.sendMessage({"event" : "start"})
+        }, 0)
+    }, [])
     
     MyUseEffect(() => {
         if (data) {

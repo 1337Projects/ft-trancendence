@@ -14,7 +14,7 @@ import { MessageType, UserType } from "../Types"
 
 export default function ChatLayout() {
     const { theme } = useContext(ApearanceContext) || {}
-    const [menu, setMenu] = useState<Boolean>(false)
+    const [menu, setMenu] = useState<Boolean>(true)
 
     const { user } = useContext(UserContext) || {}
     const [ cnvs , setCnvs ] = useState<any>(null)
