@@ -245,7 +245,7 @@ def generate_2fa_qr_code(request):
     file_name = f"{uuid.uuid4()}-qr_code_image.png"
     default_storage.save(file_name, ContentFile(img_io.read()))
 
-    return Response({"qr_code_image": file_name}, status=200)
+    return Response({"qr_code_image": "http://localhost:8000/media/" + file_name}, status=200)
 
 
 @api_view(['POST'])

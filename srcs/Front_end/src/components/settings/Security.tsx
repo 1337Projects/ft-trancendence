@@ -5,7 +5,8 @@ import SettingsInput from "./Input"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
 import TwoFImg from "./TwoFImg"
-
+import { Link } from "react-router-dom"
+import TwoFactor from "../auth/2fa"
 function SecurityItem({children}) {
     return (
         <li 
@@ -65,6 +66,8 @@ export default function Security() {
     const [changePass, setChangePass] = useState(true)
     const [twoF, setTwoF] = useState(true)
     const { color, theme } = useContext(ApearanceContext) || {}
+    const [showPopup, setShowPopup] = useState(false);
+    
     return (
         <div className="h-full">
             <ul className="">
@@ -84,9 +87,13 @@ export default function Security() {
                 {twoF && 
                     <div className={`mt-4 grid h-fit grid-cols-2 gap-2 border-[1px]  p-4 rounded ${theme == 'light' ? "border-black/20" : "border-white/20"}`}>
                         <div className="w-full h-full p-2">
-                            <h1 className="capitalize text-md">turn on two-factor authentification</h1>
+                            <h1 className="capitalize text-md">
+                                turn on two-factor authentification
+                            </h1>
                             <p className="text-xs mt-4 lowercase leading-5">Prevent hackers from accessing your account with an additional layer of security.</p>
-                            <button style={{background : color}} className="mt-10 text-white  p-3 px-6 text-xs rounded">turn on 2-f authentification</button>
+                            <button onClick={() => setShowPopup(!showPopup)} style={{background : color}} className="mt-10 text-white  p-3 px-6 text-xs rounded">
+                                turn on 2-f authentification
+                            </button>
                         </div>
                         <div className="w-full h-full p-4 flex justify-center items-center">
                             <div className="w-[160px] ">
@@ -96,6 +103,11 @@ export default function Security() {
                     </div>
                 }
             </ul>
+            {showPopup && (
+                <div className={` h-[30%]  transition-all duration-300 ease-in-out ${1 ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' : 'relative'}`}>
+                    <TwoFactor are_you_in={false} cancel={showPopup} setShowPopup={setShowPopup} />
+                </div>
+            )}
         </div>
     )
 }
