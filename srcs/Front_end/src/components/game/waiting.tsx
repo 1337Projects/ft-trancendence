@@ -2,27 +2,31 @@ import React, { useContext, useEffect, useState } from "react"
 import Socket from '../../socket'
 import { Link, useNavigate } from 'react-router-dom'
 import { ApearanceContext } from "../../Contexts/ThemeContext"
-
+import { UserContext } from '../../Contexts/authContext'
 
 export default function Waiting() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const [room, setRoom] = useState(null)
     const [invite, setInvite] = useState(false)
     const navigate = useNavigate()
+    const { authInfos } = useContext( UserContext ) || {}
 
 
     
     useEffect(() => {
+
         const timer = setTimeout(() => {
-            Socket.connect(`${import.meta.env.VITE_API_URL}ws/game/2/`)
+            Socket.connect(`ws://localhost:8000/ws/game/play/?token=${authInfos?.accessToken}`)
             Socket.addCallback("setRoom", setRoom)
             Socket.addCallback("startGame", startGameHandler)
         })
 
-        return () => clearTimeout(timer)
+        return () => {
+            clearTimeout(timer)
+        }
     }, [])
 
-
+    console.log(room)
     function startGameHandler() {
         navigate("../game/room/1")
     }
@@ -61,8 +65,8 @@ export default function Waiting() {
                     <div className="flex items-center mt-20 justify-center">
                         <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
                             <div className='text-center'>
-                                <img src={room?.room?.players[0]?.user?.profile?.image} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
-                                <h1 className='uppercase mt-4'>{room?.room?.players[0]?.user?.username}</h1>
+                                <img src={room?.room?.players[0]?.profile?.avatar} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
+                                <h1 className='uppercase mt-4'>{room?.room?.players[0]?.username}</h1>
                                 <h1 className='uppercase mt-2 text-[12px]'>player 1</h1>
                             </div>
                         </div>
@@ -72,8 +76,8 @@ export default function Waiting() {
                         </div>
                         <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
                             <div className=' text-center'>
-                                <img src={room?.room?.players[1] ? room?.room?.players[1]?.user?.profile?.image : ""} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
-                                <h1 className='uppercase mt-4'>{room?.room?.players[1] ? room?.room?.players[1]?.user?.username : "waiting..."}</h1>
+                                <img src={room?.room?.players[1] ? room?.room?.players[1]?.profile?.avatar : "/_.jpeg"} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
+                                <h1 className='uppercase mt-4'>{room?.room?.players[1] ? room?.room?.players[1]?.username : "waiting..."}</h1>
                                 <h1 className='uppercase mt-2 text-[12px]'>player 2</h1>
                             </div>
                         </div>

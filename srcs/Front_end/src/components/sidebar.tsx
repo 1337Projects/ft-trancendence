@@ -1,12 +1,11 @@
 import React, { useContext } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ApearanceContext } from '../Contexts/ThemeContext';
 import { UserContext } from '../Contexts/authContext';
 
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
-import { TbLogout, TbSettings2 } from "react-icons/tb";
+import { TbSettings2 } from "react-icons/tb";
 import { PiMoonStars, PiSunDim } from "react-icons/pi";
-import { MdOutlineEmojiEvents } from "react-icons/md";
 
 import { GrGamepad } from "react-icons/gr";
 import { RxDashboard } from "react-icons/rx";
@@ -41,11 +40,6 @@ function SideBar() {
 			text: 'profile',
 			icon : <RxDashboard />,
 			link : `profile/${user?.user?.username}`
-		},
-		{
-			text: 'tournaments',
-			icon : <MdOutlineEmojiEvents />,
-			link : `tournaments`
 		},
 		{
 			text: 'game',

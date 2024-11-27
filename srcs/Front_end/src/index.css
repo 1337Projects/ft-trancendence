@@ -21,17 +21,15 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: 4px;
-    /* display: none; */
+    width: 10px;
+    display: none;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 2px;
+    background: rgb(21, 21, 21);
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background: #2F4858;
+    background: rgba(194, 220, 252, 0.2);
 }
 
 

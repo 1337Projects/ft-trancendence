@@ -1,16 +1,15 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext } from "react"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { TbUsers } from "react-icons/tb";
-
-import { Hero } from './Game'
-import MyUseEffect from "../../hooks/MyUseEffect";
+import { Link } from "react-router-dom";
 
 
-export function TrItem() {
+export function TrItem({data}) {
 
     const { theme, color } = useContext(ApearanceContext) || {}
+    
     return (
-        <div className={`border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} w-full h-[200px] p-2 rounded mb-4`}>
+        <div className={`border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} w-full h-[200px] p-2 rounded`}>
             <div className="w-full h-[180px] flex items-center relative">
                 <img src="/_5.jpeg" className={`mr-4 border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded w-[200px] h-full`} />
                 <div style={{background : color}} className="absolute text-white top-[-10px] w-[80px] flex items-center justify-center left-[-10px] h-[35px] rounded text-xs">waiting</div>
@@ -31,59 +30,8 @@ export function TrItem() {
                         </div>
                     </div>
                     <div className="w-full h-[80px] flex justify-end items-center p-2">
-                        <button style={{background : color}} className="uppercase text-sm text-white w-[100px] h-[40px] rounded">join</button>
+                        <Link style={{ background: color }} className="uppercase text-sm text-white flex justify-center items-center w-[100px] h-[40px] rounded" to={`tournment/waiting/${data.id}`}>join</Link>
                     </div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-export default function Events() {
-
-    const { theme, color } = useContext(ApearanceContext) || {}
-
-    const [tournments, setTournments] = useState([])
-
-    MyUseEffect(async () => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/get_all/`, {
-                method : 'GET',
-                credentials : 'include'
-            })
-
-            if (!response.ok) {
-                const { error } = await response.json()
-                throw  new Error(error)
-            }
-
-            const { data } = await response.json()
-            setTournments(data)
-        } catch(err) {
-            console.log(err)
-        }
-    }, [])
-
-    return (
-        <div className={`overflow-scroll ${theme === 'dark' ? 'bg-darkItems text-darkText' : 'bg-lightItems text-lightText'} h-full mt-2 rounded p-2`}>
-            <div>
-                <Hero color={color} img="/Tennis-bro.svg" />
-            </div>
-            <div className="w-full max-w-[700px] mx-auto h-full mt-2 p-2">
-                <div className="mb-10">
-                    <h1 className="capitalize text-lg">avaliable tournaments :</h1>
-                    <p className="text-xs mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur, non.</p>
-                </div>
-                <div  className="w-full h-fit px-4">
-                    {
-                        tournments.length ?
-                        tournments.map((item, index) => <TrItem />)
-                        :
-                        <div className="w-full h-[200px] rounded border-[1px] border-white/20 text-sm flex justify-center items-center">
-                            <p>not tournaments yet, create one</p>
-                            <span style={{color : color}} className="ml-2 font-bold text-md cursor-pointer">Create !</span>
-                        </div>
-                    }
                 </div>
             </div>
         </div>

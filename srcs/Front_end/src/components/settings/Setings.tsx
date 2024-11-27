@@ -39,7 +39,7 @@ export default function Setings() {
         <div className={`overflow-scroll ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} p-1 w-full flex-grow h-[94vh] rounded mt-2`}>
             <div className="w-full md:flex px-10 max-w-[800px] mx-auto mt-4">
                 <div className="w-full  md:w-[300px] md:mr-4 px-2">
-                    <ul className="grid grid-cols-3 content-start p-2 md:grid-cols-1 gap-4 min-h-[45px] h-full border-[1px] border-black/10 rounded-md">
+                    <ul className={`grid grid-cols-3 content-start p-2 md:grid-cols-1 gap-4 min-h-[45px] h-full border-[1px] ${theme == 'light' ? "border-black/10" : "border-white/10"}  rounded-md`}>
                         {listItems.map(it => <ListItem key={it.text} item={it} isActive={it.text == item} handler={setItem}  />)}
                     </ul>
                 </div>

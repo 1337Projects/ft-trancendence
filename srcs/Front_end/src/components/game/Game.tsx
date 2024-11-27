@@ -42,10 +42,13 @@ function Card({color, img, text}) {
     return (
         <div className="w-full mx-auto">
             <div className="h-[180px] w-full p-2">
-                <div className="w-full h-full bg-gray-200 rounded" ></div>
+                <div className="w-full h-full bg-gray-200 overflow-hidden rounded flex justify-center" >
+                    {/* {img} */}
+                    {/* <img src="/ttttt.webp" className="w-full h-full" alt="" /> */}
+                </div>
             </div>
             <div className="mt-2 text-center" >
-                <h1 className="text-lg font-medium uppercase ">{text}</h1>
+                <h1 className="text-lg  capitalize font-bold">{text}</h1>
                 <p className="mt-2 text-xs font-thin">Lorem ipsum dolor, sit amet elit. Placeat, autem minus deleniti ad</p>
                 <button style={{background:color}} className=" px-3 h-[36px] ml-[50%] translate-x-[-50%] text-white rounded-full w-[100px] mt-4 flex items-center justify-center" >
                     <h1 className="text-[14px] capitalize mr-2">play</h1>
@@ -58,6 +61,7 @@ function Card({color, img, text}) {
 
 import { RiGamepadLine } from "react-icons/ri";
 import { DialogContext } from "../../Contexts/DialogContext"
+import { TrItem } from "./Events"
 // import { MdGamepad } from "react-icons/md";
 
 
@@ -88,10 +92,10 @@ function Cards({color}) {
                     <TournmentDialog  />
                 }
             </div>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                <Card color={color} img="/game1.svg" text="play random match"/>
-                <Card color={color} img="/game1.svg" text="play vs Computer"/>
-                <Card color={color} img="/game1.svg" text="play with friend"/>
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <Card color={color} img={<TornmentImg color={color} />} text="play random match"/>
+                <Card color={color} img={<AiImg  color={color} />} text="play vs Computer"/>
+                <Card color={color} img={<FriendImg color={color} />} text="play with friend"/>
             </div>
         </div>
     )
@@ -125,39 +129,25 @@ export default function Game() {
         <>
             <div className={`${appearence?.theme == 'light' ? "bg-lightItems text-lightText " : "bg-darkItems text-darkText"} mt-2 w-full h-[100vh] overflow-scroll p-2`}>
                 <div className="mx-auto max-w-[800px] h-full">
-                    <Hero color={appearence?.color} />
+                    <Hero color={appearence?.color} img="/Tennis-bro.svg" />
                     <Cards color={appearence?.color} />
                     
-                    <div className="mt-16 w-full h-[600px] px-8">
-                        <h1 className="my-4 capitalize">played tournments :</h1>
-                        {
-                            tournments.length ?
-                            <div className="h-fit min-h-[200px] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3  gap-4">
-                                {
-                                    tournments.map(t => {
-                                        return (
-                                            <div key={t.id} className="w-full">
-                                                <div className="w-full h-[180px] relative rounded overflow-hidden">
-                                                    <img className="" src="/tour.webp" alt="img" />
-                                                    <div 
-                                                        style={{background : appearence?.color}} 
-                                                        className="absolute top-1 left-1 px-4 text-xs py-2 text-white rounded"
-                                                    >{t.mode}</div>
-
-                                                    <div className="absolute bottom-0 w-full bg-blackG p-2 h-[100px]">
-                                                        <Link to={`tournment/waiting/${t.id}`} className="text-white border-[1px] cursor-pointer uppercase border-white/40 px-4 py-1 right-2 rounded absolute bottom-2 text-xs">join</Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
-                            :
-                            <div className={`rounded border-[1px] ${appearence?.theme == 'light' ? "border-black/10" : "border-white/10"}  h-[100px] flex justify-center items-center`}>
-                                <h1 className="text-sm">no tournments yet, create a new one !</h1>
-                            </div>
-                        }
+                    <div className="px-10 mt-16">
+                        <h1 className="text-xl font-bold">Avialable Tournments :</h1>
+                        <div  className="w-full mt-10 h-fit overflow-y-scroll">
+                            {
+                                tournments.length ?
+                                tournments.map((item, index) => 
+                                    <div className="h-[270px]" key={index}>
+                                        <TrItem data={item} />
+                                    </div> )
+                                :
+                                <div className="w-full h-[200px] rounded border-[1px] border-white/20 text-sm flex justify-center items-center">
+                                    <p>not tournaments yet, create one</p>
+                                    <span style={{color : appearence?.color}} className="ml-2 font-bold text-md cursor-pointer">Create !</span>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div> 
