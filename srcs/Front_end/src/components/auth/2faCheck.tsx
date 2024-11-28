@@ -16,6 +16,7 @@ export default function TwoFacCheck () {
     // const [bol, setBol] = useState(true);
     const user = useContext(UserContext)
     const location = useLocation();  // Get location object
+    const navigate = useNavigate()
 
     const { dataa } = location.state || {}; 
     const handleChange = (otp) =>{

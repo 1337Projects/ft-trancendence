@@ -75,7 +75,7 @@ def intra_oauth(request):
                 
                 request.session['user_id'] =  user.id
                 request.session.set_expiry(1800)
-                response = JsonResponse({"2fa": "True", "status": 200, "user_id" : user.id})
+                response = JsonResponse({"2fa": "True", "status": 200})
             else:
                 access_token = generate_access_token(user)
                 response = JsonResponse({'access': access_token, "userinfo": userinfo, "2fa": "False", "status": 200})

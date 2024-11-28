@@ -241,7 +241,7 @@ def generate_2fa_qr_code(request):
     img_io = io.BytesIO()
     img.save(img_io, format='PNG')
     img_io.seek(0)
-  
+
     file_name = f"{uuid.uuid4()}-qr_code_image.png"
     default_storage.save(file_name, ContentFile(img_io.read()))
 
