@@ -14,6 +14,8 @@ urlpatterns = [
     path('2fa/', views.set_2fa),
     path('2fa/qr/', views.generate_2fa_qr_code),
     path('2fa/topt/', views.check_topt),
+    path('2fa/state/', views.is_2fa_enable),
+    path('2fa/disable/', views.disable_2fa),
     path('<str:username>/', views.get_profile),
     path('getOthersFriends/<str:username>/', views.get_others_friends),
 ]

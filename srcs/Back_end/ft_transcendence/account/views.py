@@ -251,8 +251,13 @@ def generate_2fa_qr_code(request):
 @api_view(['POST'])
 def check_topt(request):
     user_id = request.session.get('user_id')
+    user_retry = request.session.get('retry_limit')
     if not user_id:
-        return JsonResponse({'error': 'User ID not found in session'}, status=400)
+        return JsonResponse({'error': 'Invalid data from the session'}, status=400)
+    
+    if user_retry <= 0:
+        return JsonResponse({'error': 'Retry limit exceeded. Please try again later.'}, status=429)
+
     if 'data' in request.data:
         data = request.data.get('data')
         if 'topt' in data:
@@ -265,11 +270,34 @@ def check_topt(request):
                 set_refresh_token_cookie(response, refresh_token)
                 return response
             else:
+                request.session['retry_limit'] -= 1
                 return JsonResponse({"status": 400, "message": "Invalid TOPT",}, status=400)
         else:
             return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
     else:
         return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
+    
+@api_view(['GET'])
+def is_2fa_enable(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = get_object_or_404(User, id=id)
+    if user.twofa:
+        return Response({"2fa" : "True"}, status=200)
+    else:
+        return Response({"2fa" : "False"}, status=200)
+    
+@api_view(['PATCH'])
+def disable_2fa(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = get_object_or_404(User, id=id)
+    user.twofa = False
+    user.secret_key = None
+    user.save()
+    return JsonResponse({'status': '200', 'message': 'Secret key deleted successfully'}, status=200)
 
 
 # @api_view(['GET'])
