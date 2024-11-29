@@ -284,9 +284,9 @@ def is_2fa_enable(request):
         return Response({"message": "Invalid token"}, status=400)
     user = get_object_or_404(User, id=id)
     if user.twofa:
-        return Response({"2fa" : "True"}, status=200)
+        return Response({"twofa" : "True"}, status=200)
     else:
-        return Response({"2fa" : "False"}, status=200)
+        return Response({"twofa" : "False"}, status=200)
     
 @api_view(['PATCH'])
 def disable_2fa(request):
@@ -295,7 +295,7 @@ def disable_2fa(request):
         return Response({"message": "Invalid token"}, status=400)
     user = get_object_or_404(User, id=id)
     user.twofa = False
-    user.secret_key = None
+    user.secret_key = 'DEFAULT_SECRET'
     user.save()
     return JsonResponse({'status': '200', 'message': 'Secret key deleted successfully'}, status=200)
 
