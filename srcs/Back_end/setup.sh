@@ -10,7 +10,7 @@ python3 -m venv virtualenv
 
 #mel-harc
 pip install --upgrade pip
-pip install --no-cache-dir -r requirements.txt
+pip install --no-cache-dir -r ft_transcendence/requirements.txt
 pip install python-dotenv
 pip install djangorestframework
 pip install django-allauth
@@ -23,6 +23,8 @@ pip install djangorestframework-simplejwt
 pip install django-otp
 pip install qrcode[pil] pyotp
 pip install pyotp
+pip install django-background-tasks
+
 
 #khawla
 pip install dj-rest-auth
@@ -43,4 +45,7 @@ python3 /app/ft_transcendence/manage.py makemigrations tournment
 python /app/ft_transcendence/manage.py makemigrations --noinput
 python3 /app/ft_transcendence/manage.py migrate --noinput
 python3 /app/ft_transcendence/manage.py createsuperuser --noinput || true
+
+nohup python3 /app/ft_transcendence/manage.py process_tasks &
+
 python3 /app/ft_transcendence/manage.py runserver 0.0.0.0:8000

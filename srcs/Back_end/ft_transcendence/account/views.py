@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .utls import *
 from datetime import timedelta
+from .tasks import delete_qr_code_image
 
 import qrcode
 import pyotp, os, io
@@ -244,6 +245,8 @@ def generate_2fa_qr_code(request):
 
     file_name = f"{uuid.uuid4()}-qr_code_image.png"
     default_storage.save(file_name, ContentFile(img_io.read()))
+
+    delete_qr_code_image(file_name, schedule=120)
 
     return Response({"qr_code_image": "http://localhost:8000/media/" + file_name}, status=200)
 

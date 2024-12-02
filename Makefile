@@ -96,9 +96,16 @@ migrate:
 # 	rm -rf srcs/Back_end/ft_transcendence/login/migrations/*
 # 	rm -rf srcs/Back_end/ft_transcendence/account/migrations/*
 # 	rm -rf srcs/Back_end/ft_transcendence/account/__pycache__
+# 	rm -rf srcs/Back_end/ft_transcendence/tournment/migrations/*
+# 	rm -rf srcs/Back_end/ft_transcendence/tournment/__pycache__
+# 	rm -rf srcs/Back_end/ft_transcendence/notifications/migrations/*
+# 	rm -rf srcs/Back_end/ft_transcendence/notifications/__pycache__
 # 	rm -rf srcs/Back_end/ft_transcendence/chat/migrations/*
 # 	rm -rf srcs/Back_end/ft_transcendence/chat/__pycache__
+# 	rm -rf srcs/Back_end/ft_transcendence/game/__pycache__
+# 	rm -rf srcs/Back_end/ft_transcendence/game/migrations/*
+# 	rm -rf srcs/Back_end/ft_transcendence/game/backend/__pycache__
 # 	rm -rf .DS_Store
 # 	rm -rf srcs/.DS_Store
 # match: down clear
-	
+
