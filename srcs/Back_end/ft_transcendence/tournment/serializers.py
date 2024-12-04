@@ -26,7 +26,7 @@ class TournmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation =  super().to_representation(instance)
-        representation['players'] = PlayerSerializer(instance.players.all(), many=True).data
+        representation['players'] = UserWithProfileSerializer(instance.players.all(), many=True).data
         representation['owner'] =  UserSerializer(instance.owner).data
         return representation
 

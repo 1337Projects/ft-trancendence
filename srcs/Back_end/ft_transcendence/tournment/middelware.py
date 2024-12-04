@@ -1,5 +1,6 @@
 
 import jwt, sys
+from django.contrib.auth.models import AnonymousUser
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from login.models import User
@@ -17,7 +18,7 @@ class MyMiddelware:
             user = User.objects.get(id=user_id)
             return user
         except:
-            return None
+            return AnonymousUser
 
     async def __call__(self, scope, receive, send):
         query_str = scope['query_string'].decode()
@@ -32,7 +33,7 @@ class MyMiddelware:
             except Exception as e:
                 print(e)
                 sys.stdout.flush()
-                scope['user'] = None
+                scope['user'] = AnonymousUser
         else:
-            scope['user'] = None
+            scope['user'] = AnonymousUser
         return await self.inner(scope, receive, send)
