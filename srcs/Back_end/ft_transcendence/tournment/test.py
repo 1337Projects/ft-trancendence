@@ -1,5 +1,6 @@
 import asyncio
 import sys
+from .utils import debug
 
 class TreeNode:
     def __init__(self, data, depth, parent):
@@ -29,10 +30,14 @@ class Builder:
 
     def __init__(self, data):
         self.data = data
+        self.rounds_list = []
         self.rounds = {}
         self.levels =  self.count_levels(len(data)) - 1
+        for i in range(self.levels + 1):
+            self.rounds_list.append([])
         self.tree = self.build_tree(self.levels, None)
         self.tree_to_rounds(self.tree)
+        # debug(self.rounds_list)
 
 
     def count_levels(self,  list_len):
@@ -45,9 +50,12 @@ class Builder:
 
         if index == 0:
             my_player = Player(self.data.pop())
-            return TreeNode(my_player, index, parent)
+            root = TreeNode(my_player, index, parent)
+            self.rounds_list[index].append(root)
+            return root
         my_match = Match()
         root = TreeNode(my_match, index, parent)
+        self.rounds_list[index].append(root)
         root.left = self.build_tree(index-1, my_match)
         root.right = self.build_tree(index-1, my_match)
 
@@ -86,8 +94,27 @@ class Builder:
             self.tree_to_rounds(root.right)
 
 
-    def get_player_match(self):
-        pass
+    def get_player_match(self, level, id):
+        my_list = self.rounds_list[level]
+        debug(f"{level} - {my_list}")
+        # debug("----------")
+        for item in my_list:
+            try:
+                left_node = item.left
+                if left_node and isinstance(left_node.val, Player):
+                    user = left_node.val.data
+                    if user['id'] == id:
+                        return item
+                    
+                right_node = item.right
+                if right_node and isinstance(right_node.val, Player):
+                    user = right_node.val.data
+                    if user['id'] == id:
+                        return item
+            except:
+                pass
+        # debug("----------")
+        return None
 
 
     def get_rounds(self):
