@@ -93,6 +93,9 @@ const router = createBrowserRouter(
         </Route>
 
         <Route path='chat' element={<ChatLayout />}>
+          <Route index element={<div className='w-full h-full p-10 flex justify-center items-center'>
+            <img src='/chaat.svg' />
+          </div>} />
           <Route path=':user' element={<Conversation/>} />
         </Route>
 
