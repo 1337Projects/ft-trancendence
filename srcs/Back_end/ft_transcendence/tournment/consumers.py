@@ -2,7 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 from .models import Tournment
 from  asgiref.sync import sync_to_async, async_to_sync
-from .serializers import TournmentSerializer, PlayerSerializer
+from .serializers import TournmentSerializer
 from game_api.serializers import MatchSerializer
 from .test import Builder, Player, Match
 import json, copy
@@ -128,10 +128,12 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
 class Tournament:
 
     lock = threading.Lock()
+    current_matches = {}
 
     def __init__(self, data):
-        self.data = data
-        self.builder = Builder(data['data']['players'])
+        self.current_match = None
+        self.builder = Builder()
+        self.builder.init(data['data']['players'])
 
     # async def run(self, level, id):
     #     match  = self.builder.get_player_match(level, id)
@@ -149,8 +151,13 @@ class Tournament:
 
 
     async def play(self, lvl, id):
-        match = self.builder.get_player_match(lvl, id)
-        assert match != None
+        next_match = self.builder.get_player_match(lvl, id)
+        if not next_match:
+            return None
+        self.current_matches[id] = next_match
+        match = self.current_matches[id]
+        # assert self.current_match != None
+        # debug(f"match list ===> {self.builder.rounds_list}")
         status = False
         with self.lock:
             if match and match.val.status == 'waiting':
@@ -161,7 +168,22 @@ class Tournament:
             if match_data:
                 return match_data
         return None
-            
+    
+    async def upgrade(self,lvl, id):
+        match = self.current_matches[id]
+        if match:
+            if match.left.val.data['id'] == id:
+                match.val = match.left.val
+                debug("upgrade left up")
+            elif match.right.val.data['id'] == id:
+                match.val = match.right.val
+                debug("upgrade right up")
+            # self.builder.rounds = self.builder.tree_to_rounds(self.builder.tree)
+            # debug(f"new val => {match.val}")
+            # debug(f"match val ===> {self.builder.rounds_list[lvl][0].val}")
+            # debug(f"match left val ===> {self.builder.rounds_list[lvl][0].left.val}")
+            # debug(f"match right val ===> {self.builder.rounds_list[lvl][0].right.val}")
+        
 
     @database_sync_to_async
     def create_match(self, match):
@@ -178,6 +200,9 @@ class Tournament:
         except Exception as e:
             debug(f"exception => {e}")
             return None
+
+
+
 
 class SharedState:
     _instance = None
@@ -208,6 +233,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.group_name, self.channel_name)
 
         async with self.shared_state.lock:
+            await asyncio.sleep(0.5)
             await self.init()
             await self.create_provider()
         
@@ -227,8 +253,9 @@ class TournmentConsumer(AsyncWebsocketConsumer):
     async def create_provider(self):
         debug(self.shared_state._tournaments[self.tournment_id]['user_count'])
         if self.shared_state._tournaments[self.tournment_id]['user_count'] == self.shared_state._tournaments[self.tournment_id]['data']['max_players']:
-            self.shared_state.tournaments_providers[self.tournment_id] = Tournament(copy.deepcopy(self.shared_state._tournaments[self.tournment_id]))
-            self.shared_state._tournaments[self.tournment_id]["rounds"] = self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds()
+            self.shared_state.tournaments_providers[self.tournment_id] = Tournament(self.shared_state._tournaments[self.tournment_id])
+            debug(self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds())
+            # self.shared_state._tournaments[self.tournment_id]["rounds"] = self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds()
             debug("send provider data")
             await self.channel_layer.group_send(
                 self.group_name,
@@ -258,7 +285,23 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                             "status" : 211
                         },
                     })
-            # self.lvl += 1
+                
+        elif text_to_json_data['event'] == "upgrade":
+            self.lvl += 1
+            provider = self.shared_state.tournaments_providers[self.tournment_id]
+            if text_to_json_data['winner_id'] == self.scope['user'].id:
+                await provider.upgrade(self.lvl, text_to_json_data['winner_id'])
+                self.shared_state._tournaments[self.tournment_id]["rounds"] = self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds()
+                await self.channel_layer.group_send(
+                    self.group_name,
+                    {
+                        "type" : "send_data",
+                        "data" : {
+                            "data" : self.shared_state._tournaments[self.tournment_id],
+                            "status" : 210
+                        },
+                    }
+                )
 
 
 

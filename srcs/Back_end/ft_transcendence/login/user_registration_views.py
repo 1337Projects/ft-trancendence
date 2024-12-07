@@ -48,6 +48,7 @@ class UserLoginView(generics.GenericAPIView):
                     response = Response({"2fa": "True"}, status=status.HTTP_200_OK)
                 else:    
                     refresh = RefreshToken.for_user(user)
+                    refresh['username'] = user.username
                     response = Response({
                         'access': str(refresh.access_token),
                     }, status=status.HTTP_200_OK)
