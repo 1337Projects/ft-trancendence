@@ -4,10 +4,36 @@ import FriendImg from '../assets/FriendImg'
 import AiImg from "../assets/AiImg"
 import TornmentImg from "../assets/TornmentImg"
 import { json, Link } from "react-router-dom"
-import { FaGamepad } from "react-icons/fa6"
+import { FaArrowRightLong, FaGamepad, FaInbox } from "react-icons/fa6"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
 import MyUseEffect from '../../hooks/MyUseEffect'
+import { MdOutlineTipsAndUpdates } from "react-icons/md";
+import { GiSandsOfTime } from "react-icons/gi";
+
+function CatButton({icon, text, categorie, handler}) {
+    const {color, theme} = useContext(ApearanceContext) || {}
+    const t = categorie === text ? color : ""
+    return (
+        <button style={{color:t, borderColor : t}} className={`border-[.1px] ${theme == 'light' ? "border-black" : "border-white"} h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} onClick={()=> handler(text)}>
+            <p className="mr-2">{text}</p>
+            <div className="text-[12pt]">
+                {icon}
+            </div>
+        </button>
+    )
+}
+
+export function Categories({categorie, Handler}) {
+    
+    return (
+        <div className="w-full h-[30px] flex">
+            <CatButton text="latest" icon={<MdOutlineTipsAndUpdates />} categorie={categorie} handler={Handler} />
+            <CatButton text="ongoing" icon={<GiSandsOfTime />} categorie={categorie}  handler={Handler} />
+            <CatButton text="ended" icon={<IoIosMailUnread />} categorie={categorie}  handler={Handler} />
+        </div>
+    )
+}
 
 export function Hero({color, img}) {
     
@@ -19,9 +45,9 @@ export function Hero({color, img}) {
                         <div className="">
                             <p style={{color : color}} >Play Ping Pong</p>
                             <h3 className="text-[2rem] mt-2 font-kav max-w-[270px] font-bold capitalize">its time to play ping pong</h3>
-                            <p className="text-[8px] max-w-[260px] leading-4 mt-4">welcome to pong comunity, go play with your friends, and leet them see your amazing skills , enjoy ; )</p>
+                            <p className="text-[8px] max-w-[260px] leading-4 mt-4">welcome to pong comunity, go play with your friends, and leet them see your amazing skills enjoy.</p>
                             <Link to="waiting">
-                                <button style={{backgroundColor : color}} className={`flex text-[10pt] justify-between h-[40px] w-[130px] items-center p-2 px-4 text-white rounded-3xl mt-10`}>
+                                <button style={{backgroundColor : color}} className={`flex text-[10pt] justify-between h-[40px] w-[130px] items-center p-2 px-4 text-white rounded-full mt-10`}>
                                     <p className="mr-2 capitalize">Play now</p>
                                     <FaGamepad className="text-[16pt]" />
                                 </button>
@@ -39,20 +65,23 @@ export function Hero({color, img}) {
 }
 
 function Card({color, img, text}) {
+
+    const { theme } = useContext(ApearanceContext) || {}
+
     return (
-        <div className="w-full mx-auto">
-            <div className="h-[160px] w-full p-2">
-                <div className="w-full h-full bg-gray-200 overflow-hidden rounded flex justify-center" >
+        <div className={`w-full mx-auto border-[1px] ${theme == 'light' ? "border-black/10" : "border-white/10"} rounded`}>
+            <div className="h-[160px] w-full">
+                <div className="w-full h-full overflow-hidden rounded-t flex justify-center" >
                     {/* {img} */}
-                    {/* <img src="/ttttt.webp" className="w-full h-full" alt="" /> */}
+                    <img src={img} className="w-full h-full" alt="" />
                 </div>
             </div>
-            <div className="mt-2 text-center" >
-                <h1 className="text-lg  capitalize font-bold">{text}</h1>
-                <p className="mt-2 text-xs font-thin">Lorem ipsum dolor, sit amet elit. Placeat, autem minus deleniti ad</p>
-                <button style={{background:color}} className=" px-3 h-[36px] ml-[50%] translate-x-[-50%] text-white rounded-full w-[100px] mt-4 flex items-center justify-center" >
-                    <h1 className="text-[14px] capitalize mr-2">play</h1>
-                    <FaGamepad className="text-[16pt]" />
+            <div className="p-4">
+                <h1 className="text-md capitalize font-semibold tracking-wide">{text}</h1>
+                <p className="mt-2 text-xs font-thin leading-5">Lorem ipsum dolor, sit amet elit. Placeat, autem minus deleniti ad</p>
+                <button style={{background : color}} className="px-6 text-white h-[34px] rounded mt-4 flex items-center justify-center" >
+                    <h1 className="text-[12px] lowercase mr-2">play now</h1>
+                    <FaArrowRightLong className="text-[10pt]" />
                 </button>
             </div>
         </div>
@@ -62,6 +91,7 @@ function Card({color, img, text}) {
 import { RiGamepadLine } from "react-icons/ri";
 import { DialogContext } from "../../Contexts/DialogContext"
 import { TrItem } from "./Events"
+import { IoIosMailUnread } from "react-icons/io"
 // import { MdGamepad } from "react-icons/md";
 
 
@@ -78,10 +108,10 @@ function Cards({color}) {
                     <p className="text-small max-w-[400px] mt-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur rem quia inventore officiis, odio rerum sapiente asperiores earum nobis labore architecto nam qui quae. repudiandae voluptas consequuntur pariatur</p>
                 </div>
             </div>
-            <div className="mt-10 flex justify-end px-10">
+            <div className="mt-10 flex justify-end">
                 <button 
                     style={{background : appearence?.color}} 
-                    className="p-3 px-4 capitalize rounded-full text-white flex items-center"
+                    className="p-2 px-4 capitalize rounded-full text-white flex items-center"
                     onClick={() => setOpen!(true)}
                 >
                     <span className="mr-2 text-sm">create tournment</span>
@@ -93,9 +123,9 @@ function Cards({color}) {
                 }
             </div>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <Card color={color} img={<TornmentImg color={color} />} text="play random match"/>
-                <Card color={color} img={<AiImg  color={color} />} text="play vs Computer"/>
-                <Card color={color} img={<FriendImg color={color} />} text="play with friend"/>
+                <Card color={color} img="/leo-vs-random.jpg" text="random match"/>
+                <Card color={color} img="/leo-vs-computer.jpg" text="vs Computer"/>
+                <Card color={color} img="/leo-vs-friend.jpg" text="vs friend"/>
             </div>
         </div>
     )
@@ -134,7 +164,10 @@ export default function Game() {
                     
                     <div className="px-10 mt-16">
                         <h1 className="text-xl font-bold">Avialable Tournments :</h1>
-                        <div  className="w-full mt-10 h-fit overflow-y-scroll">
+                        <div className="w-full h-[50px] flex items-center mt-6">
+                            <Categories categorie="latest" Handler={null} />
+                        </div>
+                        <div  className="w-full mt-6 h-fit overflow-y-scroll">
                             {
                                 tournments.length ?
                                 tournments.map((item, index) => 
@@ -160,7 +193,7 @@ function TournmentDialog() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const { setOpen } = useContext(DialogContext) || {}
     const { user } = useContext(UserContext) || {}
-    const [data, setData] = useState({members : 4, mode : 'local'})
+    const [data, setData] = useState({members : 4, mode : 'remote'})
     const [players, setPlayers] = useState({}) 
     const [created, setCreated] = useState<null | number>(null)
 
@@ -239,7 +272,7 @@ function TournmentDialog() {
                                         <option value="local">local</option>
                                     </select>
                                 </div>
-                                {
+                                {/* {
                                     data.mode === 'local' && 
                                     <div className="mt-2">
                                         <button 
@@ -268,7 +301,7 @@ function TournmentDialog() {
                                             }
                                         </div>
                                     </div>
-                                }
+                                } */}
                         </div>
                     }
                     
