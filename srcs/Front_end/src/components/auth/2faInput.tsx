@@ -1,13 +1,22 @@
 import React, { useEffect, useRef, useReducer, ChangeEvent, KeyboardEvent, FocusEvent } from "react";
+import MyUseEffect from '../../hooks/MyUseEffect';
 
 // Type for the submittedValues array in the doSubmit function
 function doSubmit(submittedValues: string[]): Promise<void> {
-console.log(`Submitted: ${submittedValues.join("")}`);
-
-return new Promise((resolve) => {
-    setTimeout(() => {
-    resolve();
-    }, 1500);
+    let nums : string = submittedValues.join("")
+    console.log(`Submitted: ${nums}`);
+    // 2fa/
+    return new Promise((resolve) => {
+        setTimeout(() => {
+        // const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/2fa/qr/`, {
+        //     method: 'GET',
+        //     credentials : 'include',
+        //     headers : {
+        //         'Authorization' : `Bearer ${user?.authInfos?.accessToken}`,
+        //     }
+        // })
+        resolve();
+        }, 1500);
 });
 }
 
@@ -111,24 +120,27 @@ function handlePaste(pastedValue: string[]) {
 
     if (pastedValue.length === 6) {
     dispatch({ type: "VERIFY" });
+    console.log("handlePaste!!")
     doSubmit(pastedValue).then(() => dispatch({ type: "VERIFY_SUCCESS" }));
-    }
+}
 }
 
 function handleFocus(focusedIndex: number) {
     dispatch({ type: "FOCUS", payload: { focusedIndex } });
+    console.log("handleFocus!!")
 }
 
 function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     dispatch({ type: "VERIFY" });
+    console.log("handleSubmit!!")
     doSubmit(inputValues).then(() => dispatch({ type: "VERIFY_SUCCESS" }));
 }
 
 return (
-    <form onSubmit={handleSubmit} className="border border-black p-5 w-[450px] md:w-[500px] flex flex-col items-center justify-around rounded-[5px] ">
-    <div className="grid gap-2.5 grid-cols-6 mb-2.5">
+    <form onSubmit={handleSubmit} className="p-5 w-[450px] md:w-[500px] flex flex-col items-center justify-around ">
+    <div className="grid gap-2.5 grid-cols-6 mb-2.5 text-[#000]">
         {inputValues.map((value, index) => {
         return (
             <Input

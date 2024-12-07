@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .utls import *
 from datetime import timedelta
+from .tasks import delete_qr_code_image
 
 import qrcode
 import pyotp, os, io
@@ -202,14 +203,18 @@ def set_2fa(request):
     user = User.objects.get(id=id)
     if 'data' in request.data:
         data = request.data.get('data')
-        if '2fa' in data:
-            user.twofa = data.get('2fa')
-            user.save()
-            return Response({"status": 200, "message": "Successful"}, status=200)
+        if 'topt' in data:
+            code = data.get('topt')
+            if validate_totp(user=user, otp=code):
+                user.twofa = True
+                user.save()
+                return Response({"status": 200, "message": "Successful"}, status=200)
+            else:
+                return Response({"status": 401, "message": "Invalid TOPT"}, status=401)
         else:
-            return Response({"status": 400, "message": "Emty data"}, status=400)
+            return Response({"status": 400, "message": "Invalild data"}, status=400)
     else:
-        return Response({"status": 400, "message": "Emty data"}, status=400)
+        return Response({"status": 400, "message": "Invalild data"}, status=400)
 
 
 
@@ -237,23 +242,30 @@ def generate_2fa_qr_code(request):
     img_io = io.BytesIO()
     img.save(img_io, format='PNG')
     img_io.seek(0)
-  
+
     file_name = f"{uuid.uuid4()}-qr_code_image.png"
     default_storage.save(file_name, ContentFile(img_io.read()))
 
-    return Response({"qr_code_image": file_name}, status=200)  
+    delete_qr_code_image(file_name, schedule=120)
+
+    return Response({"qr_code_image": "http://localhost:8000/media/" + file_name}, status=200)
 
 
 @api_view(['POST'])
 def check_topt(request):
-    id = get_id(request)
-    if not id:
-        return JsonResponse({"message": "Invalid token"}, status=400)
+    user_id = request.session.get('user_id')
+    user_retry = request.session.get('retry_limit')
+    if not user_id:
+        return JsonResponse({'error': 'Invalid data from the session'}, status=400)
+    
+    if user_retry <= 0:
+        return JsonResponse({'error': 'Retry limit exceeded. Please try again later.'}, status=429)
+
     if 'data' in request.data:
         data = request.data.get('data')
         if 'topt' in data:
             opt = data.get('topt')
-            user = User.objects.get(id=id)
+            user = User.objects.get(id=user_id)
             if validate_totp(user=user, otp=opt):
                 access_token = generate_access_token(user)
                 refresh_token = generate_refresh_token(user)
@@ -261,11 +273,35 @@ def check_topt(request):
                 set_refresh_token_cookie(response, refresh_token)
                 return response
             else:
+                request.session['retry_limit'] -= 1
                 return JsonResponse({"status": 400, "message": "Invalid TOPT",}, status=400)
         else:
             return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
     else:
         return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
+    
+@api_view(['GET'])
+def is_2fa_enable(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = get_object_or_404(User, id=id)
+    if user.twofa:
+        return Response({"twofa" : "True"}, status=200)
+    else:
+        return Response({"twofa" : "False"}, status=200)
+    
+@api_view(['PATCH'])
+def disable_2fa(request):
+    id = get_id(request)
+    if not id:
+        return Response({"message": "Invalid token"}, status=400)
+    user = get_object_or_404(User, id=id)
+    user.twofa = False
+    user.secret_key = 'DEFAULT_SECRET'
+    user.save()
+    return JsonResponse({'status': '200', 'message': 'Secret key deleted successfully'}, status=200)
+
 
 # @api_view(['GET'])
 # def get_others_friends(request, username):

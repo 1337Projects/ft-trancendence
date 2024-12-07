@@ -7,6 +7,7 @@ services:
     environment:
       - PYCHARM_HOST=host.docker.internal
       - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=ft_transcendence.settings
     volumes:
       - ${PWD}/srcs/Back_end/ft_transcendence:/app
     ports:

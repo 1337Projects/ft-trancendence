@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { UserContext } from '../../Contexts/authContext'
 import { FaGoogle } from 'react-icons/fa'
 import { Si42 } from "react-icons/si";
@@ -56,8 +56,18 @@ export function Oauth({url} : {url : string}) {
         .then(res => res.json())
         .then(data => {
           if (data.status == 200) {
-            user?.setAuthInfosHandler(data.access)
-            navigate('../../dashboard/game')
+            console.log(data['2fa'])
+            if (data['2fa'] === 'True')
+            {
+              navigate('/auth/2faCheck', {
+                state: {dataa: data}
+              })
+            }
+            else {
+
+              user?.setAuthInfosHandler(data.access)
+              navigate('../../dashboard/game')
+            }
           }
         })
         .catch(err => console.log(err))

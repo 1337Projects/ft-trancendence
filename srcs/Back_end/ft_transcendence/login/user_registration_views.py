@@ -45,6 +45,9 @@ class UserLoginView(generics.GenericAPIView):
             )
             if user:
                 if user.twofa :
+                    request.session['user_id'] =  user.id
+                    request.session['retry_limit'] = 5
+                    request.session.set_expiry(300)
                     response = Response({"2fa": "True"}, status=status.HTTP_200_OK)
                 else:    
                     refresh = RefreshToken.for_user(user)

@@ -72,6 +72,9 @@ def intra_oauth(request):
             create_profile(user.id, image)  
         try:
             if user.twofa:
+                request.session['user_id'] =  user.id
+                request.session['retry_limit'] = 5
+                request.session.set_expiry(300)
                 response = JsonResponse({"2fa": "True", "status": 200})
             else:
                 access_token = generate_access_token(user)
@@ -129,6 +132,9 @@ def google_oauth(request):
                 create_profile(user.id, image)
             try:
                 if user.twofa:
+                    request.session['user_id'] =  user.id
+                    request.session['retry_limit'] = 5
+                    request.session.set_expiry(300)
                     response = JsonResponse({"2fa": "True", "status": 200})
                 else:
                     access_token = generate_access_token(user)
