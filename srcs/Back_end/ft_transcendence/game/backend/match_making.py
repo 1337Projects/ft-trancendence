@@ -26,6 +26,11 @@ class MatchMaking:
         game.save()
         return game.id
 
+    async def remove_player(self, player):
+        for p , channel in list(self.waiting_players):
+            if p == player:
+                self.waiting_players.remove((p, channel))
+
     async def game_start_message(self, channel_name: str, game_id: int):
         channel_layer = get_channel_layer()
         await channel_layer.send(channel_name, {

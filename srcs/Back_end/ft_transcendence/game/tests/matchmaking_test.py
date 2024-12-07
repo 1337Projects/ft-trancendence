@@ -5,8 +5,8 @@ from asgiref.sync import sync_to_async
 from rest_framework.test import APIClient
 from ft_transcendence.asgi import application
 from channels.testing import WebsocketCommunicator
-from .models import Game
-
+from game.models import Game
+from django.test import TestCase
 from login.serializer import UserSerializer
 
 import sys
@@ -17,7 +17,7 @@ def print_data(data):
 
 @pytest.mark.django_db
 @pytest.mark.asyncio
-class Test_MatchmakingConsumer:
+class TestMatchmakingConsumer:
     """Test class for MatchmakingConsumer."""
 
     async def create_user(self, username, email, password, first_name, last_name) -> User:
@@ -54,6 +54,7 @@ class Test_MatchmakingConsumer:
         return communicator
 
     async def test_matchmaking_consumer(self):
+        '''simulate two users connecting to matchmaking'''
         user1, token1 = await self.create_user("player1", "player1@example.com", "password123", "Player1", "Player1")
         user2, token2 = await self.create_user("player2", "player2@example.com", "password123", "Player2", "Player1")
 
@@ -61,15 +62,15 @@ class Test_MatchmakingConsumer:
         communicator2 = await self.connected_communicator(token2)
 
         response1 = await communicator1.receive_json_from()
-        assert response1 == {'message': f'Welcome {user1.username}!'}
+        game_id_from_user1 = response1['game_id']
+        assert game_id_from_user1 is not None
         response2 = await communicator2.receive_json_from()
-        assert response2 == {'message': f'Welcome {user2.username}!'}
-        response2 = await communicator2.receive_json_from()
-        print(response2)
-        game_id = response2['game_id']
-        message = response2['message']
-        assert message == f"Game started! Your game ID is {game_id}"
+        game_id_from_user2  = response2['game_id']
+        assert game_id_from_user2 is not None
 
+        assert game_id_from_user1 == game_id_from_user2
+
+        game_id = game_id_from_user1
         # check if game is created
         game: Game = await database_sync_to_async(Game.objects.get)(id=game_id)
         player1 = await database_sync_to_async(lambda: game.player1)()

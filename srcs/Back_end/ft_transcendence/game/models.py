@@ -1,5 +1,4 @@
 from django.db import models
-# from tournment.models import Player  # Adjust the import path according to your project structure
 from login.models import User
 from django.utils import timezone
 
@@ -8,7 +7,7 @@ class Game(models.Model):
     player2 = models.ForeignKey(User, related_name='games_as_player2', on_delete=models.CASCADE)
     score1 = models.IntegerField(default=0)
     score2 = models.IntegerField(default=0)
-    # winner = models.ForeignKey(Player, related_name='winner', on_delete=models.CASCADE, null=True, blank=True)
-    # loser = models.ForeignKey(Player, related_name='loser', on_delete=models.CASCADE, null=True, blank=True)
+    winner = models.ForeignKey(User, related_name='winner', on_delete=models.CASCADE, null=True, blank=True)
+    loser = models.ForeignKey(User, related_name='loser', on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)  # Temporarily add default
     updated_at = models.DateTimeField(auto_now=True)
