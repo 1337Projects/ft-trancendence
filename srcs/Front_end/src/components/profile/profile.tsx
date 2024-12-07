@@ -103,7 +103,7 @@ export default function Profile() {
 	}, [user_name])
 
 	return (
-		<div className={`w-full mt-2 backdrop-blur-md ${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
+		<div className={`w-full mt-2 backdrop-blur-md p-2 ${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
 			<div className={` w-full h-[90vh] sm:h-[100vh] overflow-scroll`}>
 				<Banner user={currentUser} />
 				<div className='px-4'>

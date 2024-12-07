@@ -32,7 +32,7 @@ export default function Hero({ data }) {
                     <ul className="flex">
                         {
                             data?.data?.players.map(
-                                (player, index) => <img src={player.user_id.profile.avatar} className="bg-white w-[25px] h-[25px] mr-[-10px] rounded-full border-[1px]">
+                                (player, index) => <img src={player.profile.avatar} className="bg-white w-[25px] h-[25px] mr-[-10px] rounded-full border-[1px]">
                                 </img>
                             )
                         }

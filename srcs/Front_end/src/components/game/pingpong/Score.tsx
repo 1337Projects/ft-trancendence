@@ -28,14 +28,14 @@ export default function Score({data}) {
             </div>
         )
     }
-    
+    // console.log(data)
     return (
         <div className="h-[40px] w-full">
             <div className="h-full w-full flex justify-between items-center">
                 <div className=''>
                     <div className=" flex items-center p-2 rounded-full border-[0px] border-white/30">
                         <div className="mr-4 border-[.3px] w-[40px] h-[40px] flex justify-center items-center rounded-full">
-                            <img src={data.players.player1.user.profile.avatar} className="bg-white max-w-full rounded-full max-h-full" alt="" />
+                            <img src={data.players.player1.user.profile.avatar} className="bg-white w-full rounded-full h-full" alt="" />
                         </div>
                         <div className="relative">
                             <h1 className='text-[12pt] font-bold'>{data.players.player1.user.username}</h1>
@@ -47,7 +47,7 @@ export default function Score({data}) {
                     </div>
                 </div>
                 <div className="score text-center">
-                    <div className="text-[12pt]">0 / 0</div>
+                    <div className="text-[12pt]">{data.players.player1.score} / {data.players.player2.score}</div>
                 </div>
                 <div className='relative '>
                     <div className=" flex items-center p-2 rounded-full border-[0px] border-white/30">
@@ -58,7 +58,7 @@ export default function Score({data}) {
                             </ul>
                         </div>
                         <div className="ml-4 border-[.3px] w-[40px] h-[40px] flex justify-center items-center rounded-full">
-                            <img src={data.players.player2.user.profile.avatar} className="bg-white max-w-full rounded-full max-h-full" alt="" />
+                            <img src={data.players.player2.user.profile.avatar} className="bg-white w-full rounded-full h-full" alt="" />
                         </div>
                     </div> 
                 </div>
