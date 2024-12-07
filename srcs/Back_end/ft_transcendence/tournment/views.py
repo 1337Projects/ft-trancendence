@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 import sys
 from rest_framework.response import Response
-from .serializers import TournmentSerializer, PlayerSerializer
+from .serializers import TournmentSerializer
 from login.models import User
 from .models import Tournment
 
@@ -27,15 +27,6 @@ class TournmentViews(viewsets.ViewSet):
             if not serializer.is_valid():
                 return  Response(serializer.errors, status=400)
             serializer.save()
-            
-            if mode == 'local':
-                players =  request.data['players']
-                for player in players:
-                    player_serializer = PlayerSerializer(data={'name' : player})
-                    if  not player_serializer.is_valid():
-                        return  Response(player_serializer.errors, status=400)
-                    player_serializer.save()
-                    serializer.instance.players.add(player_serializer.instance)
             return Response({"id" : serializer.data['id']}, status=200)
         except:
             return Response({"error": "Somthing went wrong"}, status=400)
