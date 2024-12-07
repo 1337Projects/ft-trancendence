@@ -1,11 +1,14 @@
 
 import React, { useContext, useEffect, useRef, useState } from "react"
+import { useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "../../Contexts/ThemeContext"
-import Socket from "../../socket";
+import { UserContext } from '../../Contexts/authContext'
+import { gameSocket, tournamentSocket } from "../../socket";
 import Game from "./pingpong/Game";
 import Score from "./pingpong/Score";
 
 import MyUseEffect from "../../hooks/MyUseEffect"
+import {PlayerWon} from './pingpong/Winner'
 
 
 export default function PingPong() {
@@ -14,90 +17,29 @@ export default function PingPong() {
     const canvaParentRef = useRef<null | HTMLDivElement>(null);
     const gameRef = useRef<null | Game>(null);
     const [data, setData] = useState(null);
-    
-    // let interval;
-    // const [result, setResult] = useState(null)
-    // const [restart, setRestart] = useState(false);
-    // const [deg, setDeg] = useState(90);
-    // const navigate = useNavigate();
-    // const [isStarted, setIsStarted] = useState(false)
-    // const [startStatus, setStartStatus] = useState(3)
-
-    // function quitHandler() {
-    //     Socket.close()
-    //     navigate('/dashboard/game');
-    // }
-
-
-    // function start_handler() {
-    //     interval = setInterval(() => {
-    //         setStartStatus(prev => prev == 1 ? 'ready ?' : prev - 1)
-    //     }, 1000);
-    // } 
-
-    // useEffect(() => {
-    //     const timer = setTimeout(() => {
-    //         let rect = canvaParentRef.current.getBoundingClientRect()
-    //         canvasRef.current.width = rect.width
-    //         canvasRef.current.height = rect.height
-    //         window.addEventListener('resize', () => {
-    //             if (gameRef.current.isPaused) {
-    //                 rect = canvaParentRef.current.getBoundingClientRect()
-    //                 canvasRef.current.width = rect.width
-    //                 canvasRef.current.height = rect.height
-    //                 setRestart(!restart)
-    //             }
-    //         })
-    //     }, 100)
-
-    //     return (() => {
-    //         clearTimeout(timer)
-    //     })
-    // }, [])
-    
-    // useEffect(() => {
-    //     Socket.connect("ws://localhost:8000/ws/game/abc/")
-    //     const  ctx = canvasRef.current.getContext("2d");
-    //     const timer = setTimeout(() => {
-    //         gameRef.current = new Game(ctx, setPlayer, player);
-    //         gameRef.current.setup();
-    //         setTimeout(() => {
-    //             gameRef.current.isEnded = false;
-    //             gameRef.current.isPaused = false
-    //             setIsStarted(true)
-    //             setStartStatus(3)
-    //             clearInterval(interval)
-    //         }, 4000)
-    //         start_handler()
-    //     }, 500)
-        
-    //     return () => {
-    //         clearTimeout(timer);
-    //         setPlayer([{...player[0], total:0, score:[0,0,0]},{...player[1], total:0, score:[0,0,0]}])
-    //         delete gameRef.current;
-    //         ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
-    //         setIsStarted(false)
-    //     }
-    // } , [restart])
-
-  
+    const { id } = useParams()
+    const { authInfos } = useContext(UserContext) || {}
+    const navigate = useNavigate()
+    const [ closed, setClosed ] = useState(false)
 
     useEffect(() => {
+        
         const timer = setTimeout(() => {
-            Socket.addCallback("setInitData", setData)
-            setTimeout(() => {
-                Socket.sendMessage({"event" : "get_init_data"})
-            }, 1000)
-        }, 300)
+            gameSocket.connect(`ws://localhost:8000/ws/game/play/${id}/?token=${authInfos?.accessToken}`)
+            gameSocket.addCallback("setInitData", setData)
+            // gameSocket.addCallback("closeHandler", setClosed)
+        }, 200)
 
-        return ()  => {
+        return () => {
             clearTimeout(timer)
+            gameSocket.close()
         }
     }, [])
 
-    
-
-
+    const quiteHandler = () => {
+        navigate(`/dashboard/game/tournment/1/remote`)
+        tournamentSocket.sendMessage({"event" : "upgrade", "winner_id" : data.players.player1.user.id})
+    }
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -106,14 +48,18 @@ export default function PingPong() {
                 const  ctx = canvasRef?.current?.getContext("2d");
                 gameRef.current = new Game(ctx, setData);
                 gameRef.current.setup(data)
+                if (data.ended) {
+                    gameSocket.close()
+                    setClosed(true)
+                }
             }
-            // Socket.addCallback("resultHandler", setResult)
         }, 50)
 
         return () =>  {
             // delete gameRef.current;
             gameRef.current = null
             clearTimeout(timer)
+           
         }
     }, [data])
 
@@ -121,9 +67,15 @@ export default function PingPong() {
 
     return (
             <div className={`relative ${theme === 'light' ? " text-lightText bg-lightItems" : " text-darkText bg-darkItems"}  flex justify-center items-center rounded-none w-full h-[100vh] mt-2 p-2`}>
-                <div className={`h-fit`}>
+                <div className={`relative h-fit`}>
                     
                     {/* <ActionsMenu rotateHandler={rotateHandler} pauseHandler={pauseHandler} /> */}
+
+                    {
+                        closed && <div className="w-full bg-white/20 backdrop-blur-lg h-[500px] absolute z-10 p-2">
+                            <PlayerWon quitHandler={quiteHandler} data={data} />
+                        </div>
+                    }
                     {
                         <div>
                             <div className='flex justify-center'>
@@ -148,3 +100,4 @@ export default function PingPong() {
             </div> 
     )
 }
+

@@ -1,22 +1,33 @@
 import React, { useContext, useState } from "react";
 import { Touramentcontext } from "../../Contexts/TournamentContext";
-
+import { useNavigate } from 'react-router-dom'
+import { UserContext } from '../../Contexts/authContext'
 import MyUseEffect from '../../hooks/MyUseEffect'
 import  drawTournment  from '../../libs/svg'
 
-import Socket from '../../socket'
+import Socket, { tournamentSocket } from '../../socket'
 
 export default function Schema() {
 
 
     const { data } = useContext(Touramentcontext) || {}
+    const { authInfos } = useContext(UserContext) || {}
     const [svg, setSvg] = useState("")
+    const navigate = useNavigate()
 
     MyUseEffect(() => {
         setTimeout(() => {
-            Socket.sendMessage({"event" : "start"})
+            tournamentSocket.addCallback("match_data", matchHandler)
         }, 0)
     }, [])
+
+    const matchHandler = (data) => {
+        if (data && authInfos) {
+            if (data.player_1.username == authInfos?.username || data.player_2.username == authInfos?.username) {
+                navigate(`/dashboard/game/room/${data.id}`)
+            }
+        }
+    }
     
     MyUseEffect(() => {
         if (data) {
