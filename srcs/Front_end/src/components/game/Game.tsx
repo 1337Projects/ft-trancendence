@@ -41,7 +41,7 @@ export function Hero({color, img}) {
 function Card({color, img, text}) {
     return (
         <div className="w-full mx-auto">
-            <div className="h-[180px] w-full p-2">
+            <div className="h-[160px] w-full p-2">
                 <div className="w-full h-full bg-gray-200 overflow-hidden rounded flex justify-center" >
                     {/* {img} */}
                     {/* <img src="/ttttt.webp" className="w-full h-full" alt="" /> */}
