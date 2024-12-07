@@ -1,7 +1,7 @@
 import React, {useContext, useState, useRef, useEffect, useCallback} from 'react'
 import { Link, useParams } from 'react-router-dom';
 
-import Socket from '../../socket'
+import { chatSocket } from '../../socket'
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { UserContext } from '../../Contexts/authContext';
 import { FaArrowLeft, FaEllipsisV } from 'react-icons/fa';
@@ -21,18 +21,18 @@ function UserMessage({m, username}) {
     const [time, setTime] = useState<string>('')
     MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
 
-    const { color } = useContext(ApearanceContext) || {}
+    const { color, theme } = useContext(ApearanceContext) || {}
 
     return (
         <li  className={`mt-4 flex items-start  ${m.sender.username == username ? "justify-end" : "justify-start"}`}>
             {
                 m.sender.username != username &&
                 <Link to={`/dashboard/profile/${m?.sender?.username}`}>
-                    <img src={m?.sender?.profile?.avatar} className="w-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
+                    <img src={m?.sender?.profile?.avatar} className="w-[40px] h-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
                 </Link>
             }
             <div>
-                <div className={`backdrop-blur-xl text-white bg-gray-800 rounded-[30px] p-1`} >
+                <div className={`backdrop-blur-xl ${theme == "light" ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"} rounded-[50px] p-1`} >
                     <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
                 </div>
                 <p 
@@ -41,7 +41,7 @@ function UserMessage({m, username}) {
             </div>
             {
                 m.sender.username == username &&
-                <img src={m?.sender?.profile?.avatar} className="w-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
+                <img src={m?.sender?.profile?.avatar} className="w-[40px] h-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
             }
         </li>
     )
@@ -130,7 +130,7 @@ function MessagesList() {
     }, [messages])
 
 function send_fetch_event(page) {
-        Socket.sendMessage({
+    chatSocket.sendMessage({
             "partner": user,
             "from": authInfos?.username,
             "event" : "fetch_messages",

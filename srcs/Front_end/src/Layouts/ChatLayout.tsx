@@ -7,7 +7,7 @@ import { FaBars } from "react-icons/fa"
 import { TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { UserContext } from "../Contexts/authContext"
 import MyUseEffect from '../hooks/MyUseEffect'
-import Socket from '../socket'
+import { chatSocket } from '../socket'
 import ChatContextProvider from "../Contexts/ChatContext"
 import { MessageType, UserType } from "../Types"
 
@@ -36,19 +36,19 @@ export default function ChatLayout() {
     }
 
     MyUseEffect(() => {
-        Socket.connect(`ws://localhost:8000/ws/chat/${user?.id}/`)
-        Socket.addCallback('cnvsHandler', setCnvs)
-        Socket.addCallback('cnvsUpdate', UpdateConversationsHandler)
-        Socket.addCallback("setData", setMessages)
-        Socket.addCallback("setUser", setUserData)
-        Socket.sendMessage({
+        chatSocket.connect(`ws://localhost:8000/ws/chat/${user?.id}/`)
+        chatSocket.addCallback('cnvsHandler', setCnvs)
+        chatSocket.addCallback('cnvsUpdate', UpdateConversationsHandler)
+        chatSocket.addCallback("setData", setMessages)
+        chatSocket.addCallback("setUser", setUserData)
+        chatSocket.sendMessage({
             "event" : "fetch_conversations"
         })
     }, [])
 
     useEffect(() => {
         return () => {
-            Socket.close();
+            chatSocket.close();
         }
     }, [])
 
@@ -75,9 +75,7 @@ export default function ChatLayout() {
                     <div className={`flex-grow w-full`}>
                         <div className={`w-full h-full p-2 `}>
                             <ChatContextProvider value={value}>
-                                <Suspense fallback={<div>loading ...</div>}>
-                                    <Outlet />
-                                </Suspense>
+                                <Outlet />
                             </ChatContextProvider>
                         </div>
                     </div>

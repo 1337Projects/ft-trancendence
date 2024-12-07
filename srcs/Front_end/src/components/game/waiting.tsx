@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import Socket from '../../socket'
+import { gameSocket } from '../../socket'
 import { Link, useNavigate } from 'react-router-dom'
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
@@ -16,19 +16,19 @@ export default function Waiting() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            Socket.connect(`ws://localhost:8000/ws/game/play/?token=${authInfos?.accessToken}`)
-            Socket.addCallback("setRoom", setRoom)
-            Socket.addCallback("startGame", startGameHandler)
-        })
+            gameSocket.connect(`ws://localhost:8000/ws/game/join/game/?token=${authInfos?.accessToken}`)
+            gameSocket.addCallback("setRoom", setRoom)
+            gameSocket.addCallback("startGame", startGameHandler)
+        }, 100)
 
         return () => {
             clearTimeout(timer)
+            gameSocket.close()
         }
     }, [])
 
-    console.log(room)
-    function startGameHandler() {
-        navigate("../game/room/1")
+    function startGameHandler(id) {
+        navigate(`../game/room/${id}`)
     }
 
     if (!room) {

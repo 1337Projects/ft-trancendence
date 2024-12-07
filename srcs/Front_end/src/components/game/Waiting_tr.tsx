@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import MyUseEffect from "../../hooks/MyUseEffect"
 import { useNavigate, useParams } from "react-router-dom"
-import Socket from "../../socket"
+import { tournamentSocket } from "../../socket"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from "../../Contexts/authContext"
 
@@ -20,12 +20,12 @@ export default function WaitingTournment() {
 
 
     MyUseEffect(() => {
-        Socket.connect(`ws://localhost:8000/ws/join/tournment/${id}/?token=${authInfos?.accessToken}`)
-        Socket.addCallback('roomDataHandler', roomDataHandler)
+        tournamentSocket.connect(`ws://localhost:8000/ws/join/tournment/${id}/?token=${authInfos?.accessToken}`)
+        tournamentSocket.addCallback('roomDataHandler', roomDataHandler)
     }, [])
 
     useEffect(() => {
-        return () => Socket.close()
+        return () => tournamentSocket.close()
     }, [])
 
     MyUseEffect(() => {
@@ -41,7 +41,7 @@ export default function WaitingTournment() {
         if (data.players.length == data.data.max_players) {
             setLoading(true)
             setTimeout(() => {
-                Socket.sendMessage({"event" : "start_tournament"})
+                tournamentSocket.sendMessage({"event" : "start_tournament"})
                 navigate(`/dashboard/game/tournment/${id}/remote`)
             }, 1000 * 3)
         }

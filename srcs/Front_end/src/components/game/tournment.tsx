@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import MyUseEffect from '../../hooks/MyUseEffect'
-import Socket from "../../socket";
+import Socket, { tournamentSocket } from "../../socket";
 import { UserContext } from '../../Contexts/authContext'
 import Hero from "./Hero";
 import Nav from "./Navbar";
@@ -19,12 +19,21 @@ export default function Tournment() {
 
     function DataHandler(data) {
         setData(data)
+        console.log(data)
     }
 
     MyUseEffect(() => {
-        Socket.addCallback("tr_data", DataHandler)
-        Socket.connect(`ws://localhost:8000/ws/tournment/${id}/?token=${authInfos?.accessToken}`)
+        setTimeout(() => {
+            tournamentSocket.addCallback("tr_data", DataHandler)
+            tournamentSocket.connect(`ws://localhost:8000/ws/tournment/${id}/?token=${authInfos?.accessToken}`)
+        }, 100)
     }, [])
+
+    // useEffect(() => {
+    //     return () => {
+    //         tournamentSocket.close()
+    //     }
+    // }, [])
 
 
     

@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react"
 import { FaKeyboard, FaRegSmile } from "react-icons/fa"
 import Emojies from './Emojies';
 import { ApearanceContext } from "../../Contexts/ThemeContext"
-import Socket from '../../socket'
+import { chatSocket } from '../../socket'
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../Contexts/authContext"
 import { FiSend } from "react-icons/fi";
@@ -11,7 +11,7 @@ import { IoGameControllerOutline } from "react-icons/io5";
 
 export default function ChatInput() {
 
-    const { color } = useContext(ApearanceContext) || {}
+    const { color, theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
     const [ text, setText ] = useState('');
     const { user } = useParams()
@@ -24,7 +24,7 @@ export default function ChatInput() {
                 "content": text,
                 "event" : "new_message"
             }
-            Socket.sendMessage(data)
+            chatSocket.sendMessage(data)
             console.log('sent')
         }
         setText('');
@@ -47,7 +47,7 @@ export default function ChatInput() {
                 {
                     emojie && <Emojies inputText={text} TextInputHandler={setText} />
                 }
-                <div className="input w-full h-full rounded-full px-4 text-[16pt] flex items-center justify-between bg-gray-800 text-white">
+                <div className={`input w-full h-full rounded-full px-2 pl-4 text-[16pt] flex items-center justify-between ${theme == 'light' ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-950"} `}>
                     <div onClick={() => setEmojie(prev => !prev)}>
                         { emojie ? <FaKeyboard /> : <FaRegSmile /> }
                     </div>
@@ -62,7 +62,7 @@ export default function ChatInput() {
                         onChange={(e) => setText(e.target.value)} 
                         className="w-[70%] sm:w-[80%] text-[10pt] bg-transparent focus:outline-none" 
                     />
-                    <div style={{background:color}} onClick={sendMessage} className='w-[30px] h-[30px] text-[12pt] rounded-full flex justify-center cursor-pointer items-center'>
+                    <div style={{background:color}} onClick={sendMessage} className='w-[40px] h-[35px] flex justify-center items-center text-[12pt] text-white rounded-full'>
                         <FiSend />
                     </div>
                 </div>

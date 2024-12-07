@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { notsSocket } from "../socket";
+import { notificationSocket } from "../socket";
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "../Contexts/ThemeContext";
 import { UserContext } from "../Contexts/authContext";
@@ -37,7 +37,7 @@ function InviteItem({data}) {
     const { friends, setFriends , user, authInfos } = useContext(UserContext) || {}
 
     const notificationAcceptFriendRequest = (data) => {
-        notsSocket.sendMessage({
+        notificationSocket.sendMessage({
             event: "send_request",
             sender: data?.sender?.username, // Your logged-in user's username
             receiver: data?.receiver?.username, // Username of the friend to whom the request is sent
@@ -109,9 +109,9 @@ export default function Notifications() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            notsSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
-            notsSocket.addCallback("FirstSetNots", setNots)
-            notsSocket.sendMessage({
+            notificationSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
+            notificationSocket.addCallback("FirstSetNots", setNots)
+            notificationSocket.sendMessage({
                 event : "fetch nots",
                 sender : user?.authInfos?.username
             })
@@ -130,7 +130,7 @@ export default function Notifications() {
     // console.log(nots)
 
     return (
-        <div className={`min-h-[60px]  rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
+        <div className={`min-h-[60px] rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="mr-2 font-popins">Notifications</h1>

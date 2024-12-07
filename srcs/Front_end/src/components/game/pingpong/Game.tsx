@@ -1,5 +1,5 @@
 
-import Socket from "../../../socket";
+import {gameSocket} from "../../../socket";
 
 class Ball {
     ctx: any;
@@ -82,16 +82,16 @@ export default class Game {
     handler(e) {
         switch (e.key) {
             case 'a':
-                Socket.sendMessage({"event":"control", "action" : "p1_left"})
+                gameSocket.sendMessage({"event":"control", "action" : "p1_left"})
                 break;
             case 'd':
-                Socket.sendMessage({"event":"control", "action" : "p1_right"})
+                gameSocket.sendMessage({"event":"control", "action" : "p1_right"})
                 break;
             case 'ArrowLeft':
-                Socket.sendMessage({"event":"control", "action" : "p2_left"})
+                gameSocket.sendMessage({"event":"control", "action" : "p2_left"})
                 break;
             case 'ArrowRight':
-                Socket.sendMessage({"event":"control", "action" : "p2_right"})
+                gameSocket.sendMessage({"event":"control", "action" : "p2_right"})
                 break;
             default:
                 break;
