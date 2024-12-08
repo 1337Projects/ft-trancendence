@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import HeroImg from "../assets/HeroImg1"
+// import HeroImg from "../assets/HeroImg1"
 import FriendImg from '../assets/FriendImg'
 import AiImg from "../assets/AiImg"
 import TornmentImg from "../assets/TornmentImg"
@@ -10,6 +10,8 @@ import { UserContext } from '../../Contexts/authContext'
 import MyUseEffect from '../../hooks/MyUseEffect'
 import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { GiSandsOfTime } from "react-icons/gi";
+import HeroImg from "./HeroImg"
+
 
 function CatButton({icon, text, categorie, handler}) {
     const {color, theme} = useContext(ApearanceContext) || {}

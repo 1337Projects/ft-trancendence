@@ -47,7 +47,7 @@ export default function Login() {
     }
 
     return (
-       <div>
+       <div className="overflow-y-scroll h-[100vh]">
         <div className="heading w-full p-1 text-center">
             <h1 className="text-[40pt] font-semibold uppercase">welcome back</h1>
             <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>

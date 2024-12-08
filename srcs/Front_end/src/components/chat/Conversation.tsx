@@ -39,10 +39,10 @@ function UserMessage({m, username}) {
                     className={`text-[8pt] flex items-center lowercase mt-2 py-1 ${m.sender.username != username ? "text-right ml-10" : "ml-2"}`}
                 >{time} <RiCheckDoubleFill style={{color : m.seen ? color : ""}} className='ml-2 text-[10pt]' /></p>
             </div>
-            {
+            {/* {
                 m.sender.username == username &&
                 <img src={m?.sender?.profile?.avatar} className="w-[40px] h-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
-            }
+            } */}
         </li>
     )
 }
@@ -56,7 +56,7 @@ export default function Conversation() {
             <div className='w-full h-[60px]'>
                 <ConversationHeader userData={userData?.user}  />
             </div>
-            <div className='w-full h-fit relative max-w-[560px] mx-auto overflow-y-auto' >
+            <div className='w-full h-fit relative overflow-y-auto' >
                 <MessagesList />
             </div>
             <div className='w-full px-10 h-[100px]'>
@@ -183,7 +183,7 @@ function send_fetch_event(page) {
 
     return (
         <div>
-            <div style={{height : `calc(100vh - 260px)`}} className='px-10 overflow-y-auto scroll-bottom flex flex-col-reverse'>
+            <div style={{height : `calc(100vh - 260px)`}} className='px-2 overflow-y-auto scroll-bottom flex flex-col-reverse'>
                 <div className='flex flex-col '>
                     {
                         messages.map((message, index) => {

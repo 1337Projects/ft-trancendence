@@ -54,7 +54,7 @@ export default function Signup() {
     }
 
     return (
-        <div>
+        <div className="h-[100vh] overflow-y-scroll">
             <div className="heading w-full p-1 text-center">
                 <h1 className="text-[40pt] font-semibold uppercase">welcome back</h1>
                 <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
