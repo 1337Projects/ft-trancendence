@@ -72,7 +72,7 @@ export default function Security() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const [showPopup, setShowPopup] = useState(false);
     const [showCheck, setCheck] = useState(false);
-    const [twofa, setTwofa] = useState(false);
+    const [twofa, setTwofa] = useState(true);
     const { authInfos } = useContext(UserContext) || {}
     const appearence = useContext(ApearanceContext)
 

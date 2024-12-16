@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_otp',
     'django_otp.plugins.otp_totp',
-    # 'background_task',
+    'background_task',
 ]
 
 MIDDLEWARE = [
