@@ -1,4 +1,4 @@
-
+import React from 'react'
 
 export type ApearanceContextType = {
     theme : string,
@@ -57,3 +57,4 @@ export type AlertType = {
     message: string[];
     type: string;
 }
+
