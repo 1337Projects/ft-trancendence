@@ -44,13 +44,13 @@ export default function AuthLayout() {
                 <div className='w-full'>
                   <div className=''>
                     <div className={`${slide == 1 ? "w-full transition-opacity duration-[4s]  opacity-1" : "w-0 h-0 overflow-hidden opacity-0"}`}>
-                      <Slide text="Play ping pong" img="/485.svg" />
+                      <Slide text="Play ping pong" img="/auth/485.svg" />
                     </div>
                     <div className={`${slide == 2 ? "w-full transition-opacity duration-[4s] opacity-1" : "w-0 h-0 overflow-hidden opacity-0"}`}>
-                      <Slide text="Contact with friends" img="/487.svg" />
+                      <Slide text="Contact with friends" img="/auth/487.svg" />
                     </div>
                     <div className={`${slide == 3 ? "w-full transition-opacity duration-[4s] opacity-1" : "w-0 h-0 overflow-hidden opacity-0"}`}>
-                      <Slide text="add your friends" img="/486.svg" />
+                      <Slide text="add your friends" img="/auth/486.svg" />
                     </div>
                   </div>
                   <div className='mt-[100px] flex justify-center'>

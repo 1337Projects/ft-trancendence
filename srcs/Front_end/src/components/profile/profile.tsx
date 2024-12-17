@@ -4,7 +4,6 @@ import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { Banner } from './Hero';
 import Level from './Level'
 import Chart from './Chart'
-import Achivments from './Achivments'
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import { UserContext } from '../../Contexts/authContext';
 import { UserType } from '../../Types';
@@ -20,7 +19,7 @@ function St() {
 				<li className=' border-b-2 border-sky-500 text-[22pt] flex items-center justify-center'>
 				<div className='text-center'>
 						<div className='flex justify-center items-center'>
-							<img src="/fire.png" className='w-8 mr-4' alt="" />
+							<img src="/profile/fire.png" className='w-8 mr-4' alt="" />
 							<h1>0</h1>
 						</div>
 						<h1 className='text-[10pt] uppercase'>Played Match</h1>
@@ -29,7 +28,7 @@ function St() {
 				<li className=' border-b-2 border-green-500 text-[22pt] flex items-center justify-center'>
 					<div className='text-center'>
 						<div className='flex justify-center items-center'>
-							<img src="/thumb-up.png" className='w-8 mr-4' alt="" />
+							<img src="/profile/thumb-up.png" className='w-8 mr-4' alt="" />
 							<h1>0</h1>
 						</div>
 						<h1 className='text-[10pt] uppercase'>Match win</h1>
@@ -38,7 +37,7 @@ function St() {
 				<li className=' border-b-2 border-red-500 text-[22pt] flex items-center justify-center'>
 					<div className='text-center'>
 						<div className='flex justify-center items-center'>
-							<img src="/thumb-down.png" className='w-8 mr-4' alt="" />
+							<img src="/profile/thumb-down.png" className='w-8 mr-4' alt="" />
 							<h1>0</h1>
 						</div>
 						<h1 className='text-[10pt] uppercase'>match Lose</h1>
@@ -61,9 +60,6 @@ export function UserProfile() {
 				</div>
 				<div className='mt-20'>
 					<Chart />
-				</div>
-				<div className='mt-20'>
-					<Achivments />
 				</div>
 			</div> 
 		</div>

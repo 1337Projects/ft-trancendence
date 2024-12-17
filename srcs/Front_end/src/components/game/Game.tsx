@@ -55,8 +55,7 @@ export function Hero({color, img}) {
                         </div>
                     </div>
                     <div className="relative img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
-                        {/* <img src="/Ellipse.svg" className="absolute  w-[400px]" alt="" /> */}
-                        <img className="absolute" src={`${img != null ? img : "/herrrro.svg"}`} alt="" />
+                        <img className="absolute" src="/game/Tennis-bro.svg" alt="" />
                     </div>
                 </div>
             </div>
@@ -72,7 +71,6 @@ function Card({color, img, text}) {
         <div className={`w-full mx-auto border-[1px] ${theme == 'light' ? "border-black/10" : "border-white/10"} rounded`}>
             <div className="h-[160px] w-full">
                 <div className="w-full h-full overflow-hidden rounded-t flex justify-center" >
-                    {/* {img} */}
                     <img src={img} className="w-full h-full" alt="" />
                 </div>
             </div>
@@ -92,7 +90,6 @@ import { RiGamepadLine } from "react-icons/ri";
 import { DialogContext } from "../../Contexts/DialogContext"
 import { TrItem } from "./Events"
 import { IoIosMailUnread } from "react-icons/io"
-// import { MdGamepad } from "react-icons/md";
 
 
 
@@ -123,9 +120,9 @@ function Cards({color}) {
                 }
             </div>
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <Card color={color} img="/leo-vs-random.jpg" text="random match"/>
-                <Card color={color} img="/leo-vs-computer.jpg" text="vs Computer"/>
-                <Card color={color} img="/leo-vs-friend.jpg" text="vs friend"/>
+                <Card color={color} img="/game/leo-vs-random.jpg" text="random match"/>
+                <Card color={color} img="/game/leo-vs-computer.jpg" text="vs Computer"/>
+                <Card color={color} img="/game/leo-vs-friend.jpg" text="vs friend"/>
             </div>
         </div>
     )
@@ -221,15 +218,7 @@ function TournmentDialog() {
         setCreated(id)
     }
 
-    function randomize() {
-        const players = {}
-        
-        for (let i = 0; i < data.members; i++) {
-            let r = (Math.random() + 1).toString(36).substring(2);
-            players[`player${i}`] = r
-        }
-        setPlayers(players)
-    }
+    
 
     return (
         <div className={`${theme == 'light' ? "bg-white border-black/10" : "bg-darkItems border-white/20"}  rounded-md  p-6 border-[.3px] w-[400px] sm:w-[600px] h-fit z-40 left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%] absolute`}>
@@ -272,36 +261,6 @@ function TournmentDialog() {
                                         <option value="local">local</option>
                                     </select>
                                 </div>
-                                {/* {
-                                    data.mode === 'local' && 
-                                    <div className="mt-2">
-                                        <button 
-                                            onClick={randomize}
-                                            className="my-4 p-2 text-sm px-4 rounded text-white ml-[100%] translate-x-[-100%]"
-                                            style={{background : color}}
-                                        >randomize</button>     
-                                        <div className={`border-[.3px] ${theme == 'light' ? "border-black/20" : "border-white/20"}  rounded w-full h-fit max-h-[400px] overflow-auto p-6 grid gap-4`}>
-                                            {
-                                                [...Array(data.members)].map((player, index) => {
-                                
-                                                    return (
-                                                    <div key={index} className="text-sm">
-                                                        <label htmlFor={`player${index}`} className="">{`player${index + 1}`}</label>
-                                                        <input 
-                                                            type="text" 
-                                                            className={`border-[.3px] bg-transparent ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded h-[40px] px-2 mt-2 w-full`}
-                                                            placeholder="player name..."
-                                                            value={players[`player${index}`]}
-                                                            id={`player${index}`}
-                                                            onChange={(e) => setPlayers({...players , [`player${index}`] : e.target.value})}
-                                                        />
-                                                    </div>)
-                                                })
-
-                                            }
-                                        </div>
-                                    </div>
-                                } */}
                         </div>
                     }
                     
