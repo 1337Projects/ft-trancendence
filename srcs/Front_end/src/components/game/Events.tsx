@@ -11,7 +11,7 @@ export function TrItem({data}) {
     return (
         <div className={`border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} w-full h-[200px] p-2 rounded`}>
             <div className="w-full h-[180px] flex items-center relative">
-                <img src="/_5.jpeg" className={`mr-4 border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded w-[200px] h-full`} />
+                <img src="/tr.jpg" className={`mr-4 border-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded w-[200px] h-full`} />
                 <div style={{background : color}} className="absolute text-white top-[-10px] w-[80px] flex items-center justify-center left-[-10px] h-[35px] rounded text-xs">waiting</div>
                 <div className="w-full h-full">
                     <div className={`h-[100px] w-full  border-b-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"}`}>

@@ -17,6 +17,6 @@ class Tournment(models.Model):
     max_players = models.IntegerField()
     mode =  models.CharField(max_length=10, choices=TOURNMENT_MODE_CHOICES)
     players = models.ManyToManyField(User, related_name='players')
-
-    
-    
+    # tournament name
+    # tourament status
+    # created_at

@@ -103,26 +103,24 @@ function ConvItem({c, menu}) {
     }, [c])
 
     return (
-        <li className="w-full h-[60px] rounded xl:p-2 border-white/30 relative mt-3 flex justify-center items-center cursor-pointer">
-            <Link to={`${data.username}`} className={`flex justify-start items-center w-full xl:px-4 ${menu && "test-style px-4"}`}>
-                <div className={`flex  ${menu ? "test-style" : "justify-center"} xl:justify-start  items-center w-full`}>
-                    <div className={`w-[35px] h-[35px] xl:mr-4 ${menu && "test-style mr-4"}`}>
+        <li className="w-full h-[60px] rounded xl:p-2 border-white/30 relative mt-3 flex items-center cursor-pointer">
+            <Link to={`${data.username}`} className={`flex justify-start items-center w-full ${menu && "test-style"}`}>
+                <div className={`flex  ${menu ? "test-style" : "justify-center"} xl:justify-start items-center w-full`}>
+                    <div className={`w-[35px] h-[35px] ${menu && "test-style"}`}>
                         <img src={data?.profile?.avatar} className="w-full bg-white h-full rounded-full" alt="img" />
                     </div>
-                    <div className={`content text-[14px] w-fit ${menu ? "test-style" : "hidden"} xl:block`}>
-                        <h1 className="font-bold ">{data?.username}</h1>
-                        <p className="text-[8px] mt-1 flex items-center">
-                            <FaCheckDouble className="mr-2 text-sky-400" />
-                            {c.content_of_last_message?.substring(0,20)} ...
+                    <div className={`content w-fit ml-4 ${menu ? "test-style" : "hidden"} xl:block`}>
+                        <div className="flex justify-between items-center">
+                            <h1 className="font-bold text-[10pt]">{data?.username}</h1>
+                            <p className="text-[7pt]">{time}</p>
+                        </div>
+                        <p className="text-[8pt] w-[140px] overflow-hidden">
+                            {c.content_of_last_message}
                         </p>
                     </div>
                 </div>
-                <div className={`date ${menu ? "test-style" : "hidden"} xl:flex justify-end w-[70px] items-center relative mr-4`}>
-                    {data.categorie === 'unread' &&  <div style={{background:color}} className="dot flex items-center justify-center w-[20px] h-[20px] text-[9px] font-bold rounded-full text-white">1</div>}
-                    <p className="text-[8px] ml-4">{time}</p>
-                </div>
             </Link>
-            <div 
+            {/* <div 
                 className={`xl:block relative ${menu ? "test-style" : "hidden"}`}
                 onClick={() => setOpen(prev => !prev)}    
             >
@@ -130,7 +128,7 @@ function ConvItem({c, menu}) {
                 <div className="absolute right-0 top-4 backdrop-blur-md">
                     { open && <ConversationOptions partner={data} /> }
                 </div>
-            </div>
+            </div> */}
         </li>
     )
 }
@@ -202,7 +200,7 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
     
     if (!cnvs) {
         return (
-            <div className="px-2">
+            <div className="px-2 ">
                 <div className="flex items-center mt-4">
                     <div className="h-8 rounded-full animate-pulse w-full bg-gray-300" />
                 </div>
@@ -227,15 +225,15 @@ export default function ConversationsList({menu, data} : {menu : Boolean, data :
                     <input 
                         type="text" 
                         placeholder="search..." 
-                        className={`w-full ${menu ? "test-style" : "hidden"} xl:block px-4 text-xs rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.5px]`} 
+                        className={`w-full ${menu ? "test-style" : "hidden"} outline-none xl:block px-4 text-xs rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.5px]`} 
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
                 </div>
-                <div className={`mt-10 xl:block ${menu ? "test-style" : "hidden"}`}>
+                <div className={`mt-4 xl:block ${menu ? "test-style" : "hidden"}`}>
                     <Categories categorie="all" Handler={null} />
                 </div>
-                <ul className="mt-10 xl:p-4">
+                <ul className="mt-10 xl:px-2">
                     {
                         cnvs.length ?
                             cnvs?.map(c => {

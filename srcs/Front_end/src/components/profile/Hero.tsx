@@ -73,8 +73,8 @@ export function Banner({user}) {
 	
 	return (
 		<div>
-			<div className='top-0 h-[150px] w-full border-b-[1px] overflow-hidden'>
-				<img src={user?.profile.banner} className='min-w-full w-fit min-h-full h-fit' alt="" />
+			<div className='top-0 h-[180px] w-full border-b-[1px] overflow-hidden'>
+				<img src={user?.profile.banner} className='w-full h-full' alt="" />
 			</div>
 
 			<div className='w-full px-2  rounded-sm h-fit mt-[-40px] flex items-center justify-center'>
@@ -93,7 +93,7 @@ export function Banner({user}) {
 								<textarea 
 									value={user?.profile?.bio}
 									disabled={true}
-									className={`${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} text-center resize-none bg-transparent outline-none`}>
+									className={`${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} resize-none bg-transparent outline-none`}>
 								</textarea>
 							}
 						</div>

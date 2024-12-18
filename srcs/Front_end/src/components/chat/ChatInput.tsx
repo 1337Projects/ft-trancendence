@@ -42,28 +42,29 @@ export default function ChatInput() {
     const [emojie, setEmojie] = useState<boolean>(false)
 
     return (
-        <div className=" w-full h-full flex items-center">
-            <div className=' w-full h-1/2 max-w-[490px] relative mx-auto' >
+        <div className={`w-full h-full flex items-center border-t-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"}`}>
+            <div className='w-full h-1/2 relative' >
                 {
                     emojie && <Emojies inputText={text} TextInputHandler={setText} />
                 }
-                <div className={`input w-full h-full rounded-full px-2 pl-4 text-[16pt] flex items-center justify-between ${theme == 'light' ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-950"} `}>
-                    <div onClick={() => setEmojie(prev => !prev)}>
-                        { emojie ? <FaKeyboard /> : <FaRegSmile /> }
-                    </div>
-                    <div className="mx-4 text-[20pt]" onClick={sendGameInvite}>
+                <div className="flex w-full h-full items-center">
+                    <div
+                        className={`text-[14pt] mr-2 flex justify-center items-center ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black text-white"} rounded-full h-full w-[45px]`} 
+                        onClick={sendGameInvite}>
                         <IoGameControllerOutline />
                     </div>
-                    <input 
-                        onKeyUp={inputHandler} 
-                        value={text}  
-                        type="text"  
-                        placeholder="Message ..." 
-                        onChange={(e) => setText(e.target.value)} 
-                        className="w-[70%] sm:w-[80%] text-[10pt] bg-transparent focus:outline-none" 
-                    />
-                    <div style={{background:color}} onClick={sendMessage} className='w-[40px] h-[35px] flex justify-center items-center text-[12pt] text-white rounded-full'>
-                        <FiSend />
+                    <div className={`input w-full h-full rounded-full px-2 pl-4 text-[16pt] flex items-center justify-between ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black text-white"} `}>
+                        <div onClick={() => setEmojie(prev => !prev)}>
+                            { emojie ? <FaKeyboard /> : <FaRegSmile /> }
+                        </div>
+                        <input 
+                            onKeyUp={inputHandler} 
+                            value={text}  
+                            type="text"  
+                            placeholder={`Message @${user}`} 
+                            onChange={(e) => setText(e.target.value)} 
+                            className="w-full ml-2 text-[10pt] bg-transparent focus:outline-none" 
+                        />
                     </div>
                 </div>
             </div>

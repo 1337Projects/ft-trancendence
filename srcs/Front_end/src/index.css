@@ -35,17 +35,17 @@ body {
 
 .active-menu {
     width: 300px;
-    transition: opacity .6s ease;
+    transition: opacity .3s ease;
 }
 
 .non-active-menu {
-    transition : opacity .6s ease;
+    transition : opacity .3s ease;
 }
 
 .test-style {
     /* background-color: red; */
     opacity: 1;
-    animation: slide 1s linear;
+    animation: slide .3s linear;
 }
 
 

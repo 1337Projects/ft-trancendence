@@ -93,9 +93,7 @@ const router = createBrowserRouter(
         </Route>
 
         <Route path='chat' element={<ChatLayout />}>
-          <Route index element={<div className='w-full h-full p-10 flex justify-center items-center'>
-            <img src='/chat/chaat.svg' />
-          </div>} />
+          <Route index element={<ChatImg />} />
           <Route path=':user' element={<Conversation/>} />
         </Route>
 
@@ -112,6 +110,14 @@ const router = createBrowserRouter(
       //     <Route path='game/waiting' element={<Waiting />} />
 
       //     {/* chat  */}
+
+function ChatImg() {
+  return (
+      <div className='w-full h-full p-10 flex justify-center items-center'>
+        <img src='/chaat.svg' />
+      </div>
+  )
+}
 
 
 

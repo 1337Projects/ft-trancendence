@@ -21,28 +21,19 @@ function UserMessage({m, username}) {
     const [time, setTime] = useState<string>('')
     MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
 
-    const { color, theme } = useContext(ApearanceContext) || {}
-
     return (
-        <li  className={`mt-4 flex items-start  ${m.sender.username == username ? "justify-end" : "justify-start"}`}>
-            {
-                m.sender.username != username &&
-                <Link to={`/dashboard/profile/${m?.sender?.username}`}>
-                    <img src={m?.sender?.profile?.avatar} className="w-[40px] h-[40px] bg-white shadow-sm rounded-full mr-4" alt="" />
+        <li className={`mt-4 flex justify-between`}>
+            <div className='w-[40px] mr-4'>
+                <Link  to={`/dashboard/profile/${m?.sender?.username}`}>
+                    <img src={m?.sender?.profile?.avatar} className="w-[35px] h-[35px] bg-white shadow-sm rounded-full mr-4" alt="" />
                 </Link>
-            }
-            <div>
-                <div className={`backdrop-blur-xl ${theme == "light" ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"} rounded-[50px] p-1`} >
-                    <h1 className="text-[14px] break-words max-w-[300px] min-w-[100px] p-2">{m?.message}</h1>
-                </div>
-                <p 
-                    className={`text-[8pt] flex items-center lowercase mt-2 py-1 ${m.sender.username != username ? "text-right ml-10" : "ml-2"}`}
-                >{time} <RiCheckDoubleFill style={{color : m.seen ? color : ""}} className='ml-2 text-[10pt]' /></p>
             </div>
-            {/* {
-                m.sender.username == username &&
-                <img src={m?.sender?.profile?.avatar} className="w-[40px] h-[40px] bg-white shadow-sm rounded-full ml-4" alt="" />
-            } */}
+            <div className='w-full max-w-[400px]'>
+                <div>
+                    <h1 className='font-bold text-[10pt]'>{m.sender.username} <span className='ml-4 font-thin text-[8pt]'>{time}</span></h1>
+                    <h1 className="text-[14px] break-words min-w-[100px]">{m?.message}</h1>
+                </div>
+            </div>
         </li>
     )
 }
@@ -59,7 +50,7 @@ export default function Conversation() {
             <div className='w-full h-fit relative overflow-y-auto' >
                 <MessagesList />
             </div>
-            <div className='w-full px-10 h-[100px]'>
+            <div className='w-full h-[80px]'>
                 <ChatInput />
             </div>
         </div>
@@ -141,7 +132,7 @@ function send_fetch_event(page) {
     if (!messages) {
         return (
             
-            <ul style={{height : `calc(100vh - 260px)`}}>
+            <ul style={{height : `calc(100vh - 220px)`}}>
                 <div className='w-full h-[50px] flex items-center p-2 mt-4'>
                     <div className='bg-gray-300 animate-pulse  w-[40px] rounded-full h-[40px]' />
                     <div className='ml-4'>
@@ -183,7 +174,7 @@ function send_fetch_event(page) {
 
     return (
         <div>
-            <div style={{height : `calc(100vh - 260px)`}} className='px-2 overflow-y-auto scroll-bottom flex flex-col-reverse'>
+            <div style={{height : `calc(100vh - 220px)`}} className='px-2 overflow-y-auto scroll-bottom flex flex-col-reverse'>
                 <div className='flex flex-col '>
                     {
                         messages.map((message, index) => {

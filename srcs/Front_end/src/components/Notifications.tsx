@@ -15,8 +15,8 @@ function NotItem({data}) {
     const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
 
     return (
-        <li className="flex relative font-popins justify-between ml-[50%] translate-x-[-50%] items-center w-full p-1 h-[60px] my-3">
-            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 mx-2 border-[1px] border-black/20 rounded-[50%]" />
+        <li className="flex relative font-popins justify-between px-4 items-center w-full h-[60px] my-3">
+            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 border-[1px] border-black/20 rounded-[50%]" />
             <div className="text text-primaryText">
                 <Link to={data.action}>
                     <h1 className="font-bold text-sm">{data.sender.username}</h1>
@@ -130,7 +130,7 @@ export default function Notifications() {
     // console.log(nots)
 
     return (
-        <div className={`min-h-[70px]  rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
+        <div className={`min-h-[70px] rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="mr-2 font-popins">Notifications</h1>
