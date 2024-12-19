@@ -7,9 +7,6 @@ import { gameSocket, tournamentSocket } from "../../socket";
 import Game from "./pingpong/Game";
 import Score from "./pingpong/Score";
 
-import MyUseEffect from "../../hooks/MyUseEffect"
-import {PlayerWon} from './pingpong/Winner'
-
 
 export default function PingPong() {
 
@@ -17,17 +14,16 @@ export default function PingPong() {
     const canvaParentRef = useRef<null | HTMLDivElement>(null);
     const gameRef = useRef<null | Game>(null);
     const [data, setData] = useState(null);
-    const { id } = useParams()
-    const { authInfos } = useContext(UserContext) || {}
+    const { tournament_id, game_id } = useParams()
+    const { authInfos, user } = useContext(UserContext) || {}
     const navigate = useNavigate()
     const [ closed, setClosed ] = useState(false)
 
     useEffect(() => {
         
         const timer = setTimeout(() => {
-            gameSocket.connect(`ws://localhost:8000/ws/game/play/${id}/?token=${authInfos?.accessToken}`)
+            gameSocket.connect(`ws://localhost:8000/ws/game/play/${game_id}/?token=${authInfos?.accessToken}`)
             gameSocket.addCallback("setInitData", setData)
-            // gameSocket.addCallback("closeHandler", setClosed)
         }, 200)
 
         return () => {
@@ -36,14 +32,9 @@ export default function PingPong() {
         }
     }, [])
 
-    const quiteHandler = () => {
-        navigate(`/dashboard/game/tournment/1/remote`)
-        tournamentSocket.sendMessage({"event" : "upgrade", "winner_id" : data.players.player1.user.id})
-    }
-
+    
     useEffect(() => {
         const timer = setTimeout(() => {
-            console.log('rebuild')
             if (canvasRef.current && data) {
                 const  ctx = canvasRef?.current?.getContext("2d");
                 gameRef.current = new Game(ctx, setData);
@@ -51,6 +42,14 @@ export default function PingPong() {
                 if (data.ended) {
                     gameSocket.close()
                     setClosed(true)
+                    setTimeout(() => {
+                        tournamentSocket.sendMessage({"event" : "upgrade", "winner_id" : data.winner})
+                        if (tournament_id) {
+                            navigate(`/dashboard/game/tournment/${tournament_id}/remote`)
+                        } else {
+                            navigate(`/dashboard/game/`)
+                        }
+                    }, 2000)
                 }
             }
         }, 50)
@@ -67,14 +66,17 @@ export default function PingPong() {
 
     return (
             <div className={`relative ${theme === 'light' ? " text-lightText bg-lightItems" : " text-darkText bg-darkItems"}  flex justify-center items-center rounded-none w-full h-[100vh] mt-2 p-2`}>
-                <div className={`relative h-fit`}>
+                <div className={`relative h-fit relative`}>
                     
                     {/* <ActionsMenu rotateHandler={rotateHandler} pauseHandler={pauseHandler} /> */}
 
                     {
-                        closed && <div className="w-full bg-white/20 backdrop-blur-lg h-[500px] absolute z-10 p-2">
-                            <PlayerWon quitHandler={quiteHandler} data={data} />
-                        </div>
+                        closed && 
+                        <h1 
+                            className="bg-black/20 h-[150px] flex justify-center items-center absolute z-10 w-full top-[50%] translate-y-[-50%]"
+                        > 
+                            <h1 className="text-[30pt] font-bold uppercase">{data.winner == user.id ? "victory" : "ko"} </h1>
+                        </h1>
                     }
                     {
                         <div>

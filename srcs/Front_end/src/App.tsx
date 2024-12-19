@@ -69,18 +69,16 @@ const router = createBrowserRouter(
 
       <Route path='/dashboard' element={<DashboardPrivateRoute />}>
 
-        {/* <Route path='game' element={<Game />} / > */}
+        
         <Route path='game' element={<Game />} />
         <Route path='game/waiting' element={<Waiting />} />
-
-        <Route path='game/room/:id' element={<PingPong />} />
+        
+        <Route path='game/room/:game_id' element={<PingPong />} />
+        <Route path='game/room/:tournament_id/:game_id' element={<PingPong />} />
         
         <Route path='game/tournment' element={<GameLayout />}>
           <Route path=':id/:type' element={<Tournment />} >
             <Route index element={<Schema />} />
-            <Route path='leaderboard' element={<div>loaderboard</div>} />
-            <Route path='players' element={<Players />} />
-            <Route path='matches' element={<div>matches</div>} />
           </Route>
           <Route path='waiting/:id' element={<WaitingTournment />} />
         </Route>
@@ -114,7 +112,7 @@ const router = createBrowserRouter(
 function ChatImg() {
   return (
       <div className='w-full h-full p-10 flex justify-center items-center'>
-        <img src='/chaat.svg' />
+        <img src='/chat/chaat.svg' />
       </div>
   )
 }

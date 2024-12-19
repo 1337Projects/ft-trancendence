@@ -134,6 +134,7 @@ function Cards({color}) {
 export default function Game() {
     const appearence = useContext(ApearanceContext)
     const [tournments, setTournments] = useState([])
+    const { open } = useContext(DialogContext) || {}
 
     MyUseEffect(async () => {
         try {
@@ -152,7 +153,7 @@ export default function Game() {
         } catch(err) {
             console.log(err)
         }
-    }, [])
+    }, [open])
 
     return (
         <>
@@ -191,24 +192,18 @@ export default function Game() {
 function TournmentDialog() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const { setOpen } = useContext(DialogContext) || {}
-    const { user } = useContext(UserContext) || {}
-    const [data, setData] = useState({members : 4, mode : 'remote'})
-    const [players, setPlayers] = useState({}) 
+    const [data, setData] = useState({members : 4, name : ''})
     const [created, setCreated] = useState<null | number>(null)
 
+
     async function createHandler() {
-        const tournment_players = []
-        Object.entries(players).forEach(([key, value]) => {
-            tournment_players.push(value)
-        })
-    
         const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/create/`, {
             method : 'POST',
             headers : { 
                 'Content-Type' : 'application/json'
             },
             credentials : 'include',
-            body : JSON.stringify({...data, players : tournment_players, user : user?.username})
+            body : JSON.stringify(data)
         })
 
         if (!response.ok) {
@@ -237,6 +232,18 @@ function TournmentDialog() {
                         <div>
                             <h1 className="text-sm mt-4">Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone.</h1>
                                 <div className="mt-4">
+                                    <label className="w-full block" htmlFor="name">name</label>
+                                    <input 
+                                        className={`rounded px-6 bg-transparent ${theme == 'light' ? "border-black/20" : "border-white/20"} h-[40px] border-[.3px] w-full mt-2`}
+                                        type="text"
+                                        id="name" 
+                                        name="name"
+                                        value={data.name}
+                                        onChange={(e) => setData({...data, name : e.target.value})}
+                                        placeholder="tournament name..."
+                                    />
+                                </div>
+                                <div className="mt-4">
                                     <label className="w-full block" htmlFor="members">members</label>
                                     <input 
                                         step="4"
@@ -249,19 +256,6 @@ function TournmentDialog() {
                                         max="16"
                                         min="4"
                                     />
-                                </div>
-                                <div className="mt-4">
-                                    <label className="w-full block" htmlFor="mode">mode ( local / remote )</label>
-                                    <select 
-                                        value={data.mode}
-                                        className={`w-full block h-[40px] mt-2 px-4 border-[.3px] bg-transparent ${theme == 'light' ? "border-black/20" : "border-white/20"} rounded`}
-                                        name="mode" 
-                                        id="mode"
-                                        onChange={(e) =>  setData({...data, mode : e.target.value})}
-                                    >
-                                        <option value="remote">remote</option>
-                                        <option value="local">local</option>
-                                    </select>
                                 </div>
                         </div>
                     }
@@ -291,15 +285,6 @@ function TournmentDialog() {
                         >
                             close
                         </button>   
-                        <button 
-                            onClick={() => setOpen!(false)}
-                            style={{background: color}}
-                            className="px-4 h-[40px] rounded text-sm text-white"
-                        >
-                            <Link to={data.mode == 'local' ? `tournment/${created}/local` : `tournment/waiting/${created}/`}>
-                                luanch tournment
-                            </Link>
-                        </button>
                     </div>
                 }
             </div>
