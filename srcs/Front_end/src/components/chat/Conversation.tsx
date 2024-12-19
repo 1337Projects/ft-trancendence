@@ -8,7 +8,6 @@ import { FaArrowLeft, FaEllipsisV } from 'react-icons/fa';
 import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
-import { RiCheckDoubleFill } from 'react-icons/ri';
 
 
 function calc_time(created_at) {
@@ -70,14 +69,11 @@ function MessagesList() {
     const [hasMore, setHasMore] = useState(true)
 
     useEffect(() => {
-        // const timer = setTimeout(() => {
-
-        // }, 300)
         return () => {
-            console.log(messages)
-            setMessages!([])
+            setMessages!(null)
+            setPage(1)
         }
-    }, [])
+    }, [user])
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -88,29 +84,27 @@ function MessagesList() {
         return () => {
             clearTimeout(timer)
         }
-    }, [page])
+    }, [page, user])
 
  
-    
-    
     const topitem = useCallback(() => {
         if (observer.current) observer.current.disconnect()
 
-        observer.current = new IntersectionObserver(entries => {  
+        observer.current = new IntersectionObserver(entries => { 
             if (entries[0].isIntersecting && hasMore) {
                 setPage(prev => prev + 1)
             }
         })
 
         if (lastItem.current) observer.current.observe(lastItem.current)
-    }, [lastItem, hasMore])
+    }, [lastItem, hasMore, user])
 
 
     useEffect(() => {
         return () => {
             if (observer.current) observer.current.disconnect()
         }
-    }, [])
+    }, [user])
 
     MyUseEffect(() => {
         if (lastItem.current && messages) {
@@ -118,10 +112,10 @@ function MessagesList() {
                 topitem()
             }, 1000)
         }
-    }, [messages])
+    }, [messages, user])
 
-function send_fetch_event(page) {
-    chatSocket.sendMessage({
+    function send_fetch_event(page) {
+        chatSocket.sendMessage({
             "partner": user,
             "from": authInfos?.username,
             "event" : "fetch_messages",
@@ -131,7 +125,6 @@ function send_fetch_event(page) {
 
     if (!messages) {
         return (
-            
             <ul style={{height : `calc(100vh - 220px)`}}>
                 <div className='w-full h-[50px] flex items-center p-2 mt-4'>
                     <div className='bg-gray-300 animate-pulse  w-[40px] rounded-full h-[40px]' />
