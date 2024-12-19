@@ -111,24 +111,15 @@ function ConvItem({c, menu}) {
                     </div>
                     <div className={`content w-fit ml-4 ${menu ? "test-style" : "hidden"} xl:block`}>
                         <div className="flex justify-between items-center">
-                            <h1 className="font-bold text-[10pt]">{data?.username}</h1>
+                            <h1 className="font-bold text-[10pt] max-w-[100px] truncate">{data?.username}</h1>
                             <p className="text-[7pt]">{time}</p>
                         </div>
-                        <p className="text-[8pt] w-[140px] overflow-hidden">
+                        <p className="text-[8pt] truncate w-[140px] overflow-hidden">
                             {c.content_of_last_message}
                         </p>
                     </div>
                 </div>
             </Link>
-            {/* <div 
-                className={`xl:block relative ${menu ? "test-style" : "hidden"}`}
-                onClick={() => setOpen(prev => !prev)}    
-            >
-                <BsThreeDotsVertical />
-                <div className="absolute right-0 top-4 backdrop-blur-md">
-                    { open && <ConversationOptions partner={data} /> }
-                </div>
-            </div> */}
         </li>
     )
 }
@@ -145,7 +136,7 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
     } 
 
     return (
-        <ul className={`w-full xl:p-4 max-h-[300px] xl:h-[100px] xl:flex xl:items-center ${menu ? "h-[100px] p-2  flex items-center test-style" : "h-fit pb-6 grid grid-cols-1 content-start"}`}> 
+        <ul className={`w-full overflow-y-scroll xl:p-4 max-h-[200px] xl:h-[150px] grid gap-4  ${menu ? "h-[100px] p-2 grid-cols-3  flex items-center test-style" : "h-fit grid-cols-1 content-start"}`}> 
             {
                 friends.length > 0  ?
                     friends?.filter(f => f.status == 'accept').map((f, index) => {
@@ -156,7 +147,7 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
                                 onClick={() => handler(false)}  
                                 className={`xl:w-[80px] xl:h-full  flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}
                             >
-                                <Link to={data.username} className="w-full">
+                                <Link to={data.username} className="truncate w-[35px]">
                                     <div className="relative w-full">
                                         <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
                                         <div className={`h-2 w-2 ${data.profile.online ? "bg-green-400" : "bg-red-400"}  rounded-full absolute top-[27px]  xl:right-4 right-6`}></div>

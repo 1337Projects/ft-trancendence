@@ -21,7 +21,7 @@ function UserMessage({m, username}) {
     MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
 
     return (
-        <li className={`mt-4 flex justify-between`}>
+        <li className={`mt-4 flex justify-start`}>
             <div className='w-[40px] mr-4'>
                 <Link  to={`/dashboard/profile/${m?.sender?.username}`}>
                     <img src={m?.sender?.profile?.avatar} className="w-[35px] h-[35px] bg-white shadow-sm rounded-full mr-4" alt="" />
@@ -125,7 +125,7 @@ function MessagesList() {
 
     if (!messages) {
         return (
-            <ul style={{height : `calc(100vh - 220px)`}}>
+            <ul style={{height : `calc(100vh - 240px)`}}>
                 <div className='w-full h-[50px] flex items-center p-2 mt-4'>
                     <div className='bg-gray-300 animate-pulse  w-[40px] rounded-full h-[40px]' />
                     <div className='ml-4'>

@@ -33,7 +33,7 @@ export default function ChatLayout() {
     }
 
     function UpdateConversationsHandler(cnv) {
-        setCnvs(prev => [...prev.filter(c => c.id != cnv.id), cnv])
+        setCnvs(prev => [cnv, ...prev.filter(c => c.id != cnv.id)])
     }
 
     MyUseEffect(() => {

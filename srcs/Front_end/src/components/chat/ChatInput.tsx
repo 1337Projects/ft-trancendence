@@ -47,7 +47,7 @@ export default function ChatInput() {
                 {
                     emojie && <Emojies inputText={text} TextInputHandler={setText} />
                 }
-                <div className="flex w-full h-full items-center">
+                <div className="flex w-full max-w-[500px] mx-auto h-full items-center">
                     <div
                         className={`text-[14pt] mr-2 flex justify-center items-center ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black text-white"} rounded-full h-full w-[45px]`} 
                         onClick={sendGameInvite}>
@@ -65,6 +65,11 @@ export default function ChatInput() {
                             onChange={(e) => setText(e.target.value)} 
                             className="w-full ml-2 text-[10pt] bg-transparent focus:outline-none" 
                         />
+                        <div className="px-1" onClick={() => sendMessage()}>
+                            <div style={{background : color}} className="px-2 text-white w-[30px] flex jusity-center items-center h-[28px] rounded-full">
+                                <FiSend />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
