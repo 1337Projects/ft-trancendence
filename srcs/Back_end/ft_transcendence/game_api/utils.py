@@ -20,6 +20,7 @@ class Game:
     direction_y = math.sin(angl)
     players = None
     end = False
+    winner = None
 
 
     def reset(self):
@@ -48,7 +49,8 @@ class Game:
             "pay":self.paddle_ay,
             "pby":self.paddle_by,
             "players" : self.players,
-            "ended": self.end
+            "ended": self.end,
+            "winner" : self.winner
         }
 
 
@@ -67,8 +69,12 @@ class Game:
         elif self.ball_x >= self.width:
             self.players["player1"]["score"] += 1
             self.reset()
-        if self.players["player1"]["score"] == 2 or self.players["player2"]["score"] == 2:
+        if self.players["player1"]["score"] == 2:
             self.end = True
+            self.winner = self.players["player1"]["user"]["id"]
+        elif self.players["player2"]["score"] == 2:
+            self.end = True
+            self.winner = self.players["player2"]["user"]["id"]
         self.val += 0.8
 
 

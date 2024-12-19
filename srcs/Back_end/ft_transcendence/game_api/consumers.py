@@ -135,8 +135,8 @@ class GameConsumer(AsyncConsumer):
     matches = {}
 
     def __init__(self) -> None:
-        self.game_task = None
-        self.game = None
+        # self.game_task = None
+        # self.game = None
         self.match_id = None
         self.room_name = None
         self.shared_state = SharedState()
@@ -160,15 +160,14 @@ class GameConsumer(AsyncConsumer):
             await asyncio.sleep(0.5)
             self.matches[self.match_id]['access'] += 1
             if self.matches[self.match_id]['access'] == 2:
-                self.game = Game(self.matches[self.match_id]['data'])
-                self.game_task = asyncio.create_task(self.game_loop())
-            debug(f"access to {self.match_id} is {self.matches[self.match_id]['access']}")
+                self.matches[self.match_id]["game"] = Game(self.matches[self.match_id]['data'])
+                self.matches[self.match_id]["game_task"] = asyncio.create_task(self.game_loop())
 
     async def websocket_receive(self, text_data):
         text_data_json = json.loads(text_data["text"])
-        if text_data_json["event"] == "control":
-            if self.game:
-                self.game.update_paddles(text_data_json["action"])
+        # if text_data_json["event"] == "control":
+        #     if self.game:
+        #         self.game.update_paddles(text_data_json["action"])
 
 
     async def websocket_disconnect(self, event):
@@ -176,9 +175,10 @@ class GameConsumer(AsyncConsumer):
             self.room_name,
             self.channel_name
         )
-        if self.game_task:
-            debug("cancel task")
-            self.game_task.cancel()
+        if self.matches[self.match_id]["game_task"]:
+            # debug("cancel task")
+            self.matches[self.match_id]["game_task"].cancel()
+            self.matches[self.match_id]["game"].end = True 
         raise StopConsumer()
 
 
@@ -202,27 +202,25 @@ class GameConsumer(AsyncConsumer):
 
 
 
-
-
     async def game_loop(self):
         lastFrameTime = time.time()
         while True:
             currentTime = time.time()
             deltatime = currentTime - lastFrameTime
             lastFrameTime = currentTime
-            self.game.update(deltatime)
+            self.matches[self.match_id]["game"].update(deltatime)
             await self.channel_layer.group_send(
                 self.room_name,
                 {
                     "type": "chat.message",
                     "data": {
-                        "game" : self.game.__dict__(),
+                        "game" : self.matches[self.match_id]["game"].__dict__(),
                         "status" : 202
                     },
 
                 }
             )
-            if self.game.end == True:
+            if self.matches[self.match_id]["game"].end == True:
                 break
             await asyncio.sleep(0.06)
             
