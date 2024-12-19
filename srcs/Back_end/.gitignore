@@ -1,7 +1,6 @@
 virtualenv
 __pycache__
 migrations/
-ft_transcendence/media
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -178,11 +178,6 @@ class Tournament:
             elif match.right.val.data['id'] == id:
                 match.val = match.right.val
                 debug("upgrade right up")
-            # self.builder.rounds = self.builder.tree_to_rounds(self.builder.tree)
-            # debug(f"new val => {match.val}")
-            # debug(f"match val ===> {self.builder.rounds_list[lvl][0].val}")
-            # debug(f"match left val ===> {self.builder.rounds_list[lvl][0].left.val}")
-            # debug(f"match right val ===> {self.builder.rounds_list[lvl][0].right.val}")
         
 
     @database_sync_to_async
@@ -251,12 +246,9 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         
 
     async def create_provider(self):
-        debug(self.shared_state._tournaments[self.tournment_id]['user_count'])
         if self.shared_state._tournaments[self.tournment_id]['user_count'] == self.shared_state._tournaments[self.tournment_id]['data']['max_players']:
             self.shared_state.tournaments_providers[self.tournment_id] = Tournament(self.shared_state._tournaments[self.tournment_id])
-            debug(self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds())
-            # self.shared_state._tournaments[self.tournment_id]["rounds"] = self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds()
-            debug("send provider data")
+            self.shared_state._tournaments[self.tournment_id]["rounds"] = self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds()
             await self.channel_layer.group_send(
                 self.group_name,
                 {
@@ -272,7 +264,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         text_to_json_data = json.loads(text_data)
         if text_to_json_data['event'] == "start":
-            debug("start event")
             provider = self.shared_state.tournaments_providers[self.tournment_id]
             id = await asyncio.create_task(provider.play(self.lvl, self.scope['user'].id))
             if id:
@@ -291,17 +282,24 @@ class TournmentConsumer(AsyncWebsocketConsumer):
             provider = self.shared_state.tournaments_providers[self.tournment_id]
             if text_to_json_data['winner_id'] == self.scope['user'].id:
                 await provider.upgrade(self.lvl, text_to_json_data['winner_id'])
-                self.shared_state._tournaments[self.tournment_id]["rounds"] = self.shared_state.tournaments_providers[self.tournment_id].builder.get_rounds()
+                builder = self.shared_state.tournaments_providers[self.tournment_id].builder
+                self.shared_state._tournaments[self.tournment_id]["rounds"] = builder.get_rounds()
+                debug(self.shared_state._tournaments[self.tournment_id]["rounds"][0][0]["winner"])
+             
+
+        elif text_to_json_data['event'] == "get_data":
+            data = self.shared_state._tournaments.get(self.tournment_id, None)
+            if data:
                 await self.channel_layer.group_send(
-                    self.group_name,
-                    {
-                        "type" : "send_data",
-                        "data" : {
-                            "data" : self.shared_state._tournaments[self.tournment_id],
-                            "status" : 210
-                        },
-                    }
-                )
+                        self.group_name,
+                        {
+                            "type" : "send_data",
+                            "data" : {
+                                "data" : data,
+                                "status" : 210
+                            },
+                        }
+                    )
 
 
 
@@ -316,13 +314,13 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
         async with self.shared_state.lock:
             self.shared_state._tournaments[self.tournment_id]['user_count'] -= 1
-            debug(f"dec => {self.shared_state._tournaments[self.tournment_id]['user_count']}")
+            # debug(f"dec => {self.shared_state._tournaments[self.tournment_id]['user_count']}")
             if self.shared_state._tournaments[self.tournment_id]['user_count'] == 0:
-                debug("delete")
+                # debug("delete")
                 del self.shared_state._tournaments[self.tournment_id]
                 del self.shared_state.tournaments_providers[self.tournment_id]
-                debug(self.shared_state.tournaments_providers)
-                debug(self.shared_state._tournaments)
+                # debug(self.shared_state.tournaments_providers)
+                # debug(self.shared_state._tournaments)
 
 
 

@@ -153,7 +153,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         receiver_ser = await get_user_with_profile(to_)
         all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
         page = text_data_json.get('page', 1)
-        limit = text_data_json.get('limit', 10)
+        limit = text_data_json.get('limit', 30)
         paginator = Paginator(all_messages, limit)
         try:
             messages = paginator.page(page)
