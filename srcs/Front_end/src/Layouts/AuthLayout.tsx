@@ -36,8 +36,8 @@ export default function AuthLayout() {
           <div className='bg-white w-full  h-full'>
             <div className="h-full w-full flex">
               <div className="h-full w-full lg:w-1/2 flex items-center justify-center">
-                  <div className="w-full max-w-[700px]">
-                    <Outlet />
+                  <div className="w-full max-w-[700px] h-full">
+                      <Outlet />
                   </div>
               </div>
               <div className="h-full hidden bg-[#1b1b1f]  w-1/2 p-2 lg:flex items-center">

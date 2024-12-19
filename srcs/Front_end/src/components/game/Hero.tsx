@@ -9,7 +9,7 @@ export default function Hero({ data }) {
     const { color } = useContext(ApearanceContext) || {}
     return (
         <div className="relative overflow-hidden h-[200px] rounded">
-            <img src="/tr_hero.webp" className="w-full " alt="img" />
+            <img src="/game/tr_hero.webp" className="w-full " alt="img" />
             <div className="absolute top-4 left-6 text-white z-10 text-xl">
                 <Link to={`/dashboard/game`}>
                     <IoMdArrowRoundBack />
@@ -17,7 +17,7 @@ export default function Hero({ data }) {
             </div>
             <div className="bg-blackGT absolute top-0 left-0 w-full h-full p-2 flex items-center">
                 <div className=" w-[150px] h-[150px] rounded ml-[20px]">
-                    <img src="/winner.svg" alt="" />
+                    <img src="/game/winner.svg" alt="" />
                 </div>
                 <div className="text-white ml-[20px]">
                     <p style={{background:color}} className="py-2 text-white px-4 uppercase w-fit text-xs rounded">{data?.data?.mode}</p>

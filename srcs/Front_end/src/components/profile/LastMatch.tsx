@@ -57,7 +57,7 @@ export default function LastMatch() {
 				{/* <p className={`text-[10px] font-light}`}>Date</p> */}
 				<div className='flex h-full overflow-y-auto flex-col items-end'>
 					{
-						matches?.length ?
+						matches ?
 						<ul className='w-full my-2 border-[.2px] border-white/20 p-2  h-[260px] overflow-scroll'>
 							{
 								matches.map(m => {

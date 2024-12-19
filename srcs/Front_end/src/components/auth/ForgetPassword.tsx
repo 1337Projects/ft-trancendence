@@ -92,53 +92,53 @@ export default function ForgetPassword() {
     
 
     return (
-       <div className="px-10">
-            <div>
-            <div className="text-center">
-                <h1 className="font-bold uppercase text-[18pt]">Forget your passowrd ?</h1>
-                <p className="mt-4 text-[8pt]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit voluptatum nihil dignissimos?</p>
-            </div>
-            <div className="mt-14 max-w-[400px] mx-auto">
-                {
-                    alert && <Alert alert={alert} alertHandler={setAlert} />
-                }
-                {
-                    token == null ?
-                    <Formik
-                        initialValues={{ email : '', }}
-                        validationSchema={EmailvalidationSchema}
-                        onSubmit={async (values) =>  setAlert(await requestLinkHandler(values))}
-                    >
-                        <Form>
-                            <MyInput type="email" id="email" label="email" name="email" placeholder="email@example.com" />
-                            <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt] capitalize">reset</button>
-                        </Form>
-                    </Formik>
-                    :
-                    <Formik
-                        initialValues={{ password : '' }}
-                        validationSchema={PasswordvalidationSchema}
-                        onSubmit={async (values) => {
-                            setAlert(await resetPasswordHandler({...values, token , email}))
-                            setTimeout(() => navigate('/auth/login') , 1000 * 3)
-                        }}
-                    >
-                        <Form>
-                            <MyInput type="password" id="password" label="new password" name="password" placeholder="***************" />
-                            <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt] capitalize">reset</button>
-                        </Form>
-                    </Formik>
-                }
-               
-            </div>
-            <h1 className="mt-10 text-center lowercase">
-                you wanna go back to 
-                <span  className="font-bold ml-2 uppercase">
-                    <Link to="../login">
-                        login ?
-                    </Link>
-                </span>
-            </h1>
+       <div className="px-10 h-[100vh] flex items-center justify-center">
+            <div className="h-fit">
+                <div className="text-center">
+                    <h1 className="font-bold uppercase text-[18pt]">Forget your passowrd ?</h1>
+                    <p className="mt-4 text-[8pt]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit voluptatum nihil dignissimos?</p>
+                </div>
+                <div className="mt-14 max-w-[400px] mx-auto">
+                    {
+                        alert && <Alert alert={alert} alertHandler={setAlert} />
+                    }
+                    {
+                        token == null ?
+                        <Formik
+                            initialValues={{ email : '', }}
+                            validationSchema={EmailvalidationSchema}
+                            onSubmit={async (values) =>  setAlert(await requestLinkHandler(values))}
+                        >
+                            <Form>
+                                <MyInput type="email" id="email" label="email" name="email" placeholder="email@example.com" />
+                                <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt] capitalize">reset</button>
+                            </Form>
+                        </Formik>
+                        :
+                        <Formik
+                            initialValues={{ password : '' }}
+                            validationSchema={PasswordvalidationSchema}
+                            onSubmit={async (values) => {
+                                setAlert(await resetPasswordHandler({...values, token , email}))
+                                setTimeout(() => navigate('/auth/login') , 1000 * 3)
+                            }}
+                        >
+                            <Form>
+                                <MyInput type="password" id="password" label="new password" name="password" placeholder="***************" />
+                                <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt] capitalize">reset</button>
+                            </Form>
+                        </Formik>
+                    }
+                
+                </div>
+                <h1 className="mt-10 text-center lowercase">
+                    you wanna go back to 
+                    <span  className="font-bold ml-2 uppercase">
+                        <Link to="../login">
+                            login ?
+                        </Link>
+                    </span>
+                </h1>
             </div>
        </div>
     )
