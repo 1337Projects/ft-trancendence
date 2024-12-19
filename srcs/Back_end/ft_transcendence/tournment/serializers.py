@@ -8,15 +8,11 @@ from account.serializer import UserWithProfileSerializer
 
 class TournmentSerializer(serializers.ModelSerializer):
 
-    queryset = User.objects.all()
-    owner = serializers.PrimaryKeyRelatedField(queryset=queryset)
-
     def to_representation(self, instance):
         representation =  super().to_representation(instance)
         representation['players'] = UserWithProfileSerializer(instance.players.all(), many=True).data
-        representation['owner'] =  UserSerializer(instance.owner).data
         return representation
 
     class Meta:
         model = Tournment
-        fields = ["id", "mode", "max_players", "owner"]
+        fields = ["id", "tournament_name", "tourament_status", "created_at", "max_players"]

@@ -13,23 +13,19 @@ class TournmentViews(viewsets.ViewSet):
     @action(detail=False, methods=['post'])
     def create_tournment(self, request):
         try:
-            username =  request.data['user']
             members =  request.data['members']
-            mode = request.data['mode']
-
-            owner = User.objects.get(username=username)
+            tournament_name = request.data['name']
 
             serializer = TournmentSerializer(data={
                 'max_players' : members,
-                'mode' : mode,
-                'owner' : owner.id
+                'tournament_name' : tournament_name
             })
             if not serializer.is_valid():
                 return  Response(serializer.errors, status=400)
             serializer.save()
-            return Response({"id" : serializer.data['id']}, status=200)
-        except:
-            return Response({"error": "Somthing went wrong"}, status=400)
+            return Response({"id" : serializer.data["id"]}, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
 
     
     @action(detail=False, methods=['GET'])

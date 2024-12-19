@@ -1,22 +1,16 @@
 from django.db import models
 from login.models import User
 
-# Create your models here.
-
-
-
 
 class Tournment(models.Model):
 
-    TOURNMENT_MODE_CHOICES = [
-        ('local', "Local"),
-        ('remote',  "Remote"),
+    TOURNMENT_STATUS_CHOICES = [
+        ('ended', "ENDED"),
+        ('ongoing',  "ONGOING"),
     ]
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     max_players = models.IntegerField()
-    mode =  models.CharField(max_length=10, choices=TOURNMENT_MODE_CHOICES)
     players = models.ManyToManyField(User, related_name='players')
-    # tournament name
-    # tourament status
-    # created_at
+    tournament_name = models.CharField(max_length=200, blank=True)
+    tourament_status = models.CharField(max_length=10, choices=TOURNMENT_STATUS_CHOICES, default='ongoing')
+    created_at = models.DateTimeField(auto_now=True)

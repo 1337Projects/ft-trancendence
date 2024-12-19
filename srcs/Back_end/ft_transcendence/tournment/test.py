@@ -48,13 +48,25 @@ class Builder:
     def build_tree(self, index):
         if index == 0:
             root = TreeNode(Player(self.data.pop()), index)
-            self.rounds_list[index].append(root)
+            # self.rounds_list[index].append(root)
             return root
         root = TreeNode(Match(), index)
         self.rounds_list[index].append(root)
         root.left = self.build_tree(index-1)
         root.right = self.build_tree(index-1)
         return root
+    
+    def get_val2(self, root):
+        if isinstance(root.val, Match):
+            return 'unknown'
+        return  root.val.data["username"]
+    
+    def myprint(self, root):
+        if root == None:
+            return
+        debug(f"print tree node {root.depth} => {self.get_val2(root)}")
+        self.myprint(root.left)
+        self.myprint(root.right)
 
 
     def get_rounds(self):
@@ -62,11 +74,11 @@ class Builder:
         for r in self.rounds_list:
             rounds.append([])
             for match in r:
-                if isinstance(match.val, Match):
-                    rounds[-1].append({"player1" : self.get_val(match.left), "player2" : self.get_val(match.right)})
-        rounds.reverse()
-        rounds.pop()
-        rounds.reverse()
+                rounds[-1].append({"player1" : self.get_val(match.left), "player2" : self.get_val(match.right)})
+        rounds[0].append({"winner" : self.get_val(self.rounds_list[-1][0])})
+        # rounds.reverse()
+        # rounds.pop()
+        # rounds.reverse()
         return rounds
 
 
@@ -99,3 +111,8 @@ class Builder:
                 pass
         return None
 
+
+
+if __name__ == "__main__":
+    for i in range(0, 10, 2):
+        print(f"{i} - {i + 1}")
