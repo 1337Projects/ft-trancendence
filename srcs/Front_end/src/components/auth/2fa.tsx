@@ -18,7 +18,7 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
     const user = useContext(UserContext)
     const appearence = useContext(ApearanceContext)
     const [otp, setOtp] = useState('');
-    const [errr, setErrr] = useState('VERIFY');
+    const [errr, setErrr] = useState('Verify');
     const [bol, setBol] = useState(true);
 
     const handleChange = (otp) =>{
@@ -26,7 +26,7 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
     }
     
     const handleSubmit = () =>{
-        if (errr === 'DONE') {
+        if (errr === 'Done') {
             setShowPopup(false)
         }
         if (otp.length === 6) {
@@ -54,8 +54,9 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
                 }
                 else {
                     setBol(false)
-                    setTwofa(false)
-                    setErrr('DONE')
+                    setTwofa(true)
+                    setShowPopup(false)
+                    setErrr('Done')
                 }
             })
             
@@ -88,12 +89,12 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
         }, []
     )
 
-    console.log(qrCodeUrl)
+    // console.log(appearence?.color)
     return (
         <div className={`flex  flex-col items-center justify-center  md:w-[100%]
         transition-all duration-300 ease-in-out p-6 text-white text-center rounded-lg
         'backdrop-blur-md
-        ${appearence?.theme === 'light' ? 'bg-black/30': 'bg-white/30'  }
+        ${appearence?.theme === 'light' ? 'bg-[#424242]': 'bg-[#b6b6b6]'  }
         ${bol === true ? 'h-[530px]' : 'h-[100px]' }
         `}>
         {
@@ -107,10 +108,7 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
                             <h1 className='p-4'>skip for now</h1>
                         </Link>
                     }
-                    {
-                        cancel &&
-                        <button className='p-4 text-[30px] text-[#ebebeb]' onClick={() => setShowPopup(false)} >CANCEL</button>
-                    }
+                    
                 </div>
             </div>
         }
@@ -136,10 +134,17 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
             }}
             />
         }
-            <button onClick={handleSubmit} className='text-[#fff] p-2 mt-4 rounded-[5px] text-[25px] bg-[#ff0000]'>
+        <div className='flex items-center justify-center w-[70%]'>
+            <button
+            style={{ backgroundColor: appearence?.color }}
+            onClick={handleSubmit} className={` pl-5 pr-5 h-[44px]  rounded-[5px] text-[18px] text-[#fff]`}>
                 {errr}
             </button>
-
+            {
+                cancel && errr != 'Done' &&
+                <button className={`p-4 text-[18px] ${appearence?.theme === 'light' ? 'text-[#fff]' : 'text-[#000]'} `} onClick={() => setShowPopup(false)} >Cancel</button>
+            }
+        </div>
         </div>
     )
 }

@@ -68,11 +68,11 @@ function ChangePassword() {
 
 export default function Security() {
     const [changePass, setChangePass] = useState(true)
-    const [twoF, setTwoF] = useState(true)
+    const [twoF, setTwoF] = useState(false)
     const { color, theme } = useContext(ApearanceContext) || {}
     const [showPopup, setShowPopup] = useState(false);
     const [showCheck, setCheck] = useState(false);
-    const [twofa, setTwofa] = useState(true);
+    const [twofaa, setTwofa] = useState(true);
     const { authInfos } = useContext(UserContext) || {}
     const appearence = useContext(ApearanceContext)
 
@@ -92,7 +92,7 @@ export default function Security() {
             if (data['message'] === 'Secret key deleted successfully')
             {
                 setCheck(!showCheck)
-                setTwofa(!twofa)
+                setTwofa(!twofaa)
             }
             console.log('changed:', data)
         })
@@ -115,18 +115,19 @@ export default function Security() {
                     throw  new Error(error)
                 }
                 const { twofa } = await response.json()
+                // console.log(twofa)
                 if (twofa === 'True')
                 {
-                    setTwoF(true)
+                    setTwofa(true)
                 } else {
-                    setTwoF(false)
+                    setTwofa(false)
                 }
-                console.log(twofa)
+                // console.log(twofaa)
             }
             catch(err) {
 
             }
-    }, [])
+    }, [twofaa])
     return (
         <div className="h-full">
             <ul className="">
@@ -151,7 +152,7 @@ export default function Security() {
                             </h1>
                             <p className="text-xs mt-4 lowercase leading-5">Prevent hackers from accessing your account with an additional layer of security.</p>
                             {
-                                twofa === true ?
+                                twofaa === false ?
                                 <button onClick={() => setShowPopup(!showPopup)} style={{background : color}} className="mt-10 text-white  p-3 px-6 text-xs rounded">
                                 turn on 2-f authentification
                                 </button>
@@ -170,7 +171,7 @@ export default function Security() {
                 }
             </ul>
             {showPopup && (
-                <div className={` h-[30%]  transition-all duration-300 ease-in-out ${1 ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' : 'relative'}`}>
+                <div className={` h-[60%]  transition-all duration-300 ease-in-out ${1 ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' : 'relative'}`}>
                     <TwoFactor are_you_in={false} cancel={showPopup} setShowPopup={setShowPopup} setTwofa={setTwofa} />
                 </div>
             )}
@@ -178,12 +179,14 @@ export default function Security() {
                 <div className={`flex flex-col justify-around h-[150px]  transition-all duration-300 ease-in-out fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
                 p-6 text-white text-center rounded-lg
                 'backdrop-blur-md
-                ${appearence?.theme === 'light' ? 'bg-black/30': 'bg-white/30'  }
+                ${appearence?.theme === 'light' ? 'bg-[#424242]': 'bg-[#b6b6b6]'  }
                 `}>
-                    <button onClick={submitCancel} className="bg-[#0048ff] text-[#fff] p-[10px] rounded-[5px]">
+                    <button
+                    style={{ backgroundColor: appearence?.color }}
+                    onClick={submitCancel} className="text-[#fff] p-[10px] rounded-[5px]">
                         Are you sure ???
                     </button>
-                    <button onClick={() => setCheck(!showCheck)} className="bg-[#ff0000] text-[#fff] p-[10px] rounded-[5px]">
+                    <button onClick={() => setCheck(!showCheck)} className={`p-[10px] rounded-[5px] ${appearence?.theme === 'light' ? 'text-[#fff]' : 'text-[#000]'} `}>
                         Cancel
                     </button>
                 </div>

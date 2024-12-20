@@ -111,6 +111,7 @@ export default function Notifications() {
         const timer = setTimeout(() => {
             notificationSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
             notificationSocket.addCallback("FirstSetNots", setNots)
+            notificationSocket.addCallback("setNots", setNots)
             notificationSocket.sendMessage({
                 event : "fetch nots",
                 sender : user?.authInfos?.username
