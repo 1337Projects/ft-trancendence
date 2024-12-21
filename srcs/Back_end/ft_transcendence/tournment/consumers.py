@@ -284,7 +284,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                 await provider.upgrade(self.lvl, text_to_json_data['winner_id'])
                 builder = self.shared_state.tournaments_providers[self.tournment_id].builder
                 self.shared_state._tournaments[self.tournment_id]["rounds"] = builder.get_rounds()
-                debug(self.shared_state._tournaments[self.tournment_id]["rounds"][0][0]["winner"])
+                
              
 
         elif text_to_json_data['event'] == "get_data":
@@ -300,6 +300,21 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                             },
                         }
                     )
+                rounds = data.get("rounds", None)
+                if rounds:
+                    winner = rounds[0][0]["winner"]
+                    if winner != 'unknown':
+                        builder = self.shared_state.tournaments_providers[self.tournment_id].builder
+                        await self.channel_layer.group_send(
+                            self.group_name,
+                            {
+                                "type" : "send_data",
+                                "data" : {
+                                    "data" : builder.tournament_rank(builder.tree),
+                                    "status" : 212
+                                },
+                            }
+                        )
 
 
 

@@ -29,6 +29,7 @@ class Builder:
         self.tree = None
         self.levels_num = None
         self.rounds_list = []
+        self.rank = []
 
 
     def init(self, data):
@@ -80,6 +81,33 @@ class Builder:
         # rounds.pop()
         # rounds.reverse()
         return rounds
+    
+
+    def tournament_rank(self, root):
+        queue = []
+
+        if root is None:
+            return self.rank
+        
+        queue.append(root)
+        if not root.val.data in self.rank:
+            self.rank.append(root.val.data)
+        while queue:
+
+            current_node = queue.pop(0)
+
+            if current_node.left:
+                queue.append(current_node.left)
+                if not current_node.left.val.data in self.rank:
+                    self.rank.append(current_node.left.val.data)
+            if current_node.right:
+                queue.append(current_node.right)
+                if not current_node.right.val.data in self.rank:
+                    self.rank.append(current_node.right.val.data)
+
+        return self.rank
+        
+    
 
 
     def get_val(self, root):
@@ -99,13 +127,13 @@ class Builder:
                 left_node = item.left
                 if left_node and isinstance(left_node.val, Player):
                     user = left_node.val.data
-                    if user['id'] == id:
+                    if user['id'] == id and isinstance(item.right.val, Player):
                         return item
                     
                 right_node = item.right
                 if right_node and isinstance(right_node.val, Player):
                     user = right_node.val.data
-                    if user['id'] == id:
+                    if user['id'] == id and isinstance(item.left.val, Player):
                         return item
             except:
                 pass

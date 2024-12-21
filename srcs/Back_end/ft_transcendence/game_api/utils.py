@@ -1,7 +1,7 @@
 import math
 import json
 from tournment.utils import debug
-
+import random
 
 class Game:
     match = None
@@ -21,6 +21,7 @@ class Game:
     players = None
     end = False
     winner = None
+    mx = None
 
 
     def reset(self):
@@ -32,6 +33,7 @@ class Game:
 
     
     def __init__(self, match) -> None:
+        self.mx = random.randint(2, 6)
         self.match = match
         self.players = {"player1" : {"score": 0}, "player2" : {"score": 0}}
         self.players["player1"] = {**self.players["player1"], "user" : self.match['player_1']}
@@ -69,10 +71,10 @@ class Game:
         elif self.ball_x >= self.width:
             self.players["player1"]["score"] += 1
             self.reset()
-        if self.players["player1"]["score"] == 2:
+        if self.players["player1"]["score"] == self.mx:
             self.end = True
             self.winner = self.players["player1"]["user"]["id"]
-        elif self.players["player2"]["score"] == 2:
+        elif self.players["player2"]["score"] == self.mx:
             self.end = True
             self.winner = self.players["player2"]["user"]["id"]
         self.val += 0.8
