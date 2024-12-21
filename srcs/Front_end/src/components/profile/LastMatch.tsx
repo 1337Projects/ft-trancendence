@@ -67,7 +67,6 @@ export default function LastMatch() {
 						</ul>
 						:
 						<div className={`w-full min-h-[100px] max-h-[400px] rounded-sm flex justify-center items-center border-[.2px] ${appearence?.theme == 'light' ? "border-black/20" : "border-white/20"} `}>
-							<span className='text-[20px] mr-2'>😕</span>
 							<h1 className='capitalize text-[13px]'>no matches yet</h1>
 						</div>
 					}

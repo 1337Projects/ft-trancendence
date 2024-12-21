@@ -10,6 +10,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../Contexts/authContext'
 import { TbLogout } from 'react-icons/tb'
 import { ApearanceContext } from '../Contexts/ThemeContext'
+import { NotificationsContext } from '../Contexts/NotificationsContext'
+import { notificationSocket } from '../socket'
 
 
 function LogoImg() {
@@ -47,6 +49,27 @@ export default function DashboardLayout() {
 
     const navigate = useNavigate();
 
+    const { setNotifications } = useContext(NotificationsContext) || {}
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        notificationSocket.addCallback("FirstSetNots", setNotifications)
+        notificationSocket.addCallback("setNots", setNotifications)
+        notificationSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
+        notificationSocket.sendMessage({
+          event : "fetch nots",
+          sender : user?.authInfos?.username
+        })
+
+
+      }, 500)
+
+      return () => {
+        clearTimeout(timer)
+      }
+
+    }, [])
+    
     useEffect(() => {
       const timer = setTimeout(() => {
         fetch(`${import.meta.env.VITE_API_URL}api/profile/profile_data/`, {

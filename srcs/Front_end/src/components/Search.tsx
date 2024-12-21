@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../Contexts/authContext";
 import { FaAnglesUp, FaGear, FaRightToBracket } from "react-icons/fa6";
@@ -6,6 +6,8 @@ import { ApearanceContext } from "../Contexts/ThemeContext";
 import { FaCaretDown, FaSearch, FaUser } from "react-icons/fa";
 import { LuBell } from "react-icons/lu";
 import { FiUser } from "react-icons/fi";
+import { NotificationsContext } from "../Contexts/NotificationsContext";
+import { NotItem } from "./Notifications";
 
 
 function SearchResult({query, queryHandler}) {
@@ -88,10 +90,37 @@ function HeaderItems({icon}) {
 }
 
 export default function Search() {
-    const [show, setShow] = useState(false)
     const [searchText, seTSearchText] = useState('')
     const user = useContext(UserContext)
     const appearence = useContext(ApearanceContext)
+    const { notifications, invites } = useContext(NotificationsContext) || {}
+    const notsRef = useRef(null)
+    const invRef = useRef(null)
+    const [ notsOpen, setNotsOpen ] = useState(false)
+    const [ invitesOpen, setInvitesOpen ] = useState(false)
+    const toggleButtonRef = useRef(null)
+
+    useEffect(() => {
+
+        const handleClickOutside = (event) => {
+            if (notsRef.current && notsRef.current != event.target && toggleButtonRef.current != event.target) {
+                setNotsOpen(false)
+            }
+            if (invRef.current && invRef.current != event.target) {
+                setInvitesOpen(false)
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+      
+
+        return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        };
+
+    }, [])
+
+
     return (
         <>
             <div className="flex relative w-full h-[60px]">
@@ -115,52 +144,65 @@ export default function Search() {
                             <SearchResult query={searchText} queryHandler={seTSearchText} /> 
                         }
                         <div className="absolute top-0 right-0 w-fit h-full flex items-center lg:hidden">
-                            <HeaderItems icon={<LuBell />} />
-                            <HeaderItems icon={<FiUser />} />
+                            <button ref={toggleButtonRef} onClick={(e) => {
+                                setNotsOpen(prev => !prev)
+                            }}>
+                                <HeaderItems icon={<LuBell />} />
+                            </button>
+                            <button onClick={() => setInvitesOpen(prev => !prev)}>
+                                <HeaderItems icon={<FiUser />} />
+                            </button>
                             {
-                                // <div className="w-[220px] h-[300px] right-0 z-10 top-[30px] border-[.1px] border-white/20 backdrop-blur-md absolute rounded">
-
-                                // </div>
+                                notsOpen &&
+                                <div ref={notsRef} className="bg-darkItems overflow-scroll border-[.3px] border-white/20 rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10">
+                                    {
+                                        notifications?.length ? 
+                                        notifications.map(not => {
+                                            return (
+                                                <NotItem data={not} />
+                                            )
+                                        })
+                                        :
+                                        <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
+                                            not nots yet
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            {
+                                invitesOpen &&
+                                <div ref={invRef} className="bg-darkItems overflow-scroll border-[.3px] border-white/20 rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10">
+                                    {
+                                        invites?.length ? 
+                                        invites.map(not => {
+                                            return (
+                                                <NotItem data={not} />
+                                            )
+                                        })
+                                        :
+                                        <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
+                                            not invites yet
+                                        </div>
+                                    }
+                                </div>
                             }
                         </div>
                     </div>
                 </div>
                 <div className={`
                     ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/10"}
-                   w-[170px] border-[0px] h-full z-10 rounded-sm ml-2 shadow-sm cursor-pointer`} onClick={() => setShow(!show)}>
+                   w-[170px] border-[0px] h-full z-10 rounded-sm ml-2 shadow-sm cursor-pointer`}>
                     <div className="flex items-center justify-center h-full">
                         <div className="infos">
                             <div className="top flex text-small mb-1 justify-between items-center">
                                 <p>enjoy</p>
-                                <FaCaretDown />
                             </div>
                             <h1 className="text-primaryText font-bold">{user?.user?.username}</h1>
                         </div>
                         <img className="w-[40px] h-[40px] rounded-[50%] h-25px border-[1px] bg-white ml-4" src={user?.user?.profile?.avatar} alt="avatar" />
                     </div>
-                    {
-                        show && 
-                        <ul className={`${appearence?.theme === 'light' ? "bg-lightItems" : "bg-darkItems/50 border-darkText/10"} border-[.4px] rounded-sm backdrop-blur-md text-primaryText p-1 mt-[4px] rounded-b-sm}`}>
-                            <li>
-                                <Link to="profile" className="flex w-full justify-between items-center px-4 my-4">
-                                    <p>Pfrofile</p>
-                                    <FaUser />
-                                </Link>
-                            </li> 
-                            <li>
-                                <Link to="setings" className="flex w-full justify-between items-center px-4 my-4 ">
-                                    <p>Setings</p>
-                                    <FaGear />
-                                </Link>
-                            </li>
-                            <li className="flex w-full border-t-[.3px] border-darkText/20 justify-between items-center p-2 px-4">
-                                <p className="">Logout</p>
-                                <FaRightToBracket />
-                            </li>
-                            
-                        </ul>
-                    }
                 </div>
+                
             </div>
             
         </>

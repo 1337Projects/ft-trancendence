@@ -40,6 +40,7 @@ import WaitingTournment from './components/game/Waiting_tr'
 import GameLayout from './Layouts/GameLayout'
 import Players from './components/game/Players'
 import Schema from './components/game/Schema'
+import NotificationsContextProvider from './Contexts/NotificationsContext'
 
 
 function Home() {
@@ -112,7 +113,10 @@ const router = createBrowserRouter(
 function ChatImg() {
   return (
       <div className='w-full h-full p-10 flex justify-center items-center'>
-        <img src='/chat/chaat.svg' />
+        <div className='text-center'>
+          <img src='/chat/chaat.svg' />
+          <p className='text-xs max-w-[450px] mx-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium vero asperiores tempora iure ex autem quod. Porro animi pariatur distinctio?</p>
+        </div>
       </div>
   )
 }
@@ -137,6 +141,7 @@ function Main() {
 function App() {
   
   return (
+    <NotificationsContextProvider>
       <ApearanceProvider>
         <UserContextProvider>
           <DialogContextProvider>
@@ -144,6 +149,7 @@ function App() {
           </DialogContextProvider>
         </UserContextProvider>
       </ApearanceProvider>
+    </NotificationsContextProvider>
   )
 }
 

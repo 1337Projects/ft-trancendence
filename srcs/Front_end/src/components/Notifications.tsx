@@ -6,8 +6,9 @@ import { UserContext } from "../Contexts/authContext";
 import { FaBell, FaCaretDown, FaCheck, FaTrash, FaUserPlus } from "react-icons/fa";
 import { FirendType } from "../Types";
 import { accept_friend_request, reject_friend_request } from "./profile/ActionsHandlers";
+import { NotificationsContext } from "../Contexts/NotificationsContext";
 
-function NotItem({data}) {
+export function NotItem({data}) {
 
     const createdAt = new Date(data.created_at);
 
@@ -32,7 +33,7 @@ function NotItem({data}) {
     )
 }
 
-function InviteItem({data}) {
+export function InviteItem({data}) {
     const appearence = useContext(ApearanceContext)
     const { friends, setFriends , user, authInfos } = useContext(UserContext) || {}
 
@@ -62,7 +63,7 @@ function InviteItem({data}) {
     
 
     return (
-        <li className="flex ml-[50%] translate-x-[-50%] w-full my-2 p-1 h-[50px]">
+        <li className="flex ml-[50%] translate-x-[-50%] w-full my-2 p-1 h-[70px]">
             <div className="text text-primaryText ml-4 w-full">
                 <div className="flex items-center">
                     <Link className="flex" to={`/dashboard/profile/${sender.username}`}>
@@ -99,64 +100,47 @@ function InviteItem({data}) {
 }
 
 export default function Notifications() {
-    const notifications = window.localStorage.getItem('showNotifications')
-    if (notifications === null)
+    const notificationsOpen = window.localStorage.getItem('showNotifications')
+    if (notificationsOpen === null)
         window.localStorage.setItem('showNotifications', "false");
-    const user = useContext(UserContext)
-    const [nots, setNots] = useState([])
-    const [show, setShow] = useState(notifications == 'true')
+
+    const { notifications } = useContext(NotificationsContext) || {}
+    const [show, setShow] = useState(notificationsOpen == 'true')
     const appearence = useContext(ApearanceContext)
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            notificationSocket.connect(`ws://localhost:8000/ws/notifications/${user?.authInfos?.username}/`)
-            notificationSocket.addCallback("FirstSetNots", setNots)
-            notificationSocket.addCallback("setNots", setNots)
-            notificationSocket.sendMessage({
-                event : "fetch nots",
-                sender : user?.authInfos?.username
-            })
-            
-        }, 300)
-        return () => {
-            clearTimeout(timer)
-        }
-    }, [user?.authInfos?.username])
 
     function handler(value) {
         setShow(value)
         window.localStorage.setItem('showNotifications', value);
     }
 
-    // console.log(nots)
-
     return (
-        <div className={`min-h-[70px] rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
+        <div className={`min-h-[70px] w-full rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="mr-2 font-popins">Notifications</h1>
                     <FaBell />
-                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">{nots.length}</div>
+                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">{notifications?.length}</div>
                 </div>
                 <FaCaretDown />
             </div>
             {
                 show === true && 
-                <span className="list-none border-[.2px] max-h-[360px] overflow-scroll border-darkText/10 rounded-sm m-2">
+                <div className="list-none p-2 w-full max-h-[360px] overflow-scroll rounded-sm">
+                    
                     {
-                        nots.length ? 
-                        nots.map((not, index) => <NotItem key={index} data={not}/>)
+                        notifications?.length ? 
+                        notifications.map((not, index) => <NotItem key={index} data={not}/>)
                         : 
-                        <li className={`h-[100px] border-[.3px] rounded-sm flex justify-center items-center ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"}`}>
+                        <li className={`h-[100px] border-[.3px] w-full rounded-sm flex justify-center items-center ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"}`}>
                             <div className="flex items-center">
                                 <h1 className="text-[12px] capitalize">
-                                    <span className="mr-2 text-[20px]">😕</span> 
-                                    <span>no notifications yet</span>
+                                    no notifications yet
                                 </h1>
                             </div>
                         </li>
                     }
-                </span>
+                </div>
             }
         </div>
     )
@@ -198,14 +182,14 @@ export function Invites() {
             </div>
             {
                 show && 
-                <ul className={`my-2 border-[.3px] ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"} m-2 rounded-sm`}>
+                <ul className="p-2">
                     {
                         invites?.length ? 
                         invites.map((inv, index) => <InviteItem key={index} data={inv} />)
                         :
-                        <li className="h-[100px] flex justify-center items-center">
+                        <li className={`h-[100px] border-[.3px] flex justify-center items-center ${appearence?.theme == 'light' ? "border-lightText/20" : "border-darkText/20"}`}>
                             <div className="flex items-center">
-                                <h1 className="text-[12px] capitalize"><span className="text-[20px] mr-2">😕</span> no invites yet</h1>
+                                <h1 className="text-[12px] capitalize">no invites yet</h1>
                             </div>
                         </li>
                     }
