@@ -119,8 +119,11 @@ export default function ForgetPassword() {
                             initialValues={{ password : '' }}
                             validationSchema={PasswordvalidationSchema}
                             onSubmit={async (values) => {
-                                setAlert(await resetPasswordHandler({...values, token , email}))
-                                setTimeout(() => navigate('/auth/login') , 1000 * 3)
+                                const ret = await resetPasswordHandler({...values, token , email})
+                                setAlert(ret)
+                                if (ret.type === "success") {
+                                    setTimeout(() => navigate('/auth/login') , 1000 * 3)
+                                }
                             }}
                         >
                             <Form>

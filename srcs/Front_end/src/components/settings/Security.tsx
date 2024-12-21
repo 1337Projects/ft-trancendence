@@ -26,21 +26,25 @@ function ChangePassword() {
 
     async function submitHandler(values) {
 
-        const response = await  fetch(`${import.meta.env.VITE_API_URL}users/changePassword/`, {
-            method : 'POST',
-            headers : { 
-                'Content-Type' : 'application/json',
-                'Authorization' : `Bearer ${authInfos?.accessToken}`
-            },
-            credentials : 'include',
-            body : JSON.stringify(values)
-        })
-
-        if (!response.ok) {
-            console.log(await response.json())
+        try {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}users/changePassword/`, {
+                method : 'POST',
+                headers : { 
+                    'Content-Type' : 'application/json',
+                    'Authorization' : `Bearer ${authInfos?.accessToken}`
+                },
+                credentials : 'include',
+                body : JSON.stringify(values)
+            })
+    
+            if (!response.ok) {
+                throw(await response.json())
+            }
+    
+            console.log('changed')
+        } catch (err) {
+            console.log(err)
         }
-
-        console.log('changed')
 
     }
 

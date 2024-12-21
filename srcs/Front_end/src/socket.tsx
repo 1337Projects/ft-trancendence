@@ -133,7 +133,9 @@ class ChatSocket extends WebSocketService {
     }
     
     eventCallback = (event) => {
+
         const data = JSON.parse(event.data)
+        console.log(data)
         switch (data.response.status) {
             case 205:
                 this.callbacks["setData"](prev => prev ? [...prev, data.response.message] : [data.response.message])
@@ -220,6 +222,9 @@ class TournamentSocket extends WebSocketService {
                 break;
             case 211:
                 this.callbacks["match_data"](data.response.data)
+                break;
+            case 212:
+                this.callbacks["winner_data"](data.response.data)
                 break;
             default:
                 break;
