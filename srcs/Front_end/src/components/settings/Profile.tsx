@@ -81,17 +81,16 @@ export default function Profile() {
                         })}
                     />
                 </div>
-                <div className="user w-full flex mt-8">
+                <div className="w-full flex mt-8">
                     <img src={user?.profile?.avatar} className="bg-white w-[60px] h-[60px] rounded-sm mr-3" alt="img" />
-                    <div className="text-[10px]">
+                    <div className="text-[10px] relative">
                         <input
                             type="file" 
-                            className="bg-darkItems/40 backdrop-blur-lg text-white rounded-sm p-2 w-fit text-[12px]"
+                            className=" absolute bg-darkItems/40 backdrop-blur-lg text-white rounded-sm p-2 text-[12px]"
                             onChange={e => setImages(prev => {
                                 return {...prev, avatar: e.target.files![0]}
                             })}
                         />
-                        <p className="mt-2 text-[10pt]">JPG, PNG, JPEG</p>
                     </div>
                 </div>
             </div>
