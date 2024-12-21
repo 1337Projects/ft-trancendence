@@ -3,6 +3,8 @@ import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from "../../Contexts/authContext"
 import { Form, Formik } from "formik"
 import SettingsInput, { TextArea } from "./Input"
+import { AlertType } from "../../Types"
+import Alert from "../ui/Alert"
 
 
 export default function Profile() {
@@ -10,7 +12,7 @@ export default function Profile() {
     const appearence = useContext(ApearanceContext)
     const {user, authInfos, setUser} = useContext(UserContext) || {}
     const [images, setImages] = useState<{avatar : null | File, banner : null | File}>({avatar : null, banner: null})
-
+    const [alert, setAlert] = useState<AlertType | null>(null)
 
     const initialValues = {
         username : user?.username,
@@ -38,20 +40,36 @@ export default function Profile() {
             })
 
             if (!response.ok) {
-                console.log(await response.json())
-                throw Error("");
+                const {message} = await response.json()
+                throw Error(message)
             }
             const data = await response.json()
             setUser!(data.res);
+            setAlert({
+                type : "success",
+                message : ["your data has been updated successfully"]
+            })
         } catch (err) {
-            console.log(err.toString());
+            setAlert({
+                type : "error",
+                message : [err.toString()]
+            })
         }
+        setTimeout(() => {
+            setAlert(null)
+        }, 2000)
     }
 
     return (
         <div className="px-2 md:px-6 w-full">
-            <div className="w-full ">
-                <div className="w-full relative h-[140px] rounded-sm">
+            <div className="w-full">
+                {
+                    alert &&
+                    <div className="w-full]">
+                        <Alert alert={alert} alertHandler={setAlert} />
+                    </div>
+                }
+                <div className="w-full mt-4 relative h-[140px] rounded-sm">
                     <div className='top-0 h-[140px] w-full overflow-hidden rounded-md'>
                         <img src={user?.profile?.banner} className='min-w-full  w-fit min-h-full h-fit' alt="" />
                     </div>
