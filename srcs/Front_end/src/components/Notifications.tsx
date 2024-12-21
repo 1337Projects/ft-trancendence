@@ -64,8 +64,8 @@ export function InviteItem({data}) {
 
     return (
         <li className="flex ml-[50%] translate-x-[-50%] w-full my-2 p-1 h-[70px]">
-            <div className="text text-primaryText ml-4 w-full">
-                <div className="flex items-center">
+            <div className="text text-primaryText w-full">
+                <div className="flex items-center justify-center h-full">
                     <Link className="flex" to={`/dashboard/profile/${sender.username}`}>
                         <img src={sender.profile.avatar} alt="user" className="h-10 w-10 rounded-[50%]" />
                         <div className="ml-2">

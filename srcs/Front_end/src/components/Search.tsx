@@ -7,7 +7,7 @@ import { FaCaretDown, FaSearch, FaUser } from "react-icons/fa";
 import { LuBell } from "react-icons/lu";
 import { FiUser } from "react-icons/fi";
 import { NotificationsContext } from "../Contexts/NotificationsContext";
-import { NotItem } from "./Notifications";
+import { InviteItem, NotItem } from "./Notifications";
 
 
 function SearchResult({query, queryHandler}) {
@@ -93,12 +93,13 @@ export default function Search() {
     const [searchText, seTSearchText] = useState('')
     const user = useContext(UserContext)
     const appearence = useContext(ApearanceContext)
-    const { notifications, invites } = useContext(NotificationsContext) || {}
+    const { notifications } = useContext(NotificationsContext) || {}
     const notsRef = useRef(null)
     const invRef = useRef(null)
     const [ notsOpen, setNotsOpen ] = useState(false)
     const [ invitesOpen, setInvitesOpen ] = useState(false)
     const toggleButtonRef = useRef(null)
+    const invites = user?.friends?.filter(item => item.status == 'waiting' && item.sender.username != user?.user?.username)
 
     useEffect(() => {
 
@@ -119,7 +120,6 @@ export default function Search() {
         };
 
     }, [])
-
 
     return (
         <>
@@ -176,7 +176,7 @@ export default function Search() {
                                         invites?.length ? 
                                         invites.map(not => {
                                             return (
-                                                <NotItem data={not} />
+                                                <InviteItem data={not} />
                                             )
                                         })
                                         :
