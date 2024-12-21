@@ -42,7 +42,7 @@ export default function WaitingTournment() {
             setLoading(true)
             setTimeout(() => {
                 tournamentSocket.sendMessage({"event" : "start_tournament"})
-                navigate(`/dashboard/game/tournment/${id}/remote`)
+                navigate(`/dashboard/game/tournment/${id}/`)
             }, 1000 * 3)
         }
     }

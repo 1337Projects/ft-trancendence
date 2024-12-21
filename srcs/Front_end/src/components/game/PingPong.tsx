@@ -45,7 +45,7 @@ export default function PingPong() {
                     setTimeout(() => {
                         tournamentSocket.sendMessage({"event" : "upgrade", "winner_id" : data.winner})
                         if (tournament_id) {
-                            navigate(`/dashboard/game/tournment/${tournament_id}/remote`)
+                            navigate(`/dashboard/game/tournment/${tournament_id}/`)
                         } else {
                             navigate(`/dashboard/game/`)
                         }

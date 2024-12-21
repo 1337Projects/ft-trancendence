@@ -75,14 +75,12 @@ const router = createBrowserRouter(
         <Route path='game/waiting' element={<Waiting />} />
         
         <Route path='game/room/:game_id' element={<PingPong />} />
-        <Route path='game/room/:tournament_id/:game_id' element={<PingPong />} />
         
-        <Route path='game/tournment' element={<GameLayout />}>
-          <Route path=':id/:type' element={<Tournment />} >
-            <Route index element={<Schema />} />
-          </Route>
-          <Route path='waiting/:id' element={<WaitingTournment />} />
+        <Route path='game/tournment/:tournament_id' element={<GameLayout />}>
+          <Route index element={<Tournment />} />
+          <Route path='play/:game_id' element={<PingPong />} />
         </Route>
+        <Route path='game/tournment/waiting/:id' element={<WaitingTournment />} />
 
 
 

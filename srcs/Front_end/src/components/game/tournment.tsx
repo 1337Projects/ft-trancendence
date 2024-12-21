@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import MyUseEffect from '../../hooks/MyUseEffect'
 import { tournamentSocket } from "../../socket";
 import { UserContext } from '../../Contexts/authContext'
@@ -10,19 +10,20 @@ import Schema from "./Schema";
 
 export default function Tournment() {
 
-    const { id, type } = useParams()
+    const { tournament_id } = useParams()
     const { authInfos, user } = useContext(UserContext) || {}
     const { theme, color } = useContext(ApearanceContext) || {}
-    const [ data, setData ] = useState(null)
+    const [ tournamentData, setTournamentData ] = useState(null)
     const navigate = useNavigate()
     const [ ended, setEnded ] = useState(null)
+ 
 
     function EndHandler(data) {
         setEnded(data)
     }
 
     function DataHandler(data) {
-        setData(data)
+        setTournamentData(data)
     }
 
     MyUseEffect(() => {
@@ -30,34 +31,27 @@ export default function Tournment() {
             tournamentSocket.addCallback("tr_data", DataHandler)
             tournamentSocket.addCallback("match_data", matchHandler)
             tournamentSocket.addCallback("winner_data", EndHandler)
-            tournamentSocket.connect(`ws://localhost:8000/ws/tournment/${id}/?token=${authInfos?.accessToken}`)
+            tournamentSocket.connect(`ws://localhost:8000/ws/tournment/${tournament_id}/?token=${authInfos?.accessToken}`)
             tournamentSocket.sendMessage({"event" : "get_data"})
         }, 100)
     }, [])
 
 
-    const matchHandler = (data) => {
-        if (data && user) {
-            if (data.player_1.username == user?.username || data.player_2.username == user?.username) {
-                navigate(`/dashboard/game/room/${data.id}/${data.id}`)
+    const matchHandler = (match_data) => {
+        if (match_data && user) {
+            if (match_data.player_1.username == user?.username || match_data.player_2.username == user?.username) {
+                navigate(`play/${match_data.id}`)
             }
         }
     }
 
-    // useEffect(() => {
-    //     return () => {
-    //         tournamentSocket.close()
-    //     }
-    // }, [])
-
-
-    
+   
     return  (
         <div className={`w-full h-[100vh] ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}  mt-2 p-2`}>
-            <Hero data={data} />
+            <Hero data={tournamentData} />
             <div className="w-full h-fit mt-2">
 
-                <Schema data={data} />
+                <Schema data={tournamentData} />
                 {
                     ended && 
                     <div 
