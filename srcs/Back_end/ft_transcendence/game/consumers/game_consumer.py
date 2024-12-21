@@ -1,35 +1,24 @@
 import json
+import sys
+import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from game.backend.pong_game_backend import PongGameManager
 from game.models import Game
 from channels.db import database_sync_to_async
 from login.models import User
+from icecream import ic
 
 class GameConsumer(AsyncWebsocketConsumer):
     pongGameManager = PongGameManager()
 
     async def connect(self):
-        """
-        Handles the WebSocket connection for a game.
-
-        This method is called when a WebSocket connection is established. It performs the following actions:
-        1. Retrieves the game ID from the URL route.
-        2. Constructs the room name using the game ID.
-        3. Fetches the game object from the database.
-        4. Checks if the user is a player in the game.
-        5. Adds the WebSocket channel to the channel layer group for the game room.
-        6. Accepts the WebSocket connection.
-        7. Adds the user to the game using the PongGameManager.
-        8. Starts a timeout check to disconnect the first player if the second player doesn't join in time.
-
-        Raises:
-            Game.DoesNotExist: If the game with the specified ID does not exist.
-            User.DoesNotExist: If the user is not a player in the game.
-        """
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.player = self.scope['user']
         self.room_name = f'game_{self.game_id}'
+
+        ic(self.player.username, "Connecting")
+        sys.stdout.flush()
 
         game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
 
@@ -46,23 +35,47 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
-        await self.pongGameManager.add_player_to_game(game, self.player, self.room_name)
+        game_is_full = await self.pongGameManager.add_player_to_game(game, self.player, self.room_name)
+        if game_is_full:
+            await self.init_game()
+            asyncio.create_task(self.game_loop())
     
     async def disconnect(self, close_code):
         """ Handles the WebSocket disconnection for a game."""
+        ic(self.player.username, "Disconnecting", close_code)
+        sys.stdout.flush()
         if close_code == 1000:
-            # await self.pongGameManager.remove_player_from_game(self.room_name, self.player.id)
             await self.channel_layer.group_discard(
                 self.room_name,
                 self.channel_name
             )
         else:
-            # assert False, f"Unexpected close code: {close_code}"
             pass
 
+    async def game_loop(self):
+        ic(self.player.username, "Game loop started")
+        sys.stdout.flush()
+        # for i in range(100):
+        #     await asyncio.sleep(1 / 60)
+        #     # self.pongGameManager.update(self.room_name)
+        #     await self.broadcast_stats()
 
-    async def start_game(self, event):
-        # Ensure event is serializable
-        stats = event['stats']
-        await self.send(text_data=json.dumps({'stats': stats}))
-    
+    async def group_send(self, event):
+        await self.channel_layer.group_send(
+            self.room_name,
+            event
+        )
+        
+    async def init_game(self):
+        ic(self.player.username, "Initializing game")
+        # ic(stats)
+        sys.stdout.flush()
+        event = {
+            'type': 'broad_cast',
+            'event': 'init_game',
+        }
+        event.update(self.pongGameManager.get_init(self.room_name))
+        await self.group_send(event)
+
+    async def broad_cast(self, event):
+        await self.send(text_data=json.dumps(event))

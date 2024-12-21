@@ -4,25 +4,71 @@ from game.models import Game
 from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
+from enum import Enum
 
-class paddel:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.speed = 10
-        self.width = 10
-        self.height = 100
+# Define constants
+    # Screen
+SCREEN_WIDTH = 400
+SCREEN_HEIGHT = 800
+    # Paddle
+PADDLE_WIDTH = 100 # could be pair (2k)
+PADDLE_HEIGHT = 20 # could be pair (2k)
+PADDLE_SPEED = 5
+    # Ball
+BALL_SIZE = 10
+FPS = 60
+
+class PaddlePlayer(Enum):
+    PLAYER_1_PADDLE = 1
+    PLAYER_2_PADDLE = 2
+
+class Paddle:
+    def __init__(self, player: PaddlePlayer):
+        self.paddlePlayer = player
+        self.x = SCREEN_WIDTH // 2
+        if player == PaddlePlayer.PLAYER_1_PADDLE:
+            self.y = 0  # paddle 1 is at the top
+        else:
+            self.y = SCREEN_HEIGHT - PADDLE_HEIGHT # paddle 2 is at the bottom
+        self.speed = PADDLE_SPEED
+        self.width = PADDLE_WIDTH
+        self.height = PADDLE_HEIGHT
     
+ 
+    def get_demensions(self):
+        if self.paddlePlayer == PaddlePlayer.PLAYER_1_PADDLE:
+            side = "top"
+        else:
+            side = "bottom"
+        return {
+            'height': self.height,
+            'width': self.width,
+            'x': self.x,
+            'y': self.y,
+            'side': side
+        }
+
+class Ball:
+    def __init__(self):
+        self.x = SCREEN_WIDTH // 2
+        self.y = SCREEN_HEIGHT // 2
+        self.speed_x = 5
+        self.speed_y = 5
     
+
+
+
 class PongGame:
     def __init__(self, game: Game, room_name):
+        self.width = SCREEN_WIDTH
+        self.height = SCREEN_HEIGHT
         self.game = game
         self.room_name = room_name
         self.score1 = None
         self.score2 = None
-        self.paddle1 = paddel(0, 50)
-        self.paddle2 = paddel(200, 50)
-        self.ball = {'x': 100, 'y': 50, 'speed_x': 1, 'speed_y': 1}
+        self.paddle1 = Paddle(PaddlePlayer.PLAYER_1_PADDLE)
+        self.paddle2 = Paddle(PaddlePlayer.PLAYER_2_PADDLE)
+        # self.ball = Ball()
         self.player1 = None
         self.player2 = None
 
@@ -39,44 +85,59 @@ class PongGame:
         elif player2_username == player.username:
             self.player2 = player
         
-        if self.player1 and self.player2:
-            await self.group_send({
-                'type': 'start_game',
-                'stats': self.get_stats()
-            })
-            
-    async def group_send(self, event):
-        channel_layer = get_channel_layer()
-        await channel_layer.group_send(
-            self.room_name,
-            event
-        )
+        return self.player1 and self.player2
     
-    async def start_game(self):
+    def check_collision(self, x, y):
         pass
+        
+
+    def update(self, player):
+        next_x = self.ball['x'] + self.ball['speed_x']
+        next_y = self.ball['y'] + self.ball['speed_y']
+
 
     def get_stats(self):
-        return {
-            'paddle1': self.paddle1.y,
-            'paddle2': self.paddle2.y,
-            'ball': {
-                'x': self.ball['x'],
-                'y': self.ball['y']
-            },
-            'score1': self.score1,
-            'score2': self.score2,
+        stats = {}
+        stats.update(self.paddle1.get_position())
+        stats.update(self.paddle2.get_position())
+        stats['score1'] = self.score1
+        stats['score2'] = self.score2
+        return stats
+
+    def get_init(self):
+        '''
+        return the initial state of the game.
+        '''
+        paddles = {
+            'paddle1X': self.paddle1.x,
+            'paddle2X': self.paddle2.x,
+            'width': self.paddle1.width,
+            'height': self.paddle1.height
         }
+        game = {
+            'width': self.width,
+            'height': self.height
+        }
+        return {
+            'paddles': paddles,
+            'game': game
+        }
+        
+        
 
 class PongGameManager:
     def __init__(self):
         self.games: Dict[str, PongGame] = {}
     
     async def add_player_to_game(self, game: Game, player: User, room_name: str) -> bool:
-        '''Adds a player to the specified game. If the game does not exist, it creates a new game.'''
+        '''
+        Adds a player to the specified game. If the game does not exist, it creates a new game.
+        return True if the second player joined the game, False otherwise.
+        '''
         if room_name not in self.games:
             self.games[room_name] = PongGame(game, room_name)
             await self.games[room_name].initialize()
-        await self.games[room_name].join(player)
+        return await self.games[room_name].join(player)
     
     async def remove_player_from_game(self, room_name, player_id):
         '''Finish the game and make this player luses.'''
@@ -84,3 +145,12 @@ class PongGameManager:
 
     def get_stats(self, room_name):
         return self.games[room_name].get_stats()
+
+    def get_init(self, room_name):
+        '''
+        get the init stat of the game.
+        '''
+        return self.games[room_name].get_init()
+    
+    def get_paddles_demension(self, room_name):
+        return self.games[room_name].get_paddles_demension()

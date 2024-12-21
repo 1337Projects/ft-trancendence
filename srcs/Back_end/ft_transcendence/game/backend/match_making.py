@@ -1,7 +1,6 @@
 import asyncio
 from collections import deque
 from channels.layers import get_channel_layer
-from tournment.models import Player
 from channels.db import database_sync_to_async
 from game.models import Game
 from login.models import User
