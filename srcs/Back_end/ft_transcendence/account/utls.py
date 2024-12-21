@@ -30,8 +30,8 @@ def create_profile(id, image_link):
         user_id=id,
         level=0,
         bio="Nothing",
-        banner=default_banner,
-        avatar=image_link,
+        # banner=default_banner,
+        # avatar=image_link,
     )
 
 def get_id(request):
