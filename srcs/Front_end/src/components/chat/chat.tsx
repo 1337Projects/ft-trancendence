@@ -23,7 +23,7 @@ const actions = [
 ]
 
 
-async function BlockHandler(user_id : number, partner_id : number) {
+export async function BlockHandler(user_id : number, partner_id : number) {
 
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}users/blockUser/`, {
@@ -40,10 +40,12 @@ async function BlockHandler(user_id : number, partner_id : number) {
             throw new Error("somthing went wrong")
         }
 
-        console.log(await response.json())
+        return true
     } catch(err) {
         console.log(err.toString())
+        
     }
+    return false
 }
 
 async function DeleteHandler(conversation_id : number) {

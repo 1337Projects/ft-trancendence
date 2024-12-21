@@ -8,6 +8,8 @@ import { FaArrowLeft, FaEllipsisV } from 'react-icons/fa';
 import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
+import { GoBlocked } from "react-icons/go";
+import { BlockHandler } from './chat'
 
 
 function calc_time(created_at) {
@@ -40,7 +42,7 @@ function UserMessage({m, username}) {
 
 export default function Conversation() {
     const { userData } = useContext(ChatContext) || {}
-
+    console.log(userData)
     return (
         <div className='w-full h-full flex flex-col space-y-2'>
             <div className='w-full h-[60px]'>
@@ -192,8 +194,29 @@ function MessagesList() {
 }
 
 function ConversationHeader({userData}) {
-    
+
     const { theme } = useContext(ApearanceContext) || {}
+    const { user, setFriends, authInfos } = useContext(UserContext) || {}
+
+    async function BlockUser() {
+        const res = await BlockHandler(user.id, userData.id)
+        if (res) {
+
+            fetch(`${import.meta.env.VITE_API_URL}api/profile/info/friends/`, {
+                method: 'GET',
+                credentials : 'include',
+                headers : {
+                  'Authorization' : `Bearer ${authInfos?.accessToken}`,
+                }
+              })
+              .then(res => res.json())
+              .then(res => {
+                setFriends!(res.data)
+              })
+              .catch(err => console.log(err))
+        }
+    }
+
 
     if (!userData) {
         return (
@@ -219,14 +242,19 @@ function ConversationHeader({userData}) {
                     <FaArrowLeft />
                 </Link>
                 <Link to={`/dashboard/profile/${userData?.username}`} className='flex'>
-                    <img src={userData?.profile?.avatar} className="bg-white w-[35px] h-[35px] rounded-full mx-4" alt="" />
+                    <div className='relative'>
+                        <img src={userData?.profile?.avatar} className="bg-white border-[2px] w-[35px] h-[35px] rounded-full mx-4" alt="avatar" />
+                        <div className={`w-3 h-3 rounded-full ${userData.profile.online ? "bg-green-500" : "bg-red-500"} absolute bottom-0 right-4`} >
+                            <div className='w-2 h-2 bg-gray-300 absolute left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%] rounded-full' />
+                        </div>
+                    </div>
                     <div className="infos text-[12px]">
                         <h1 className="font-bold text-[11pt]">{userData?.username}</h1>
                         <p className="text-[8pt]">{userData?.profile?.online ? "online" : "offline"}</p>
                     </div>
                 </Link>
             </div>
-            <FaEllipsisV />
+            <GoBlocked onClick={BlockUser} />
         </div>
     )
 }
