@@ -127,11 +127,11 @@ celerybeat.pid
 
 
 #media
-ft_transcendance/media/*
-!ft_transcendance/media/avatar.jpg
-!ft_transcendance/media/default-avatar.jpeg
-!ft_transcendance/media/default-banner.jpeg
-!ft_transcendance/media/default-banner.webp
+ft_transcendence/media/*
+!ft_transcendence/media/avatar.jpg
+!ft_transcendence/media/default-avatar.jpeg
+!ft_transcendence/media/default-banner.jpeg
+!ft_transcendence/media/default-banner.webp
 
 # Environments
 # .env
