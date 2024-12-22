@@ -155,7 +155,7 @@ def forget_password(request):
                 return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
             token = default_token_generator.make_token(user)
             PasswordReset.objects.create(user=user, token=token)
-            reset_link = f"http://localhost:5173/auth/forgetPassowrd?token={token}&email={email}"
+            reset_link = f"https://localhost:1024/auth/forgetPassowrd?token={token}&email={email}"
             send_mail(
                 'Request : Reset Password',
                 f'A password change has been requested for your account. If this was you, please use the link below to reset your password: {reset_link}',
