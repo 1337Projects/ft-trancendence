@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import { ApearanceContext } from "../../Contexts/ThemeContext";
-import { UserContext } from "../../Contexts/authContext";
-import LevelImg from "./assets/LevelImg";
+import { ApearanceContext } from "../../../Contexts/ThemeContext";
+import { UserContext } from "../../../Contexts/authContext";
+import LevelImg from "../assets/LevelImg";
 
 
 export function Avatar() {

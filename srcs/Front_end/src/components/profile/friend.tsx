@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useContext } from "react"
-import { ApearanceContext } from '../../Contexts/ThemeContext';
-import { Banner } from './Hero';
-import Level from './Level'
-import Chart from './Chart'
-import Achivments from './Achivments'
-import { Link, Outlet, useParams } from 'react-router-dom';
-import { UserContext } from '../../Contexts/authContext';
-import { FaArrowLeft, FaArrowRight, FaUserFriends } from 'react-icons/fa';
-import { UserType } from '../../Types';
-import { FirendType } from '../../Types';
-import { RiProfileFill } from 'react-icons/ri';
-import MyUseEffect from '../../hooks/MyUseEffect';
+import { ApearanceContext } from '@/Contexts/ThemeContext';
+import { Link, useParams } from 'react-router-dom';
+import { UserContext } from '@/Contexts/authContext';
+import { FaArrowRight } from 'react-icons/fa';
+import { FirendType } from '@/Types';
+import MyUseEffect from '@/hooks/MyUseEffect';
 
 function FriendCard({friend}) {
 	const appearence = useContext(ApearanceContext)

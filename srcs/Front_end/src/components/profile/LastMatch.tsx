@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useContext } from 'react'
-import {ApearanceContext} from '../../Contexts/ThemeContext'
-import {UserContext} from '../../Contexts/authContext'
+import {ApearanceContext} from '@/Contexts/ThemeContext'
+import {UserContext} from '@/Contexts/authContext'
 
 function History ( {date="01-01-2024 19:30", data}) {
 	const appearence = useContext(ApearanceContext)

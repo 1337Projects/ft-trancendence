@@ -1,14 +1,44 @@
 import React, { useContext,  } from "react"
-import { ApearanceContext } from "../../Contexts/ThemeContext"
+import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { Actions } from "./Actions"
-import {  UserContext } from "../../Contexts/authContext"
+import {  UserContext } from "@/Contexts/authContext"
 import {
 	accept_friend_request, 
 	send_friend_request,
 	reject_friend_request,
 	cancle_friend_request
 } from './ActionsHandlers'
-import { FirendType } from "../../Types"
+import { FirendType } from "@/Types"
+
+function BannerSkeleton() {
+	return (
+		<div>
+			<div className='top-0 h-[150px] w-full'>
+				<div className='animate-pulse w-full h-full bg-gray-300'></div>
+			</div>
+			<div className='w-full px-2 rounded-sm h-fit mt-[-40px] flex items-center justify-center'>
+				<div className='px-2 h-full w-full'>
+					<div className="flex items-center">
+						<div className='w-[90px] h-[90px] z-10 bg-gray-300 border-2 rounded-full'></div>
+						<div className="mt-10 ml-4">
+							<h1 className='mt-4 animate-pulse rounded-full bg-gray-300 w-[100px] h-6'></h1>
+							<h1 className='mt-2 animate-pulse rounded-full bg-gray-300 w-[180px] h-4'></h1>
+						</div>
+					</div>
+					<div className="flex items-center justify-between">
+						<div className='text-[10pt] mt-4'>
+							<h1 className='mt-4 animate-pulse rounded-full bg-gray-300 w-[180px]  h-4'></h1>
+							<h1 className='mt-2 animate-pulse rounded-full bg-gray-300 w-[80px]  h-4'></h1>
+						</div>
+						<div>
+							<h1 className='animate-pulse rounded-full bg-gray-300 w-[80px]  h-8'></h1>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
 
 export function Banner({user}) {
 
@@ -41,32 +71,7 @@ export function Banner({user}) {
 
 	if (!user) {
 		return (
-			<div>
-				<div className='top-0 h-[150px] w-full overflow-hidden'>
-					<div className='min-w-full w-fit min-h-full h-fit animate-pulse bg-gray-300'></div>
-				</div>
-	
-				<div className='w-full px-2  rounded-sm h-fit mt-[-40px] flex items-center justify-center'>
-					<div className='px-2  w-full'>
-						<div className="flex items-center">
-							<div className='w-[90px] h-[90px] z-10 bg-gray-300 border-2 rounded-full'></div>
-						<div className="mt-10 ml-4">
-							<h1 className='mt-4 animate-pulse rounded-full bg-gray-300 w-[100px] h-6'></h1>
-							<h1 className='mt-2 animate-pulse rounded-full bg-gray-300 w-[180px] h-4'></h1>
-						</div>
-					</div>
-					<div className="flex items-center justify-between">
-						<div className='text-[10pt] mt-4'>
-							<h1 className='mt-4 animate-pulse rounded-full bg-gray-300 w-[180px]  h-4'></h1>
-							<h1 className='mt-2 animate-pulse rounded-full bg-gray-300 w-[80px]  h-4'></h1>
-						</div>
-						<div>
-							<h1 className='animate-pulse rounded-full bg-gray-300 w-[80px]  h-8'></h1>
-						</div>
-					</div>
-				</div>
-				</div>
-			</div>
+			<BannerSkeleton />
 		)
 	}
 

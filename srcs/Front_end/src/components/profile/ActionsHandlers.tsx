@@ -1,4 +1,4 @@
-import { FirendType, UserType } from "../../Contexts/authContext"
+import { FirendType, UserType } from "@/Contexts/authContext"
 
 
 export function send_friend_request(token : string, callback : (data : FirendType) => void , data : UserType) {

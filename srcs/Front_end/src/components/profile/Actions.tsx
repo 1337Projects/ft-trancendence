@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { ApearanceContext } from "../../Contexts/ThemeContext"
+import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { FaCommentDots, FaEllipsisV, FaPlus, FaUserMinus } from "react-icons/fa"
 import { GiSandsOfTime } from "react-icons/gi";
 import { FiCheckCircle } from "react-icons/fi";

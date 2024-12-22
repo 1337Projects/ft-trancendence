@@ -1,7 +1,7 @@
 import React, { useContext } from "react"
 import {Line} from 'react-chartjs-2'
 import {defaults}  from 'chart.js/auto'
-import { ApearanceContext } from "../../Contexts/ThemeContext"
+import { ApearanceContext } from "../../../Contexts/ThemeContext"
 
 defaults.responsive = true
 defaults.maintainAspectRatio = false
