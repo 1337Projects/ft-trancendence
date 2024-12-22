@@ -4,6 +4,18 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from '../../Contexts/authContext'
 
+export function PlayerGameCard({player}) {
+    return (
+        <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
+            <div className=' text-center'>
+                <img src={player ? player.profile.avatar : "/_.jpeg"} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
+                <h1 className='uppercase mt-4'>{player ? player.username : "waiting..."}</h1>
+                <h1 className='uppercase mt-2 text-[12px]'>player 2</h1>
+            </div>
+        </div>
+    )
+}
+
 export default function Waiting() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const [room, setRoom] = useState(null)
@@ -63,24 +75,12 @@ export default function Waiting() {
                         </div>
                     </div>
                     <div className="flex items-center mt-20 justify-center">
-                        <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
-                            <div className='text-center'>
-                                <img src={room?.room?.players[0]?.profile?.avatar} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
-                                <h1 className='uppercase mt-4'>{room?.room?.players[0]?.username}</h1>
-                                <h1 className='uppercase mt-2 text-[12px]'>player 1</h1>
-                            </div>
-                        </div>
+                        <PlayerGameCard player={room?.room?.players[0]} />
                         <div className="w-[100px] text-center">
                             <h1 className='text-[40px]'>vs</h1>
                             <h1 className='mt-2'>0 / 0</h1>
                         </div>
-                        <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
-                            <div className=' text-center'>
-                                <img src={room?.room?.players[1] ? room?.room?.players[1]?.profile?.avatar : "/_.jpeg"} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
-                                <h1 className='uppercase mt-4'>{room?.room?.players[1] ? room?.room?.players[1]?.username : "waiting..."}</h1>
-                                <h1 className='uppercase mt-2 text-[12px]'>player 2</h1>
-                            </div>
-                        </div>
+                        <PlayerGameCard player={room?.room?.players[1]} />
                     </div>
                 </div>
             </div>

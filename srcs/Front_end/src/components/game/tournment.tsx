@@ -31,7 +31,7 @@ export default function Tournment() {
             tournamentSocket.addCallback("tr_data", DataHandler)
             tournamentSocket.addCallback("match_data", matchHandler)
             tournamentSocket.addCallback("winner_data", EndHandler)
-            tournamentSocket.connect(`ws://localhost:8000/ws/tournment/${tournament_id}/?token=${authInfos?.accessToken}`)
+            tournamentSocket.connect(`ws://localhost:8000/wss/tournment/${tournament_id}/?token=${authInfos?.accessToken}`)
             tournamentSocket.sendMessage({"event" : "get_data"})
         }, 100)
     }, [])

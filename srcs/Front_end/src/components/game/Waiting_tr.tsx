@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { tournamentSocket } from "../../socket"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from "../../Contexts/authContext"
+import { PlayerGameCard } from './waiting'
 
 export default function WaitingTournment() {
 
@@ -65,22 +66,12 @@ export default function WaitingTournment() {
                     </div>
                     <h1 className="mt-6 text-lg"> {roomData?.players?.length < roomData?.data?.max_players ? "waiting..." : "ready"}</h1>
                 </div>
-                <div className="p-2 grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 ">
+                <div className="p-2 grid grid-cols-4 gap-4 mt-20 ">
                     {
                         [...Array(roomData?.data?.max_players)].map((item, index) => {
                             return (
-                                <div key={index} className={`border-[1px] ${theme == 'light' ? "border-lightText/40" : "border-darkText/40"} rounded p-2`}>
-                                    <img className="w-full h-[120px] rounded bg-cover" 
-                                        src={
-                                            index < roomData?.players?.length 
-                                            ? roomData?.players[index].profile.avatar 
-                                            : "/_.jpeg"
-                                        } 
-                                        alt="" 
-                                    />
-                                    <h1 className={`mt-4 font-light text-center uppercase text-sm`}>
-                                        {index < roomData?.players?.length ? roomData?.players[index].username : "waiting..."}
-                                    </h1>
+                                <div key={index}>
+                                    <PlayerGameCard player={index < roomData?.players?.length ? roomData?.players[index] : null} />
                                 </div>
                             )
                         })
