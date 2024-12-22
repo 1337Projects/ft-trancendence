@@ -24,7 +24,7 @@ export default function Signup() {
 
     const signupHandler = async values => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}users/api/register/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/api/register/`, {
                 method : 'POST',
                 headers : {
                     "Content-Type" : "application/json"

@@ -26,7 +26,7 @@ const actions = [
 export async function BlockHandler(user_id : number, partner_id : number) {
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}users/blockUser/`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/blockUser/`, {
             method : 'POST',
             credentials : 'include',
             headers : {
@@ -144,7 +144,7 @@ export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispa
                     <ul className={`w-full overflow-y-scroll max-h-[200px] grid gap-4  ${menu ? "h-[100px] p-2 grid-cols-3  flex items-center test-style" : "h-fit grid-cols-1 content-start"}`}> 
                         {
                             friends?.filter(f => f.status == 'accept').map((f, index) => {
-                                const data = Object.filter(f, i => typeof i === "object" && i.username !== authInfos?.username)[0]
+                                const data = Object.filter(f, i => typeof i === "object" && i?.username !== authInfos?.username)[0]
                                 return (
                                     <li 
                                         key={index}

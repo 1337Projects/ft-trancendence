@@ -9,7 +9,7 @@ import Alert from "../ui/Alert"
 
 async function requestLinkHandler(values) {
     try {
-        const url = `${import.meta.env.VITE_API_URL}users/forgetPassword/`
+        const url = `${import.meta.env.VITE_API_URL}api/users/forgetPassword/`
         console.log(url)
         const response = await fetch(url, {
             method: 'POST',
@@ -51,7 +51,7 @@ async function resetPasswordHandler(values) {
     console.log(values)
 
     try { 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}users/confirmPassword/`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/confirmPassword/`, {
             method: 'POST',
             headers : {
                 'Content-Type' : 'application/json'

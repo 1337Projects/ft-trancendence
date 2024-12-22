@@ -20,7 +20,7 @@ export default function Login() {
 
     const loginHandler = async values => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}users/api/login/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/api/login/`, {
                 method : 'POST',
                 credentials : 'include',
                 headers : {

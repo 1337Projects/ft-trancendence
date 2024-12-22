@@ -37,7 +37,7 @@ class Test_MatchmakingConsumer:
         assert user.check_password(password)
         
         client = APIClient()
-        response = await sync_to_async(client.post)('/users/api/login/', {
+        response = await sync_to_async(client.post)('/api/users/api/login/', {
             'email': email,
             'password': password
         }, format='json')
@@ -48,7 +48,7 @@ class Test_MatchmakingConsumer:
 
     async def connected_communicator(self, access_token: str):
         """Get communicator object."""
-        communicator = WebsocketCommunicator(application, f'/ws/match_making/?token={access_token}')
+        communicator = WebsocketCommunicator(application, f'/wss/match_making/?token={access_token}')
         connected, subprotocol = await communicator.connect()
         assert connected
         return communicator
