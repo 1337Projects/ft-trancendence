@@ -199,27 +199,22 @@ def confirm_password(request):
 @api_view(["post"])
 def change_password(request):
     id = get_id1(request)
+    user = User.objects.get(id=id)
+    if user.google_or_intra:
+        return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
     old_password = request.data.get('old_password')
-    if not old_password:
-        return JsonResponse({'error': 'Old password is missing'}, status=400)
+    new_password = request.data.get('new_password')
+    if not old_password or not new_password:
+        return JsonResponse({'error': 'Old password or New password is missing'}, status=400)
     exist_password = User.objects.get(id=id).password
     if not check_password(old_password, exist_password):
         return JsonResponse({'error': 'Invalid old password'}, status=400)
-    new_password = request.data.get('new_password')
-    if not new_password:
-        return JsonResponse({'error': 'New password is missing'}, status=400)
     err = validate_password(new_password)
     if err:
-        return JsonResponse({'error': err}, status=400)#zr khtad
-    user = User.objects.get(id=id)
+        return JsonResponse({'error': err}, status=400)
     user.password = make_password(new_password)
     user.save()
     return JsonResponse({'message': 'The Password has been changed'}, status=200)
-
-
-# def check_if_blocked(blocker_id, blocked_id):
-#     is_blocked = BlockedUser.objects.filter(Q(blocker_id=blocker_id, blocked_id=blocked_id) | Q(blocker_id=blocked_id, blocked_id=blocker_id))
-#     return is_blocked.exists()
 
 @api_view(["post"])
 def block_user(request):
