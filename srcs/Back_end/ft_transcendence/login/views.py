@@ -202,13 +202,15 @@ def change_password(request):
     old_password = request.data.get('old_password')
     if not old_password:
         return JsonResponse({'error': 'Old password is missing'}, status=400)
-    if not check_password(old_password, request.user.password):
+    exist_password = User.objects.get(id=id).password
+    if not check_password(old_password, exist_password):
         return JsonResponse({'error': 'Invalid old password'}, status=400)
     new_password = request.data.get('new_password')
     if not new_password:
         return JsonResponse({'error': 'New password is missing'}, status=400)
-    if not validate_password(new_password):
-        return JsonResponse({'error': 'Password does not meet all the requirements.'}, status=400)
+    err = validate_password(new_password)
+    if err:
+        return JsonResponse({'error': err}, status=400)#zr khtad
     user = User.objects.get(id=id)
     user.password = make_password(new_password)
     user.save()
