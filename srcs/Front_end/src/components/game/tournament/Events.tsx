@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { ApearanceContext } from "../../Contexts/ThemeContext"
+import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { TbUsers } from "react-icons/tb";
 import { Link } from "react-router-dom";
 

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ApearanceContext } from "../../Contexts/ThemeContext";
+import { ApearanceContext } from "@/Contexts/ThemeContext";
 
 export default function HeroImg() {
 

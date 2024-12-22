@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { ApearanceContext } from "../../../Contexts/ThemeContext"
+import { ApearanceContext } from "@/Contexts/ThemeContext"
 
 
 export function PlayerWon({quitHandler, data}) {
@@ -22,9 +22,6 @@ export function PlayerWon({quitHandler, data}) {
                                 <p className='mt-2 text-[11px] capitalize w-[270px]'>you couldnt do it this time , u did play well but unlucky plase go show them ur real skills</p>
                             </div>
                     }
-                    {/* <div>
-                        <FontAwesomeIcon icon={faClose} />
-                    </div> */}
                 </div>
                 <div className='flex  w-full'>
                     <div className='w-1/2 p-10 flex justify-center items-center text-center'>
@@ -33,11 +30,7 @@ export function PlayerWon({quitHandler, data}) {
                             <h1 className='mt-2'>{data?.winner?.user?.username}</h1>
                             <div className='my-2'>
                                 <ul className='flex justify-center text-orange-300'>
-                                    {/* <li><FontAwesomeIcon icon={faStar} /></li>
-                                    <li><FontAwesomeIcon icon={faStar} /></li>
-                                    <li><FontAwesomeIcon icon={faStar} /></li>
-                                    <li><FontAwesomeIcon icon={faStar} /></li>
-                                    <li><FontAwesomeIcon icon={faStar} /></li> */}
+                                    
                                 </ul>
                             </div>
                             <h1 className='my-2'>+ {'aamhamdi' == data?.winner?.user?.username ? "100" : "10"}px</h1>

@@ -1,17 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import MyUseEffect from '../../hooks/MyUseEffect'
-import { tournamentSocket } from "../../socket";
-import { UserContext } from '../../Contexts/authContext'
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import MyUseEffect from '@/hooks/MyUseEffect'
+import { tournamentSocket } from "@/socket";
+import { UserContext } from '@/Contexts/authContext'
 import Hero from "./Hero";
-import { ApearanceContext } from "../../Contexts/ThemeContext";
+import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { FaArrowRight } from "react-icons/fa6";
 import Schema from "./Schema";
 
 export default function Tournment() {
 
-    const { tournament_id } = useParams()
-    const { authInfos, user } = useContext(UserContext) || {}
+    const { user } = useContext(UserContext) || {}
     const { theme, color } = useContext(ApearanceContext) || {}
     const [ tournamentData, setTournamentData ] = useState(null)
     const navigate = useNavigate()

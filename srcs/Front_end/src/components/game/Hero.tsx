@@ -1,42 +1,33 @@
 import React, { useContext } from "react"
-import { IoMdArrowRoundBack } from "react-icons/io";
-import { Link } from 'react-router-dom'
-import { ApearanceContext } from "../../Contexts/ThemeContext";
-import { FiUsers } from "react-icons/fi";
+import { ApearanceContext } from "@/Contexts/ThemeContext"
+import { Link } from "react-router-dom"
+import { FaGamepad } from "react-icons/fa"
 
+export default function Hero() {
+    
 
-export default function Hero({ data }) {
     const { color } = useContext(ApearanceContext) || {}
+
     return (
-        <div className="relative overflow-hidden h-[200px] rounded">
-            <img src="/game/tr_hero.webp" className="w-full " alt="img" />
-            <div className="absolute top-4 left-6 text-white z-10 text-xl">
-                <Link to={`/dashboard/game`}>
-                    <IoMdArrowRoundBack />
-                </Link>
-            </div>
-            <div className="bg-blackGT absolute top-0 left-0 w-full h-full p-2 flex items-center">
-                <div className=" w-[150px] h-[150px] rounded ml-[20px]">
-                    <img src="/game/winner.svg" alt="" />
-                </div>
-                <div className="text-white ml-[20px]">
-                    <p style={{background:color}} className="py-2 text-white px-4 uppercase w-fit text-xs rounded">{data?.data?.mode}</p>
-                    <h1 className="uppercase text-2xl mt-4 font-bold">tournment name</h1>
-                    <div className="mt-4 text-sm flex items-center">
-                        <FiUsers className="mr-2" /> 
-                        <p className="mr-2 uppercase">max players :</p>
-                        <span>{data?.data?.max_players}</span> 
+        <div className="h-2/3 sm:h-1/2 max-h-[400px] sm:max-h-[400px]">
+            <div className="flex items-center justify-center h-full w-full rounded-sm p-1">
+                <div className="place-items-center flex items-center justify-center w-full">
+                    <div className="centent w-[50%] h-full leading-snug px-8 flex justify-between items-center">
+                        <div className="">
+                            <p style={{color : color}} >Play Ping Pong</p>
+                            <h3 className="text-[2rem] mt-2 font-kav max-w-[270px] font-bold capitalize">its time to play ping pong</h3>
+                            <p className="text-[8px] max-w-[260px] leading-4 mt-4">welcome to pong comunity, go play with your friends, and leet them see your amazing skills enjoy.</p>
+                            <Link to="waiting">
+                                <button style={{backgroundColor : color}} className={`flex text-[10pt] justify-between h-[40px] w-[130px] items-center p-2 px-4 text-white rounded-full mt-10`}>
+                                    <p className="mr-2 capitalize">Play now</p>
+                                    <FaGamepad className="text-[16pt]" />
+                                </button>
+                            </Link>
+                        </div>
                     </div>
-                </div>
-                <div className="w-[150px] h-10 absolute bottom-4 right-4 flex justify-center items-center">
-                    <ul className="flex">
-                        {
-                            data?.data?.players.map(
-                                (player, index) => <img src={player.profile.avatar} className="bg-white w-[25px] h-[25px] mr-[-10px] rounded-full border-[1px]">
-                                </img>
-                            )
-                        }
-                    </ul>
+                    <div className="relative img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
+                        <img className="absolute" src="/game/Tennis-bro.svg" alt="" />
+                    </div>
                 </div>
             </div>
         </div>

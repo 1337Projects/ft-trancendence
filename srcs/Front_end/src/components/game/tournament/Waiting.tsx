@@ -1,15 +1,15 @@
 
 import React, { useContext, useEffect, useState } from "react"
-import MyUseEffect from "../../hooks/MyUseEffect"
+import MyUseEffect from "@/hooks/MyUseEffect"
 import { useNavigate, useParams } from "react-router-dom"
-import { tournamentSocket } from "../../socket"
-import { ApearanceContext } from "../../Contexts/ThemeContext"
-import { UserContext } from "../../Contexts/authContext"
-import { PlayerGameCard } from './waiting'
+import { tournamentSocket } from "@/socket"
+import { ApearanceContext } from "@/Contexts/ThemeContext"
+import { UserContext } from "@/Contexts/authContext"
+import { InviteFriendsToPlay, PlayerGameCard } from '../pingpong/waiting'
 
 export default function WaitingTournment() {
 
-    const { color, theme } = useContext(ApearanceContext) || {}
+    const { theme } = useContext(ApearanceContext) || {}
     const { id } = useParams()
     const [ roomData, setRoomData ] = useState({})
     const navigate = useNavigate()
@@ -56,13 +56,7 @@ export default function WaitingTournment() {
                 <div className="text-center p-2 w-fit ml-[50%] translate-x-[-50%]">
                     <h1 className={`text-3xl font-bold uppercase`}>Waiting for tournament to start</h1>
                     <div className="p-2 mt-6 flex">
-                        <input 
-                            className={`w-fit border-[1px] p-2 h-[45px] bg-transparent ${theme == 'light' ? "border-lightText/40" : "border-darkText/40"} rounded-full px-6 text-sm min-w-[300px]`} 
-                            type="text" 
-                            value={`dashboard/game/tournment/waiting/1`}
-                            onChange={() => {}}
-                        />
-                        <button style={{background : color}} className="ml-2 p-2 text-white text-sm rounded-full px-4">invite</button>
+                        <InviteFriendsToPlay data={roomData} />
                     </div>
                     <h1 className="mt-6 text-lg"> {roomData?.players?.length < roomData?.data?.max_players ? "waiting..." : "ready"}</h1>
                 </div>

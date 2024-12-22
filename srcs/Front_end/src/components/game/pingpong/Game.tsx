@@ -1,5 +1,5 @@
 
-import {gameSocket} from "../../../socket";
+import {gameSocket} from "@/socket";
 
 class Ball {
     ctx: any;

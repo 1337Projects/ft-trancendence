@@ -1,5 +1,5 @@
 import React from "react";
-import SchemaFour from '../assets/schema/Schema4'
+import SchemaFour from '@/components/assets/schema/Schema4'
 
 export default function Schema({data}) {
 

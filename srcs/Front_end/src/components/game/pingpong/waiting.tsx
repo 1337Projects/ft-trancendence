@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react"
-import { gameSocket } from '../../socket'
+import { gameSocket } from '@/socket'
 import { Link, useNavigate } from 'react-router-dom'
-import { ApearanceContext } from "../../Contexts/ThemeContext"
-import { UserContext } from '../../Contexts/authContext'
+import { ApearanceContext } from "@/Contexts/ThemeContext"
+import { UserContext } from '@/Contexts/authContext'
 
 export function PlayerGameCard({player}) {
     return (
@@ -19,12 +19,10 @@ export function PlayerGameCard({player}) {
 export default function Waiting() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const [room, setRoom] = useState(null)
-    const [invite, setInvite] = useState(false)
     const navigate = useNavigate()
     const { authInfos } = useContext( UserContext ) || {}
 
 
-    
     useEffect(() => {
 
         const timer = setTimeout(() => {
@@ -66,14 +64,7 @@ export default function Waiting() {
                         <h1 className='font-bold'>waiting for player to join</h1>
                         <h1 className="mt-2">{room?.room?.status}</h1>
                     </div>
-                    <div className='w-full flex items-center bg-white text-gray-700 h-[50px] border-[1px] mt-8 rounded-full'>
-                        <div className='w-full  flex items-center justify-between px-2'>
-                            <h1 className='ml-4 w-[300px] overflow-hidden h-[18px] text-[10px] uppercase'>http://localhost:5173/dashboard/game/waiting/?room={room?.room?.name}</h1>
-                            <button onClick={() => {
-                                setInvite(prev => !prev)
-                            }} style={{background : color}} className='border-white/80 text-white border-[1px] p-1 rounded-full text-[12px] h-[35px] w-[60px] uppercase'>{invite ? "invited" : "invite"}</button>
-                        </div>
-                    </div>
+                    <InviteFriendsToPlay data={room?.room} />
                     <div className="flex items-center mt-20 justify-center">
                         <PlayerGameCard player={room?.room?.players[0]} />
                         <div className="w-[100px] text-center">
@@ -86,5 +77,22 @@ export default function Waiting() {
             </div>
         </div>
 
+    )
+}
+
+export function InviteFriendsToPlay({ data }) {
+
+    const [invite, setInvite] = useState(false)
+    const { color } = useContext(ApearanceContext) || {}
+
+    return (
+        <div className='w-full flex items-center bg-white text-gray-700 h-[50px] border-[1px] mt-8 rounded-full'>
+            <div className='w-full  flex items-center justify-between px-2'>
+                <h1 className='ml-4 w-[300px] overflow-hidden h-[18px] text-[10px] uppercase'>http://localhost:5173/dashboard/game/waiting/?room={data?.name}</h1>
+                <button onClick={() => {
+                    setInvite(prev => !prev)
+                }} style={{background : color}} className='border-white/80 text-white border-[1px] p-1 rounded-full text-[12px] h-[35px] w-[60px] uppercase'>{invite ? "invited" : "invite"}</button>
+            </div>
+        </div>
     )
 }
