@@ -1,28 +1,26 @@
-from django.shortcuts import render,redirect
-from django.http import JsonResponse
+from .utls import *
+from django.db.models import Q
+from chat.views import get_id1
+from datetime import timedelta
 from django.conf import settings
 from urllib.parse import urlencode
+from account.models import Friends
+from django.http import JsonResponse
+# from django.shortcuts import redirect
+from django.core.mail import send_mail
 from account.utls import create_profile
-from datetime import timedelta
-from .models import User , PasswordReset#, BlockedUser
-from dotenv import load_dotenv, dotenv_values
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.exceptions import AuthenticationFailed
+from .models import User , PasswordReset
+# from rest_framework.response import Response
+# from dotenv import load_dotenv, dotenv_values
 from django.contrib.auth import get_user_model
-from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.signals import user_logged_out
+from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
+# from django.contrib.auth import logout as auth_logout
+# from django.contrib.auth.signals import user_logged_out
+from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.hashers import make_password, check_password
 import requests, secrets , jwt, datetime, json, os, random, string, re
-
-from django.core.mail import send_mail
-from chat.views import get_id1
-from account.models import Friends
-from django.db.models import Q
-
-from .utls import *
 
 load_dotenv()
 
@@ -84,8 +82,6 @@ def intra_oauth(request):
             return response
         except AuthenticationFailed:
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
-
-
 
 @csrf_exempt
 @api_view(["post"])
@@ -168,7 +164,7 @@ def forget_password(request):
             return JsonResponse({'error': 'Email not found'}, status=404)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-import sys
+
 @api_view(["post"])
 def confirm_password(request):
     if request.method == 'POST':
@@ -195,7 +191,6 @@ def confirm_password(request):
             return JsonResponse({'error': 'Invalid token'}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
 @api_view(["post"])
 def change_password(request):
     id = get_id1(request)
@@ -220,16 +215,13 @@ def change_password(request):
 def block_user(request):
     id = request.data.get('id')
     id_to_block = request.data.get('id_to_block')
-    if not id:
-        return JsonResponse({'error': 'User ID is missing'}, status=400)
-    if not id_to_block:
-        return JsonResponse({'error': 'User to block ID is missing'}, status=400)
+    if not id or not id_to_block:
+        return JsonResponse({'error': 'User ID or User to block ID is missing'}, status=400)
     try:
         blocker = User.objects.get(id=id)
         user_to_block = User.objects.get(id=id_to_block)
         if blocker == user_to_block:
             return JsonResponse({'error': 'You cannot block yourself'}, status=400)
-        # try to update the status in account.freinds
         freinds = Friends.objects.filter(Q(sender=blocker, receiver=user_to_block) | Q(sender=user_to_block, receiver=blocker)).first()
         if freinds and freinds.status != "blocked":
             freinds.status = "blocked"
@@ -240,17 +232,13 @@ def block_user(request):
             return JsonResponse({'message': 'User is already blocked or no relationship exist between them'}, status=400)
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
-
-
         
 @api_view(["post"])
 def unblock_user(request):
     id = request.data.get('id')
     id_to_unblock = request.data.get('id_to_unblock')
-    if not id:
-        return JsonResponse({'error': 'User ID is missing'}, status=400)
-    if not id_to_unblock:
-        return JsonResponse({'error': 'User to unblock ID is missing'}, status=400)
+    if not id or not id_to_unblock:
+        return JsonResponse({'error': 'User ID or User to unblock ID is missing'}, status=400)
     try:
         blocker = User.objects.get(id=id)
         user_to_unblock = User.objects.get(id=id_to_unblock)
