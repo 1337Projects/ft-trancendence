@@ -11,7 +11,7 @@ from django.core.mail import send_mail
 from account.utls import create_profile
 from .models import User , PasswordReset
 # from rest_framework.response import Response
-# from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv, dotenv_values
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
