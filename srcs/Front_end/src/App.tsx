@@ -21,25 +21,21 @@ import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
 
 
 import Game from './components/game/Game'
-import Profile, { UserProfile } from './components/profile/profile'
+import Profile from './components/profile/profile'
+import Dashboard from './components/profile/dashboard/Dashboard'
 import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
-// import Tournament from './components/game/tournament'
-// import PingPong from './components/game/PingPong'
-import Waiting from './components/game/waiting'
-import PingPong from './components/game/PingPong'
-// import {TournmentWaiting} from './components/game/tournament'
+import Waiting from './components/game/pingpong/waiting'
+import PingPong from './components/game/pingpong/PingPong'
 
 import NotFound from './components/NotFound'
 import ForgetPassword from './components/auth/ForgetPassword'
 import { DialogContext, DialogContextProvider } from './Contexts/DialogContext'
-import Tournment from './components/game/tournment'
+import Tournment from './components/game/tournament/tournment'
 
 import Friends from './components/profile/friend'
-import WaitingTournment from './components/game/Waiting_tr'
+import WaitingTournment from './components/game/tournament/Waiting'
 import GameLayout from './Layouts/GameLayout'
-import Players from './components/game/Players'
-import Schema from './components/game/Schema'
 import NotificationsContextProvider from './Contexts/NotificationsContext'
 
 
@@ -85,7 +81,7 @@ const router = createBrowserRouter(
 
 
         <Route path='profile/:user_name' element={<Profile />}>
-          <Route index element={<UserProfile />} />
+          <Route index element={<Dashboard />} />
           <Route path='friends' element={<Friends />} />
         </Route>
 
@@ -101,13 +97,7 @@ const router = createBrowserRouter(
     </Route>
   )
 )
-      //     <Route path='game/tournment' element={<Tournament/>} />
-      //     <Route path='game/tournment/waiting' element={<TournmentWaiting/>} />
-      //     <Route path="game/room/:id" element={<PingPong />}/>
-      //     <Route path='game/waiting' element={<Waiting />} />
-
-      //     {/* chat  */}
-
+  
 function ChatImg() {
   return (
       <div className='w-full h-full p-10 flex justify-center items-center'>
