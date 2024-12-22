@@ -112,7 +112,7 @@ def google_oauth(request):
             email = user_info.get('email')
             name = user_info.get('name')
             username = generate_username(customize_username(name))
-            image = user_info.get('picture')
+            image = "https://localhost:1024/media/avatar.jpg"
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
             try:
