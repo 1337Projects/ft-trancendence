@@ -106,18 +106,15 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_sender_and_receiver(self, from_, to_):
         try:
-            sender = User.object    # async def send_error(self, error):
-        except:
-            pass
-    #     await self.send(text_data=json.dumps({
-    #         'response': {
-    #                 'event': "seen_messages",
-    #                 'status': 212,
-    #                 'seen': False,
-    #                 'error': error,
-    #         }
-    #     }))
-        # return sender, receiver, sender_ser, receiver_ser
+            sender = User.objects.get(username=from_)
+            receiver = User.objects.get(username=to_)
+        except User.DoesNotExist:
+            return None, None, 'user not found'
+
+        sender_ser = UserWithProfileSerializer(sender).data
+        receiver_ser = UserWithProfileSerializer(receiver).data
+
+        return sender, receiver, sender_ser, receiver_ser
 
     async def send_message(self, event):
         await self.send(text_data=json.dumps({
