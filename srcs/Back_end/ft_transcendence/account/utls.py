@@ -13,11 +13,12 @@ from functools import wraps
 from django.http import JsonResponse
 
 
-default_banner = "http://127.0.0.1:8000/media/default-banner.jpg"
+default_banner = "https://localhost:1024/media/default-banner.jpeg"
+default_avatar = "https://localhost:1024/media/avatar.jpg"
 
 def manage_images(user_id, request, type):
     file_url = Profile.objects.filter(user_id=user_id).values(type).first()
-    if file_url and file_url[type] != default_banner:
+    if file_url and file_url[type] != default_banner and file_url[type] != default_avatar:
         file_name = os.path.basename(urlparse(file_url[type]).path)
         if default_storage.exists(file_name):
             default_storage.delete(file_name)
@@ -30,8 +31,8 @@ def create_profile(id, image_link):
         user_id=id,
         level=0,
         bio="Nothing",
-        # banner=default_banner,
-        # avatar=image_link,
+        banner=default_banner,
+        avatar=image_link,
     )
 
 def get_id(request):

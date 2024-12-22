@@ -17,8 +17,8 @@ class Profile(AbstractBaseUser):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     bio = models.TextField(default='', blank=True)
     level = models.FloatField(default=0.0)
-    banner = models.CharField(default='http://localhost:8000/media/default-banner.webp')
-    avatar = models.CharField(default='http://localhost:8000/media/default-avatar.jpeg')
+    banner = models.CharField(default='')
+    avatar = models.CharField(default='')
     last_activity = models.DateTimeField(auto_now=True)
     objects = ProfileManager()
 

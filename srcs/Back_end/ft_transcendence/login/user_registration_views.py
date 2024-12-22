@@ -23,7 +23,7 @@ class UserRegistrationView(generics.CreateAPIView):
             response = Response({
                 'message':  'User created successfully',
             }, status=status.HTTP_201_CREATED)
-            create_profile(user.id, '../media/avatar.jpeg')
+            create_profile(user.id, 'https://localhost:1024/media/avatar.jpg')
             return response
         except ValidationError as e:
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
