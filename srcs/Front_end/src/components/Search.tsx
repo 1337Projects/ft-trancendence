@@ -98,16 +98,17 @@ export default function Search() {
     const invRef = useRef(null)
     const [ notsOpen, setNotsOpen ] = useState(false)
     const [ invitesOpen, setInvitesOpen ] = useState(false)
-    const toggleButtonRef = useRef(null)
+    const toggleNotsButtonRef = useRef(null)
+    const toggleInvitesButtonRef = useRef(null)
     const invites = user?.friends?.filter(item => item.status == 'waiting' && item.sender.username != user?.user?.username)
 
     useEffect(() => {
 
         const handleClickOutside = (event) => {
-            if (notsRef.current && notsRef.current != event.target && toggleButtonRef.current != event.target) {
+            if (notsRef.current && !notsRef.current.contains(event.target)  && !toggleNotsButtonRef.current.contains(event.target)) {
                 setNotsOpen(false)
             }
-            if (invRef.current && invRef.current != event.target) {
+            if (invRef.current && invRef.current != event.target && !toggleInvitesButtonRef.current.contains(event.target)) {
                 setInvitesOpen(false)
             }
         };
@@ -144,12 +145,10 @@ export default function Search() {
                             <SearchResult query={searchText} queryHandler={seTSearchText} /> 
                         }
                         <div className="absolute top-0 right-0 w-fit h-full flex items-center lg:hidden">
-                            <button ref={toggleButtonRef} onClick={(e) => {
-                                setNotsOpen(prev => !prev)
-                            }}>
+                            <button ref={toggleNotsButtonRef} onClick={() => setNotsOpen(prev => !prev)}>
                                 <HeaderItems icon={<LuBell />} />
                             </button>
-                            <button onClick={() => setInvitesOpen(prev => !prev)}>
+                            <button ref={toggleInvitesButtonRef} onClick={() => setInvitesOpen(prev => !prev)}>
                                 <HeaderItems icon={<FiUser />} />
                             </button>
                             {
@@ -164,7 +163,7 @@ export default function Search() {
                                         })
                                         :
                                         <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
-                                            not nots yet
+                                            no notifications yet
                                         </div>
                                     }
                                 </div>
@@ -181,7 +180,7 @@ export default function Search() {
                                         })
                                         :
                                         <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
-                                            not invites yet
+                                            no invites yet
                                         </div>
                                     }
                                 </div>

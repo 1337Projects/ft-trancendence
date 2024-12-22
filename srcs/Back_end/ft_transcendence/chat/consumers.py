@@ -107,6 +107,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     def get_sender_and_receiver(self, from_, to_):
         try:
             sender = User.object    # async def send_error(self, error):
+        except:
+            pass
     #     await self.send(text_data=json.dumps({
     #         'response': {
     #                 'event': "seen_messages",
