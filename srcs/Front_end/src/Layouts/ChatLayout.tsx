@@ -36,7 +36,7 @@ export default function ChatLayout() {
     }
 
     MyUseEffect(() => {
-        chatSocket.connect(`ws://localhost:8000/wss/chat/${user?.id}/`)
+        chatSocket.connect(`wss://localhost:8000/wss/chat/${user?.id}/`)
         chatSocket.addCallback('cnvsHandler', setCnvs)
         chatSocket.addCallback('cnvsUpdate', UpdateConversationsHandler)
         chatSocket.addCallback("setData", setMessages)

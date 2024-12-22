@@ -55,7 +55,7 @@ export default function DashboardLayout() {
       const timer = setTimeout(() => {
         notificationSocket.addCallback("FirstSetNots", setNotifications)
         notificationSocket.addCallback("setNots", setNotifications)
-        notificationSocket.connect(`ws://localhost:8000/wss/notifications/${user?.authInfos?.username}/`)
+        notificationSocket.connect(`wss://localhost:8000/wss/notifications/${user?.authInfos?.username}/`)
         notificationSocket.sendMessage({
           event : "fetch nots",
           sender : user?.authInfos?.username
