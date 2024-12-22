@@ -15,7 +15,7 @@ export function TournmentWaiting() {
 	const navigate = useNavigate()
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			Socket.connect("ws://localhost:8000/ws/game/tournment/4/any/")
+			Socket.connect("ws://localhost:8000/wss/game/tournment/4/any/")
 			Socket.addCallback("setRoom", setRoom)
 			Socket.addCallback("startGame", startHandler)
 		}, 300)
@@ -111,7 +111,7 @@ export default function Tournament() {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			// console.log("connecting again")
-			Socket.connect("ws://localhost:8000/ws/game/tournment/4/any/")
+			Socket.connect("ws://localhost:8000/wss/game/tournment/4/any/")
 			Socket.addCallback("setRoom", setRoom)
 			Socket.addCallback("startGame", startGameHandler)
 		}, 300)

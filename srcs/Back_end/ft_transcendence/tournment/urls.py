@@ -8,6 +8,6 @@ urlpatterns = [
 ]
 
 websocket_urlpatterns = [
-    path('ws/tournment/<str:id>/',  consumers.TournmentConsumer.as_asgi()),
-    path('ws/join/tournment/<str:id>/',  consumers.MatchMakeingConsumer.as_asgi()),
+    path('wss/tournment/<str:id>/',  consumers.TournmentConsumer.as_asgi()),
+    path('wss/join/tournment/<str:id>/',  consumers.MatchMakeingConsumer.as_asgi()),
 ]

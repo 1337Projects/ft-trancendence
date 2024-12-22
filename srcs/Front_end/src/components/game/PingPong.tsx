@@ -22,7 +22,7 @@ export default function PingPong() {
     useEffect(() => {
         
         const timer = setTimeout(() => {
-            gameSocket.connect(`ws://localhost:8000/ws/game/play/${game_id}/?token=${authInfos?.accessToken}`)
+            gameSocket.connect(`ws://localhost:8000/wss/game/play/${game_id}/?token=${authInfos?.accessToken}`)
             gameSocket.addCallback("setInitData", setData)
         }, 200)
 
