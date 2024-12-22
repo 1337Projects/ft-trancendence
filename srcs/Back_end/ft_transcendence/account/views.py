@@ -61,9 +61,6 @@ def set_infos(request):
         return Response({"message": "Invalid token"}, status=400)
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
-    # user_id = user_infos_dict.get('id')
-    print(f"{request.user}")
-    sys.stdout.flush()
     user_id = id
     username = user_infos_dict.get('username')
     first_name = user_infos_dict.get('first_name')
@@ -81,12 +78,12 @@ def set_infos(request):
     if 'avatar' in request.FILES:
         name = manage_images(user_id, request, 'avatar')
         Profile.objects.filter(user_id=user_id).update(
-            avatar=f'http://127.0.0.1:8000/media/{name}'
+            avatar=f'https://127.0.0.1:1024/media/{name}'
         )
     if 'banner' in request.FILES:
         name = manage_images(user_id, request, 'banner')
         Profile.objects.filter(user_id=user_id).update(
-            banner=f'http://127.0.0.1:8000/media/{name}'
+            banner=f'https://localhost:1024/media/{name}'
         )
     return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
 
@@ -246,9 +243,9 @@ def generate_2fa_qr_code(request):
     file_name = f"{uuid.uuid4()}-qr_code_image.png"
     default_storage.save(file_name, ContentFile(img_io.read()))
 
-    delete_qr_code_image(file_name, schedule=120)
+    delete_qr_code_image(file_name, schedule=20)
 
-    return Response({"qr_code_image": "http://localhost:8000/media/" + file_name}, status=200)
+    return Response({"qr_code_image": "https://localhost:1024/media/" + file_name}, status=200)
 
 
 @api_view(['POST'])
