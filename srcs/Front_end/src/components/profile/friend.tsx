@@ -64,7 +64,7 @@ export default function Friends() {
     }, [])
 
     return (
-        <div className='w-full h-full'>
+        <div className='w-full h-fit'>
             <div className='mt-10 px-4'>
                 <h1 className='text-xl uppercase font-bold underline'>my friends</h1>
             </div>

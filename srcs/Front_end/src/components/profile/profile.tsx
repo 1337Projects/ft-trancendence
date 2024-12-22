@@ -50,8 +50,8 @@ function St() {
 
 export function UserProfile() {
 	return (
-		<div className='mx-2 flex h-full'>
-			<div className='w-full mx-auto max-w-[700px] mt-10 h-full'>
+		<div className='mx-2 flex h-fit'>
+			<div className='w-full mx-auto max-w-[700px] mt-10'>
 				<div>
 					<Level />
 				</div>
@@ -100,7 +100,7 @@ export default function Profile() {
 
 	return (
 		<div className={`w-full mt-2 backdrop-blur-md p-2 ${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
-			<div className={` w-full h-[90vh] sm:h-[100vh] overflow-scroll`}>
+			<div className={` w-full h-[calc(100vh-180px)] sm:h-[100vh] overflow-scroll`}>
 				<Banner user={currentUser} />
 				<div className='px-4'>
 					<ul className='flex items-center py-4 text-[12pt]'>

@@ -55,7 +55,7 @@ export default function ChatLayout() {
 
     return (
         <>
-            <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-full mt-2 shadow-sm rounded-sm flex-grow`}>
+            <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-[calc(100vh-180px)] sm:h-[100vh] mt-2 shadow-sm rounded-sm flex-grow`}>
                 <div className="flex w-full h-full ">
                     <div className={`h-full ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px]  ${menu ? "active-menu" : "non-active-menu"}`}>
                         <div className={`w-full h-fit ${menu && "px-4"}`}>

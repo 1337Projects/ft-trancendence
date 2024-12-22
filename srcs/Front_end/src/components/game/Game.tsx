@@ -121,7 +121,7 @@ function Cards({color}) {
                     <TournmentDialog  />
                 }
             </div>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
                 <Card color={color} img="/game/leo-vs-random.jpg" text="random match"/>
                 <Card color={color} img="/game/leo-vs-computer.jpg" text="vs Computer"/>
                 <Card color={color} img="/game/leo-vs-friend.jpg" text="vs friend"/>
@@ -157,7 +157,7 @@ export default function Game() {
 
     return (
         <>
-            <div className={`${appearence?.theme == 'light' ? "bg-lightItems text-lightText " : "bg-darkItems text-darkText"} mt-2 w-full h-[100vh] overflow-scroll p-2`}>
+            <div className={`${appearence?.theme == 'light' ? "bg-lightItems text-lightText " : "bg-darkItems text-darkText"} mt-2 w-full h-[calc(100vh-180px)]  sm:h-[100vh] overflow-scroll p-2`}>
                 <div className="mx-auto max-w-[800px] h-full">
                     <Hero color={appearence?.color} img="/Tennis-bro.svg" />
                     <Cards color={appearence?.color} />
