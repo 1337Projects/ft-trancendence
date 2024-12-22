@@ -125,6 +125,14 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+
+#media
+ft_transcendance/media/*
+!ft_transcendance/media/avatar.jpg
+!ft_transcendance/media/default-avatar.jpeg
+!ft_transcendance/media/default-banner.jpeg
+!ft_transcendance/media/default-banner.webp
+
 # Environments
 # .env
 .venv
