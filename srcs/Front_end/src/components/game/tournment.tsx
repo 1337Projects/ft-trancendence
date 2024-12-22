@@ -27,13 +27,16 @@ export default function Tournment() {
     }
 
     MyUseEffect(() => {
-        setTimeout(() => {
+        const timer = setTimeout(() => {
             tournamentSocket.addCallback("tr_data", DataHandler)
             tournamentSocket.addCallback("match_data", matchHandler)
             tournamentSocket.addCallback("winner_data", EndHandler)
-            tournamentSocket.connect(`ws://localhost:8000/wss/tournment/${tournament_id}/?token=${authInfos?.accessToken}`)
             tournamentSocket.sendMessage({"event" : "get_data"})
         }, 100)
+
+        return () => {
+            clearTimeout(timer)
+        }
     }, [])
 
 
