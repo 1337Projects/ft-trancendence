@@ -35,5 +35,5 @@ class UserWithFriendsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Friends
-        fields = ('id', 'status', 'sender', 'receiver')
+        fields = ('id', 'status', 'sender', 'receiver', 'blocker')
 

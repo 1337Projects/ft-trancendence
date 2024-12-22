@@ -148,6 +148,9 @@ class ChatSocket extends WebSocketService {
             case 209:
                 this.callbacks["cnvsHandler"](data.response.conversations)
                 break;
+            case 400:
+                console.log("400" , data)
+                break;
             default:
                 break;
         }

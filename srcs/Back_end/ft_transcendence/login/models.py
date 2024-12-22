@@ -35,10 +35,10 @@ class PasswordReset(models.Model):
     token = models.CharField(unique=True)
     is_used = models.BooleanField(default=False)
 
-class BlockedUser(models.Model):
-    blocker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blocked_users")
-    blocked = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blocked_by")
+# class BlockedUser(models.Model):
+#     blocker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blocked_users")
+#     blocked = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blocked_by")
 
 
-    class Meta:
-        unique_together = ('blocker', 'blocked')
+#     class Meta:
+#         unique_together = ('blocker', 'blocked')

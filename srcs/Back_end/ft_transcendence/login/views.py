@@ -4,7 +4,7 @@ from django.conf import settings
 from urllib.parse import urlencode
 from account.utls import create_profile
 from datetime import timedelta
-from .models import User , PasswordReset, BlockedUser
+from .models import User , PasswordReset#, BlockedUser
 from dotenv import load_dotenv, dotenv_values
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
@@ -19,7 +19,7 @@ import requests, secrets , jwt, datetime, json, os, random, string, re
 
 from django.core.mail import send_mail
 from chat.views import get_id1
-
+from account.models import Friends
 from django.db.models import Q
 
 from .utls import *
@@ -228,16 +228,24 @@ def block_user(request):
     if not id_to_block:
         return JsonResponse({'error': 'User to block ID is missing'}, status=400)
     try:
-        user = User.objects.get(id=id)
+        blocker = User.objects.get(id=id)
         user_to_block = User.objects.get(id=id_to_block)
-        if user == user_to_block:
+        if blocker == user_to_block:
             return JsonResponse({'error': 'You cannot block yourself'}, status=400)
-        BlockedUser.objects.create(blocker=user, blocked=user_to_block)
-        return JsonResponse({'message': 'User has been blocked'}, status=200)
+        # try to update the status in account.freinds
+        freinds = Friends.objects.filter(Q(sender=blocker, receiver=user_to_block) | Q(sender=user_to_block, receiver=blocker)).first()
+        if freinds and freinds.status != "blocked":
+            freinds.status = "blocked"
+            freinds.blocker = blocker
+            freinds.save()
+            return JsonResponse({'message': 'User has been blocked'}, status=200)
+        else:
+            return JsonResponse({'message': 'User is already blocked or no relationship exist between them'}, status=400)
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
 
+        
 @api_view(["post"])
 def unblock_user(request):
     id = request.data.get('id')
@@ -247,14 +255,15 @@ def unblock_user(request):
     if not id_to_unblock:
         return JsonResponse({'error': 'User to unblock ID is missing'}, status=400)
     try:
-        user = User.objects.get(id=id)
+        blocker = User.objects.get(id=id)
         user_to_unblock = User.objects.get(id=id_to_unblock)
-        if user == user_to_unblock:
+        if blocker == user_to_unblock:
             return JsonResponse({'error': 'You cannot unblock yourself'}, status=400)
-        is_he_blocked = BlockedUser.objects.filter(blocker=user, blocked=user_to_unblock)
-        if not is_he_blocked:
-            return JsonResponse({'error': 'User is not blocked'}, status=400)
-        is_he_blocked.delete()
-        return JsonResponse({'message': 'User has been unblocked'}, status=200)
+        freinds = Friends.objects.filter(Q(sender=blocker, receiver=user_to_unblock) | Q(sender=user_to_unblock, receiver=blocker)).first()
+        if freinds and freinds.status == "blocked" and freinds.blocker == blocker:
+            freinds.delete()
+            return JsonResponse({'message': 'User has been unblocked'}, status=200)
+        else:
+            return JsonResponse({'message': 'User is not blocked or no relationship exist between them or you are not the blocker'}, status=400)
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
