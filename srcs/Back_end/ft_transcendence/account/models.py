@@ -26,3 +26,4 @@ class Friends(AbstractBaseUser):
     status = models.CharField(default='')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='send_requests')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_requests')
+    blocker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='the_blocker', null=True, blank=True)
