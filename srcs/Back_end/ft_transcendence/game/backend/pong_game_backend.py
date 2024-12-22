@@ -13,7 +13,7 @@ SCREEN_HEIGHT = 800
     # Paddle
 PADDLE_WIDTH = 100 # could be pair (2k)
 PADDLE_HEIGHT = 20 # could be pair (2k)
-PADDLE_SPEED = 5
+PADDLE_SPEED = 10
     # Ball
 BALL_SIZE = 10
 FPS = 60
@@ -33,20 +33,28 @@ class Paddle:
         self.speed = PADDLE_SPEED
         self.width = PADDLE_WIDTH
         self.height = PADDLE_HEIGHT
-    
- 
-    def get_demensions(self):
+
+    def move(self, key: str):
+        direction = None
         if self.paddlePlayer == PaddlePlayer.PLAYER_1_PADDLE:
-            side = "top"
+            if key == 'ArrowRight':
+                direction = -1
+            else:
+                assert(key == 'ArrowLeft') # debug
+                direction = 1
         else:
-            side = "bottom"
-        return {
-            'height': self.height,
-            'width': self.width,
-            'x': self.x,
-            'y': self.y,
-            'side': side
-        }
+            if key == 'ArrowRight':
+                direction = 1
+            else:
+                assert(key == 'ArrowLeft') # debug
+                direction = -1
+        setp = direction * self.speed
+        if (self.x + setp) - self.width / 2 <= 0:
+            self.x = self.width / 2
+        elif (self.x + setp) + self.width / 2 >= SCREEN_WIDTH:
+            self.x = SCREEN_WIDTH - self.width / 2
+        else:
+            self.x += setp
 
 class Ball:
     def __init__(self):
@@ -55,6 +63,11 @@ class Ball:
         self.speed_x = 5
         self.speed_y = 5
     
+    def get(self):
+        return {
+            'x': self.x,
+            'y': self.y,
+        }
 
 
 
@@ -68,9 +81,9 @@ class PongGame:
         self.score2 = None
         self.paddle1 = Paddle(PaddlePlayer.PLAYER_1_PADDLE)
         self.paddle2 = Paddle(PaddlePlayer.PLAYER_2_PADDLE)
-        # self.ball = Ball()
-        self.player1 = None
-        self.player2 = None
+        self.ball = Ball()
+        self.player1: User = None
+        self.player2: User = None
 
     async def initialize(self):
         self.score1 = await sync_to_async(lambda: self.game.score1)()
@@ -97,11 +110,10 @@ class PongGame:
 
 
     def get_stats(self):
-        stats = {}
-        stats.update(self.paddle1.get_position())
-        stats.update(self.paddle2.get_position())
-        stats['score1'] = self.score1
-        stats['score2'] = self.score2
+        stats = {
+            'paddle1X': self.paddle1.x,
+            'paddle2X': self.paddle2.x,
+        }
         return stats
 
     def get_init(self):
@@ -118,11 +130,18 @@ class PongGame:
             'width': self.width,
             'height': self.height
         }
+        ball = self.ball.get()
         return {
             'paddles': paddles,
-            'game': game
+            'game': game,
+            'ball': ball
         }
         
+    def move_player(self, player_id, key):
+        if player_id == self.player1.id:
+            self.paddle1.move(key)
+        elif player_id == self.player2.id:
+            self.paddle2.move(key)
         
 
 class PongGameManager:
@@ -154,3 +173,6 @@ class PongGameManager:
     
     def get_paddles_demension(self, room_name):
         return self.games[room_name].get_paddles_demension()
+    
+    def move_player(self, room_name: str, player_id: int, key: str):
+        return self.games[room_name].move_player(player_id, key)

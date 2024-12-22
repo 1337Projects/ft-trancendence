@@ -40,6 +40,29 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.init_game()
             asyncio.create_task(self.game_loop())
     
+    async def receive(self, text_data=None):
+        ic('received data from client: ', text_data)
+        data = json.loads(text_data)
+        event_type = data.get('type')
+        if event_type == 'movePaddle':
+            key = data.get('key')
+            ic(key)
+            self.pongGameManager.move_player(self.room_name, self.player.id, key)
+            await self.send_stats()
+        
+    
+    async def send_stats(self):
+        ic('send_stats')
+        sys.stdout.flush()
+        stats = self.pongGameManager.get_stats(self.room_name)
+        event = {
+            'type': 'broad_cast',
+            'event': 'update',
+            'stats': stats
+        }
+        await self.group_send(event)
+        
+    
     async def disconnect(self, close_code):
         """ Handles the WebSocket disconnection for a game."""
         ic(self.player.username, "Disconnecting", close_code)

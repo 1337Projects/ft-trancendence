@@ -1,31 +1,38 @@
 class Paddle {
-    private context;
-    private width;
-    private height;
-    private y;
-    private x;
-    private paddleNum;
+    private context: CanvasRenderingContext2D;
+    private width: number;
+    private height: number;
+    private y: number;
+    private _x: number;
+    private paddleNum: number;
 
-    constructor(context: CanvasRenderingContext2D, num, paddles) {
+    constructor(context: CanvasRenderingContext2D, num: number, paddles: { width: number, height: number, paddle1X: number, paddle2X: number }) {
         this.context = context;
         this.width = paddles.width;
         this.height = paddles.height;
         this.paddleNum = num;
-        if (num == 1)
-        {
+        if (num === 1) {
             this.y = 0;
-            this.x = paddles.paddle1X;
-        }
-        else
-        {
+            this._x = paddles.paddle1X;
+        } else {
             this.y = context.canvas.height - this.height;
-            this.x = paddles.paddle2X;
+            this._x = paddles.paddle2X;
         }
     }
     
     public render() {
+        console.log('x: ', this._x, 'y: ', this.y);
         this.context.fillStyle = 'black';
-        this.context.fillRect(this.x - (this.width / 2), this.y, this.width, this.height);
+        this.context.fillRect(this._x - (this.width / 2), this.y, this.width, this.height);
+    }
+
+    public set X(x: number) {
+        console.log('setX x: ', x);
+        this._x = x;
+    }
+
+    public get X(): number {
+        return this._x;
     }
 }
 class Ball {
@@ -34,10 +41,10 @@ class Ball {
     private radius: number = 10;
     private context;
 
-    constructor(context: CanvasRenderingContext2D) {
+    constructor(context: CanvasRenderingContext2D, ball: any) {
         this.context = context;
-        this.x = context.canvas.width / 2;
-        this.y = context.canvas.height / 2;
+        this.x = ball.x;
+        this.y = ball.y;
     }
 
     public render() {
@@ -57,10 +64,9 @@ class Game {
     private paddle2: Paddle;
     private paddleMove: number;
 
-    constructor(context: CanvasRenderingContext2D, paddles) {
+    constructor(context: CanvasRenderingContext2D, paddles: { width: number, height: number, paddle1X: number, paddle2X: number }, ball: any) {
         this.context = context;
-        this.ball = new Ball(context);
-        console.log(paddles);
+        this.ball = new Ball(context, ball);
         this.paddle1 = new Paddle(context, 1, paddles);
         this.paddle2 = new Paddle(context, 2, paddles);
         this.paddleMove = 10;
@@ -85,8 +91,11 @@ class Game {
         }
     }
 
-    update(paddle1X, paddle2X): void {
+    setUpdate(stats: { paddle1X: number, paddle2X: number }): void {
         // set stats of paddle1 and paddle2
+        console.log('setUpdate (stats): ', stats);
+        this.paddle1.X = stats.paddle1X;
+        this.paddle2.X = stats.paddle2X;
     }
 
     render() {
@@ -106,6 +115,7 @@ class WebSocketHandler {
     constructor(wsUrl: string) {
         this.socket = new WebSocket(wsUrl);
         this.initializeWebSocket();
+        this.initializeKeydownListener();
     }
 
     private initializeWebSocket() {
@@ -114,8 +124,8 @@ class WebSocketHandler {
         };
 
         this.socket.onmessage = (event) => {
-            console.log('Received message', event.data);
             const data = JSON.parse(event.data);
+            console.log('Received message', data);
             this.handleMessage(data);
         };
 
@@ -128,14 +138,28 @@ class WebSocketHandler {
         };
     }
 
-    private handleMessage(data: any) {
+    private initializeKeydownListener() {
+        document.addEventListener('keydown', (event) => {
+            const keyData = {
+                type: 'movePaddle',
+                key: event.key,
+            };
+            if (keyData.key === 'ArrowRight' || keyData.key === 'ArrowLeft')
+                this.socket.send(JSON.stringify(keyData));
+        });
+    }
+
+    private handleMessage(data) {
         const type = data.event;
+        console.log('handle message : ', type);
         switch (type) {
             case 'init_game':
                 this.handleInitGame(data);
                 break;
-            case 'update_stats':
-                this.handleUpdateStats(data);
+            case 'update':
+                const stats = data.stats;
+                console.log('stats to update: ', stats);
+                this.handleUpdate(stats);
                 break;
             // Add more cases for other message types
             default:
@@ -143,23 +167,29 @@ class WebSocketHandler {
         }
     }
 
-    private handleInitGame(data: any) {
+    private handleInitGame(data) {
         const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
         const context = canvas.getContext('2d')!;
         const paddles = data.paddles;
         const gameDimensions = data.game;
+        const ball = data.ball;
 
-        if (!paddles || !gameDimensions) {
+        console.log(`hanndle init game: ${data}`);
+        if (!paddles || !gameDimensions || !ball) {
             console.error('Invalid game initialization data:', data);
             return;
         }
-        this.game = new Game(context, paddles);
-        this.game!.render();
+        this.game = new Game(context, paddles, ball);
+        this.game.render();
     }
 
-    private handleUpdateStats(data: any) {
-        const stats = data.stats;
+    private handleUpdate(stats) {
         // Handle stats update
+        console.log('handleUpdate (stats): ', stats);
+        if (this.game) {
+            this.game.setUpdate(stats);
+            this.game.render();
+        }
     }
 
     // Add more methods to handle other message types
@@ -198,8 +228,6 @@ function connect() {
     }
     const wsUrl = getWsUrl(`/ws/game/${gameId}/?token=${accessToken}`);
     console.log('WebSocket URL:', wsUrl);
-
-    // const game = new Game(context);
 
     new WebSocketHandler(wsUrl);
 }
