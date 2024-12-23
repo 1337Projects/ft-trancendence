@@ -186,11 +186,16 @@ export default function Security() {
                 ${appearence?.theme === 'light' ? 'bg-[#424242]': 'bg-[#b6b6b6]'  }
                 `}>
                     <button
-                    style={{ backgroundColor: appearence?.color }}
-                    onClick={submitCancel} className="text-[#fff] p-[10px] rounded-[5px]">
-                        Are you sure ???
+                    
+                    onClick={submitCancel}
+                    className={` p-[10px] rounded-[5px] hover:bg-[#747474]
+                    ${appearence?.theme === 'light' ? 'text-[#fff]' : 'text-[#000]'}
+                    `}>
+                        Turn OFF
                     </button>
-                    <button onClick={() => setCheck(!showCheck)} className={`p-[10px] rounded-[5px] ${appearence?.theme === 'light' ? 'text-[#fff]' : 'text-[#000]'} `}>
+                    <button
+                    style={{ backgroundColor: appearence?.color }}
+                    onClick={() => setCheck(!showCheck)} className={`p-[10px] rounded-[5px] text-[#fff] `}>
                         Cancel
                     </button>
                 </div>
