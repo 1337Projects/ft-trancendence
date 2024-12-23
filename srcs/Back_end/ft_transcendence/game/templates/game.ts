@@ -2,37 +2,37 @@ class Paddle {
     private context: CanvasRenderingContext2D;
     private width: number;
     private height: number;
-    private y: number;
-    private _x: number;
+    private x: number;
+    private _y: number;
     private paddleNum: number;
 
-    constructor(context: CanvasRenderingContext2D, num: number, paddles: { width: number, height: number, paddle1X: number, paddle2X: number }) {
+    constructor(context: CanvasRenderingContext2D, num: number, paddles: { width: number, height: number, paddle1: number, paddle2: number }) {
         this.context = context;
         this.width = paddles.width;
         this.height = paddles.height;
         this.paddleNum = num;
         if (num === 1) {
-            this.y = 0;
-            this._x = paddles.paddle1X;
+            this.x = 0;
+            this._y = paddles.paddle1;
         } else {
-            this.y = context.canvas.height - this.height;
-            this._x = paddles.paddle2X;
+            this.x = context.canvas.width - this.width;
+            this._y = paddles.paddle2;
         }
     }
     
     public render() {
-        console.log('x: ', this._x, 'y: ', this.y);
+        console.log('x: ', this.x, 'y: ', this._y);
         this.context.fillStyle = 'black';
-        this.context.fillRect(this._x - (this.width / 2), this.y, this.width, this.height);
+        this.context.fillRect(this.x, this._y - (this.height / 2), this.width, this.height);
     }
 
-    public set X(x: number) {
-        console.log('setX x: ', x);
-        this._x = x;
+    public set Y(y: number) {
+        console.log('setY y: ', y);
+        this._y = y;
     }
 
-    public get X(): number {
-        return this._x;
+    public get Y(): number {
+        return this._y;
     }
 }
 class Ball {
@@ -55,6 +55,11 @@ class Ball {
         this.context.fill();
         this.context.closePath();
     }
+
+    public set(ball: {x, y}) {
+        this.x = ball.x;
+        this.y = ball.y;
+    }
 }
 
 class Game {
@@ -64,7 +69,7 @@ class Game {
     private paddle2: Paddle;
     private paddleMove: number;
 
-    constructor(context: CanvasRenderingContext2D, paddles: { width: number, height: number, paddle1X: number, paddle2X: number }, ball: any) {
+    constructor(context: CanvasRenderingContext2D, paddles: { width: number, height: number, paddle1: number, paddle2: number }, ball: any) {
         this.context = context;
         this.ball = new Ball(context, ball);
         this.paddle1 = new Paddle(context, 1, paddles);
@@ -91,11 +96,12 @@ class Game {
         }
     }
 
-    setUpdate(stats: { paddle1X: number, paddle2X: number }): void {
+    setUpdate(stats: { paddle1: number, paddle2: number , ball : {x, y}}): void {
         // set stats of paddle1 and paddle2
         console.log('setUpdate (stats): ', stats);
-        this.paddle1.X = stats.paddle1X;
-        this.paddle2.X = stats.paddle2X;
+        this.paddle1.Y = stats.paddle1;
+        this.paddle2.Y = stats.paddle2;
+        this.ball.set(stats.ball);
     }
 
     render() {
@@ -144,7 +150,7 @@ class WebSocketHandler {
                 type: 'movePaddle',
                 key: event.key,
             };
-            if (keyData.key === 'ArrowRight' || keyData.key === 'ArrowLeft')
+            if (keyData.key === 'ArrowUp' || keyData.key === 'ArrowDown')
                 this.socket.send(JSON.stringify(keyData));
         });
     }
@@ -154,7 +160,9 @@ class WebSocketHandler {
         console.log('handle message : ', type);
         switch (type) {
             case 'init_game':
-                this.handleInitGame(data);
+                const {type, event, ...init_data} = data;
+                console.log('case init_game init_datat', init_data);
+                this.handleInitGame(init_data);
                 break;
             case 'update':
                 const stats = data.stats;
@@ -167,14 +175,14 @@ class WebSocketHandler {
         }
     }
 
-    private handleInitGame(data) {
+    private handleInitGame(data: { paddles, game, ball}) {
         const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
         const context = canvas.getContext('2d')!;
         const paddles = data.paddles;
         const gameDimensions = data.game;
         const ball = data.ball;
 
-        console.log(`hanndle init game: ${data}`);
+        console.log('hanndle init game:', data);
         if (!paddles || !gameDimensions || !ball) {
             console.error('Invalid game initialization data:', data);
             return;

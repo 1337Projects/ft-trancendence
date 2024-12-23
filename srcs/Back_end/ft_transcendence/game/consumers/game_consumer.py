@@ -41,19 +41,17 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.game_loop())
     
     async def receive(self, text_data=None):
-        ic('received data from client: ', text_data)
         data = json.loads(text_data)
         event_type = data.get('type')
         if event_type == 'movePaddle':
             key = data.get('key')
-            ic(key)
             self.pongGameManager.move_player(self.room_name, self.player.id, key)
-            await self.send_stats()
+            # await self.send_stats()
         
     
     async def send_stats(self):
-        ic('send_stats')
-        sys.stdout.flush()
+        # ic('send_stats')
+        # sys.stdout.flush()
         stats = self.pongGameManager.get_stats(self.room_name)
         event = {
             'type': 'broad_cast',
@@ -78,10 +76,10 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def game_loop(self):
         ic(self.player.username, "Game loop started")
         sys.stdout.flush()
-        # for i in range(100):
-        #     await asyncio.sleep(1 / 60)
-        #     # self.pongGameManager.update(self.room_name)
-        #     await self.broadcast_stats()
+        for i in range(1000):
+            await asyncio.sleep(1 / 60)
+            self.pongGameManager.update(self.room_name)
+            await self.send_stats()
 
     async def group_send(self, event):
         await self.channel_layer.group_send(
@@ -91,7 +89,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         
     async def init_game(self):
         ic(self.player.username, "Initializing game")
-        # ic(stats)
         sys.stdout.flush()
         event = {
             'type': 'broad_cast',

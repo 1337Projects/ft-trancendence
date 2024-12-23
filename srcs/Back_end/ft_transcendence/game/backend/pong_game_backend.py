@@ -5,17 +5,19 @@ from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from enum import Enum
+from icecream import ic
+import sys
 
 # Define constants
     # Screen
-SCREEN_WIDTH = 400
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 400
     # Paddle
-PADDLE_WIDTH = 100 # could be pair (2k)
-PADDLE_HEIGHT = 20 # could be pair (2k)
+PADDLE_WIDTH = 20 # could be pair (2k)
+PADDLE_HEIGHT = 100 # could be pair (2k)
 PADDLE_SPEED = 10
     # Ball
-BALL_SIZE = 10
+BALL_RADIUS = 10
 FPS = 60
 
 class PaddlePlayer(Enum):
@@ -25,11 +27,11 @@ class PaddlePlayer(Enum):
 class Paddle:
     def __init__(self, player: PaddlePlayer):
         self.paddlePlayer = player
-        self.x = SCREEN_WIDTH // 2
+        self.y = SCREEN_HEIGHT // 2
         if player == PaddlePlayer.PLAYER_1_PADDLE:
-            self.y = 0  # paddle 1 is at the top
+            self.x = 0  # paddle 1 is on the left
         else:
-            self.y = SCREEN_HEIGHT - PADDLE_HEIGHT # paddle 2 is at the bottom
+            self.x = SCREEN_WIDTH - PADDLE_WIDTH  # paddle 2 is on the right
         self.speed = PADDLE_SPEED
         self.width = PADDLE_WIDTH
         self.height = PADDLE_HEIGHT
@@ -37,38 +39,41 @@ class Paddle:
     def move(self, key: str):
         direction = None
         if self.paddlePlayer == PaddlePlayer.PLAYER_1_PADDLE:
-            if key == 'ArrowRight':
+            if key == 'ArrowUp':
                 direction = -1
-            else:
-                assert(key == 'ArrowLeft') # debug
+            elif key == 'ArrowDown':
                 direction = 1
         else:
-            if key == 'ArrowRight':
-                direction = 1
-            else:
-                assert(key == 'ArrowLeft') # debug
+            if key == 'ArrowUp':
                 direction = -1
-        setp = direction * self.speed
-        if (self.x + setp) - self.width / 2 <= 0:
-            self.x = self.width / 2
-        elif (self.x + setp) + self.width / 2 >= SCREEN_WIDTH:
-            self.x = SCREEN_WIDTH - self.width / 2
-        else:
-            self.x += setp
+            elif key == 'ArrowDown':
+                direction = 1
+
+        if direction is not None:
+            self.y += direction * self.speed
+            # Ensure the paddle stays within the screen bounds
+            self.y = max(self.height // 2, min(self.y, SCREEN_HEIGHT - self.height // 2))
 
 class Ball:
     def __init__(self):
         self.x = SCREEN_WIDTH // 2
         self.y = SCREEN_HEIGHT // 2
         self.speed_x = 5
-        self.speed_y = 5
+        self.speed_y = 2
     
     def get(self):
         return {
             'x': self.x,
             'y': self.y,
         }
-
+    
+    def move(self):
+        self.x += self.speed_x
+        self.y += self.speed_y
+        if self.y - BALL_RADIUS <= 0 or self.y + BALL_RADIUS >= SCREEN_HEIGHT:
+            self.speed_y = -self.speed_y
+        if self.x - BALL_RADIUS <= 0 or self.x + BALL_RADIUS >= SCREEN_WIDTH:
+            self.speed_x = -self.speed_x
 
 
 class PongGame:
@@ -100,19 +105,21 @@ class PongGame:
         
         return self.player1 and self.player2
     
-    def check_collision(self, x, y):
-        pass
+    def check_collision(self):
+        y = self.ball.y
+        r = BALL_RADIUS
         
 
-    def update(self, player):
-        next_x = self.ball['x'] + self.ball['speed_x']
-        next_y = self.ball['y'] + self.ball['speed_y']
+    def update(self):
+        self.ball.move()
+        self.check_collision()
 
 
     def get_stats(self):
         stats = {
-            'paddle1X': self.paddle1.x,
-            'paddle2X': self.paddle2.x,
+            'paddle1': self.paddle1.y,
+            'paddle2': self.paddle2.y,
+            'ball': self.ball.get()
         }
         return stats
 
@@ -121,8 +128,8 @@ class PongGame:
         return the initial state of the game.
         '''
         paddles = {
-            'paddle1X': self.paddle1.x,
-            'paddle2X': self.paddle2.x,
+            'paddle1': self.paddle1.y,
+            'paddle2': self.paddle2.y,
             'width': self.paddle1.width,
             'height': self.paddle1.height
         }
@@ -142,7 +149,6 @@ class PongGame:
             self.paddle1.move(key)
         elif player_id == self.player2.id:
             self.paddle2.move(key)
-        
 
 class PongGameManager:
     def __init__(self):
@@ -173,6 +179,9 @@ class PongGameManager:
     
     def get_paddles_demension(self, room_name):
         return self.games[room_name].get_paddles_demension()
+
+    def update(self, room_name):
+        self.games[room_name].update()
     
     def move_player(self, room_name: str, player_id: int, key: str):
         return self.games[room_name].move_player(player_id, key)
