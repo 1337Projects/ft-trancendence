@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { ReactElement, useContext, useState } from "react";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { FaPalette,  FaUser } from "react-icons/fa";
 import { MdOutlineSecurity } from "react-icons/md";
@@ -6,7 +6,13 @@ import Profile from "./Profile";
 import Apperance from "./Apperance";
 import Security from "./Security";
 
-function ListItem({item,  isActive, handler}) {
+type ItemType = {text : string, icon : ReactElement}
+
+function ListItem({item,  isActive, handler} : {
+    item : ItemType,
+    isActive : boolean,
+    handler : React.Dispatch<React.SetStateAction<string>> 
+}) {
     const {color, theme} = useContext(ApearanceContext) || {}
 
     return (

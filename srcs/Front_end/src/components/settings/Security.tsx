@@ -12,7 +12,7 @@ import { AlertType } from "@/Types"
 import * as Yup from 'yup'
 
 
-function SecurityItem({children}) {
+function SecurityItem({children} : { children : React.ReactNode }) {
     return (
         <li 
             className="flex h-[40px] cursor-pointer justify-between items-center text-[10pt] w-fit capitalize"
@@ -146,7 +146,7 @@ export default function Security() {
                 // console.log(twofaa)
             }
             catch(err) {
-
+                console.log(err)
             }
     }, [twofaa])
     return (

@@ -1,27 +1,6 @@
 import React, { useContext } from "react";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 
-
-function Select({children, val, handler, label}) {
-    const {theme} = useContext(ApearanceContext) || {theme : ""}
-    return (
-        <div className="text-[10pt]">
-            <label htmlFor={label} className="flex w-full  capitalize mb-2 px-2 ">
-                <p>{label}</p>
-            </label>
-            <select
-                className={`mt-2 px-4 w-full h-[45px] border-[1px] rounded-md ${theme === 'light' ? "border-black/20" :  "border-white/20 bg-darkItems"}`} 
-                value={val} 
-                onChange={(e) => {
-                    handler(e.target.value);
-                }}
-            >
-                {children}
-            </select> 
-        </div>
-    )
-}
-
 const colors = [
     {id:0, color:'#FFC100', name:'yellow'},
     {id:1, color:'#C53F3F', name:'red'},
@@ -34,7 +13,7 @@ const colors = [
 
 export default function Apperance() {
 
-   const { theme , color, colorHandler } = useContext(ApearanceContext) || {}
+   const { theme , colorHandler } = useContext(ApearanceContext) || {}
 
     return (
         <div className="px-2 max-w-[500px] mx-auto ">
@@ -58,7 +37,6 @@ export default function Apperance() {
                         </div>
                         <div className="h-full flex items-center justify-center">
                             <img src="/pallete.svg" alt="pimg" />
-                            {/* <PalleteImg /> */}
                         </div>
                     </div>
                 </li>
