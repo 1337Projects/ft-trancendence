@@ -169,7 +169,7 @@ function MessagesList() {
 
     return (
         <div>
-            <div style={{height : `calc(100vh - 220px)`}} className='px-2 overflow-y-auto scroll-bottom flex flex-col-reverse'>
+            <div className='px-2 h-[calc(100vh-350px)] sm:h-[calc(100vh-220px)] overflow-y-auto scroll-bottom flex flex-col-reverse'>
                 <div className='flex flex-col '>
                     {
                         messages.map((message, index) => {

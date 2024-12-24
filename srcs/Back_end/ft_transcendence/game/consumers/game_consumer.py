@@ -7,7 +7,7 @@ from game.backend.pong_game_backend import PongGameManager
 from game.models import Game
 from channels.db import database_sync_to_async
 from login.models import User
-from icecream import ic
+# from icecream import ic
 
 class GameConsumer(AsyncWebsocketConsumer):
     pongGameManager = PongGameManager()

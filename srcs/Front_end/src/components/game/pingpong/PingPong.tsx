@@ -22,8 +22,9 @@ export default function PingPong() {
     useEffect(() => {
         
         const timer = setTimeout(() => {
-            gameSocket.connect(`ws://localhost:8000/wss/game/play/${game_id}/?token=${authInfos?.accessToken}`)
-            gameSocket.addCallback("setInitData", setData)
+            gameSocket.connect(`ws://localhost:8000/ws/game/${game_id}/?token=${authInfos?.accessToken}`)
+            gameSocket.addCallback("init", init)
+            // gameSocket.addCallback("setInitData", setData)
         }, 200)
 
         return () => {
@@ -32,35 +33,41 @@ export default function PingPong() {
         }
     }, [])
 
-    
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (canvasRef.current && data) {
-                const  ctx = canvasRef?.current?.getContext("2d");
-                gameRef.current = new Game(ctx, setData);
-                gameRef.current.setup(data)
-                if (data.ended) {
-                    gameSocket.close()
-                    setClosed(true)
-                    setTimeout(() => {
-                        tournamentSocket.sendMessage({"event" : "upgrade", "winner_id" : data.winner})
-                        if (tournament_id) {
-                            navigate(`/dashboard/game/tournment/${tournament_id}/`)
-                        } else {
-                            navigate(`/dashboard/game/`)
-                        }
-                    }, 2000)
-                }
-            }
-        }, 50)
 
-        return () =>  {
-            // delete gameRef.current;
-            gameRef.current = null
-            clearTimeout(timer)
+    function init(data) {
+        console.log(data)
+    }
+
+
+    
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         if (canvasRef.current && data) {
+    //             const  ctx = canvasRef?.current?.getContext("2d");
+    //             gameRef.current = new Game(ctx, setData);
+    //             gameRef.current.setup(data)
+    //             if (data.ended) {
+    //                 gameSocket.close()
+    //                 setClosed(true)
+    //                 setTimeout(() => {
+    //                     tournamentSocket.sendMessage({"event" : "upgrade", "winner_id" : data.winner})
+    //                     if (tournament_id) {
+    //                         navigate(`/dashboard/game/tournment/${tournament_id}/`)
+    //                     } else {
+    //                         navigate(`/dashboard/game/`)
+    //                     }
+    //                 }, 2000)
+    //             }
+    //         }
+    //     }, 50)
+
+    //     return () =>  {
+    //         // delete gameRef.current;
+    //         gameRef.current = null
+    //         clearTimeout(timer)
            
-        }
-    }, [data])
+    //     }
+    // }, [data])
 
     const { theme } = useContext(ApearanceContext) || {}
 

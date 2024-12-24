@@ -5,7 +5,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from enum import Enum
-from icecream import ic
+# from icecream import ic
 import sys
 
 # Define constants
@@ -68,14 +68,14 @@ class Paddle:
         if self.paddlePlayer == PaddlePlayer.PLAYER_1_PADDLE:
             if x - r <= self.x + self.width:
                 if y  < self.y - (self.height // 2 + 10) or y > self.y + (self.height // 2 + 10):
-                    ic('ball', ball.get(), 'paddle', self.x, self.y)
+                    # ic('ball', ball.get(), 'paddle', self.x, self.y)
                     return True
                 ball.speed_x = -ball.speed_x
                 ball.x = max(self.x + self.width, ball.x)
         else:
             if x + r >= self.x:
                 if y - r < self.y - (self.height // 2 + 20) or y + r > self.y + (self.height // 2 + 20):
-                    ic('ball', ball.get(), 'paddle', self.x, self.y - self.height // 2, self.y + self.height // 2)
+                    # ic('ball', ball.get(), 'paddle', self.x, self.y - self.height // 2, self.y + self.height // 2)
                     return True
                 ball.speed_x = -ball.speed_x
                 ball.x = min(self.x - r, ball.x)
@@ -152,7 +152,7 @@ class PongGame:
                 self.ball.reset()
         if self.ball.x + BALL_RADIUS >= self.paddle2.x:
             if self.paddle2.check_collision(self.ball):
-                ic('goal is scored on ', self.player2)
+                # ic('goal is scored on ', self.player2)
                 sys.stdout.flush()
                 self.ball.reset()
             
