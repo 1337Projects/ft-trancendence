@@ -66,7 +66,7 @@ export default function Tournment() {
                             {
                                 ended.map((item, index) => {
                                     return (
-                                        <li className="h-[70px] border-[1px] mt-4 rounded-full p-2">
+                                        <li key={index} className="h-[70px] border-[1px] mt-4 rounded-full p-2">
                                             <div className="flex items-center h-full">
                                                 <div className="relative">
                                                     <img className="w-[50px] h-[50px] rounded-full mr-6" src={ item.profile.avatar } alt="" />

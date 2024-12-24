@@ -1,12 +1,22 @@
+import { UserType } from "@/Types"
 import React from "react"
 
-function Radio({checked}) {
+type Player = {
+    user : UserType, score : number
+}
+
+type Players = {
+    player1 : Player,
+    player2 : Player
+}
+
+function Radio({checked} : {checked : boolean}) {
     return (
         <li><input type="radio" className="w-[11px]" onChange={() => {}} checked={checked} /></li>
     )
 }
 
-export default function Score({data}) {
+export default function Score({data} : {data : {players : Players}}) {
 
     if (!data) {
         return (
@@ -40,9 +50,8 @@ export default function Score({data}) {
                         <div className="relative">
                             <h1 className='text-[12pt] font-bold'>{data.players.player1.user.username}</h1>
                             <ul className="flex justify-between w-[90px]">
-                                {[...Array(7)].map((item, index) => <Radio key={index} checked={false} />)}
+                                {[...Array(7)].map((index) => <Radio key={index} checked={false} />)}
                             </ul>
-                            {/* <h1 className=' text-[10px]'>LVL</h1> */}
                         </div>
                     </div>
                 </div>
@@ -54,7 +63,7 @@ export default function Score({data}) {
                         <div className="text-right">
                             <h1 className="text-[12pt] font-bold">{data.players.player2.user.username}</h1>
                             <ul className="flex justify-between w-[90px]">
-                                {[...Array(7)].map((item, index) => <Radio key={index} checked={false} />)}
+                                {[...Array(7)].map((index) => <Radio key={index} checked={false} />)}
                             </ul>
                         </div>
                         <div className="ml-4 border-[.3px] w-[40px] h-[40px] flex justify-center items-center rounded-full">

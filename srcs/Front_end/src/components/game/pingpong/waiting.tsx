@@ -3,8 +3,9 @@ import { gameSocket } from '@/socket'
 import { Link, useNavigate } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
+import { UserType } from "@/Types"
 
-export function PlayerGameCard({player}) {
+export function PlayerGameCard({player} : { player : UserType }) {
     return (
         <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
             <div className=' text-center'>
@@ -18,7 +19,7 @@ export function PlayerGameCard({player}) {
 
 export default function Waiting() {
     const { color, theme } = useContext(ApearanceContext) || {}
-    const [room, setRoom] = useState(null)
+    const [room, setRoom] = useState<{room : RoomType} | null>(null)
     const navigate = useNavigate()
     const { authInfos } = useContext( UserContext ) || {}
 
@@ -37,7 +38,7 @@ export default function Waiting() {
         }
     }, [])
 
-    function startGameHandler(id) {
+    function startGameHandler(id : number) {
         navigate(`../game/room/${id}`)
     }
 
@@ -80,7 +81,13 @@ export default function Waiting() {
     )
 }
 
-export function InviteFriendsToPlay({ data }) {
+export type RoomType = {
+    players : UserType[],
+    status : string,
+    name : string
+}
+
+export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 
     const [invite, setInvite] = useState(false)
     const { color } = useContext(ApearanceContext) || {}

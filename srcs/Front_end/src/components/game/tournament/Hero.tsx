@@ -3,9 +3,10 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { Link } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { FiUsers } from "react-icons/fi";
+import { TournamnetType } from "./Schema";
 
 
-export default function Hero({ data }) {
+export default function Hero({ data } : {data : TournamnetType}) {
     const { color } = useContext(ApearanceContext) || {}
     return (
         <div className="relative overflow-hidden h-[200px] rounded">
@@ -32,7 +33,11 @@ export default function Hero({ data }) {
                     <ul className="flex">
                         {
                             data?.data?.players.map(
-                                (player, index) => <img src={player.profile.avatar} className="bg-white w-[25px] h-[25px] mr-[-10px] rounded-full border-[1px]">
+                                (player, index) => 
+                                <img 
+                                    key={index}
+                                    src={player.profile.avatar} 
+                                    className="bg-white w-[25px] h-[25px] mr-[-10px] rounded-full border-[1px]">
                                 </img>
                             )
                         }

@@ -9,7 +9,7 @@ import { TrItem } from "./tournament/Events"
 import { IoIosMailUnread } from "react-icons/io"
 import Cards from "./GameCards";
 
-function CatButton({icon, text, categorie, handler}) {
+function CatButton({icon, text, categorie, handler} : {}) {
     const {color, theme} = useContext(ApearanceContext) || {}
     const t = categorie === text ? color : ""
     return (

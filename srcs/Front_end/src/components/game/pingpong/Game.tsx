@@ -2,10 +2,10 @@
 import {gameSocket} from "@/socket";
 
 class Ball {
-    ctx: any;
+    ctx: CanvasRenderingContext2D;
     r: number;
     
-    constructor(context) {
+    constructor(context : CanvasRenderingContext2D) {
         this.ctx = context;
         this.r = 25;
     }
@@ -19,11 +19,11 @@ class Ball {
 }
 
 class Paddle {
-    ctx: any;
+    ctx: CanvasRenderingContext2D;
     width: number;
     height: number;
 
-    constructor(context) {
+    constructor(context : CanvasRenderingContext2D) {
         this.ctx = context;
         this.width = 10;
         this.height = 60;
@@ -39,17 +39,16 @@ class Paddle {
 
 
 export default class Game {
-    width: any;
-    height: any;
-    ctx: any;
+    width: number;
+    height: number;
+    ctx: CanvasRenderingContext2D;
     ball: Ball;
     paddleA: Paddle;
     paddleB: Paddle;
     lastTime: null;
     step: number;
-    scoreHandler: any;
     data: null;
-    constructor(context, scoreHandler) {
+    constructor(context : CanvasRenderingContext2D) {
 
         this.width = context.canvas.width;
         this.height = context.canvas.height;
@@ -59,7 +58,6 @@ export default class Game {
         this.paddleB = new Paddle(this.ctx);
         this.lastTime = null;
         this.step = context.canvas.width / 10
-        this.scoreHandler = scoreHandler
         this.data = null
     }
 
@@ -71,7 +69,6 @@ export default class Game {
         this.ctx.moveTo(this.width / 2, 0);
         this.ctx.lineTo(this.width / 2, this.height);
         this.ctx.stroke();
-        // console.log(this.data)
         if (this.data) {
             this.paddleA.draw(this.data.pay, 4);
             this.paddleB.draw(this.data.pby, this.width - 14);

@@ -5,7 +5,7 @@ import { DialogContext } from "@/Contexts/DialogContext"
 import { RiGamepadLine } from "react-icons/ri"
 import TournmentDialog from './TournamentDialog'
 
-function Card({color, img, text}) {
+function Card({color, img, text} : {color : string, img : string, text : string}) {
 
     const { theme } = useContext(ApearanceContext) || {}
 
@@ -29,7 +29,7 @@ function Card({color, img, text}) {
 }
 
 
-export default function Cards({color}) {
+export default function Cards({color} : {color : string}) {
     const appearence = useContext(ApearanceContext)
     const { open, setOpen } = useContext(DialogContext) || {}
 

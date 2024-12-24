@@ -1,7 +1,21 @@
 import React from "react";
 import SchemaFour from '@/components/assets/schema/Schema4'
+import { UserType } from "@/Types";
 
-export default function Schema({data}) {
+export type TournamentDataType = {
+    id : number,
+    max_players : number,
+    players : UserType[],
+    tournament_name : string,
+    tourament_status : string
+}
+
+export type TournamnetType = {
+    rounds : []
+    data : TournamentDataType
+}
+
+export default function Schema({data} : {data : TournamnetType}) {
 
     if (!data || !data.rounds) {
         return ("loading ....")
