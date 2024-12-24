@@ -21,7 +21,7 @@ export default function WaitingTournment() {
 
 
     MyUseEffect(() => {
-        tournamentSocket.connect(`wss://localhost:8000/wss/join/tournment/${id}/?token=${authInfos?.accessToken}`)
+        tournamentSocket.connect(`ws://localhost:8000/wss/join/tournment/${id}/?token=${authInfos?.accessToken}`)
         tournamentSocket.addCallback('roomDataHandler', roomDataHandler)
     }, [])
 

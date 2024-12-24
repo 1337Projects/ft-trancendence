@@ -26,7 +26,7 @@ export default function Waiting() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            gameSocket.connect(`wss://localhost:8000/wss/game/join/game/?token=${authInfos?.accessToken}`)
+            gameSocket.connect(`ws://localhost:8000/wss/game/join/game/?token=${authInfos?.accessToken}`)
             gameSocket.addCallback("setRoom", setRoom)
             gameSocket.addCallback("startGame", startGameHandler)
         }, 100)
