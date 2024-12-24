@@ -17,8 +17,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.player = self.scope['user']
         self.room_name = f'game_{self.game_id}'
 
-        ic(self.player.username, "Connecting")
-        sys.stdout.flush()
+        # ic(self.player.username, "Connecting")
+        # sys.stdout.flush()
 
         game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
 
@@ -63,8 +63,8 @@ class GameConsumer(AsyncWebsocketConsumer):
     
     async def disconnect(self, close_code):
         """ Handles the WebSocket disconnection for a game."""
-        ic(self.player.username, "Disconnecting", close_code)
-        sys.stdout.flush()
+        # ic(self.player.username, "Disconnecting", close_code)
+        # sys.stdout.flush()
         if close_code == 1000:
             await self.channel_layer.group_discard(
                 self.room_name,
@@ -74,10 +74,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             pass
 
     async def game_loop(self):
-        ic(self.player.username, "Game loop started")
-        sys.stdout.flush()
-        for i in range(1000):
-            await asyncio.sleep(1 / 60)
+        # ic(self.player.username, "Game loop started")
+        # sys.stdout.flush()
+        for i in range(10000):
+            await asyncio.sleep(1 / 40)
             self.pongGameManager.update(self.room_name)
             await self.send_stats()
 
@@ -88,8 +88,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
         
     async def init_game(self):
-        ic(self.player.username, "Initializing game")
-        sys.stdout.flush()
+        # ic(self.player.username, "Initializing game")
+        # sys.stdout.flush()
         event = {
             'type': 'broad_cast',
             'event': 'init_game',

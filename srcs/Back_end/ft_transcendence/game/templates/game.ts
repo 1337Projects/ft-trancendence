@@ -21,13 +21,13 @@ class Paddle {
     }
     
     public render() {
-        console.log('x: ', this.x, 'y: ', this._y);
+        // console.log('x: ', this.x, 'y: ', this._y);
         this.context.fillStyle = 'black';
         this.context.fillRect(this.x, this._y - (this.height / 2), this.width, this.height);
     }
 
     public set Y(y: number) {
-        console.log('setY y: ', y);
+        // console.log('setY y: ', y);
         this._y = y;
     }
 
@@ -98,7 +98,7 @@ class Game {
 
     setUpdate(stats: { paddle1: number, paddle2: number , ball : {x, y}}): void {
         // set stats of paddle1 and paddle2
-        console.log('setUpdate (stats): ', stats);
+        // console.log('setUpdate (stats): ', stats);
         this.paddle1.Y = stats.paddle1;
         this.paddle2.Y = stats.paddle2;
         this.ball.set(stats.ball);
@@ -131,7 +131,7 @@ class WebSocketHandler {
 
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log('Received message', data);
+            // console.log('Received message', data);
             this.handleMessage(data);
         };
 
@@ -157,16 +157,16 @@ class WebSocketHandler {
 
     private handleMessage(data) {
         const type = data.event;
-        console.log('handle message : ', type);
+        // console.log('handle message : ', type);
         switch (type) {
             case 'init_game':
                 const {type, event, ...init_data} = data;
-                console.log('case init_game init_datat', init_data);
+                // console.log('case init_game init_datat', init_data);
                 this.handleInitGame(init_data);
                 break;
             case 'update':
                 const stats = data.stats;
-                console.log('stats to update: ', stats);
+                // console.log('stats to update: ', stats);
                 this.handleUpdate(stats);
                 break;
             // Add more cases for other message types
@@ -182,7 +182,7 @@ class WebSocketHandler {
         const gameDimensions = data.game;
         const ball = data.ball;
 
-        console.log('hanndle init game:', data);
+        // console.log('hanndle init game:', data);
         if (!paddles || !gameDimensions || !ball) {
             console.error('Invalid game initialization data:', data);
             return;
@@ -193,7 +193,7 @@ class WebSocketHandler {
 
     private handleUpdate(stats) {
         // Handle stats update
-        console.log('handleUpdate (stats): ', stats);
+        // console.log('handleUpdate (stats): ', stats);
         if (this.game) {
             this.game.setUpdate(stats);
             this.game.render();

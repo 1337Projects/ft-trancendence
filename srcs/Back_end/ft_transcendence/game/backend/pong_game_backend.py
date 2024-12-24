@@ -15,9 +15,11 @@ SCREEN_HEIGHT = 400
     # Paddle
 PADDLE_WIDTH = 20 # could be pair (2k)
 PADDLE_HEIGHT = 100 # could be pair (2k)
-PADDLE_SPEED = 10
+PADDLE_SPEED = 20
     # Ball
 BALL_RADIUS = 10
+BALL_SPEEDX = 5
+BALL_SPEEDY = 2
 FPS = 60
 
 class PaddlePlayer(Enum):
@@ -54,12 +56,40 @@ class Paddle:
             # Ensure the paddle stays within the screen bounds
             self.y = max(self.height // 2, min(self.y, SCREEN_HEIGHT - self.height // 2))
 
+    def check_collision(self, ball) -> bool:
+        '''
+        Check if the ball collides with the paddle or a goal is scored.
+        return:
+        True if goal is scored and false otherwise.
+        '''
+        x = ball.x
+        y = ball.y
+        r = BALL_RADIUS
+        if self.paddlePlayer == PaddlePlayer.PLAYER_1_PADDLE:
+            if x - r <= self.x + self.width:
+                if y  < self.y - (self.height // 2 + 10) or y > self.y + (self.height // 2 + 10):
+                    ic('ball', ball.get(), 'paddle', self.x, self.y)
+                    return True
+                ball.speed_x = -ball.speed_x
+                ball.x = max(self.x + self.width, ball.x)
+        else:
+            if x + r >= self.x:
+                if y - r < self.y - (self.height // 2 + 20) or y + r > self.y + (self.height // 2 + 20):
+                    ic('ball', ball.get(), 'paddle', self.x, self.y - self.height // 2, self.y + self.height // 2)
+                    return True
+                ball.speed_x = -ball.speed_x
+                ball.x = min(self.x - r, ball.x)
+
+        return False
+
+
+
 class Ball:
     def __init__(self):
         self.x = SCREEN_WIDTH // 2
         self.y = SCREEN_HEIGHT // 2
-        self.speed_x = 5
-        self.speed_y = 2
+        self.speed_x = BALL_SPEEDX
+        self.speed_y = BALL_SPEEDY
     
     def get(self):
         return {
@@ -70,11 +100,18 @@ class Ball:
     def move(self):
         self.x += self.speed_x
         self.y += self.speed_y
-        if self.y - BALL_RADIUS <= 0 or self.y + BALL_RADIUS >= SCREEN_HEIGHT:
+        if self.y - BALL_RADIUS <= 0 or self.y + BALL_RADIUS >= SCREEN_HEIGHT: # hit the top of bottom
             self.speed_y = -self.speed_y
-        if self.x - BALL_RADIUS <= 0 or self.x + BALL_RADIUS >= SCREEN_WIDTH:
-            self.speed_x = -self.speed_x
+        # if self.x - BALL_RADIUS <= 0 or self.x + BALL_RADIUS >= SCREEN_WIDTH:
+        #     self.speed_x = -self.speed_x
 
+    def reset(self):
+        self.x = SCREEN_WIDTH // 2
+        self.y = SCREEN_HEIGHT // 2
+        self.speed_x *= -1
+        self.speed_y *= -1
+            
+        
 
 class PongGame:
     def __init__(self, game: Game, room_name):
@@ -103,17 +140,22 @@ class PongGame:
         elif player2_username == player.username:
             self.player2 = player
         
-        return self.player1 and self.player2
-    
-    def check_collision(self):
-        y = self.ball.y
-        r = BALL_RADIUS
-        
+        return self.player1 and self.player2    
 
-    def update(self):
+    def update(self):    
         self.ball.move()
-        self.check_collision()
-
+        if self.ball.x - BALL_RADIUS <= self.paddle1.width:
+            if self.paddle1.check_collision(self.ball): # check if goal is scored on player 1
+                # update score
+                # ic('goal is scored on ', self.player1)
+                # sys.stdout.flush()
+                self.ball.reset()
+        if self.ball.x + BALL_RADIUS >= self.paddle2.x:
+            if self.paddle2.check_collision(self.ball):
+                ic('goal is scored on ', self.player2)
+                sys.stdout.flush()
+                self.ball.reset()
+            
 
     def get_stats(self):
         stats = {
@@ -176,9 +218,6 @@ class PongGameManager:
         get the init stat of the game.
         '''
         return self.games[room_name].get_init()
-    
-    def get_paddles_demension(self, room_name):
-        return self.games[room_name].get_paddles_demension()
 
     def update(self, room_name):
         self.games[room_name].update()
