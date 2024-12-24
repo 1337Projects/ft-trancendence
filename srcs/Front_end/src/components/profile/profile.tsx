@@ -46,7 +46,10 @@ export default function Profile() {
 				<Banner user={currentUser} />
 				{
 					friendship?.status == 'blocked' ?
-					<div className='w-full h-[100px] border-[.3px] rounded mt-10 border-white/20 flex justify-center items-center'>this content is not available</div> :
+					<div className='w-full px-4'>
+						<div className='w-full h-[100px] text-xs border-[.3px] rounded mt-10 border-white/20 flex justify-center items-center'>this content is not available</div>
+					</div>
+					:
 					<>
 						<ProfileNav currentUser={currentUser} />
 						<Outlet />
