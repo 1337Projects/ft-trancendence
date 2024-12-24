@@ -2,12 +2,16 @@ import React, { useContext, useState } from "react"
 import { FaAngleDown, FaAngleUp } from "react-icons/fa"
 import { Formik, Form } from 'formik'
 import SettingsInput from "./Input"
-import { ApearanceContext } from "../../Contexts/ThemeContext"
-import { UserContext } from '../../Contexts/authContext'
+import { ApearanceContext } from "@/Contexts/ThemeContext"
+import { UserContext } from '@/Contexts/authContext'
 import TwoFImg from "./TwoFImg"
-import { Link } from "react-router-dom"
 import TwoFactor from "../auth/2fa"
-import MyUseEffect from "../../hooks/MyUseEffect"
+import MyUseEffect from "@/hooks/MyUseEffect"
+import Alert from "../ui/Alert"
+import { AlertType } from "@/Types"
+import * as Yup from 'yup'
+
+
 function SecurityItem({children}) {
     return (
         <li 
@@ -18,10 +22,16 @@ function SecurityItem({children}) {
     )
 }
 
+const ValidationSchema = Yup.object({
+    old_password : Yup.string().required('REQUIRED !').min(10, 'MUST BE AT LEAST 10 CHARACHTERS'),
+    new_password : Yup.string().required('REQUIRED !').min(10, 'MUST BE AT LEAST 10 CHARACHTERS')
+})
 
 function ChangePassword() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
+    const [ alert, setAlert ] = useState<AlertType | null>(null)
+
 
 
     async function submitHandler(values) {
@@ -41,22 +51,29 @@ function ChangePassword() {
                 throw(await response.json())
             }
     
-            console.log('changed')
+            setAlert({"type" : "success", "message" : ["your password has been updated successfully"]})
         } catch (err) {
-            console.log(err)
+            setAlert({"type" : "error" , "message" : [err.error.toString()]})
         }
-
+        setTimeout(() => {
+            setAlert(null)
+        }, 2000)
     }
 
     
 
     return (
         <div className={`w-full h-fit border-[1px] rounded p-6 mt-4 ${theme == 'light' ? "border-black/20" : "border-white/20"}`}>
+            {
+                alert && <Alert alert={alert} alertHandler={setAlert} />
+            }
+            
             <Formik
                 initialValues={{
                     old_password : '',
                     new_password : ''
                 }}
+                validationSchema={ValidationSchema}
                 onSubmit={submitHandler}
             >
                 <Form>
