@@ -51,10 +51,11 @@ export function Actions({friends, profile_user, handlers}) {
 	}
 	if (has_relation(friends, profile_user?.id, 'accept')){
 		return (
-			<div className='flex justify-between items-center w-[220px]'>
+			<div className='flex justify-between items-center w-[120px]'>
 				<ActionButton text="contact" icon={<FaCommentDots />} handler={() => navigate(`/dashboard/chat/${profile_user.username}`)} />
-				<ActionButton text="unfriend" icon={<FaUserMinus />} handler={handlers.cancle} />
+				{/* <ActionButton text="unfriend" icon={<FaUserMinus />} handler={handlers.cancle} /> */}
 				<FaEllipsisV className="w-[100px]" />
+				{/* list of unfriend , block, unblock  */}
 			</div>
 		)
 	}

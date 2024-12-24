@@ -11,9 +11,12 @@ import { RiProfileFill } from 'react-icons/ri';
 
 export default function Profile() {
 	const appearence = useContext(ApearanceContext)
-	const {authInfos, user} = useContext(UserContext) || {}
+	const {authInfos, user, friends} = useContext(UserContext) || {}
 	const {user_name} = useParams()
 	const [currentUser, setCurrentUser] = useState<UserType | null>(null)
+	const friendship = friends?.filter(item => (item.sender.username==user?.username && item.receiver.username==currentUser?.username) || (item.receiver.username==user?.username && item.sender.username==currentUser?.username))[0]
+
+	console.log(friendship)
 	
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -41,8 +44,14 @@ export default function Profile() {
 		<div className={`w-full mt-2 backdrop-blur-md p-2 ${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
 			<div className={` w-full h-[calc(100vh-180px)] sm:h-[100vh] overflow-scroll`}>
 				<Banner user={currentUser} />
-				<ProfileNav currentUser={currentUser} />
-				<Outlet />
+				{
+					friendship?.status == 'blocked' ?
+					<div className='w-full h-[100px] border-[.3px] rounded mt-10 border-white/20 flex justify-center items-center'>this content is not available</div> :
+					<>
+						<ProfileNav currentUser={currentUser} />
+						<Outlet />
+					</>
+				}
 			</div>
 		</div>
 	)

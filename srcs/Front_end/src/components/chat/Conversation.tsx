@@ -9,6 +9,7 @@ import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
 import { GoBlocked } from "react-icons/go";
+import { CgUnblock } from "react-icons/cg";
 import { BlockHandler } from './chat'
 
 
@@ -42,11 +43,10 @@ function UserMessage({m, username}) {
 
 export default function Conversation() {
     const { userData } = useContext(ChatContext) || {}
-    console.log(userData)
     return (
         <div className='w-full h-full flex flex-col space-y-2'>
             <div className='w-full h-[60px]'>
-                <ConversationHeader userData={userData?.user}  />
+                <ConversationHeader userData={userData?.user} friendShip={userData?.freindship}  />
             </div>
             <div className='w-full h-fit relative overflow-y-auto' >
                 <MessagesList />
@@ -193,27 +193,38 @@ function MessagesList() {
     )
 }
 
-function ConversationHeader({userData}) {
+function ConversationHeader({userData, friendShip}) {
 
     const { theme } = useContext(ApearanceContext) || {}
-    const { user, setFriends, authInfos } = useContext(UserContext) || {}
+    const { user, authInfos } = useContext(UserContext) || {}
+    const currentUser = friendShip?.receiver?.username == authInfos?.username ? friendShip?.receiver : friendShip?.sender
 
     async function BlockUser() {
         const res = await BlockHandler(user.id, userData.id)
-        if (res) {
+        console.log(res)
+    }
 
-            fetch(`${import.meta.env.VITE_API_URL}api/profile/info/friends/`, {
-                method: 'GET',
+    async function UblockHandler() {
+        try {
+
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/unblockUser/`, {
+                method : 'POST',
                 credentials : 'include',
                 headers : {
-                  'Authorization' : `Bearer ${authInfos?.accessToken}`,
-                }
-              })
-              .then(res => res.json())
-              .then(res => {
-                setFriends!(res.data)
-              })
-              .catch(err => console.log(err))
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify({id : user.id, id_to_unblock :  userData.id})
+            })
+
+            if (!response.ok) {
+                console.log(await response.json())
+                throw Error("")
+            }
+
+            console.log(await response.json())
+            
+        } catch (error) {
+            console.log(error.toString())
         }
     }
 
@@ -253,8 +264,24 @@ function ConversationHeader({userData}) {
                         <p className="text-[8pt]">{userData?.profile?.online ? "online" : "offline"}</p>
                     </div>
                 </Link>
+            </div> 
+            <div className='flex items-center'>
+                {
+
+                    // (friendShip.blocker && friendShip.blocker == currentUser.id) && (
+                        friendShip.status == "blocked" ?
+                        <div onClick={UblockHandler} className='flex flex-col justify-center items-center'>
+                            <CgUnblock className='mr-2' /> 
+                            <h1 className='text-xs'>unblock</h1>
+                        </div>
+                        :
+                        <>
+                            <GoBlocked className='mr-2' onClick={BlockUser} />
+                            <h1 className='text-xs'>block</h1>
+                        </>
+                    // )
+                }
             </div>
-            <GoBlocked onClick={BlockUser} />
         </div>
     )
 }

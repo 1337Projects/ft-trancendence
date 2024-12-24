@@ -17,7 +17,7 @@ export function NotItem({data}) {
 
     return (
         <li className="flex relative font-popins justify-between px-4 items-center w-full h-[60px] my-3">
-            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 border-[1px] border-black/20 rounded-[50%]" />
+            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 border-[1px] mr-4 border-black/20 rounded-[50%]" />
             <div className="text text-primaryText">
                 <Link to={data.action}>
                     <h1 className="font-bold text-sm">{data.sender.username}</h1>
