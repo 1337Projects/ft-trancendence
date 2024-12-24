@@ -1,7 +1,6 @@
 import { IoCloseCircleOutline } from "react-icons/io5";
-import React, { useContext } from "react";
+import React from "react";
 import { AlertType } from "../../Types";
-import { ApearanceContext } from "../../Contexts/ThemeContext";
 
 export default function Alert(
         {alert, alertHandler} : 

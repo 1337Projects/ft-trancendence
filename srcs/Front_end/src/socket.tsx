@@ -1,7 +1,10 @@
+import { UserType } from "./Types";
+
+type CallBackType = (data : string) => void
 
 class WebSocketService {
 
-    callbacks: any[];
+    callbacks: CallBackType[];
     socket: null | WebSocket;
     queue: never[];
 
@@ -31,7 +34,7 @@ class WebSocketService {
 
 
     eventCallback = (event) => {
-        let data = JSON.parse(event.data)
+        const data = JSON.parse(event.data)
         switch (data.response.status) {
             case 400:
                 console.log(data.response.error)
@@ -199,17 +202,19 @@ class TournamentSocket extends WebSocketService {
         console.log("tournament WebSocket connection closed");
     }
 
-    eventCallback = (event) => {
+    eventCallback = (event : MessageEvent) => {
         const data = JSON.parse(event.data)
+        
         switch (data.response.status) {
-            case 100:
-                const players : any = []
-                for (const [key, value] of Object.entries(data.response.data.players)) {
+            case 100: {
+                const players : UserType[] = []
+                for (const [, value] of Object.entries(data.response.data.players as Record<string, UserType>) ) {
                     players.push(value)
                 }
                 data.response.data.players = players
                 this.callbacks["roomDataHandler"](data.response.data)
                 break;
+            }
             case 200:
                 console.log(JSON.parse(data.response.game))
                 break;

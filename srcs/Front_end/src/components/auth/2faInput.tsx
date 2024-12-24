@@ -3,7 +3,7 @@ import MyUseEffect from '../../hooks/MyUseEffect';
 
 // Type for the submittedValues array in the doSubmit function
 function doSubmit(submittedValues: string[]): Promise<void> {
-    let nums : string = submittedValues.join("")
+    const nums : string = submittedValues.join("")
     console.log(`Submitted: ${nums}`);
     // 2fa/
     return new Promise((resolve) => {

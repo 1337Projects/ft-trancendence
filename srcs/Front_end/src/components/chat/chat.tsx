@@ -95,10 +95,10 @@ function ConvItem({c, menu}) {
     const {color} = useContext(ApearanceContext) || {}
     const {user} = useContext(UserContext) || {}
     const data = Object.filter(c, i => typeof i === "object" && i.username !== user?.username)[0]
-    const [open, setOpen] = useState<Boolean>(false)
+    const [open, setOpen] = useState<boolean>(false)
     
     useEffect(() => {
-        let date = new Date(c?.last_message_time);
+        const date = new Date(c?.last_message_time);
         const hours = date.getUTCHours()
         const mins = date.getUTCMinutes()
         setTime(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`);
@@ -127,7 +127,7 @@ function ConvItem({c, menu}) {
 }
 
 
-export function Friends({menu, handler} : {menu : Boolean, handler : React.Dispatch<SetStateAction<Boolean>>}) {
+export function Friends({menu, handler} : {menu : boolean, handler : React.Dispatch<SetStateAction<boolean>>}) {
     const {friends, authInfos} = useContext(UserContext) || {}
     const { theme } = useContext(ApearanceContext) || {}
 
@@ -176,7 +176,7 @@ Object.filter = (obj, predicate) =>
           .filter( key => predicate(obj[key]) )
           .map(key => obj[key]);
 
-export default function ConversationsList({menu, data} : {menu : Boolean, data : any}) {
+export default function ConversationsList({menu, data} : {menu : boolean, data : any}) {
     
     const { theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}

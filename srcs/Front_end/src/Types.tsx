@@ -21,6 +21,7 @@ type UserProfileType = {
 }
 
 export type UserType = {
+    id : number,
     username : string,
     first_name : string,
     last_name : string,
@@ -28,7 +29,7 @@ export type UserType = {
 }
 
 export type FirendType = {
-    id : Number,
+    id : number,
     sender : UserType,
     receiver : UserType,
     status : string

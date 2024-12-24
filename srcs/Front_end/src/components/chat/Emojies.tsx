@@ -39,7 +39,7 @@ function EmojiesSearch({query}) {
     const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
     const url = API + query + "&" + KEY
     useEffect(() => {
-        let timer = setTimeout(() => {
+        const timer = setTimeout(() => {
             console.log('fetch')
             fetch(url)
             .then(res => res.json())
@@ -77,7 +77,7 @@ function EmojesCategories({textHandler, text}) {
 
 
     useEffect(() => {
-        let timer = setTimeout(() => {
+        const timer = setTimeout(() => {
             fetch(API + "categories/" + def + "?" + KEY)
             .then(res => res.json())
             .then(res => {

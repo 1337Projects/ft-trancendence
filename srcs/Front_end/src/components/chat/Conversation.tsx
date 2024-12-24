@@ -15,7 +15,7 @@ import { BlockHandler } from './chat'
 
 function calc_time(created_at) {
     if (!created_at) return ''
-    let date = new Date(created_at);
+    const date = new Date(created_at);
     return date.toLocaleString('en-US', { hour: 'numeric', minute : '2-digit',  hour12: true })
 }
 

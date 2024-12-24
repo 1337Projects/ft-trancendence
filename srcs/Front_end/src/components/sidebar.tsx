@@ -10,10 +10,11 @@ import { PiMoonStars, PiSunDim } from "react-icons/pi";
 import { GrGamepad } from "react-icons/gr";
 import { RxDashboard } from "react-icons/rx";
 import { IoIosLogOut } from "react-icons/io";
+import { IconType } from 'react-icons';
 
 
 
-function NavItem({text, icon, link}) {
+function NavItem({text, icon, link} : {text : string, icon : IconType, link : string}) {
 	const {color} = useContext(ApearanceContext) || {}
 	const location = useLocation();
 	const isActive = location.pathname.includes(text)

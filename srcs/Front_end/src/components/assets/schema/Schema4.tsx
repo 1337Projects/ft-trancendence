@@ -65,7 +65,7 @@ export default function SchemaFour({rounds}) {
           x2="113.5"
           y2="35.5006"
           stroke="#464444"
-          stroke-linecap="round"
+          strokeLinecap="round"
         />
         <line
           x1="114.5"
@@ -73,7 +73,7 @@ export default function SchemaFour({rounds}) {
           x2="114.5"
           y2="110.5"
           stroke="#464444"
-          stroke-linecap="round"
+          strokeLinecap="round"
         />
         <rect
           x="6"
@@ -137,7 +137,7 @@ export default function SchemaFour({rounds}) {
           y2="-0.5"
           transform="matrix(-1 0 0 1 555 36.0006)"
           stroke="#464444"
-          stroke-linecap="round"
+          strokeLinecap="round"
         />
         <line
           x1="0.5"
@@ -146,7 +146,7 @@ export default function SchemaFour({rounds}) {
           y2="-0.5"
           transform="matrix(0 1 1 0 513 36)"
           stroke="#464444"
-          stroke-linecap="round"
+          strokeLinecap="round"
         />
         <rect
           width="59.0003"
