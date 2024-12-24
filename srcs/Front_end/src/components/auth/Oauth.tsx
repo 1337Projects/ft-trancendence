@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../../Contexts/authContext'
 import { FaGoogle } from 'react-icons/fa'
 import { Si42 } from "react-icons/si";

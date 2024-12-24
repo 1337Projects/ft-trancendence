@@ -1,6 +1,13 @@
+import { UserType } from "@/Types";
 import React from "react";
 
-export default function SchemaFour({rounds}) {
+type MatchType = {
+  winner : UserType,
+  player1 : UserType,
+  player2 : UserType
+}
+
+export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
   return (
       <svg
         className="max-w-full"
@@ -243,7 +250,7 @@ export default function SchemaFour({rounds}) {
 }
 
 
-function PlayerImage({ player }) {
+function PlayerImage({ player } : {player : UserType}) {
     let url = "/_.jpeg"
     if (typeof player === "object") {
         url = player.profile.avatar

@@ -1,37 +1,37 @@
 import React, { useContext, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import MyUseEffect from '@/hooks/MyUseEffect'
-import { MdOutlineTipsAndUpdates } from "react-icons/md";
-import { GiSandsOfTime } from "react-icons/gi";
+// import { MdOutlineTipsAndUpdates } from "react-icons/md";
+// import { GiSandsOfTime } from "react-icons/gi";
 import Hero from './Hero'
 import { DialogContext } from "@/Contexts/DialogContext"
 import { TrItem } from "./tournament/Events"
-import { IoIosMailUnread } from "react-icons/io"
+// import { IoIosMailUnread } from "react-icons/io"
 import Cards from "./GameCards";
 
-function CatButton({icon, text, categorie, handler} : {}) {
-    const {color, theme} = useContext(ApearanceContext) || {}
-    const t = categorie === text ? color : ""
-    return (
-        <button style={{color:t, borderColor : t}} className={`border-[.1px] ${theme == 'light' ? "border-black" : "border-white"} h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} onClick={()=> handler(text)}>
-            <p className="mr-2">{text}</p>
-            <div className="text-[12pt]">
-                {icon}
-            </div>
-        </button>
-    )
-}
+// function CatButton({icon, text, categorie, handler} : {icon : ReactElement : }) {
+//     const {color, theme} = useContext(ApearanceContext) || {}
+//     const t = categorie === text ? color : ""
+//     return (
+//         <button style={{color:t, borderColor : t}} className={`border-[.1px] ${theme == 'light' ? "border-black" : "border-white"} h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} onClick={()=> handler(text)}>
+//             <p className="mr-2">{text}</p>
+//             <div className="text-[12pt]">
+//                 {icon}
+//             </div>
+//         </button>
+//     )
+// }
 
-export function Categories({categorie, Handler}) {
+// export function Categories({categorie, Handler}) {
     
-    return (
-        <div className="w-full h-[30px] flex">
-            <CatButton text="latest" icon={<MdOutlineTipsAndUpdates />} categorie={categorie} handler={Handler} />
-            <CatButton text="ongoing" icon={<GiSandsOfTime />} categorie={categorie}  handler={Handler} />
-            <CatButton text="ended" icon={<IoIosMailUnread />} categorie={categorie}  handler={Handler} />
-        </div>
-    )
-}
+//     return (
+//         <div className="w-full h-[30px] flex">
+//             <CatButton text="latest" icon={<MdOutlineTipsAndUpdates />} categorie={categorie} handler={Handler} />
+//             <CatButton text="ongoing" icon={<GiSandsOfTime />} categorie={categorie}  handler={Handler} />
+//             <CatButton text="ended" icon={<IoIosMailUnread />} categorie={categorie}  handler={Handler} />
+//         </div>
+//     )
+// }
 
 
 export default function Game() {
@@ -68,7 +68,7 @@ export default function Game() {
                     <div className="px-10 mt-16">
                         <h1 className="text-xl font-bold">Avialable Tournments :</h1>
                         <div className="w-full h-[50px] flex items-center mt-6">
-                            <Categories categorie="latest" Handler={null} />
+                            {/* <Categories categorie="latest" Handler={null} /> */}
                         </div>
                         <div  className="w-full mt-6 h-fit overflow-y-scroll">
                             {

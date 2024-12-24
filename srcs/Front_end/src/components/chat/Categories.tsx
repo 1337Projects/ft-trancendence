@@ -1,10 +1,18 @@
-import React, { useContext } from "react";
+import React, { ReactElement, useContext } from "react";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { FaInbox } from "react-icons/fa";
 import { IoIosMailUnread } from "react-icons/io";
 
 
-function CatButton({icon, text, categorie, handler}) {
+function CatButton(
+    {icon, text, categorie, handler} : 
+    {
+        icon : ReactElement,
+        text : string,
+        categorie : string,
+        handler : React.Dispatch<React.SetStateAction<string>>
+    }
+){
     const {color, theme} = useContext(ApearanceContext) || {}
     const t = categorie === text ? color : ""
     return (
@@ -18,7 +26,13 @@ function CatButton({icon, text, categorie, handler}) {
 }
 
 
-export default function Categories({categorie, Handler}) {
+export default function Categories(
+    {categorie, Handler} : 
+    {
+        categorie : string,
+        Handler : React.Dispatch<React.SetStateAction<string>>
+    }
+) {
     
     return (
         <div className="w-full h-[30px] px-4 flex mt-4">

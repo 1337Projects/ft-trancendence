@@ -4,22 +4,23 @@ import { Link, useParams } from 'react-router-dom';
 import { chatSocket } from '../../socket'
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { UserContext } from '../../Contexts/authContext';
-import { FaArrowLeft, FaEllipsisV } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
 import { GoBlocked } from "react-icons/go";
 import { CgUnblock } from "react-icons/cg";
 import { BlockHandler } from './chat'
+import { MessageType } from '@/Types';
 
 
-function calc_time(created_at) {
+function calc_time(created_at : string) {
     if (!created_at) return ''
     const date = new Date(created_at);
     return date.toLocaleString('en-US', { hour: 'numeric', minute : '2-digit',  hour12: true })
 }
 
-function UserMessage({m, username}) {
+function UserMessage({m} : {m : MessageType}) {
     const [time, setTime] = useState<string>('')
     MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
 
@@ -58,6 +59,48 @@ export default function Conversation() {
     )
 }
 
+
+function MessagesSkelton() {
+    return (
+        <ul style={{height : `calc(100vh - 240px)`}}>
+                <div className='w-full h-[50px] flex items-center p-2 mt-4'>
+                    <div className='bg-gray-300 animate-pulse  w-[40px] rounded-full h-[40px]' />
+                    <div className='ml-4'>
+                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
+                </div>
+            </div>
+                <div className='w-full h-[50px] flex items-center justify-end p-2 mt-4'>
+                    <div className='mr-4'>
+                        <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                        <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
+                    </div>
+                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+                </div>
+            <div className='w-full h-[50px] flex items-center justify-end p-2 mt-4'>
+                <div className='mr-4'>
+                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
+                </div>
+                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+                </div>
+            <div className='w-full h-[50px] flex items-center p-2 mt-4'>
+                    <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+                <div className='ml-4'>
+                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
+                </div>
+            </div>
+            <div className='w-full h-[50px] flex items-center p-2 mt-4'>
+                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
+                    <div className='ml-4'>
+                        <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
+                        <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
+                </div>
+                </div>
+        </ul>
+    )
+}
 
 
 function MessagesList() {
@@ -116,7 +159,7 @@ function MessagesList() {
         }
     }, [messages, user])
 
-    function send_fetch_event(page) {
+    function send_fetch_event(page : number) {
         chatSocket.sendMessage({
             "partner": user,
             "from": authInfos?.username,
@@ -125,47 +168,7 @@ function MessagesList() {
         })
     }
 
-    if (!messages) {
-        return (
-            <ul style={{height : `calc(100vh - 240px)`}}>
-                <div className='w-full h-[50px] flex items-center p-2 mt-4'>
-                    <div className='bg-gray-300 animate-pulse  w-[40px] rounded-full h-[40px]' />
-                    <div className='ml-4'>
-                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                </div>
-            </div>
-                <div className='w-full h-[50px] flex items-center justify-end p-2 mt-4'>
-                    <div className='mr-4'>
-                        <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                        <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                    </div>
-                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
-                </div>
-            <div className='w-full h-[50px] flex items-center justify-end p-2 mt-4'>
-                <div className='mr-4'>
-                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                </div>
-                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
-                </div>
-            <div className='w-full h-[50px] flex items-center p-2 mt-4'>
-                    <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
-                <div className='ml-4'>
-                    <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                    <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                </div>
-            </div>
-            <div className='w-full h-[50px] flex items-center p-2 mt-4'>
-                <div className='bg-gray-300 animate-pulse w-[40px] rounded-full h-[40px]' />
-                    <div className='ml-4'>
-                        <div className='bg-gray-300 animate-pulse w-[100px] rounded-full h-[20px]' />
-                        <div className='w-[40px] rounded-full h-2 bg-gray-300 animate-pulse mt-2' />
-                </div>
-                </div>
-            </ul>
-        )
-    }
+    if (!messages) { return ( <MessagesSkelton /> ) }
 
     return (
         <div>
@@ -176,13 +179,13 @@ function MessagesList() {
                             if (index === 0) {
                                 return (
                                     <div className='w-full' ref={lastItem} key={index}>
-                                        <UserMessage m={message} username={authInfos?.username}  />
+                                        <UserMessage m={message}  />
                                     </div>
                                 )
                             }
                             return (
                                 <div className='w-full' key={index}>
-                                    <UserMessage m={message} username={authInfos?.username}  />
+                                    <UserMessage m={message}  />
                                 </div>
                             )
                         })
@@ -193,14 +196,14 @@ function MessagesList() {
     )
 }
 
-function ConversationHeader({userData, friendShip}) {
+function ConversationHeader() {
 
     const { theme } = useContext(ApearanceContext) || {}
-    const { user, authInfos } = useContext(UserContext) || {}
-    const currentUser = friendShip?.receiver?.username == authInfos?.username ? friendShip?.receiver : friendShip?.sender
+    const { user } = useContext(UserContext) || {}
+    const { userData } = useContext(ChatContext) || {}
 
     async function BlockUser() {
-        const res = await BlockHandler(user.id, userData.id)
+        const res = await BlockHandler(user.id, userData.user.id)
         console.log(res)
     }
 
@@ -213,7 +216,7 @@ function ConversationHeader({userData, friendShip}) {
                 headers : {
                     'Content-Type' : 'application/json'
                 },
-                body : JSON.stringify({id : user.id, id_to_unblock :  userData.id})
+                body : JSON.stringify({id : user.id, id_to_unblock :  userData.user.id})
             })
 
             if (!response.ok) {
@@ -252,34 +255,31 @@ function ConversationHeader({userData, friendShip}) {
                 <Link className="p-2 flex items-center justify-center cursor-pointer" to="/dashboard/chat">
                     <FaArrowLeft />
                 </Link>
-                <Link to={`/dashboard/profile/${userData?.username}`} className='flex'>
+                <Link to={`/dashboard/profile/${userData?.user.username}`} className='flex'>
                     <div className='relative'>
-                        <img src={userData?.profile?.avatar} className="bg-white border-[2px] w-[35px] h-[35px] rounded-full mx-4" alt="avatar" />
-                        <div className={`w-3 h-3 rounded-full ${userData.profile.online ? "bg-green-500" : "bg-red-500"} absolute bottom-0 right-4`} >
+                        <img src={userData?.user.profile?.avatar} className="bg-white border-[2px] w-[35px] h-[35px] rounded-full mx-4" alt="avatar" />
+                        <div className={`w-3 h-3 rounded-full ${userData.user.profile.online ? "bg-green-500" : "bg-red-500"} absolute bottom-0 right-4`} >
                             <div className='w-2 h-2 bg-gray-300 absolute left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%] rounded-full' />
                         </div>
                     </div>
                     <div className="infos text-[12px]">
-                        <h1 className="font-bold text-[11pt]">{userData?.username}</h1>
-                        <p className="text-[8pt]">{userData?.profile?.online ? "online" : "offline"}</p>
+                        <h1 className="font-bold text-[11pt]">{userData?.user.username}</h1>
+                        <p className="text-[8pt]">{userData?.user.profile?.online ? "online" : "offline"}</p>
                     </div>
                 </Link>
             </div> 
             <div className='flex items-center'>
                 {
-
-                    // (friendShip.blocker && friendShip.blocker == currentUser.id) && (
-                        friendShip.status == "blocked" ?
-                        <div onClick={UblockHandler} className='flex flex-col justify-center items-center'>
-                            <CgUnblock className='mr-2' /> 
-                            <h1 className='text-xs'>unblock</h1>
-                        </div>
-                        :
-                        <>
-                            <GoBlocked className='mr-2' onClick={BlockUser} />
-                            <h1 className='text-xs'>block</h1>
-                        </>
-                    // )
+                    userData.freindship.status == "blocked" ?
+                    <div onClick={UblockHandler} className='flex flex-col justify-center items-center'>
+                        <CgUnblock className='mr-2' /> 
+                        <h1 className='text-xs'>unblock</h1>
+                    </div>
+                    :
+                    <>
+                        <GoBlocked className='mr-2' onClick={BlockUser} />
+                        <h1 className='text-xs'>block</h1>
+                    </>
                 }
             </div>
         </div>

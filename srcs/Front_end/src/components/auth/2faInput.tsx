@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useReducer, ChangeEvent, KeyboardEvent, FocusEvent } from "react";
-import MyUseEffect from '../../hooks/MyUseEffect';
+
 
 // Type for the submittedValues array in the doSubmit function
 function doSubmit(submittedValues: string[]): Promise<void> {

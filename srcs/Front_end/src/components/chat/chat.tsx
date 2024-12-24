@@ -1,26 +1,10 @@
-import React, { SetStateAction, useContext, useEffect, useReducer, useState } from "react";
+import React, { SetStateAction, useContext, useEffect, useState } from "react";
 import Categories from './Categories'
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { UserContext } from "../../Contexts/authContext";
-import { FaCheckDouble } from "react-icons/fa";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { CgBlock, CgTrash } from "react-icons/cg";
 import MyUseEffect from "../../hooks/MyUseEffect";
 
-
-const actions = [
-    {
-        name: 'block user',
-        handler : BlockHandler,
-        icon : <CgBlock />
-    },
-    {
-        name: 'delete conversation',
-        handler : DeleteHandler,
-        icon : <CgTrash />
-    },
-]
 
 
 export async function BlockHandler(user_id : number, partner_id : number) {
@@ -48,54 +32,18 @@ export async function BlockHandler(user_id : number, partner_id : number) {
     return false
 }
 
-async function DeleteHandler(conversation_id : number) {
-    try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}api/chat/deleteConversations/`, {
-            method : 'DELETE',
-            credentials : 'include',
-            headers : {
-                "Content-Type" : "application/json"
-            },
-            body :  JSON.stringify({conversation_id})
-        })
 
-        if (!response.ok) {
-            console.log(await response.json())
-            throw new Error("somthing went wrong")
-        }
 
-        console.log(await response.json())
-    } catch (err) {
+type ConversationType = {
+    content_of_last_message : string,
+    last_message_time : string
 
-    }
 }
 
-function ConversationOptions({partner}) {
-    const {user} = useContext(UserContext) || {}
-    return (
-        <div className="rounded w-[180px] h-fit p-2 border-[.3px] border-white/20">
-            {
-                actions.map((action, index) => 
-                <div
-                    key={index}
-                    onClick={() => action.handler(user?.id, partner.id)}
-                    className="flex justify-start hover:bg-red-800/30 rounded p-2 items-center h-[30px] font-thin"
-                >
-                    <p className="text-sm lowercase mr-2">{action.name}</p>
-                    <div className="text-[14pt]"> {action.icon} </div>
-                </div>)
-            }
-        </div>
-    )
-}
-
-
-function ConvItem({c, menu}) {
+function ConvItem({c, menu} : {c : ConversationType, menu : boolean}) {
     const [time , setTime] = useState("")
-    const {color} = useContext(ApearanceContext) || {}
     const {user} = useContext(UserContext) || {}
     const data = Object.filter(c, i => typeof i === "object" && i.username !== user?.username)[0]
-    const [open, setOpen] = useState<boolean>(false)
     
     useEffect(() => {
         const date = new Date(c?.last_message_time);
@@ -176,14 +124,14 @@ Object.filter = (obj, predicate) =>
           .filter( key => predicate(obj[key]) )
           .map(key => obj[key]);
 
-export default function ConversationsList({menu, data} : {menu : boolean, data : any}) {
+export default function ConversationsList({menu, data} : {menu : boolean, data : ConversationType[]}) {
     
     const { theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
 
     const [query, setQuery] = useState<string>('')
 
-    const [cnvs, setcnvs] = useState(null)
+    const [cnvs, setcnvs] = useState<ConversationType[] | null>(null)
 
     
     MyUseEffect(() => {

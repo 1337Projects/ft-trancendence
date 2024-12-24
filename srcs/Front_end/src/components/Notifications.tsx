@@ -4,11 +4,18 @@ import { Link } from "react-router-dom";
 import { ApearanceContext } from "../Contexts/ThemeContext";
 import { UserContext } from "../Contexts/authContext";
 import { FaBell, FaCaretDown, FaCheck, FaTrash, FaUserPlus } from "react-icons/fa";
-import { FirendType } from "../Types";
+import { FirendType, UserType } from "../Types";
 import { accept_friend_request, reject_friend_request } from "./profile/ActionsHandlers";
 import { NotificationsContext } from "../Contexts/NotificationsContext";
 
-export function NotItem({data}) {
+type NotificationType = {
+    created_at : string,
+    sender : UserType,
+    action : string,
+    message : string
+}
+
+export function NotItem({data} : {data : NotificationType}) {
 
     const createdAt = new Date(data.created_at);
 
@@ -33,7 +40,7 @@ export function NotItem({data}) {
     )
 }
 
-export function InviteItem({data}) {
+export function InviteItem({data} : {data : FirendType}) {
     const appearence = useContext(ApearanceContext)
     const { friends, setFriends , user, authInfos } = useContext(UserContext) || {}
 
@@ -50,13 +57,13 @@ export function InviteItem({data}) {
         const friendship = friends?.filter(item => item.id == id)[0]
         if( friendship ) {
             friendship.status = 'accept'
-            setFriends!(prev => [...prev?.filter(item => item.id != id)!, friendship!])
+            setFriends(prev => [...prev.filter(item => item.id != id), friendship])
             notificationAcceptFriendRequest(data);
         }
     }
 
     function rejectCallback(id : number) {
-        setFriends!(prev => [...prev?.filter(item => item.id != id)!])
+        setFriends(prev => [...prev.filter(item => item.id != id)])
     }
     const sender = data.sender.username == user?.username ? data.receiver : data.sender;
     
@@ -78,7 +85,7 @@ export function InviteItem({data}) {
                             onClick={
                                 () =>
                                     {
-                                        accept_friend_request(authInfos?.accessToken!, acceptCallback, data.sender);
+                                        accept_friend_request(authInfos.accessToken, acceptCallback, data.sender);
                                     }
                             } 
                             className="flex text-[12px]  items-center h-[28px] rounded px-2 cursor-pointer">
@@ -86,7 +93,7 @@ export function InviteItem({data}) {
                             <FaCheck />
                         </div>
                         <div 
-                            onClick={() => reject_friend_request(authInfos?.accessToken!, rejectCallback, data.sender)}
+                            onClick={() => reject_friend_request(authInfos.accessToken, rejectCallback, data.sender)}
                             style={{borderColor:appearence?.color}} 
                             className="flex text-[12px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">reject</p> */}
@@ -109,9 +116,9 @@ export default function Notifications() {
     const appearence = useContext(ApearanceContext)
 
 
-    function handler(value) {
+    function handler(value : boolean) {
         setShow(value)
-        window.localStorage.setItem('showNotifications', value);
+        window.localStorage.setItem('showNotifications', String(value));
     }
 
     return (
@@ -165,9 +172,9 @@ export function Invites() {
         return () => clearTimeout(timer)
     }, [friends])
 
-    function handler(value) {
+    function handler(value : boolean) {
         setShow(value)
-        window.localStorage.setItem('showInvites', value);
+        window.localStorage.setItem('showInvites', String(value));
     }
 
     return (

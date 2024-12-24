@@ -1,12 +1,11 @@
 
 import React, {useState, useContext, useEffect} from 'react'
 import { ApearanceContext } from '../../Contexts/ThemeContext'
-import { FaClock, FaSearch, FaSmile } from 'react-icons/fa'
-import { FaDeleteLeft } from 'react-icons/fa6'
+import { FaSearch } from 'react-icons/fa'
 
-export default function Emojies({TextInputHandler, inputText}) {
-    const API = 'https://emoji-api.com/'
-    const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
+export default function Emojies({TextInputHandler, inputText} : {inputText : string, TextInputHandler : React.Dispatch<React.SetStateAction<string>>}) {
+    // const API = 'https://emoji-api.com/'
+    // const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
     const {theme} = useContext(ApearanceContext) || {}
     const [query, setQuery] = useState('')
     const [search, setSearch] = useState(false)
@@ -32,7 +31,7 @@ export default function Emojies({TextInputHandler, inputText}) {
     )
 }
 
-function EmojiesSearch({query}) {
+function EmojiesSearch({query} : {query : string}) {
 
     const [emojis, setEmojis] = useState([])
     const API = 'https://emoji-api.com/emojis?search='
@@ -61,14 +60,14 @@ function EmojiesSearch({query}) {
         <ul className='flex w-full text-[14px] flex-wrap p-1 h-[16vh] overflow-y-auto font-noto'>
             {
                 emojis?.map((i, index) => {
-                    return <li className='m-1' onClick={() => textHandler(text + i.character)}  key={index}>{i.character}</li>
+                    return <li className='m-1'  key={index}>{i.character}</li>
                 })
             }
         </ul> 
     )
 }
 
-function EmojesCategories({textHandler, text}) {
+function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<React.SetStateAction<string>>, text : string}) {
     const API = 'https://emoji-api.com/'
     const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
     const [def, setDef] = useState(dataa[0].name)

@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { ReactElement, useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../Contexts/authContext";
-import { FaAnglesUp, FaGear, FaRightToBracket } from "react-icons/fa6";
+import { FaAnglesUp } from "react-icons/fa6";
 import { ApearanceContext } from "../Contexts/ThemeContext";
-import { FaCaretDown, FaSearch, FaUser } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { LuBell } from "react-icons/lu";
 import { FiUser } from "react-icons/fi";
 import { NotificationsContext } from "../Contexts/NotificationsContext";
 import { InviteItem, NotItem } from "./Notifications";
 
 
-function SearchResult({query, queryHandler}) {
+function SearchResult({query, queryHandler} : {query : string, queryHandler : React.Dispatch<React.SetStateAction<string>>}) {
     const navigate = useNavigate()
     const user = useContext(UserContext)
     const [data, setData] = useState(null)
@@ -38,7 +38,7 @@ function SearchResult({query, queryHandler}) {
         return () => clearTimeout(timer)
     }, [query])
 
-    function eventHandler(user) {
+    function eventHandler(user : string) {
         queryHandler('')
         navigate(`/dashboard/profile/${user}`)
     }
@@ -77,7 +77,7 @@ function SearchResult({query, queryHandler}) {
     )
 }
 
-function HeaderItems({icon}) {
+function HeaderItems({icon} : {icon : ReactElement}) {
     return (
         <div className="relative text-[16pt] cursor-pointer ml-6">
             {icon}
@@ -156,9 +156,9 @@ export default function Search() {
                                 <div ref={notsRef} className="bg-darkItems overflow-scroll border-[.3px] border-white/20 rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10">
                                     {
                                         notifications?.length ? 
-                                        notifications.map(not => {
+                                        notifications.map((not, index) => {
                                             return (
-                                                <NotItem data={not} />
+                                                <NotItem key={index} data={not} />
                                             )
                                         })
                                         :
@@ -173,9 +173,9 @@ export default function Search() {
                                 <div ref={invRef} className="bg-darkItems overflow-scroll border-[.3px] border-white/20 rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10">
                                     {
                                         invites?.length ? 
-                                        invites.map(not => {
+                                        invites.map((inv, index) => {
                                             return (
-                                                <InviteItem data={not} />
+                                                <InviteItem data={inv} key={index} />
                                             )
                                         })
                                         :

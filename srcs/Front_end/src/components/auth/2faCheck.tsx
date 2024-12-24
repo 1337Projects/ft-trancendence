@@ -1,8 +1,7 @@
-import TwoFaInput from "./2faInput"
 import { OtpInput } from 'reactjs-otp-input';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { UserContext } from '../../Contexts/authContext'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom';
 import TwoFImg from "../settings/TwoFImg";
 import { ApearanceContext } from "../../Contexts/ThemeContext"

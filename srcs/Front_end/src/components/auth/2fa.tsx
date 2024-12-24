@@ -1,8 +1,6 @@
 
-import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
 import { UserContext } from '../../Contexts/authContext'
-import TwoFaInput from './2faInput';
 import { Link } from 'react-router-dom';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ApearanceContext } from '../../Contexts/ThemeContext';

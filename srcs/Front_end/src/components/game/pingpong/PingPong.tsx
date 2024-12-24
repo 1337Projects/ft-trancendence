@@ -1,42 +1,42 @@
 
-import React, { useContext, useEffect, useRef, useState } from "react"
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useContext, useRef } from "react"
+// import { useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { UserContext } from '@/Contexts/authContext'
-import { gameSocket, tournamentSocket } from "@/socket";
-import Game from "../pingpong/Game";
-import Score from "../pingpong/Score";
+// import { UserContext } from '@/Contexts/authContext'
+// import { gameSocket, tournamentSocket } from "@/socket";
+// import Game from "../pingpong/Game";
+// import Score from "../pingpong/Score";
 
 
 export default function PingPong() {
 
     const canvasRef = useRef<null | HTMLCanvasElement>(null);
     const canvaParentRef = useRef<null | HTMLDivElement>(null);
-    const gameRef = useRef<null | Game>(null);
-    const [data, setData] = useState(null);
-    const { tournament_id, game_id } = useParams()
-    const { authInfos, user } = useContext(UserContext) || {}
-    const navigate = useNavigate()
-    const [ closed, setClosed ] = useState(false)
+    // const gameRef = useRef<null | Game>(null);
+    // const [data, setData] = useState(null);
+    // const { tournament_id, game_id } = useParams()
+    // const { authInfos, user } = useContext(UserContext) || {}
+    // const navigate = useNavigate()
+    // const [ closed, setClosed ] = useState(false)
 
-    useEffect(() => {
+    // useEffect(() => {
         
-        const timer = setTimeout(() => {
-            gameSocket.connect(`ws://localhost:8000/ws/game/${game_id}/?token=${authInfos?.accessToken}`)
-            gameSocket.addCallback("init", init)
-            // gameSocket.addCallback("setInitData", setData)
-        }, 200)
+    //     const timer = setTimeout(() => {
+    //         // gameSocket.connect(`ws://localhost:8000/ws/game/${game_id}/?token=${authInfos?.accessToken}`)
+    //         // gameSocket.addCallback("init", init)
+    //         // gameSocket.addCallback("setInitData", setData)
+    //     }, 200)
 
-        return () => {
-            clearTimeout(timer)
-            gameSocket.close()
-        }
-    }, [])
+    //     return () => {
+    //         clearTimeout(timer)
+    //         gameSocket.close()
+    //     }
+    // }, [])
 
 
-    function init(data) {
-        console.log(data)
-    }
+    // function init(data) {
+    //     console.log(data)
+    // }
 
 
     
@@ -74,17 +74,17 @@ export default function PingPong() {
     return (
             <div className={`relative ${theme === 'light' ? " text-lightText bg-lightItems" : " text-darkText bg-darkItems"}  flex justify-center items-center rounded-none w-full h-[100vh] mt-2 p-2`}>
                 <div className={`relative h-fit`}>
-                    {
+                    {/* {
                         closed && 
                         <h1 
                             className="bg-black/20 h-[150px] flex justify-center items-center absolute z-10 w-full top-[50%] translate-y-[-50%]"
                         > 
                             <h1 className="text-[30pt] font-bold uppercase">{data.winner == user.id ? "victory" : "ko"} </h1>
                         </h1>
-                    }
+                    } */}
                     <div>
                         <div className='flex justify-center'>
-                            <Score data={data} /> 
+                            {/* <Score data={data} />  */}
                         </div>
                         <div className={`flex justify-center items-center mt-10 h-fit`}>
                             {/* {
