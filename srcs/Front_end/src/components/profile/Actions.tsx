@@ -1,12 +1,13 @@
-import React, { useContext } from "react"
+import React, { ReactElement, useContext } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { FaCommentDots, FaEllipsisV, FaPlus, FaUserMinus } from "react-icons/fa"
+import { FaCommentDots, FaEllipsisV, FaPlus } from "react-icons/fa"
 import { GiSandsOfTime } from "react-icons/gi";
 import { FiCheckCircle } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { FirendType, UserType } from "@/Types";
 
-function ActionButton({text, icon, handler}) {
+function ActionButton({text, icon, handler} : { text : string, icon : ReactElement, handler : () => void}) {
 	const appearence = useContext(ApearanceContext)
 	return (
 		<button 
@@ -20,20 +21,21 @@ function ActionButton({text, icon, handler}) {
 	)
 }
 
-export function Actions({friends, profile_user, handlers}) {
+type HandlerType = () => void
+
+export function Actions({friends, profile_user, handlers} : {friends : FirendType[], profile_user : UserType, handlers : HandlerType[]}) {
 	
 	const navigate = useNavigate()
 
-	function has_relation(arr, id, status) {
-		let res = arr?.filter(item => (item.receiver.id == id || item.sender.id== id))
-		if (status)
+	function has_relation(arr : FirendType[], id : number, status : string | null) {
+		const res = arr?.filter(item => (item.receiver.id == id || item.sender.id== id))
+		if (status && res.length > 0)
 			return res[0].status == status
 		return res?.length
 	}
 
-	function is_receiver(arr, id, status) {
-		let res = arr?.filter(item => (item.receiver.id == id && item.status == status))
-		return res?.length
+	function is_receiver(arr : FirendType[], id : number, status : string) {
+		return arr?.filter(item => (item.receiver.id == id && item.status == status)).length
 	}
 
 
@@ -53,7 +55,6 @@ export function Actions({friends, profile_user, handlers}) {
 		return (
 			<div className='flex justify-between items-center w-[120px]'>
 				<ActionButton text="contact" icon={<FaCommentDots />} handler={() => navigate(`/dashboard/chat/${profile_user.username}`)} />
-				{/* <ActionButton text="unfriend" icon={<FaUserMinus />} handler={handlers.cancle} /> */}
 				<FaEllipsisV className="w-[100px]" />
 				{/* list of unfriend , block, unblock  */}
 			</div>

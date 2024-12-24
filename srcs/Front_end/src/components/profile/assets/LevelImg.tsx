@@ -1,6 +1,6 @@
 import React from  'react';
 
-export default function LevelImg({color}) {
+export default function LevelImg({color} : {color : string}) {
     return (
         <svg className='max-w-full max-h-full' width="159" height="159" viewBox="0 0 159 159" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M147.492 63.2979C147.492 63.2979 119.826 41.3559 117.666 41.4608C116.019 41.5435 112.919 44.0334 112.919 44.0334C112.919 44.0334 102.832 33.8574 100.866 33.5999C98.9012 33.3423 70.5706 62.1086 70.5706 62.1086V102.371H147.492V63.2979Z" fill="#E0E0E0"/>

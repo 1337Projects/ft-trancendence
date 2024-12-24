@@ -14,9 +14,9 @@ export default function Level() {
 	const appearence = useContext(ApearanceContext)
     const user = useContext(UserContext)
 
-	function test(f) {
-		return Math.ceil(((f < 1.0) ? f : (f % Math.floor(f))) * 100)
-	}
+	// function test(f) {
+	// 	return Math.ceil(((f < 1.0) ? f : (f % Math.floor(f))) * 100)
+	// }
 
 	return (
 		<div className="flex items-center">

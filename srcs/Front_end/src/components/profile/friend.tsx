@@ -4,10 +4,10 @@ import { ApearanceContext } from '@/Contexts/ThemeContext';
 import { Link, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
 import { FaArrowRight } from 'react-icons/fa';
-import { FirendType } from '@/Types';
+import { FirendType, UserType } from '@/Types';
 import MyUseEffect from '@/hooks/MyUseEffect';
 
-function FriendCard({friend}) {
+function FriendCard({friend} : {friend : UserType}) {
 	const appearence = useContext(ApearanceContext)
 
 	return (

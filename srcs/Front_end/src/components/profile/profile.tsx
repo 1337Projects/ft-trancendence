@@ -57,7 +57,7 @@ export default function Profile() {
 	)
 }
 
-function ProfileNav({ currentUser }) {
+function ProfileNav({ currentUser } : { currentUser : UserType | null}) {
 
 	const { theme , color } = useContext(ApearanceContext) || {}
 	const location = useLocation()

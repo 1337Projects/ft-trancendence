@@ -1,4 +1,4 @@
-import React, { useContext,  } from "react"
+import React, { useContext } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { Actions } from "./Actions"
 import {  UserContext } from "@/Contexts/authContext"
@@ -8,7 +8,7 @@ import {
 	reject_friend_request,
 	cancle_friend_request
 } from './ActionsHandlers'
-import { FirendType } from "@/Types"
+import { FirendType, UserType } from "@/Types"
 
 function BannerSkeleton() {
 	return (
@@ -40,7 +40,7 @@ function BannerSkeleton() {
 	)
 }
 
-export function Banner({user}) {
+export function Banner({ user } : { user : UserType }) {
 
 	
 	const appearence = useContext(ApearanceContext)
@@ -50,23 +50,23 @@ export function Banner({user}) {
 		setFriends!(prev => [...prev!, data])
 	}
 
-	function RejectFriendCallback(id : Number) {
-		setFriends!(prev => prev?.filter(item => item.id != id)!)
+	function RejectFriendCallback(id : number) {
+		setFriends!(prev => prev.filter(item => item.id != id))
 	}
 
-	function AcceptFriendCallback(id : Number) {
-		let friendship = friends?.filter(item => item.id == id)[0]
+	function AcceptFriendCallback(id : number) {
+		const friendship = friends?.filter(item => item.id == id)[0]
 		friendship!.status = 'accept'
-		setFriends!(prev => [...prev?.filter(item => item.id != id)!, friendship!])
+		setFriends!(prev => [...prev.filter(item => item.id != id), friendship!])
 	}
 
 	
 
 	const handlers = {
-		"new" : () => send_friend_request(authInfos?.accessToken!, AddFriendCallback, user),
-		"reject" : () => reject_friend_request(authInfos?.accessToken!, RejectFriendCallback, user),
-		"accept" : () => accept_friend_request(authInfos?.accessToken!, AcceptFriendCallback, user),
-		"cancle" : () => cancle_friend_request(authInfos?.accessToken!, RejectFriendCallback, user)
+		"new" : () => send_friend_request(authInfos.accessToken, AddFriendCallback, user),
+		"reject" : () => reject_friend_request(authInfos.accessToken, RejectFriendCallback, user),
+		"accept" : () => accept_friend_request(authInfos.accessToken, AcceptFriendCallback, user),
+		"cancle" : () => cancle_friend_request(authInfos.accessToken, RejectFriendCallback, user)
 	}
 
 	if (!user) {

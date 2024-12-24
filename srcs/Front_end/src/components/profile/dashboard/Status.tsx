@@ -1,7 +1,7 @@
 import React from "react"
 
 
-function MatchStatusItem({title, avatar, color}) {
+function MatchStatusItem({title, avatar, color} : {title : string, avatar : string, color : string}) {
 	return (
 		<li className={`border-b-2 ${color} text-[22pt] flex items-center justify-center`}>
 			<div className='text-center'>

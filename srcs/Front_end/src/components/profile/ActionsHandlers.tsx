@@ -1,4 +1,4 @@
-import { FirendType, UserType } from "@/Contexts/authContext"
+import { FirendType, UserType } from "@/Types"
 
 
 export function send_friend_request(token : string, callback : (data : FirendType) => void , data : UserType) {
@@ -20,7 +20,7 @@ export function send_friend_request(token : string, callback : (data : FirendTyp
     .catch(err => console.log(err))
 }
 
-export function accept_friend_request(token : string, callback : (id : Number) => void  | null , data : UserType) {
+export function accept_friend_request(token : string, callback : (id : number) => void  | null , data : UserType) {
     fetch(`${import.meta.env.VITE_API_URL}api/friends/accept_friend/`, {
         method : 'POST',
         headers : {
@@ -40,7 +40,7 @@ export function accept_friend_request(token : string, callback : (id : Number) =
     .catch(err => console.log(err))
 }
 
-export function reject_friend_request(token : string, callback : (id : Number) => void , data : UserType) {
+export function reject_friend_request(token : string, callback : (id : number) => void , data : UserType) {
     fetch(`${import.meta.env.VITE_API_URL}api/friends/reject_friend/`, {
         method : 'POST',
         headers : {
@@ -59,7 +59,7 @@ export function reject_friend_request(token : string, callback : (id : Number) =
     .catch(err => console.log(err))
 }
 
-export function cancle_friend_request(token : string, callback : (id : Number) => void , data : UserType) {
+export function cancle_friend_request(token : string, callback : (id : number) => void , data : UserType) {
     fetch(`${import.meta.env.VITE_API_URL}api/friends/cancle_friend/`, {
         method : 'POST',
         headers : {
