@@ -12,7 +12,7 @@ import ChatLayout from './Layouts/ChatLayout'
 
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
-import ConfirmeEmail from './components/auth/ConfirmeEmail'
+// import ConfirmeEmail from './components/auth/ConfirmeEmail'
 import { Oauth } from './components/auth/Oauth'
 import TwoFactor from './components/auth/2fa'
 import TwoFacCheck from './components/auth/2faCheck'
@@ -61,7 +61,7 @@ const router = createBrowserRouter(
         <Route path='2fa' element={<TwoFactor/>} />
         <Route path='2faCheck' element={<TwoFacCheck/>} />
         <Route path='forgetPassowrd' element={<ForgetPassword />} />
-        <Route path='confirme/:id' element={<ConfirmeEmail/>} />
+        {/* <Route path='confirme/:id' element={<ConfirmeEmail/>} /> */}
       </Route>
 
       <Route path='/dashboard' element={<DashboardPrivateRoute />}>
