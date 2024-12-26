@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useContext } from "react"
-import { ApearanceContext } from '@/Contexts/ThemeContext';
 import { Link, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
 import { FaArrowRight } from 'react-icons/fa';
@@ -8,23 +7,22 @@ import { FirendType, UserType } from '@/Types';
 import MyUseEffect from '@/hooks/MyUseEffect';
 
 function FriendCard({friend} : {friend : UserType}) {
-	const appearence = useContext(ApearanceContext)
 
 	return (
-		<div className={`h-fit  m-2 border-[.3px] border-white/20 rounded relative`}
+		<div className={`h-fit m-2 border-[.3px] border-white/20 relative rounded`}
         >
-            <img src={friend?.profile?.avatar} alt="" className="w-full h-full rounded-t" />
+            <img src={friend?.profile?.avatar} alt="" className="w-full h-[130px] rounded" />
             <div className='w-full h-full p-2 absolute bottom-0 bg-blackG rounded'>
-                <div className='absolute bottom-2'>
+                <div className='absolute bottom-2 text-white'>
                     <h2 className='text-[16px] font-bold capitalize'>{friend?.username}</h2>
                     <p className='text-xs'>level {friend?.profile.level}</p>
                     <Link
                         to={`../../profile/${friend?.username}`}  
-                        className='rounded-sm text-[#fff] text-[14px]'
+                        className='text-[14px]'
                         
                     >
-                        <div style={{color : appearence?.color}} className='mt-2 rounded flex  items-center'>
-                            <p className='mr-2'>See profile</p>
+                        <div className='mt-2 rounded flex  items-center'>
+                            <p className='mr-2 lowercase'>See profile</p>
                             <FaArrowRight />
                         </div>
                     </Link>
@@ -60,7 +58,7 @@ export default function Friends() {
     return (
         <div className='w-full h-fit'>
             <div className='mt-10 px-4'>
-                <h1 className='text-xl uppercase font-bold underline'>my friends</h1>
+                <h1 className='text-lg uppercase font-bold'>my friends</h1>
             </div>
             {
                 friends?.length ?

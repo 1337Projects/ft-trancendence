@@ -153,7 +153,7 @@ export default function Search() {
                             </button>
                             {
                                 notsOpen &&
-                                <div ref={notsRef} className="bg-darkItems overflow-scroll border-[.3px] border-white/20 rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10">
+                                <div ref={notsRef} className={`${appearence?.theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px]  rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
                                     {
                                         notifications?.length ? 
                                         notifications.map((not, index) => {
@@ -170,7 +170,7 @@ export default function Search() {
                             }
                             {
                                 invitesOpen &&
-                                <div ref={invRef} className="bg-darkItems overflow-scroll border-[.3px] border-white/20 rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10">
+                                <div ref={invRef} className={`${appearence?.theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px] rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
                                     {
                                         invites?.length ? 
                                         invites.map((inv, index) => {

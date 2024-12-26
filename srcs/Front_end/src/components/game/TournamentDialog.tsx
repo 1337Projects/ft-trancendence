@@ -3,6 +3,11 @@ import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { DialogContext } from "@/Contexts/DialogContext"
 
 
+type DialogDataType = {
+    members : number,
+    name : string
+}
+
 export default function TournmentDialog() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const { setOpen } = useContext(DialogContext) || {}
@@ -57,19 +62,8 @@ export default function TournmentDialog() {
                                         placeholder="tournament name..."
                                     />
                                 </div>
-                                <div className="mt-4">
-                                    <label className="w-full block" htmlFor="members">members</label>
-                                    <input 
-                                        step="4"
-                                        className={`rounded px-6 bg-transparent ${theme == 'light' ? "border-black/20" : "border-white/20"} h-[40px] border-[.3px] w-full mt-2`}
-                                        type="number"
-                                        id="members" 
-                                        name="members"
-                                        value={data.members}
-                                        onChange={(e) => setData({...data, members : parseInt(e.target.value)})}
-                                        max="16"
-                                        min="4"
-                                    />
+                                <div className="mt-6">
+                                    <ParticipantsList data={data} handler={setData} />
                                 </div>
                         </div>
                     }
@@ -101,6 +95,42 @@ export default function TournmentDialog() {
                         </button>   
                     </div>
                 }
+            </div>
+        </div>
+    )
+}
+
+
+
+function ParticaipantElm({elm, handler, data} : {data : DialogDataType , elm : string, handler : React.Dispatch<React.SetStateAction<DialogDataType>>}) {
+    
+    return (
+        <label 
+            className={`p-2 ${data.members === Number(elm) && "bg-gray-800 text-white"} text-sm rounded hover:bg-gray-700/70 w-[120px] border-[.3px] border-black/30 flex justify-center items-center`} 
+            htmlFor={elm} 
+            onClick={() => handler(prev => { return {...prev, members : parseInt(elm)} })}
+        >
+            <input 
+                style={{display : "none"}} 
+                checked={data.members === Number(elm)} 
+                className="mr-2" 
+                type="radio" 
+                id={elm} 
+                name="participants" 
+                value={elm} 
+            />
+            <p className="capitalize">{elm} players</p>
+        </label>
+    )
+}
+
+
+function ParticipantsList({handler , data } : {data : DialogDataType , handler : React.Dispatch<React.SetStateAction<DialogDataType>>}) {
+    return (
+        <div>
+            <h1>participents number :</h1>
+            <div className="flex mt-4 justify-between items-center max-w-[380px]">
+                { ["4", "8", "16"].map((elm) => <ParticaipantElm data={data} handler={handler} elm={elm} />) }
             </div>
         </div>
     )

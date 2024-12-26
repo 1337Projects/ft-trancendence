@@ -40,6 +40,7 @@ export function ActionsList({ friend }) {
 	const toggleButtonRef = useRef<null | HTMLDivElement>(null)
 	const { authInfos, user , setFriends, friends} = useContext(UserContext) || {}
 	const [ blocked, setBlocked ] = useState(false)
+	const { theme } = useContext(ApearanceContext) || {}
 
 	useEffect(() => {
 		if (friends) {
@@ -80,7 +81,7 @@ export function ActionsList({ friend }) {
 			{
 				// block and unblock refactor backend
 				openMenu && 
-				<ul ref={menuRef} className="w-[160px] h-fit p-2 z-10 rounded bg-darkItems border-[.2px] border-white/20 absolute top-[40px] right-[10px]">
+				<ul ref={menuRef} className={`w-[160px] h-fit p-2 z-10 rounded ${theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} border-[.2px] absolute top-[40px] right-[10px]`}>
 					{
 						blocked ?
 						<li  onClick={
