@@ -64,13 +64,15 @@ services:
     volumes:
       - ${PWD}/srcs/nginx:/app
       - ./srcs/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./srcs/nginx/certificate.crt:/etc/nginx/certificate.crt
+      - ./srcs/nginx/prv_certificate.crt:/etc/nginx/prv_certificate.crt
     networks:
       - ft_transcendence
     depends_on:
       - be
       - frontend
     environment:
-    - WAIT_FOR_IT_TIMEOUT=60
+      - WAIT_FOR_IT_TIMEOUT=60
 
 volumes:
   pgdata:
