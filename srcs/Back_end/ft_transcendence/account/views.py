@@ -135,7 +135,7 @@ def accept_friend(request):
             relation_friend.status = "accept"
             relation_friend.save()
             serializer = UserWithFriendsSerializer(relation_friend)
-            return Response({"status": 200, "message": serializer.data})
+            return Response({"status": 200, "res": serializer.data})
         except ObjectDoesNotExist:
             return Response({"status": 400, "message": "the Friends object does not exist"})
     return Response({"message": "there is no data recieved", "status": 400})

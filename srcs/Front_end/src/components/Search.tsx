@@ -108,7 +108,7 @@ export default function Search() {
             if (notsRef.current && !notsRef.current.contains(event.target)  && !toggleNotsButtonRef.current.contains(event.target)) {
                 setNotsOpen(false)
             }
-            if (invRef.current && invRef.current != event.target && !toggleInvitesButtonRef.current.contains(event.target)) {
+            if (invRef.current && !invRef.current.contains(event.target) && !toggleInvitesButtonRef.current.contains(event.target)) {
                 setInvitesOpen(false)
             }
         };

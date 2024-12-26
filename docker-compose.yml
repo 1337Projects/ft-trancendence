@@ -3,8 +3,10 @@ services:
     container_name: data_base
     image: postgres:17-alpine
     restart: always
-    expose:
-      - 5137
+    ports:
+      - "5432:5432"
+    # expose:
+    #   - 5137
     env_file:
       - .env
     healthcheck:

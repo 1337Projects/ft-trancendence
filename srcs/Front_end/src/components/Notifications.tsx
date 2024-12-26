@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { notificationSocket } from "../socket";
+import { notificationSocket } from "@/socket";
 import { Link } from "react-router-dom";
-import { ApearanceContext } from "../Contexts/ThemeContext";
-import { UserContext } from "../Contexts/authContext";
+import { ApearanceContext } from "@/Contexts/ThemeContext";
+import { UserContext } from "@/Contexts/authContext";
 import { FaBell, FaCaretDown, FaCheck, FaTrash, FaUserPlus } from "react-icons/fa";
-import { FirendType, UserType } from "../Types";
-import { accept_friend_request, reject_friend_request } from "./profile/ActionsHandlers";
-import { NotificationsContext } from "../Contexts/NotificationsContext";
+import { FirendType, UserType } from "@/Types";
+import { NotificationsContext } from "@/Contexts/NotificationsContext";
+import { RelationsHandler } from "./profile/ActionsHandlers";
 
 type NotificationType = {
     created_at : string,
@@ -42,7 +42,7 @@ export function NotItem({data} : {data : NotificationType}) {
 
 export function InviteItem({data} : {data : FirendType}) {
     const appearence = useContext(ApearanceContext)
-    const { friends, setFriends , user, authInfos } = useContext(UserContext) || {}
+    const { setFriends , authInfos } = useContext(UserContext) || {}
 
     const notificationAcceptFriendRequest = (data) => {
         notificationSocket.sendMessage({
@@ -53,47 +53,52 @@ export function InviteItem({data} : {data : FirendType}) {
         });
     };
 
-    function acceptCallback(id : number) {
-        const friendship = friends?.filter(item => item.id == id)[0]
-        if( friendship ) {
-            friendship.status = 'accept'
-            setFriends(prev => [...prev.filter(item => item.id != id), friendship])
-            notificationAcceptFriendRequest(data);
-        }
+    function AcceptFriendCallback(response : ResponseType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.res?.id), response.res!] : [])
+        notificationAcceptFriendRequest(data);
     }
 
-    function rejectCallback(id : number) {
-        setFriends(prev => [...prev.filter(item => item.id != id)])
+    
+
+    function DeleteFriendRequest(response : ResponseType) {
+        setFriends!(prev => prev ? prev.filter(item => item.id != response.id) : [])
     }
-    const sender = data.sender.username == user?.username ? data.receiver : data.sender;
-    
-    
+ 
 
     return (
         <li className="flex ml-[50%] translate-x-[-50%] w-full my-2 p-1 h-[70px]">
             <div className="text text-primaryText w-full">
                 <div className="flex items-center justify-center h-full">
-                    <Link className="flex" to={`/dashboard/profile/${sender.username}`}>
-                        <img src={sender.profile.avatar} alt="user" className="h-10 w-10 rounded-[50%]" />
+                    <Link className="flex" to={`/dashboard/profile/${data.sender.username}`}>
+                        <img src={data.sender.profile.avatar} alt="user" className="h-10 w-10 rounded-[50%]" />
                         <div className="ml-2">
-                            <h1 className="font-bold text-[10pt]">{sender.username}</h1>
+                            <h1 className="font-bold text-[10pt]">{data.sender.username}</h1>
                             <p className="text-small mt-1">sent friend request</p>
                         </div>
                     </Link>
                     <div className="ml-4 actions flex w-[100px] justify-evenly  items-center text-primaryText ">
                         <div
                             onClick={
-                                () =>
-                                    {
-                                        accept_friend_request(authInfos.accessToken, acceptCallback, data.sender);
-                                    }
+                                () => RelationsHandler(
+                                    'api/friends/accept_friend/',
+                                    authInfos?.accessToken!,
+                                    data.sender,
+                                    AcceptFriendCallback
+                                )
                             } 
                             className="flex text-[12px]  items-center h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">accept</p> */}
                             <FaCheck />
                         </div>
                         <div 
-                            onClick={() => reject_friend_request(authInfos.accessToken, rejectCallback, data.sender)}
+                            onClick={() => 
+                                RelationsHandler(
+                                    'api/friends/reject_friend/',
+                                    authInfos?.accessToken!,
+                                    data.sender,
+                                    DeleteFriendRequest
+                                )
+                            }
                             style={{borderColor:appearence?.color}} 
                             className="flex text-[12px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
                             {/* <p className="mr-2 capitalize">reject</p> */}

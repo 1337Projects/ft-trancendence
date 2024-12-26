@@ -211,11 +211,17 @@ def change_password(request):
     user.save()
     return JsonResponse({'message': 'The Password has been changed'}, status=200)
 
+
+
+
 @api_view(["post"])
 def block_user(request):
-    id = request.data.get('id')
-    id_to_block = request.data.get('id_to_block')
-    if not id or not id_to_block:
+    try:
+        id = request.data["data"].get('id')
+        id_to_block = request.data["data"].get('id_to_block')
+        if not id or not id_to_block:
+            return JsonResponse({'error': 'User ID or User to block ID is missing'}, status=400)
+    except:
         return JsonResponse({'error': 'User ID or User to block ID is missing'}, status=400)
     try:
         blocker = User.objects.get(id=id)
@@ -227,7 +233,7 @@ def block_user(request):
             freinds.status = "blocked"
             freinds.blocker = blocker
             freinds.save()
-            return JsonResponse({'message': 'User has been blocked'}, status=200)
+            return JsonResponse({'message': 'User has been blocked', 'res' : {}, 'status' : 200}, status=200)
         else:
             return JsonResponse({'message': 'User is already blocked or no relationship exist between them'}, status=400)
     except User.DoesNotExist:
@@ -235,8 +241,8 @@ def block_user(request):
         
 @api_view(["post"])
 def unblock_user(request):
-    id = request.data.get('id')
-    id_to_unblock = request.data.get('id_to_unblock')
+    id = request.data["data"].get('id')
+    id_to_unblock = request.data["data"].get('id_to_unblock')
     if not id or not id_to_unblock:
         return JsonResponse({'error': 'User ID or User to unblock ID is missing'}, status=400)
     try:
@@ -245,9 +251,10 @@ def unblock_user(request):
         if blocker == user_to_unblock:
             return JsonResponse({'error': 'You cannot unblock yourself'}, status=400)
         freinds = Friends.objects.filter(Q(sender=blocker, receiver=user_to_unblock) | Q(sender=user_to_unblock, receiver=blocker)).first()
+        tmp_id = freinds.id
         if freinds and freinds.status == "blocked" and freinds.blocker == blocker:
             freinds.delete()
-            return JsonResponse({'message': 'User has been unblocked'}, status=200)
+            return JsonResponse({'message': 'User has been unblocked', 'id' : tmp_id, 'status' : 200}, status=200)
         else:
             return JsonResponse({'message': 'User is not blocked or no relationship exist between them or you are not the blocker'}, status=400)
     except User.DoesNotExist:

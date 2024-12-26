@@ -1,15 +1,25 @@
 import React, { ReactElement, useContext, useEffect, useRef, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { FaCommentDots, FaEllipsisV, FaPlus, FaUserMinus } from "react-icons/fa"
-import { GiSandsOfTime } from "react-icons/gi";
-import { FiCheckCircle } from "react-icons/fi";
-import { IoMdClose } from "react-icons/io";
+import { FaEllipsisV, FaUserMinus } from "react-icons/fa"
 import { GoBlocked } from "react-icons/go";
 import { CgUnblock } from "react-icons/cg";
-import { useNavigate } from "react-router-dom";
-import { FirendType, UserType } from "@/Types";
+import { UserType } from "@/Types";
+import { HasRelationWithStatus, RelationsHandler } from "./ActionsHandlers";
+import { UserContext } from "@/Contexts/authContext";
 
-function ActionButton({text, icon, handler} : { text : string, icon : ReactElement, handler : () => void}) {
+
+export function ActionButton({text, icon, handler} : 
+	{ 
+		text : string,
+		icon : ReactElement,
+		handler : (
+			url : string,
+			token : string,
+			friend : UserType,
+			callback : (response : ResponseType) => void
+		) => void
+	}
+) {
 	const appearence = useContext(ApearanceContext)
 	return (
 		<button 
@@ -23,81 +33,95 @@ function ActionButton({text, icon, handler} : { text : string, icon : ReactEleme
 	)
 }
 
-type HandlerType = () => void
+export function ActionsList({ friend }) {
 
-export function Actions({friends, profile_user, handlers} : {friends : FirendType[], profile_user : UserType, handlers : HandlerType[]}) {
-	
-	const navigate = useNavigate()
+	const [ openMenu, setOpenMenu ] = useState(false)
+	const menuRef = useRef<null | HTMLUListElement>(null)
+	const toggleButtonRef = useRef<null | HTMLDivElement>(null)
+	const { authInfos, user , setFriends, friends} = useContext(UserContext) || {}
+	const [ blocked, setBlocked ] = useState(false)
 
-	function has_relation(arr : FirendType[], id : number, status : string | null) {
-		const res = arr?.filter(item => (item.receiver.id == id || item.sender.id== id))
-		if (status && res.length > 0)
-			return res[0].status == status
-		return res?.length
-	}
-
-	function is_receiver(arr : FirendType[], id : number, status : string) {
-		return arr?.filter(item => (item.receiver.id == id && item.status == status)).length
-	}
+	useEffect(() => {
+		if (friends) {
+			setBlocked(Boolean(HasRelationWithStatus(friends, friend.id, 'blocked')))
+		}
+	}, [])
 
 
-	if (!has_relation(friends, profile_user?.id, null)) {
-		return (<ActionButton text="new Friend" icon={<FaPlus />} handler={handlers.new} />)
-	}
+	function UpdateFriendCallback(response : ResponseType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.res?.id), response.res!] : [])
+    }
 
-	if (has_relation(friends, profile_user?.id, 'waiting') && !is_receiver(friends, profile_user.id, 'waiting')) {
-		return (
-			<div className='flex justify-between w-[190px]'>
-				<ActionButton text="accept" icon={<FiCheckCircle />} handler={handlers.accept} />
-				<ActionButton text="reject" icon={<IoMdClose />} handler={handlers.reject} />
+	function DeleteFriendRequest(response : ResponseType) {
+        setFriends!(prev => prev ? prev.filter(item => item.id != response.id) : [])
+    }
+
+	useEffect(() => {
+
+		function clickHandler(event) {
+			if ( menuRef.current 
+				&& toggleButtonRef.current 
+				&& !menuRef.current.contains(event.target) 
+				&& !toggleButtonRef.current.contains(event.target)
+			){
+				setOpenMenu(false)
+			}
+		}
+		window.addEventListener('mousedown', clickHandler)
+		return () => window.removeEventListener('mousedown', clickHandler)
+	}, [])
+
+
+	return (
+		<div className="relative">
+			<div className="cursor-pointer" ref={toggleButtonRef} onClick={() => setOpenMenu(prev => !prev)}>
+				<FaEllipsisV />
 			</div>
-		)
-	}
-	if (has_relation(friends, profile_user?.id, 'accept') || has_relation(friends, profile_user?.id, 'blocked')){
-		const [ openMenu, setOpenMenu ] = useState(false)
-		const menuRef = useRef<null | HTMLUListElement>(null)
-		const toggleButtonRef = useRef<null | HTMLDivElement>(null)
-
-		useEffect(() => {
-
-			function clickHandler(event) {
-				if (menuRef.current && toggleButtonRef.current && !menuRef.current.contains(event.target) && !toggleButtonRef.current.contains(event.target)) {
-					setOpenMenu(false)
-				}
-			}
-
-			window.addEventListener('mousedown', clickHandler)
-
-			return () => {
-				window.removeEventListener('mousedown', clickHandler)
-			}
-		}, [])
-
-		return (
-			<div className='flex justify-between h-full items-center w-[120px] relative'>
-				<ActionButton text="contact" icon={<FaCommentDots />} handler={() => navigate(`/dashboard/chat/${profile_user.username}`)} />
-				<div className="cursor-pointer" ref={toggleButtonRef} onClick={() => setOpenMenu(prev => !prev)}>
-					<FaEllipsisV />
-				</div>
-				{
-					openMenu && 
-					<ul ref={menuRef} className="w-[160px] h-fit p-2 z-10 rounded bg-darkItems border-[.2px] border-white/20 absolute top-[50px] right-[10px]">
-						<li className="w-full hover:bg-gray-700/40 rounded px-4 justify-between text-xs p-2 h-[40px] flex items-center">
-							<p>unfriend</p>
-							<FaUserMinus />
-						</li>
-						<li className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between">
-							<p>block</p>
-							<GoBlocked />
-						</li>
-						<li className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between">
+			{
+				// block and unblock refactor backend
+				openMenu && 
+				<ul ref={menuRef} className="w-[160px] h-fit p-2 z-10 rounded bg-darkItems border-[.2px] border-white/20 absolute top-[40px] right-[10px]">
+					{
+						blocked ?
+						<li  onClick={
+							() => RelationsHandler(
+								'api/users/unblockUser/',
+								authInfos?.accessToken!,
+								{id : user?.id!, id_to_unblock : friend.id},
+								DeleteFriendRequest
+							)
+						} className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between">
 							<p>unblock</p>
 							<CgUnblock />
 						</li>
-					</ul>
-				}
-			</div>
-		)
-	}
-	return (<ActionButton text="waiting" icon={<GiSandsOfTime />} handler={handlers.cancle} />)
+						:
+						<>
+							<li onClick={
+								() => RelationsHandler(
+									'api/friends/cancle_friend/',
+									authInfos?.accessToken!,
+									friend,
+									DeleteFriendRequest
+								)
+							} className="w-full hover:bg-gray-700/40 rounded px-4 justify-between text-xs p-2 h-[40px] flex items-center">
+								<p>unfriend</p>
+								<FaUserMinus />
+							</li>
+							<li onClick={
+								() => RelationsHandler(
+									'api/users/blockUser/',
+									authInfos?.accessToken!,
+									{id : user?.id!, id_to_block : friend.id},
+									UpdateFriendCallback
+								)
+								} className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between">
+								<p>block</p>
+								<GoBlocked />
+							</li>
+						</>
+					}
+				</ul>
+			}
+		</div>
+	)
 }

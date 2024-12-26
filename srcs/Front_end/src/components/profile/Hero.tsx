@@ -1,14 +1,8 @@
 import React, { useContext } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { Actions } from "./Actions"
 import {  UserContext } from "@/Contexts/authContext"
-import {
-	accept_friend_request, 
-	send_friend_request,
-	reject_friend_request,
-	cancle_friend_request
-} from './ActionsHandlers'
-import { FirendType, UserType } from "@/Types"
+import { Relations } from './ActionsHandlers'
+import { UserType } from "@/Types"
 
 function BannerSkeleton() {
 	return (
@@ -42,32 +36,8 @@ function BannerSkeleton() {
 
 export function Banner({ user } : { user : UserType }) {
 
-	
 	const appearence = useContext(ApearanceContext)
-	const { friends, authInfos, setFriends } = useContext(UserContext) || {}
-
-	function AddFriendCallback(data : FirendType) {
-		setFriends!(prev => [...prev!, data])
-	}
-
-	function RejectFriendCallback(id : number) {
-		setFriends!(prev => prev.filter(item => item.id != id))
-	}
-
-	function AcceptFriendCallback(id : number) {
-		const friendship = friends?.filter(item => item.id == id)[0]
-		friendship!.status = 'accept'
-		setFriends!(prev => [...prev.filter(item => item.id != id), friendship!])
-	}
-
-	
-
-	const handlers = {
-		"new" : () => send_friend_request(authInfos.accessToken, AddFriendCallback, user),
-		"reject" : () => reject_friend_request(authInfos.accessToken, RejectFriendCallback, user),
-		"accept" : () => accept_friend_request(authInfos.accessToken, AcceptFriendCallback, user),
-		"cancle" : () => cancle_friend_request(authInfos.accessToken, RejectFriendCallback, user)
-	}
+	const { authInfos } = useContext(UserContext) || {}
 
 	if (!user) {
 		return (
@@ -75,7 +45,6 @@ export function Banner({ user } : { user : UserType }) {
 		)
 	}
 
-	
 	return (
 		<div>
 			<div className='top-0 h-[180px] w-full border-b-[1px] overflow-hidden'>
@@ -105,7 +74,7 @@ export function Banner({ user } : { user : UserType }) {
 						<div>
 							{
 								(user && user?.username != authInfos?.username) &&
-								<Actions friends={friends} profile_user={user} handlers={handlers} />
+								<Relations friend={user} />
 							}
 						</div>
 					</div>
