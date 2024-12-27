@@ -59,9 +59,7 @@ export function Oauth({url} : {url : string}) {
             console.log(data['2fa'])
             if (data['2fa'] === 'True')
             {
-              navigate('/auth/2faCheck', {
-                state: {dataa: data}
-              })
+              navigate('/auth/2faCheck')
             }
             else {
 

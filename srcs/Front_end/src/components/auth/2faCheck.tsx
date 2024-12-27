@@ -20,11 +20,15 @@ export default function TwoFacCheck () {
     const location = useLocation();  // Get location object
     const navigate = useNavigate()
     const { color, theme } = useContext(ApearanceContext) || {}
+    const [dataa, setDataa] = useState({
+            topt: ''
+    })
 
-    const { dataa } = location.state || {}; 
     const handleChange = (otp) =>{
         setOtp(otp);
-        dataa['topt'] = otp
+        setDataa({
+                topt: otp
+        })
     }
     
     const handleSubmit = () =>{

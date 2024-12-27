@@ -30,7 +30,7 @@ function IsSender(
 
 
 export function RelationsHandler(url : string, token : string, body : UserType, callback : (response : ResponseType) => void) {
-    console.log(body)
+    // console.log(body)
     fetch(`${import.meta.env.VITE_API_URL}${url}`, {
         method : 'POST',
         headers : {
@@ -42,7 +42,7 @@ export function RelationsHandler(url : string, token : string, body : UserType, 
     })
     .then(res => res.json())
     .then(data => {
-        console.log(data)
+        // console.log(data)
         if (data.status === 200) {
             callback(data)
         }

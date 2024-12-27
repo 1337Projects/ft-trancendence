@@ -11,6 +11,7 @@ from .serializers import GameRequestSerializer
 from channels.layers import get_channel_layer
 from django.core.cache import cache
 import sys
+from django.core.paginator import Paginator
 
 User = get_user_model()
 @database_sync_to_async

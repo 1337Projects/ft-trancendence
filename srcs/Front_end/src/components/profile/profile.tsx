@@ -16,7 +16,7 @@ export default function Profile() {
 	const [currentUser, setCurrentUser] = useState<UserType | null>(null)
 	const friendship = friends?.filter(item => (item.sender.username==user?.username && item.receiver.username==currentUser?.username) || (item.receiver.username==user?.username && item.sender.username==currentUser?.username))[0]
 
-	console.log(friendship)
+	// console.log(friendship)
 	
 	useEffect(() => {
 		const timer = setTimeout(() => {

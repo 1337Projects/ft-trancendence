@@ -35,11 +35,17 @@ export default function Login() {
             }
 
             const data = await response.json()
-            setAuthInfosHandler!(data.access)
+            if (data['2fa'] === 'True')
+            {
+                navigation("../2faCheck")
+            }
+            else {
+                setAuthInfosHandler!(data.access)
+                navigation("../../dashboard/game")
+
+            }
             // if has 2fa enabke
-            // navigation("../2faCheck")
             // else navigation("../../dashboard/game")
-            navigation("../../dashboard/game")
 
         } catch (error) {
             setAlert({message : [error.toString()], type : 'error'})
