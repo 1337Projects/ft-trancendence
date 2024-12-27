@@ -2,6 +2,7 @@ import React, { useContext } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { Link } from "react-router-dom"
 import { FaGamepad } from "react-icons/fa"
+import TennisAsset from "../assets/game/TennisAsset"
 
 export default function Hero() {
     
@@ -26,7 +27,7 @@ export default function Hero() {
                         </div>
                     </div>
                     <div className="relative img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
-                        <img className="absolute" src="/game/Tennis-bro.svg" alt="" />
+                        <TennisAsset />
                     </div>
                 </div>
             </div>

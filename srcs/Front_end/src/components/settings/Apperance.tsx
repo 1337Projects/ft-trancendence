@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
+import ApearanceAsset from '@/components/assets/Apperance'
 
 const colors = [
     {id:0, color:'#FFC100', name:'yellow'},
@@ -36,7 +37,7 @@ export default function Apperance() {
                             </div>
                         </div>
                         <div className="h-full flex items-center justify-center">
-                            <img src="/pallete.svg" alt="pimg" />
+                            <ApearanceAsset />
                         </div>
                     </div>
                 </li>
@@ -44,4 +45,5 @@ export default function Apperance() {
         </div>
     )
 }
+
 
