@@ -47,16 +47,16 @@ INSTALLED_APPS = [
     'account',
     'login',
     'chat',
+    'game',
     'notifications',
-    'game_api',
-    'tournment',
+    # 'game_api',
+    # 'tournment',
     'channels',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
     'django_otp',
     'django_otp.plugins.otp_totp',
     'background_task',
-    # 'game',
 ]
 
 MIDDLEWARE = [

@@ -27,7 +27,7 @@ export default function Waiting() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/join/game/?token=${authInfos?.accessToken}`)
+            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/join/?token=${authInfos?.accessToken}`)
             gameSocket.addCallback("setRoom", setRoom)
             gameSocket.addCallback("startGame", startGameHandler)
         }, 100)

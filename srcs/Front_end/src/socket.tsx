@@ -102,26 +102,22 @@ class GameSocket extends WebSocketService {
     eventCallback = (event) => {
 
         const data = JSON.parse(event.data)
-        this.callbacks["init"](data)
-        // switch (data.response.status) {
-        //     case 200:
-        //         console.log(JSON.parse(data.response.game))
-        //         break;
-        //     case 201:
-        //         this.callbacks["setRoom"](data.response.room)
-        //         break;
-        //     case 202:
-        //         this.callbacks["setInitData"](data.response.game)
-        //         break;
-        //     case 203:
-        //         this.callbacks["startGame"](data.response.game_id)
-        //         break;
-        //     case 204:
-        //         this.callbacks["resultHandler"](data.response.match)
-        //         break;
-        //     default:
-        //         break;
-        // }
+        switch (data.response.status) {
+            case 201:
+                this.callbacks["setRoom"](data.response.room)
+                break;
+            case 203:
+                this.callbacks["startGame"](data.response.game_id)
+                break;
+            // case 202:
+            //     this.callbacks["setInitData"](data.response.game)
+            //     break;
+            // case 204:
+            //     this.callbacks["resultHandler"](data.response.match)
+            //     break;
+            default:
+                break;
+        }
     }
 }
 
