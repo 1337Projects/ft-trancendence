@@ -140,6 +140,7 @@ function FriendItem({friendShip}) {
             sender: user.username, // Your logged-in user's username
             receiver: authInfos?.username, // Username of the friend to whom the request is sent
             message: `${authInfos?.username} invited you to play`,
+            link: "link"
         });
     }
 

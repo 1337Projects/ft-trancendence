@@ -60,6 +60,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             sender_username = data["sender"]
             receiver_username = data["receiver"]
             message = data.get("message")
+            link = data.get("link")
             
             receiverr = await get_user_with_profile(receiver_username)
             game_request = await self.create_game_request(sender_username, receiver_username, message)
@@ -76,6 +77,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                                         "message": game_request.message,
                                         "created_at": str(game_request.created_at),
                                         "is_accepted": game_request.is_accepted,
+                                        "link": link,
                                     },
                                     "status" : 207
                                 }
