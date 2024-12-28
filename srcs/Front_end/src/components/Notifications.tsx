@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { notificationSocket } from "@/socket";
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
@@ -115,10 +115,35 @@ export default function Notifications() {
     const notificationsOpen = window.localStorage.getItem('showNotifications')
     if (notificationsOpen === null)
         window.localStorage.setItem('showNotifications', "false");
-
-    const { notifications } = useContext(NotificationsContext) || {}
     const [show, setShow] = useState(notificationsOpen == 'true')
     const appearence = useContext(ApearanceContext)
+
+
+    const { notifications, fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {};
+    const containerRef = useRef(null);
+
+
+    const handleScroll = () => {
+        if (!containerRef.current || !hasMore) return;
+        const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+
+        if (scrollTop + clientHeight >= scrollHeight - 0.5) {
+            fetchMoreNotifications();
+        }
+    };
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (container) {
+            container.addEventListener("scroll", handleScroll);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, [fetchMoreNotifications, hasMore]);
 
 
     function handler(value : boolean) {
@@ -138,7 +163,7 @@ export default function Notifications() {
             </div>
             {
                 show === true && 
-                <div className="list-none p-2 w-full max-h-[360px] overflow-scroll rounded-sm">
+                <div ref={containerRef} className="list-none p-2 w-full max-h-[360px] overflow-auto rounded-sm">
                     
                     {
                         notifications?.length ? 

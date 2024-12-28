@@ -49,16 +49,28 @@ export default function DashboardLayout() {
 
     const navigate = useNavigate();
 
-    const { setNotifications } = useContext(NotificationsContext) || {}
+    const { setNotifications, setHasMore, setCurrentPage, currentPage} = useContext(NotificationsContext) || {}
 
     useEffect(() => {
       const timer = setTimeout(() => {
         notificationSocket.addCallback("FirstSetNots", setNotifications)
         notificationSocket.addCallback("setNots", setNotifications)
+        notificationSocket.addCallback("appendNots", (newNotifications: []) => {
+            if (newNotifications.length === 0)
+            {
+                setHasMore(false);
+            }
+            else
+            {
+                setNotifications((prev) => [...prev, ...newNotifications]);
+                setCurrentPage(currentPage + 1);
+            }
+        });
         notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/`)
         notificationSocket.sendMessage({
           event : "fetch nots",
-          sender : user?.authInfos?.username
+          sender : user?.authInfos?.username,
+          page_size: 7
         })
 
 
@@ -121,6 +133,8 @@ export default function DashboardLayout() {
         if (response.ok) {
           user?.setAuthInfosHandler(null)
           user?.setUser(null)
+          setHasMore(true);
+          setCurrentPage(1);
           navigate("/auth/login")
   
         }

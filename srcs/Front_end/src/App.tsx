@@ -129,15 +129,15 @@ function Main() {
 function App() {
   
   return (
-    <NotificationsContextProvider>
-      <ApearanceProvider>
-        <UserContextProvider>
-          <DialogContextProvider>
-            <Main />
-          </DialogContextProvider>
-        </UserContextProvider>
-      </ApearanceProvider>
-    </NotificationsContextProvider>
+    <UserContextProvider>
+      <NotificationsContextProvider>
+        <ApearanceProvider>
+            <DialogContextProvider>
+              <Main />
+            </DialogContextProvider>
+        </ApearanceProvider>
+      </NotificationsContextProvider>
+    </UserContextProvider>
   )
 }
 

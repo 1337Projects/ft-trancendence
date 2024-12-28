@@ -182,6 +182,9 @@ class NotificationSocket extends WebSocketService {
             case 208:
                 this.callbacks["FirstSetNots"](data.response.nots.reverse())
                 break;
+            case 209:
+                this.callbacks["appendNots"](data.response.nots);
+                break;
             default:
                 break;
         }

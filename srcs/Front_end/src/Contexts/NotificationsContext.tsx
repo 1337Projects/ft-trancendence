@@ -1,28 +1,55 @@
-import React, { createContext, useState } from "react";
-
+import React, { createContext, useState, useContext } from "react";
+import { notificationSocket } from "@/socket";
+import { UserContext } from "./authContext";
 
 type NotificationsContextType = {
-    notifications : [] | null,
-    setNotifications : React.Dispatch<React.SetStateAction<null | []>>,
-}
+    notifications: [] | null;
+    setNotifications: React.Dispatch<React.SetStateAction<null | []>>;
+    fetchMoreNotifications: () => void;
+    setHasMore: React.Dispatch<React.SetStateAction<boolean>>;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+    hasMore : boolean;
+    currentPage: number;
+};
 
+export const NotificationsContext = createContext<null | NotificationsContextType>(null);
 
-export const NotificationsContext = createContext<null | NotificationsContextType>(null)
+export default function NotificationsContextProvider({ children }) {
+    const { authInfos} = useContext(UserContext) || {}; 
+    const [notifications, setNotifications] = useState<null | []>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
 
-
-export default function NotificationsContextProvider({children}) {
-
-
-    const [ notifications, setNotifications ] = useState<null | []>(null)
-
+    const fetchMoreNotifications = async () => {
+        try
+        {
+            const nextPage = currentPage + 1;
+            notificationSocket.sendMessage({
+                event: "fetch nots",
+                sender: authInfos?.username,
+                page: nextPage,
+                page_size: 7,
+            });
+        }
+        catch (error)
+        {
+            console.error("Error fetching more notifications:", error);
+        }
+    };
+    
     const value = {
         notifications,
         setNotifications,
-    }
+        fetchMoreNotifications,
+        setHasMore,
+        setCurrentPage,
+        hasMore,
+        currentPage,
+    };
 
     return (
         <NotificationsContext.Provider value={value}>
             {children}
         </NotificationsContext.Provider>
-    )
+    );
 }
