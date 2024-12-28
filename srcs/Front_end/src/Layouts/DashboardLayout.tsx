@@ -49,7 +49,7 @@ export default function DashboardLayout() {
 
     const navigate = useNavigate();
 
-    const { setNotifications, setHasMore, setCurrentPage, currentPage} = useContext(NotificationsContext) || {}
+    const { setNotifications, setHasMore, setHasNew, setCurrentPage, currentPage} = useContext(NotificationsContext) || {}
 
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -66,6 +66,7 @@ export default function DashboardLayout() {
                 setCurrentPage(currentPage + 1);
             }
         });
+        notificationSocket.addCallback("hasNew", setHasNew)
         notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/`)
         notificationSocket.sendMessage({
           event : "fetch nots",

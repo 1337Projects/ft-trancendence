@@ -115,11 +115,13 @@ export default function Notifications() {
     const notificationsOpen = window.localStorage.getItem('showNotifications')
     if (notificationsOpen === null)
         window.localStorage.setItem('showNotifications', "false");
+
+    const { notifications, hasNew, setHasNew } = useContext(NotificationsContext) || {}
     const [show, setShow] = useState(notificationsOpen == 'true')
     const appearence = useContext(ApearanceContext)
 
 
-    const { notifications, fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {};
+    const { fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {};
     const containerRef = useRef(null);
 
 
@@ -150,6 +152,14 @@ export default function Notifications() {
         setShow(value)
         window.localStorage.setItem('showNotifications', String(value));
     }
+
+    useEffect(() => {
+        if (show && hasNew) {
+            setTimeout(() => {
+                setHasNew!(false)
+            }, 3000)
+        }
+    }, [show])
 
     return (
         <div className={`min-h-[70px] w-full rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>

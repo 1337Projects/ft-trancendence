@@ -10,15 +10,18 @@ type NotificationsContextType = {
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
     hasMore : boolean;
     currentPage: number;
-};
+    hasNew : boolean,
+    setHasNew : React.Dispatch<React.SetStateAction<boolean>>,
+}
 
 export const NotificationsContext = createContext<null | NotificationsContextType>(null);
 
 export default function NotificationsContextProvider({ children }) {
     const { authInfos} = useContext(UserContext) || {}; 
-    const [notifications, setNotifications] = useState<null | []>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [ notifications, setNotifications ] = useState<null | []>(null)
+    const [ hasNew, setHasNew ] = useState(false)
 
     const fetchMoreNotifications = async () => {
         try
@@ -39,13 +42,15 @@ export default function NotificationsContextProvider({ children }) {
     
     const value = {
         notifications,
+        hasNew,
         setNotifications,
         fetchMoreNotifications,
         setHasMore,
         setCurrentPage,
         hasMore,
         currentPage,
-    };
+        setHasNew
+    }
 
     return (
         <NotificationsContext.Provider value={value}>

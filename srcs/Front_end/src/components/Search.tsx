@@ -77,14 +77,17 @@ function SearchResult({query, queryHandler} : {query : string, queryHandler : Re
     )
 }
 
-function HeaderItems({icon} : {icon : ReactElement}) {
+function HeaderItems({icon, hasNew} : {icon : ReactElement, hasNew : true}) {
     return (
         <div className="relative text-[16pt] cursor-pointer ml-6">
             {icon}
-            <span className="absolute top-0 flex justify-center items-center h-2 left-0 w-2">
-                <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-600 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
-            </span>
+            {
+                hasNew &&
+                <span className="absolute top-0 flex justify-center items-center h-2 left-0 w-2">
+                    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-600 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
+                </span>
+            }
         </div>
     )
 }
@@ -93,14 +96,16 @@ export default function Search() {
     const [searchText, seTSearchText] = useState('')
     const user = useContext(UserContext)
     const appearence = useContext(ApearanceContext)
-    const { notifications } = useContext(NotificationsContext) || {}
+    const { hasNew } = useContext(NotificationsContext) || {}
     const notsRef = useRef(null)
     const invRef = useRef(null)
     const [ notsOpen, setNotsOpen ] = useState(false)
     const [ invitesOpen, setInvitesOpen ] = useState(false)
     const toggleNotsButtonRef = useRef(null)
     const toggleInvitesButtonRef = useRef(null)
-    const invites = user?.friends?.filter(item => item.status == 'waiting' && item.sender.username != user?.user?.username)
+
+    const hasInvites = user?.friends?.filter(inv => inv.status === 'waiting' && inv.sender.username != user?.user?.username).length
+    
 
     useEffect(() => {
 
@@ -146,45 +151,13 @@ export default function Search() {
                         }
                         <div className="absolute top-0 right-0 w-fit h-full flex items-center lg:hidden">
                             <button ref={toggleNotsButtonRef} onClick={() => setNotsOpen(prev => !prev)}>
-                                <HeaderItems icon={<LuBell />} />
+                                <HeaderItems hasNew={hasNew} icon={<LuBell />} />
                             </button>
                             <button ref={toggleInvitesButtonRef} onClick={() => setInvitesOpen(prev => !prev)}>
-                                <HeaderItems icon={<FiUser />} />
+                                <HeaderItems hasNew={Boolean(hasInvites)} icon={<FiUser />} />
                             </button>
-                            {
-                                notsOpen &&
-                                <div ref={notsRef} className={`${appearence?.theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px]  rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
-                                    {
-                                        notifications?.length ? 
-                                        notifications.map((not, index) => {
-                                            return (
-                                                <NotItem key={index} data={not} />
-                                            )
-                                        })
-                                        :
-                                        <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
-                                            no notifications yet
-                                        </div>
-                                    }
-                                </div>
-                            }
-                            {
-                                invitesOpen &&
-                                <div ref={invRef} className={`${appearence?.theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px] rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
-                                    {
-                                        invites?.length ? 
-                                        invites.map((inv, index) => {
-                                            return (
-                                                <InviteItem data={inv} key={index} />
-                                            )
-                                        })
-                                        :
-                                        <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
-                                            no invites yet
-                                        </div>
-                                    }
-                                </div>
-                            }
+                            { notsOpen && <Nots notsRef={notsRef} /> }
+                            { invitesOpen && <Invites invRef={invRef} /> }
                         </div>
                     </div>
                 </div>
@@ -205,5 +178,57 @@ export default function Search() {
             </div>
             
         </>
+    )
+}
+
+function Nots({ notsRef }) {
+
+    const { notifications, hasNew, setHasNew } = useContext(NotificationsContext) || {}
+    const { theme } = useContext(ApearanceContext) || {}
+
+    useEffect(() => {
+        if (hasNew) {
+            setHasNew!(false)
+        }
+    }, [])
+
+    return (
+        <div ref={notsRef} className={`${theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px]  rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
+            {
+                notifications?.length ? 
+                notifications.map((not, index) => {
+                    return (
+                        <NotItem key={index} data={not} />
+                    )
+                })
+                :
+                <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
+                    no notifications yet
+                </div>
+            }
+        </div>
+    )
+}
+
+function Invites({invRef}) {
+    const user = useContext(UserContext)
+    const { theme } = useContext(ApearanceContext) || {}
+    const invites = user?.friends?.filter(item => item.status == 'waiting' && item.sender.username != user?.user?.username)
+
+    return (
+        <div ref={invRef} className={`${theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px] rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
+            {
+                invites?.length ? 
+                invites.map((inv, index) => {
+                    return (
+                        <InviteItem data={inv} key={index} />
+                    )
+                })
+                :
+                <div className="w-full h-[80px] text-xs capitalize rounded flex justify-center items-center">
+                    no invites yet
+                </div>
+            }
+        </div>
     )
 }
