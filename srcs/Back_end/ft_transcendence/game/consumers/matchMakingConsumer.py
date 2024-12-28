@@ -20,6 +20,7 @@ class SharedState:
 
 class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
+
     def __init__(self):
         super().__init__()
         self.shared_data = SharedState()
@@ -31,15 +32,17 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         self.serialized_user = await self.get_user_from_db()
+        room_name = self.scope["url_route"]["kwargs"]["room_id"]
+        room_type = self.scope["url_route"]["kwargs"]["type"]
         
         async with self.shared_data._instance.lock:
 
-            self.room_id = self.get_room()
+            self.room_id = self.get_room(room_name, room_type)
             
             if self.room_id == -1:
                 name = secrets.token_hex(12)
                 self.room_id = len(self.shared_data._instance.rooms)
-                self.shared_data._instance.rooms[self.room_id] = {"name" : name, "status" : "waiting", "players" : [], "exec" : 0}
+                self.shared_data._instance.rooms[self.room_id] = {"name" : name, "privacy" : room_type, "status" : "waiting", "players" : [], "exec" : 0}
             
             room = self.shared_data._instance.rooms[self.room_id]
             room['players'].append(self.serialized_user)
@@ -85,7 +88,7 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         )
         if room['status'] == 'waiting':
             del self.shared_data._instance.rooms[self.room_id]
-            debug(self.shared_data._instance.rooms)
+        debug(self.shared_data._instance.rooms)
 
 
     @database_sync_to_async
@@ -105,6 +108,7 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
             return None
 
 
+
     @database_sync_to_async
     def get_user_from_db(self):
         try:
@@ -112,10 +116,16 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         except :
             return None
         
+    def get_room(self, room_name, room_type):
 
-    def get_room(self):
-        for key, room in self.shared_data._instance.rooms.items():
-            debug(key)
-            if room['status'] == 'waiting':
-                return key
+        if room_name == 'any' and room_type == 'public':
+            for key, room in self.shared_data._instance.rooms.items():
+                debug(key)
+                if room['status'] == 'waiting' and room['privacy'] == 'public':
+                    return key
+        else:
+            for key, room in self.shared_data._instance.rooms.items():
+                # debug(key)
+                if room['status'] == 'waiting' and room['name'] == room_name and room['privacy'] == 'private':
+                    return key
         return -1

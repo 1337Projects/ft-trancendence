@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react"
 import { gameSocket, notificationSocket } from '@/socket'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
 import { UserType } from "@/Types"
@@ -22,12 +22,19 @@ export default function Waiting() {
     const [room, setRoom] = useState<{room : RoomType} | null>(null)
     const navigate = useNavigate()
     const { authInfos } = useContext( UserContext ) || {}
+    const { type } = useParams()
+    const searchUrl = new URLSearchParams()
+    let room_id = searchUrl.get('room')
+    
+    if (!room_id) { 
+        room_id = 'any'
+    }
 
 
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/join/?token=${authInfos?.accessToken}`)
+            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/join/${type}/${room_id}/?token=${authInfos?.accessToken}`)
             gameSocket.addCallback("setRoom", setRoom)
             gameSocket.addCallback("startGame", startGameHandler)
         }, 100)
@@ -131,6 +138,7 @@ function FriendItem({friendShip}) {
     const { authInfos } = useContext(UserContext) || {}
     const { color } = useContext(ApearanceContext) || {}
     const user = friendShip.sender.username === authInfos?.username ? friendShip.receiver : friendShip.sender
+    const [ invited, setInvited ] = useState(false)
 
 
     function InviteHandler() {
@@ -142,10 +150,14 @@ function FriendItem({friendShip}) {
             message: `${authInfos?.username} invited you to play`,
             link: "link"
         });
+        setInvited(true)
+        setTimeout(() => {
+            setInvited(false)
+        }, 5000)
     }
 
     return (
-        <div className="h-[40px] flex justify-between items-center p-2">
+        <div className={`h-[40px] flex justify-between items-center ${invited && "opacity-30"} p-2`}>
             <div className="flex w-fit justify-start items-center">
                 <img src={user.profile.avatar} className="w-[35px] mr-4 rounded" alt="" />  
                 <div>

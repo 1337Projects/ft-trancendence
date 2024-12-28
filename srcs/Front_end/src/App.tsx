@@ -68,7 +68,7 @@ const router = createBrowserRouter(
 
         
         <Route path='game' element={<Game />} />
-        <Route path='game/waiting' element={<Waiting />} />
+        <Route path='game/waiting/room/:type' element={<Waiting />} />
         
         <Route path='game/room/:game_id' element={<PingPong />} />
         

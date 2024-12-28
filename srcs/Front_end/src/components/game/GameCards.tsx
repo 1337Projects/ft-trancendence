@@ -4,8 +4,9 @@ import { FaArrowRightLong } from "react-icons/fa6"
 import { DialogContext } from "@/Contexts/DialogContext"
 import { RiGamepadLine } from "react-icons/ri"
 import TournmentDialog from './TournamentDialog'
+import { Link } from "react-router-dom"
 
-function Card({color, img, text} : {color : string, img : string, text : string}) {
+function Card({color, img, text, link} : {color : string, img : string, text : string, link : string}) {
 
     const { theme } = useContext(ApearanceContext) || {}
 
@@ -19,10 +20,12 @@ function Card({color, img, text} : {color : string, img : string, text : string}
             <div className="p-4">
                 <h1 className="text-md capitalize font-semibold tracking-wide">{text}</h1>
                 <p className="mt-2 text-xs font-thin leading-5">Lorem ipsum dolor, sit amet elit. Placeat, autem minus deleniti ad</p>
-                <button style={{background : color}} className="px-6 text-white h-[34px] rounded mt-4 flex items-center justify-center" >
-                    <h1 className="text-[12px] lowercase mr-2">play now</h1>
-                    <FaArrowRightLong className="text-[10pt]" />
-                </button>
+                <Link to={link}>
+                    <button style={{background : color}} className="px-6 text-white h-[34px] rounded mt-4 flex items-center justify-center" >
+                        <h1 className="text-[12px] lowercase mr-2">play now</h1>
+                        <FaArrowRightLong className="text-[10pt]" />
+                    </button>
+                </Link>
             </div>
         </div>
     )
@@ -56,9 +59,9 @@ export default function Cards({color} : {color : string}) {
                 }
             </div>
             <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
-                <Card color={color} img="/game/leo-vs-random.jpg" text="random match"/>
-                <Card color={color} img="/game/leo-vs-computer.jpg" text="vs Computer"/>
-                <Card color={color} img="/game/leo-vs-friend.jpg" text="vs friend"/>
+                <Card color={color} link="waiting/room/public" img="/game/leo-vs-random.jpg" text="random match"/>
+                <Card color={color} link="/" img="/game/leo-vs-computer.jpg" text="vs Computer"/>
+                <Card color={color} link="waiting/room/private" img="/game/leo-vs-friend.jpg" text="vs friend"/>
             </div>
         </div>
     )
