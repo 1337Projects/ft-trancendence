@@ -113,9 +113,9 @@ def add_friend(request):
             new_relation = Friends.objects.create(status="waiting", sender=sender, receiver=receiver)
             new_relation.save()
             serializer = UserWithFriendsSerializer(new_relation)
-            return Response({"status": 200, "res": serializer.data})
+            return Response({"res": serializer.data}, status=200)
     else:
-        return Response({"message": "there is no data recieved", "status": 400}, status=400)
+        return Response({"message": "there is no data recieved"}, status=400)
 
 @api_view(['POST'])
 def accept_friend(request):
@@ -129,16 +129,16 @@ def accept_friend(request):
         sender = User.objects.get(id=sender_id)
         relationship = Friends.objects.filter(sender=receiver, receiver=sender)
         if relationship:
-            return Response({"status": 400, "message": "can't serve this request"})
+            return Response({"message": "can't serve this request"}, status=400)
         try:
             relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
             relation_friend.status = "accept"
             relation_friend.save()
             serializer = UserWithFriendsSerializer(relation_friend)
-            return Response({"status": 200, "res": serializer.data})
+            return Response({"res": serializer.data}, status=200)
         except ObjectDoesNotExist:
-            return Response({"status": 400, "message": "the Friends object does not exist"})
-    return Response({"message": "there is no data recieved", "status": 400})
+            return Response({"message": "the Friends object does not exist"}, status=400)
+    return Response({"message": "there is no data recieved"}, status=400)
 
 @api_view(['POST'])
 def reject_friend(request):
@@ -152,15 +152,15 @@ def reject_friend(request):
         sender = User.objects.get(id=sender_id)
         relationship = Friends.objects.filter(sender=receiver, receiver=sender)
         if relationship:
-            return Response({"status": 400, "message": "can't serve this request"})
+            return Response({"message": "can't serve this request"}, status=400)
         try:
             relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
             query_id = relation_friend.id
             relation_friend.delete()
-            return Response({"status": 200, "message": "reject successful", "id": query_id})
+            return Response({"message": "reject successful", "id": query_id}, status=200)
         except ObjectDoesNotExist:
-            return Response({"status": 400, "message": "the Friends object does not exist"})
-    return Response({"message": "there is no data recieved", "status": 400})
+            return Response({"message": "the Friends object does not exist"}, status=400)
+    return Response({"message": "there is no data recieved"}, status=400)
 
 @api_view(['POST'])
 def unfriend(request):
@@ -176,10 +176,10 @@ def unfriend(request):
             relationship = Friends.objects.get(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender))
             query_id = relationship.id 
             relationship.delete()
-            return Response({"status": 200, "message": "unfriend successul", "id": query_id})
+            return Response({"message": "unfriend successul", "id": query_id}, status=200)
         except ObjectDoesNotExist:
-            return Response({"status": 400, "message": "the Friends object does not exist"})
-    return Response({"message": "there is no data recieved", "status": 400})
+            return Response({"message": "the Friends object does not exist"}, status=400)
+    return Response({"message": "there is no data recieved"}, status=400)
 
     
 @api_view(['GET'])

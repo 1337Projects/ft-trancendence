@@ -29,56 +29,55 @@ function IsSender(
 
 
 
-export function RelationsHandler(url : string, token : string, body : UserType, callback : (response : ResponseType) => void) {
-    // console.log(body)
-    fetch(`${import.meta.env.VITE_API_URL}${url}`, {
-        method : 'POST',
-        headers : {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        credentials: 'include',
-        body : JSON.stringify({data : body})
-    })
-    .then(res => res.json())
-    .then(data => {
-        // console.log(data)
-        if (data.status === 200) {
-            callback(data)
+export async function RelationsHandler(url : string, token : string, body : UserType, callback : (response : ResponseType) => void) {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}${url}`, {
+            method : 'POST',
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            credentials: 'include',
+            body : JSON.stringify({data : body})
+        })
+    
+        if (!response.ok) {
+            const { message } = await response.json()
+            console.log(message)
+            throw Error(message)
         }
-    })
-    .catch(err => console.log(err))
+    
+    
+        const { res, id} = await response.json()
+        id ? callback(id) : callback(res)
+    } catch(err) {
+        console.log(err)
+    }
+    
 }
 
-export type ResponseType = {
-    status : number,
-    res? : FirendType,
-    id? : number
-}
+
 
 export function Relations({ friend } : {friend : UserType}) {
     
     const { friends, authInfos, setFriends } = useContext(UserContext) || {}
     const navigate = useNavigate()
     
-    function AddFriendCallbck(response : ResponseType) {
-        setFriends!(prev => [...prev!, response.res!])
+    function AddFriendCallbck(response : FirendType) {
+        setFriends!(prev => [...prev!, response!])
     }
 
-    function AcceptFriendCallback(response : ResponseType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.res?.id), response.res!] : [])
+    function AcceptFriendCallback(response : FirendType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.id), response] : [])
     }
 
-    function DeleteFriendRequest(response : ResponseType) {
-        setFriends!(prev => prev ? prev.filter(item => item.id != response.id) : [])
+    function DeleteFriendRequest(response : number) {
+        setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
 
-
-    if (!friends || !authInfos) {
-        return <></>
-    }
-
-    if(IsSender(friends!, friend?.id)) {
+    
+    
+    if(friends && IsSender(friends, friend?.id)) {
         return (
             <div className="flex w-[190px] justify-between items-center">
                 <ActionButton 
@@ -110,8 +109,9 @@ export function Relations({ friend } : {friend : UserType}) {
     }
 
     if (
-        HasRelationWithStatus(friends!, friend?.id, 'accept') ||
-        HasRelationWithStatus(friends!, friend?.id, 'blocked')
+        friends &&(
+        HasRelationWithStatus(friends, friend?.id, 'accept') ||
+        HasRelationWithStatus(friends, friend?.id, 'blocked'))
     ) {
         return (
             <div className="flex w-[120px] justify-between items-center">
@@ -125,7 +125,7 @@ export function Relations({ friend } : {friend : UserType}) {
         )
     }
 
-    if (HasRelationWithStatus(friends!, friend?.id, 'waiting')) {
+    if (friends && HasRelationWithStatus(friends, friend?.id, 'waiting')) {
         return (
             <ActionButton 
                 text="requsted" 

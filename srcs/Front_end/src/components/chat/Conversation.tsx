@@ -219,38 +219,7 @@ function MessagesList() {
 function ConversationHeader() {
 
     const { theme } = useContext(ApearanceContext) || {}
-    const { user } = useContext(UserContext) || {}
     const { userData } = useContext(ChatContext) || {}
-
-    async function BlockUser() {
-        const res = await BlockHandler(user.id, userData.user.id)
-        console.log(res)
-    }
-
-    async function UblockHandler() {
-        try {
-
-            const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/unblockUser/`, {
-                method : 'POST',
-                credentials : 'include',
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify({id : user.id, id_to_unblock :  userData.user.id})
-            })
-
-            if (!response.ok) {
-                console.log(await response.json())
-                throw Error("")
-            }
-
-            console.log(await response.json())
-            
-        } catch (error) {
-            console.log(error.toString())
-        }
-    }
-
 
     if (!userData) {
         return (
@@ -287,20 +256,6 @@ function ConversationHeader() {
                         <p className="text-[8pt]">{userData?.user.profile?.online ? "online" : "offline"}</p>
                     </div>
                 </Link>
-            </div> 
-            <div className='flex items-center'>
-                {
-                    userData.freindship.status == "blocked" ?
-                    <div onClick={UblockHandler} className='flex flex-col justify-center items-center'>
-                        <CgUnblock className='mr-2' /> 
-                        <h1 className='text-xs'>unblock</h1>
-                    </div>
-                    :
-                    <>
-                        <GoBlocked className='mr-2' onClick={BlockUser} />
-                        <h1 className='text-xs'>block</h1>
-                    </>
-                }
             </div>
         </div>
     )

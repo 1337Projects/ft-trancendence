@@ -1,3 +1,4 @@
+from account.serializer import UserWithFriendsSerializer
 from .utls import *
 from django.db.models import Q
 from chat.views import get_id1
@@ -213,49 +214,64 @@ def change_password(request):
 
 
 
+from tournment.utils import debug
 
 @api_view(["post"])
 def block_user(request):
+    id = get_id1(request)
     try:
-        id = request.data["data"].get('id')
-        id_to_block = request.data["data"].get('id_to_block')
-        if not id or not id_to_block:
-            return JsonResponse({'error': 'User ID or User to block ID is missing'}, status=400)
-    except:
-        return JsonResponse({'error': 'User ID or User to block ID is missing'}, status=400)
-    try:
-        blocker = User.objects.get(id=id)
-        user_to_block = User.objects.get(id=id_to_block)
-        if blocker == user_to_block:
-            return JsonResponse({'error': 'You cannot block yourself'}, status=400)
-        freinds = Friends.objects.filter(Q(sender=blocker, receiver=user_to_block) | Q(sender=user_to_block, receiver=blocker)).first()
-        if freinds and freinds.status != "blocked":
-            freinds.status = "blocked"
-            freinds.blocker = blocker
-            freinds.save()
-            return JsonResponse({'message': 'User has been blocked', 'res' : {}, 'status' : 200}, status=200)
-        else:
-            return JsonResponse({'message': 'User is already blocked or no relationship exist between them'}, status=400)
+        target = request.data["data"]['id']
+        if id == target:
+            return JsonResponse({'message': 'You cannot block yourself'}, status=400)
+        user1 = User.objects.get(id=id)
+        try:
+            friendship = Friends.objects.get(
+                Q(sender=id, receiver=target) | Q(sender=target, receiver=id)
+            )
+            debug(friendship)
+
+            if friendship.status == "blocked":
+                return JsonResponse({'message': 'User is already blocked'}, status=400)
+            if friendship.status != "accept":
+                return JsonResponse({"message" : "you cant block this user"}, status=400)
+            friendship.status = "blocked"
+            friendship.blocker = user1
+            friendship.save()
+            serializer = UserWithFriendsSerializer(friendship)
+            return JsonResponse({'message': 'User has been blocked', 'res' : serializer.data}, status=200)
+
+        except Friends.DoesNotExist:
+            return JsonResponse({'message': 'No friendship found'}, status=400)
     except User.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
+        debug("user doesnt found")
+    except Exception as e:
+        return JsonResponse({'message': 'data is missing'}, status=400)
+
+    
         
 @api_view(["post"])
 def unblock_user(request):
-    id = request.data["data"].get('id')
-    id_to_unblock = request.data["data"].get('id_to_unblock')
-    if not id or not id_to_unblock:
-        return JsonResponse({'error': 'User ID or User to unblock ID is missing'}, status=400)
+    id = get_id1(request)
     try:
-        blocker = User.objects.get(id=id)
-        user_to_unblock = User.objects.get(id=id_to_unblock)
-        if blocker == user_to_unblock:
-            return JsonResponse({'error': 'You cannot unblock yourself'}, status=400)
-        freinds = Friends.objects.filter(Q(sender=blocker, receiver=user_to_unblock) | Q(sender=user_to_unblock, receiver=blocker)).first()
-        tmp_id = freinds.id
-        if freinds and freinds.status == "blocked" and freinds.blocker == blocker:
-            freinds.delete()
-            return JsonResponse({'message': 'User has been unblocked', 'id' : tmp_id, 'status' : 200}, status=200)
-        else:
-            return JsonResponse({'message': 'User is not blocked or no relationship exist between them or you are not the blocker'}, status=400)
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
+        # debug(request.data['data']['id'])
+        target = request.data["data"]['id']
+        if id == target:
+            return JsonResponse({'message': 'You cannot unblock yourself'}, status=400)
+        
+        try:
+            friendship = Friends.objects.get(
+                Q(sender=id, receiver=target) | Q(sender=target, receiver=id))
+            debug(friendship.blocker)
+            if friendship.status == "blocked" and friendship.blocker.id == id:
+                friendship.status='accept'
+                friendship.blocker=None
+                friendship.save()
+                serializer = UserWithFriendsSerializer(friendship)
+                return JsonResponse({'message': 'User has been unblocked', 'res' : serializer.data}, status=200)
+            return JsonResponse({'message': 'you cant unblock this user'}, status=400)
+        except Friends.DoesNotExist:
+            return JsonResponse({'message': 'No friendship found'}, status=400)
+    except Exception as e:
+        return JsonResponse({'message': e}, status=400)
+
+ 

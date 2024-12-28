@@ -1,4 +1,6 @@
+# from account.serializer import UserWithFriendsSerializer
 from .models import User
+from account.models import Friends
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -67,3 +69,20 @@ class UserLoginSerializer(serializers.Serializer):
 
     class Meta():
         fields = ('email', 'password')
+
+# class FriendShipSerializer(serializers.ModelSerializer):
+
+#     queryset = User.objects.all()
+#     sender = serializers.PrimaryKeyRelatedField(queryset=queryset)
+#     receiver = serializers.PrimaryKeyRelatedField(queryset=queryset)
+
+
+#     def to_representation(self, instance):
+#         representation = super().to_representation(instance)
+#         representation['sender'] = UserWithProfileSerializer(instance.sender).data
+#         representation['receiver'] = UserWithProfileSerializer(instance.receiver).data
+#         return representation
+
+#     class Meta():
+#         model = Friends
+#         fields = '__all__'

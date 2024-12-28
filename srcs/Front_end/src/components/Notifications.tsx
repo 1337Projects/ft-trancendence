@@ -53,15 +53,15 @@ export function InviteItem({data} : {data : FirendType}) {
         });
     };
 
-    function AcceptFriendCallback(response : ResponseType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.res?.id), response.res!] : [])
+    function AcceptFriendCallback(response : FirendType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.id), response] : [response])
         notificationAcceptFriendRequest(data);
     }
 
     
 
-    function DeleteFriendRequest(response : ResponseType) {
-        setFriends!(prev => prev ? prev.filter(item => item.id != response.id) : [])
+    function DeleteFriendRequest(response : number) {
+        setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
  
 

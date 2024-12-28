@@ -3,7 +3,7 @@ import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { FaEllipsisV, FaUserMinus } from "react-icons/fa"
 import { GoBlocked } from "react-icons/go";
 import { CgUnblock } from "react-icons/cg";
-import { UserType } from "@/Types";
+import { FirendType, UserType } from "@/Types";
 import { HasRelationWithStatus, RelationsHandler } from "./ActionsHandlers";
 import { UserContext } from "@/Contexts/authContext";
 
@@ -38,7 +38,7 @@ export function ActionsList({ friend }) {
 	const [ openMenu, setOpenMenu ] = useState(false)
 	const menuRef = useRef<null | HTMLUListElement>(null)
 	const toggleButtonRef = useRef<null | HTMLDivElement>(null)
-	const { authInfos, user , setFriends, friends} = useContext(UserContext) || {}
+	const { authInfos , setFriends, friends} = useContext(UserContext) || {}
 	const [ blocked, setBlocked ] = useState(false)
 	const { theme } = useContext(ApearanceContext) || {}
 
@@ -46,15 +46,15 @@ export function ActionsList({ friend }) {
 		if (friends) {
 			setBlocked(Boolean(HasRelationWithStatus(friends, friend.id, 'blocked')))
 		}
-	}, [])
+	}, [friends])
 
 
-	function UpdateFriendCallback(response : ResponseType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.res?.id), response.res!] : [])
+	function UpdateFriendCallback(response : FirendType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.id), response] : [response])
     }
 
-	function DeleteFriendRequest(response : ResponseType) {
-        setFriends!(prev => prev ? prev.filter(item => item.id != response.id) : [])
+	function DeleteFriendRequest(response : number) {
+        setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
 
 	useEffect(() => {
@@ -85,12 +85,15 @@ export function ActionsList({ friend }) {
 					{
 						blocked ?
 						<li  onClick={
-							() => RelationsHandler(
-								'api/users/unblockUser/',
-								authInfos?.accessToken!,
-								{id : user?.id!, id_to_unblock : friend.id},
-								DeleteFriendRequest
-							)
+							() => {
+								RelationsHandler(
+									'api/users/unblockUser/',
+									authInfos?.accessToken!,
+									friend,
+									UpdateFriendCallback
+								)
+								setOpenMenu(false)
+							} 
 						} className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between">
 							<p>unblock</p>
 							<CgUnblock />
@@ -98,23 +101,30 @@ export function ActionsList({ friend }) {
 						:
 						<>
 							<li onClick={
-								() => RelationsHandler(
-									'api/friends/cancle_friend/',
-									authInfos?.accessToken!,
-									friend,
-									DeleteFriendRequest
-								)
+								() =>
+									{
+										RelationsHandler(
+											'api/friends/cancle_friend/',
+											authInfos?.accessToken!,
+											friend,
+											DeleteFriendRequest
+										)
+										setOpenMenu(false)
+									} 
 							} className="w-full hover:bg-gray-700/40 rounded px-4 justify-between text-xs p-2 h-[40px] flex items-center">
 								<p>unfriend</p>
 								<FaUserMinus />
 							</li>
 							<li onClick={
-								() => RelationsHandler(
-									'api/users/blockUser/',
-									authInfos?.accessToken!,
-									{id : user?.id!, id_to_block : friend.id},
-									UpdateFriendCallback
-								)
+								() => {
+									RelationsHandler(
+										'api/users/blockUser/',
+										authInfos?.accessToken!,
+										friend,
+										UpdateFriendCallback
+									)
+									setOpenMenu(false)
+								} 
 								} className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between">
 								<p>block</p>
 								<GoBlocked />

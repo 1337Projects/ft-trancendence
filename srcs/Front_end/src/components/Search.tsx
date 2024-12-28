@@ -105,7 +105,7 @@ export default function Search() {
     const toggleInvitesButtonRef = useRef(null)
 
     const hasInvites = user?.friends?.filter(inv => inv.status === 'waiting' && inv.sender.username != user?.user?.username).length
-    
+
 
     useEffect(() => {
 

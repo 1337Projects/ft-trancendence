@@ -4,7 +4,7 @@ import { ApearanceContext } from '@/Contexts/ThemeContext';
 import { Banner } from './Hero';
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
-import { UserType } from '@/Types';
+import { FirendType, UserType } from '@/Types';
 import { FaUserFriends } from 'react-icons/fa';
 import { RiProfileFill } from 'react-icons/ri';
 
@@ -14,9 +14,27 @@ export default function Profile() {
 	const {authInfos, user, friends} = useContext(UserContext) || {}
 	const {user_name} = useParams()
 	const [currentUser, setCurrentUser] = useState<UserType | null>(null)
-	const friendship = friends?.filter(item => (item.sender.username==user?.username && item.receiver.username==currentUser?.username) || (item.receiver.username==user?.username && item.sender.username==currentUser?.username))[0]
+	const [ friendship, setFriendShhip ] = useState<FirendType | null>(null)
 
-	// console.log(friendship)
+	useEffect(() => {
+		if (currentUser && user && friends) {
+			const currentFriendship = friends.filter(item => 
+				(
+					item.sender.username==user.username 
+					&& item.receiver.username==currentUser.username
+				) 
+				|| 
+				(
+					item.receiver.username==user.username 
+					&& item.sender.username==currentUser.username
+				))
+			if (currentFriendship.length) {
+				setFriendShhip(currentFriendship[0]!)
+			}
+		}
+
+	}, [friends, currentUser])
+
 	
 	useEffect(() => {
 		const timer = setTimeout(() => {
