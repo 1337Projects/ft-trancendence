@@ -38,9 +38,10 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         async with self.shared_data._instance.lock:
 
             self.room_id = self.get_room(room_name, room_type)
-            
             if self.room_id == -1:
-                name = secrets.token_hex(12)
+                name = room_name
+                if name == 'any':
+                    name = secrets.token_hex(12)
                 self.room_id = len(self.shared_data._instance.rooms)
                 self.shared_data._instance.rooms[self.room_id] = {"name" : name, "privacy" : room_type, "status" : "waiting", "players" : [], "exec" : 0}
             
@@ -81,14 +82,14 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({"response" : event["data"]}))
 
     async def disconnect(self, close_code):
-        room = self.shared_data._instance.rooms[self.room_id]
-        await self.channel_layer.group_discard(
-            room['name'],
-            self.channel_name
-        )
-        if room['status'] == 'waiting':
+        room = self.shared_data._instance.rooms.get(self.room_id, None)
+        if room:
+            await self.channel_layer.group_discard(
+                room['name'],
+                self.channel_name
+            )
             del self.shared_data._instance.rooms[self.room_id]
-        debug(self.shared_data._instance.rooms)
+            debug(self.shared_data._instance.rooms)
 
 
     @database_sync_to_async
@@ -120,12 +121,12 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
         if room_name == 'any' and room_type == 'public':
             for key, room in self.shared_data._instance.rooms.items():
-                debug(key)
+                # debug(key)
                 if room['status'] == 'waiting' and room['privacy'] == 'public':
                     return key
         else:
             for key, room in self.shared_data._instance.rooms.items():
-                # debug(key)
+                # debug(room)
                 if room['status'] == 'waiting' and room['name'] == room_name and room['privacy'] == 'private':
                     return key
         return -1

@@ -23,8 +23,10 @@ export default function Waiting() {
     const navigate = useNavigate()
     const { authInfos } = useContext( UserContext ) || {}
     const { type } = useParams()
-    const searchUrl = new URLSearchParams()
-    let room_id = searchUrl.get('room')
+    const searchUrl = new URLSearchParams(window.location.search)
+    let room_id = searchUrl.get('room_id')
+
+    console.log(room_id)
     
     if (!room_id) { 
         room_id = 'any'

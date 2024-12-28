@@ -10,6 +10,12 @@ import { IoGameControllerOutline } from "react-icons/io5";
 import { ChatContext } from "@/Contexts/ChatContext";
 
 
+function generateRandomId() {
+    return Math.floor(Math.random() * 1e12)
+      .toString()
+      .padStart(12, '0');
+  }
+
 export default function ChatInput() {
 
     const { color, theme } = useContext(ApearanceContext) || {}
@@ -39,6 +45,14 @@ export default function ChatInput() {
 
     function sendGameInvite() {
         console.log('invite')
+        const data = {
+            "from" : authInfos?.username,
+            "partner": user,
+            "type" : "game_invite",
+            "content": `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/private/?room_id=${authInfos?.username}-${user}${generateRandomId()}`,
+            "event" : "new_message"
+        }
+        chatSocket.sendMessage(data)
     }
 
     const [emojie, setEmojie] = useState<boolean>(false)

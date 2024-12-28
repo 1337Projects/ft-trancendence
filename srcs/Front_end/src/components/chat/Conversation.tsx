@@ -12,6 +12,7 @@ import { GoBlocked } from "react-icons/go";
 import { CgUnblock } from "react-icons/cg";
 import { BlockHandler } from './chat'
 import { MessageType } from '@/Types';
+import { RiGamepadLine } from "react-icons/ri";
 
 
 function calc_time(created_at : string) {
@@ -23,6 +24,7 @@ function calc_time(created_at : string) {
 function UserMessage({m} : {m : MessageType}) {
     const [time, setTime] = useState<string>('')
     MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
+    const { color, theme } = useContext(ApearanceContext) || {}
 
     return (
         <li className={`mt-4 flex justify-start`}>
@@ -34,7 +36,25 @@ function UserMessage({m} : {m : MessageType}) {
             <div className='w-full max-w-[400px]'>
                 <div>
                     <h1 className='font-bold text-[10pt]'>{m.sender.username} <span className='ml-4 font-thin text-[8pt]'>{time}</span></h1>
-                    <h1 className="text-[14px] break-words min-w-[100px]">{m?.message}</h1>
+                    {
+                        m.message.includes('https://localhost:1024/dashboard/game/waiting/room/private/?room_id=') ?
+                        <div className={`w-full flex justify-start items-center mt-2 h-[100px] rounded border-[.3px] p-2 ${theme === 'light' ? "border-black/20" : "border-white/20"} `}>
+                            <div className='w-[180px] h-full mr-2'>
+                                <img className='rounded w-full h-full' src="/game/leo-vs-friend.jpg" alt="img" />
+                            </div>
+                            <div className='flex-grow w-full h-full px-2'>
+                                <p className='text-xs'><span className='font-bold mr-1'>{m.sender.username}</span> invited you to play ping pong match</p>
+                                <Link to={m.message} className='mt-4'>
+                                    <button style={{borderColor : color, color : color}} className='border-[1px] flex justify-center items-center px-4 text-xs p-2 rounded mt-4'>
+                                        <p className='mr-2'>Play now </p>
+                                        <RiGamepadLine className='text-[12pt]' />
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                        :
+                        <p to={m.message} className="text-[14px] break-words min-w-[100px]">{m?.message}</p>
+                    }
                 </div>
             </div>
         </li>
