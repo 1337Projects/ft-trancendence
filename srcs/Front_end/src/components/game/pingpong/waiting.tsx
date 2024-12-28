@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { gameSocket } from '@/socket'
+import { gameSocket, notificationSocket } from '@/socket'
 import { Link, useNavigate } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
@@ -91,15 +91,68 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 
     const [invite, setInvite] = useState(false)
     const { color } = useContext(ApearanceContext) || {}
+    const { friends } = useContext(UserContext) || {}
 
     return (
-        <div className='w-full flex items-center bg-white text-gray-700 h-[50px] border-[1px] mt-8 rounded-full'>
-            <div className='w-full  flex items-center justify-between px-2'>
-                <h1 className='ml-4 w-[300px] overflow-hidden h-[18px] text-[10px] uppercase'>http://localhost:5173/dashboard/game/waiting/?room={data?.name}</h1>
-                <button onClick={() => {
-                    setInvite(prev => !prev)
-                }} style={{background : color}} className='border-white/80 text-white border-[1px] p-1 rounded-full text-[12px] h-[35px] w-[60px] uppercase'>{invite ? "invited" : "invite"}</button>
+        <div className="relative">
+            <div className='w-full flex items-center bg-white text-gray-700 h-[50px] border-[1px] mt-8 rounded'>
+                <div className='w-full  flex items-center justify-between px-2'>
+                    <h1 className='ml-4 w-[300px] overflow-hidden h-[18px] text-[10px] uppercase'>http://localhost:5173/dashboard/game/waiting/?room={data?.name}</h1>
+                    <button onClick={() => {
+                        setInvite(prev => !prev)
+                    }} style={{background : color}} className='border-white/80 text-white border-[1px] p-1 rounded-full text-[12px] h-[35px] w-[60px] uppercase'>{invite ? "invited" : "invite"}</button>
+                </div>
             </div>
+            {
+                invite && 
+                <div className="bg-white absolute top-[52px] left-0 text-lightText w-full h-[150px] p-2 mt-2 rounded">
+                    {
+                        friends?.length ?
+                        <ul className="h-full overflow-scroll">
+                            {
+                                friends.map((fr, index) => 
+                                    <li key={index} >
+                                        <FriendItem friendShip={fr} />
+                                    </li>)
+                            }
+                        </ul>
+                        :
+                        <div className="w-full h-[50px] flex justify-center items-center text-xs">no friends to invite</div>
+                    }
+                </div>
+            }
+        </div>
+    )
+}
+
+
+function FriendItem({friendShip}) {
+
+    const { authInfos } = useContext(UserContext) || {}
+    const { color } = useContext(ApearanceContext) || {}
+    const user = friendShip.sender.username === authInfos?.username ? friendShip.receiver : friendShip.sender
+
+
+    function InviteHandler() {
+        console.log(user)
+        notificationSocket.sendMessage({
+            event: "send_request",
+            sender: user.username, // Your logged-in user's username
+            receiver: authInfos?.username, // Username of the friend to whom the request is sent
+            message: `${authInfos?.username} invited you to play`,
+        });
+    }
+
+    return (
+        <div className="h-[40px] flex justify-between items-center p-2">
+            <div className="flex w-fit justify-start items-center">
+                <img src={user.profile.avatar} className="w-[35px] mr-4 rounded" alt="" />  
+                <div>
+                    <h1>{user.username}</h1>
+                    <p className="text-xs">level : {user.profile.level}</p>
+                </div>  
+            </div>
+            <button style={{background : color}} onClick={InviteHandler} className="p-2 px-4 text-xs text-white rounded">invite</button>
         </div>
     )
 }

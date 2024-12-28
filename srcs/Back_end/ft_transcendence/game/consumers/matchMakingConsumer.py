@@ -1,21 +1,28 @@
 
+import asyncio
 from channels.generic.websocket import  AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 import secrets
 import json
 from account.serializer import UserWithProfileSerializer
 from game.serializers import GameSerializer
+from tournment.utils import debug
 
-ROOMDATA_STATUS = 201
-GAMEDATA_STATUS = 202
-LAUNCHGAME_STATUS = 203
-GAMEENDED_STATUS = 204
+class SharedState:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(SharedState, cls).__new__(cls)
+            cls._instance.lock = asyncio.Lock()
+            cls._instance.rooms = {}
+        return cls._instance
 
 class GameMatchMakingConsumer(AsyncWebsocketConsumer):
-    rooms = {}
 
     def __init__(self):
         super().__init__()
+        self.shared_data = SharedState()
         self.serialized_user = None
         self.room_id = None
 
@@ -24,60 +31,61 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         self.serialized_user = await self.get_user_from_db()
-        self.room_id = self.get_room()
+        
+        async with self.shared_data._instance.lock:
 
-        if self.room_id == -1:
-            name = secrets.token_hex(12)
+            self.room_id = self.get_room()
             
-            self.room_id = len(self.rooms)
-            self.rooms[self.room_id] = {"name" : name, "status" : "waiting", "players" : [], "exec" : 0}
-
-        room = self.rooms[self.room_id]
-        room['players'].append(self.serialized_user)
-
-        await self.channel_layer.group_add(
-            room["name"],
-            self.channel_name
-        )
-
-        await self.channel_layer.group_send(
-            room['name'],
-            {
-                "type": "chat.message",
-                "data" : {
-                        "room" : { "room" : room },
-                        "status" : ROOMDATA_STATUS
-                    }
-            }
-        )
-
-        if len(room['players']) == 2:
-            room['status'] = 'started'
-            match = await self.save_match_to_db(room)
-            if match != None:
-                await self.channel_layer.group_send(
-                    room['name'],
-                    {
-                        "type" : "chat.message",
-                        "data" : {
-                            "game_id" : match['id'],
-                            "status" : 203
+            if self.room_id == -1:
+                name = secrets.token_hex(12)
+                self.room_id = len(self.shared_data._instance.rooms)
+                self.shared_data._instance.rooms[self.room_id] = {"name" : name, "status" : "waiting", "players" : [], "exec" : 0}
+            
+            room = self.shared_data._instance.rooms[self.room_id]
+            room['players'].append(self.serialized_user)
+            await self.channel_layer.group_add(
+                room["name"],
+                self.channel_name
+            )
+            await self.channel_layer.group_send(
+                room['name'],
+                {
+                    "type": "chat.message",
+                    "data" : {
+                            "room" : { "room" : room },
+                            "status" : 201
                         }
-                    }
-                )
+                }
+            )
+
+            if len(room['players']) == 2:
+                room['status'] = 'started'
+                match = await self.save_match_to_db(room)
+                if match != None:
+                    await self.channel_layer.group_send(
+                        room['name'],
+                        {
+                            "type" : "chat.message",
+                            "data" : {
+                                "game_id" : match['id'],
+                                "status" : 203
+                            }
+                        }
+                    )
 
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({"response" : event["data"]}))
 
     async def disconnect(self, close_code):
-        room = self.rooms[self.room_id]
+        room = self.shared_data._instance.rooms[self.room_id]
         await self.channel_layer.group_discard(
             room['name'],
             self.channel_name
         )
         if room['status'] == 'waiting':
-            del self.rooms[self.room_id]
+            del self.shared_data._instance.rooms[self.room_id]
+            debug(self.shared_data._instance.rooms)
 
 
     @database_sync_to_async
@@ -104,8 +112,10 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         except :
             return None
         
+
     def get_room(self):
-        for room in self.rooms:
-            if self.rooms[room]['status'] == 'waiting':
-                return room
+        for key, room in self.shared_data._instance.rooms.items():
+            debug(key)
+            if room['status'] == 'waiting':
+                return key
         return -1
