@@ -1,58 +1,63 @@
-import { UserType } from "./Types";
+import { UserType } from "./types/user";
+
 
 type CallBackType = (data : string) => void
 
+interface SocketMessageType {
+    event : string
+}
+
+
 class WebSocketService {
 
-    callbacks: CallBackType[];
+    callbacks: Record<string, CallBackType>;
     socket: null | WebSocket;
-    queue: never[];
+    queue: SocketMessageType[];
+    openCallback: () => void;
+    closeCallback: () => void;
+    errorCallback: (error : Event) => void;
+    eventCallback: (event : MessageEvent) => void;
 
     constructor() {
         this.socket = null
-        this.callbacks = []
+        this.callbacks = {}
         this.queue = [];
+
+        this.openCallback = () => {
+            console.log("web socket connection established")
+            this.flushQueue()
+        }
+
+        this.closeCallback = () => {
+            console.log("WebSocket connection closed");
+        }
+
+        this.errorCallback = (error : Event) => {
+            console.log("WebSocket error:", error);
+        }
+
+        this.eventCallback = (event : MessageEvent) => {
+            const data = JSON.parse(event.data)
+            switch (data.response.status) {
+                case 400:
+                    console.log(data.response.error)
+                    break;
+                case 212:
+                    console.log(data.response)
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
-    addCallback(key, callback) {
+    addCallback(key : string, callback : CallBackType) {
         this.callbacks[key] = callback
     }
 
 
-    openCallback = () => {
-        console.log("web socket connection established")
-        this.flushQueue()
-    }
-
-    closeCallback = () => {
-        console.log("WebSocket connection closed");
-    }
-
-    errorCallback = (error) => {
-        console.log("WebSocket error:", error);
-    }
-
-
-    eventCallback = (event) => {
-        const data = JSON.parse(event.data)
-        switch (data.response.status) {
-            case 400:
-                console.log(data.response.error)
-                break;
-            case 212:
-                console.log(data.response)
-                break;
-            default:
-                break;
-        }
-    }
-
-
-
     connect(url : string) {
-        // if (this.socket && this.socket.readyState == WebSocket.OPEN)
-        //     this.close()
-        if (!this.socket || this.socket.readyState == WebSocket.CLOSED) {
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
             this.socket = new WebSocket(url);
 
             this.socket.onopen = this.openCallback
@@ -62,18 +67,18 @@ class WebSocketService {
         }
     }
 
-    sendMessage(message) { 
+    sendMessage(message : SocketMessageType) { 
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(JSON.stringify(message));
-        }else {
+        } else {
             this.queue.push(message);
-        } 
+        }
     }
 
     flushQueue() {
-        while (this.queue.length > 0) {
+        while (this.queue.length > 0 && this.socket) {
             const message = this.queue.shift();
-            this.socket!.send(JSON.stringify(message));
+            this.socket.send(JSON.stringify(message));
         }
     }
 
@@ -95,26 +100,19 @@ class GameSocket extends WebSocketService {
     }
 
     closeCallback = () => {
-        // this.callbacks['closeHandler'](true)
         console.log("Game WebSocket connection closed");
     }
     
-    eventCallback = (event) => {
+    eventCallback = (event : MessageEvent) => {
 
         const data = JSON.parse(event.data)
         switch (data.response.status) {
             case 201:
-                this.callbacks["setRoom"](data.response.room)
+                this.callbacks["setRoom"]?.(data.response.room)
                 break;
             case 203:
-                this.callbacks["startGame"](data.response.game_id)
+                this.callbacks["startGame"]?.(data.response.game_id)
                 break;
-            // case 202:
-            //     this.callbacks["setInitData"](data.response.game)
-            //     break;
-            // case 204:
-            //     this.callbacks["resultHandler"](data.response.match)
-            //     break;
             default:
                 break;
         }
@@ -133,20 +131,20 @@ class ChatSocket extends WebSocketService {
         console.log("Chat WebSocket connection closed");
     }
     
-    eventCallback = (event) => {
+    eventCallback = (event : MessageEvent) => {
 
         const data = JSON.parse(event.data)
         switch (data.response.status) {
             case 205:
-                this.callbacks["setData"](prev => prev ? [...prev, data.response.message] : [data.response.message])
-                this.callbacks["cnvsUpdate"](data.response.conversation)
+                this.callbacks["setData"]?.((prev) => prev ? [...prev, data.response.message] : [data.response.message])
+                this.callbacks["cnvsUpdate"]?.(data.response.conversation)
                 break;
             case 206:
-                this.callbacks["setData"](prev => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
-                this.callbacks["setUser"](data.response)
+                this.callbacks["setData"]?.(prev => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
+                this.callbacks["setUser"]?.(data.response)
                 break;
             case 209:
-                this.callbacks["cnvsHandler"](data.response.conversations)
+                this.callbacks["cnvsHandler"]?.(data.response.conversations)
                 break;
             case 400:
                 console.log("400" , data)
@@ -170,20 +168,20 @@ class NotificationSocket extends WebSocketService {
         console.log("Notifications WebSocket connection closed");
     }
 
-    eventCallback = (event) => {
+    eventCallback = (event : MessageEvent) => {
         const data = JSON.parse(event.data)
         // console.log("nots ==> ", data)
         switch (data.response.status) {
             case 207:
                 // console.log(this.callbacks)
-                this.callbacks["setNots"](prev => [data.response.not, ...prev])
-                this.callbacks["hasNew"](true)
+                this.callbacks["setNots"]?.(prev => [data.response.not, ...prev])
+                this.callbacks["hasNew"]?.(true)
                 break;
             case 208:
-                this.callbacks["FirstSetNots"](data.response.nots)
+                this.callbacks["FirstSetNots"]?.(data.response.nots)
                 break;
             case 209:
-                this.callbacks["appendNots"](data.response.nots);
+                this.callbacks["appendNots"]?.(data.response.nots);
                 break;
             default:
                 break;
@@ -213,27 +211,27 @@ class TournamentSocket extends WebSocketService {
                     players.push(value)
                 }
                 data.response.data.players = players
-                this.callbacks["roomDataHandler"](data.response.data)
+                this.callbacks["roomDataHandler"]?.(data.response.data)
                 break;
             }
             case 200:
                 console.log(JSON.parse(data.response.game))
                 break;
             case 201:
-                this.callbacks["setRoom"](data.response.room)
+                this.callbacks["setRoom"]?.(data.response.room)
                 break;
             case 210:
                 // console.log(data.response.data)
-                this.callbacks["tr_data"](data.response.data)
+                this.callbacks["tr_data"]?.(data.response.data)
                 setTimeout(() => {
                     this.sendMessage({"event" : "start"})
                 }, 4000)
                 break;
             case 211:
-                this.callbacks["match_data"](data.response.data)
+                this.callbacks["match_data"]?.(data.response.data)
                 break;
             case 212:
-                this.callbacks["winner_data"](data.response.data)
+                this.callbacks["winner_data"]?.(data.response.data)
                 break;
             default:
                 break;

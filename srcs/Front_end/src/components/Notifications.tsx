@@ -4,16 +4,12 @@ import { Link } from "react-router-dom";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { UserContext } from "@/Contexts/authContext";
 import { FaBell, FaCaretDown, FaCheck, FaTrash, FaUserPlus } from "react-icons/fa";
-import { FirendType, UserType } from "@/Types";
 import { NotificationsContext } from "@/Contexts/NotificationsContext";
 import { RelationsHandler } from "./profile/ActionsHandlers";
+import { NotificationType } from "@/types";
+import { FirendType } from "@/types/user";
 
-type NotificationType = {
-    created_at : string,
-    sender : UserType,
-    link : string,
-    message : string
-}
+
 
 export function NotItem({data} : {data : NotificationType}) {
 

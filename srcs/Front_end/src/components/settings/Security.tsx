@@ -8,8 +8,8 @@ import TwoFImg from "./TwoFImg"
 import TwoFactor from "../auth/2fa"
 import MyUseEffect from "@/hooks/MyUseEffect"
 import Alert from "../ui/Alert"
-import { AlertType } from "@/Types"
 import * as Yup from 'yup'
+import { AlertType } from "@/types"
 
 
 function SecurityItem({children} : { children : React.ReactNode }) {
@@ -34,7 +34,7 @@ function ChangePassword() {
 
 
 
-    async function submitHandler(values) {
+    async function submitHandler(values : {old_password : string, new_password : string}) {
 
         try {
             const response = await  fetch(`${import.meta.env.VITE_API_URL}api/users/changePassword/`, {
