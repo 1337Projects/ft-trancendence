@@ -33,6 +33,8 @@ export default function NotificationsContextProvider({ children }) {
                 page: nextPage,
                 page_size: 7,
             });
+            setCurrentPage(currentPage + 1);
+            // console.log("current page:", currentPage)
         }
         catch (error)
         {

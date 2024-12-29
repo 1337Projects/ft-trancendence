@@ -36,7 +36,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         event = data.get("event")
         if event == "fetch nots":
             try:
-                print('---------------------------------------------------', data)
+                # print('---------------------------------------------------', data)
+                # sys.stdout.flush()
                 usernamo = data["sender"]
                 page = data.get("page", 1)
                 page_size = data.get("page_size")
@@ -51,9 +52,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     }
                 }))
             except Exception as e:
-                print(e)
-                print('---------------------------------------------------errora')
-                sys.stdout.flush()
+                # print(e)
+                # print('---------------------------------------------------errora')
+                # sys.stdout.flush()
                 return
 
         elif event == "send_request":

@@ -63,7 +63,6 @@ export default function DashboardLayout() {
             else
             {
                 setNotifications((prev) => [...prev, ...newNotifications]);
-                setCurrentPage(currentPage + 1);
             }
         });
         notificationSocket.addCallback("hasNew", setHasNew)
