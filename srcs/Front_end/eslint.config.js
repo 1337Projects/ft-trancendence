@@ -1,19 +1,34 @@
 
 import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
 
-/** @type {import('eslint').Linter.Config[]} */
 export default [
+
   {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    languageOptions: { 
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
       globals: globals.browser,
+      parser: tsParser,
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/typedef": [
+        "error",
+        {
+          parameter: true,
+          // variableDeclaration: true,
+          propertyDeclaration: true,
+          // memberVariableDeclaration: true,
+        },
+      ],
     },
   },
-
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
 ];
