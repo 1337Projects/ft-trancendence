@@ -38,6 +38,7 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         async with self.shared_data._instance.lock:
 
             self.room_id = self.get_room(room_name, room_type)
+            debug(self.room_id)
             if self.room_id == -1:
                 name = room_name
                 if name == 'any':
@@ -127,6 +128,6 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         else:
             for key, room in self.shared_data._instance.rooms.items():
                 # debug(room)
-                if room['status'] == 'waiting' and room['name'] == room_name and room['privacy'] == 'private':
+                if room['status'] == 'waiting' and room['name'] == room_name and room['privacy'] == room_type:
                     return key
         return -1

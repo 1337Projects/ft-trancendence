@@ -11,7 +11,7 @@ import { RelationsHandler } from "./profile/ActionsHandlers";
 type NotificationType = {
     created_at : string,
     sender : UserType,
-    action : string,
+    link : string,
     message : string
 }
 
@@ -23,19 +23,18 @@ export function NotItem({data} : {data : NotificationType}) {
     const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
 
     return (
-        <li className="flex relative font-popins justify-between px-4 items-center w-full h-[60px] my-3">
-            <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 border-[1px] mr-4 border-black/20 rounded-[50%]" />
-            <div className="text text-primaryText">
-                <Link to={data.action}>
+        <li className="relative font-popins w-full h-[60px] my-3">
+            <Link className="flex justify-between px-4 items-center w-full h-full" to={data?.link}>
+                <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 border-[1px] mr-4 border-black/20 rounded-[50%]" />
+                <div className="text text-primaryText">
                     <h1 className="font-bold text-sm">{data.sender.username}</h1>
-                </Link>
-                <p className="mt-1 text-[8pt]">{data.message}</p>
-            </div>
-            <div className="date text-center w-[60px] text-[9px]">
-                <p className="">{date}</p>
-                <p className="mt-2">{time}</p>
-            </div>
-            
+                    <p className="mt-1 text-[8pt]">{data.message}</p>
+                </div>
+                <div className="date text-center w-[60px] text-[9px]">
+                    <p className="">{date}</p>
+                    <p className="mt-2">{time}</p>
+                </div>
+            </Link>
         </li>
     )
 }

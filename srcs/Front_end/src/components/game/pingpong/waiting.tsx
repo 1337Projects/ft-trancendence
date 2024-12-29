@@ -121,7 +121,7 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
                             {
                                 friends.map((fr, index) => 
                                     <li key={index} >
-                                        <FriendItem friendShip={fr} />
+                                        <FriendItem room={data.name} friendShip={fr} />
                                     </li>)
                             }
                         </ul>
@@ -135,12 +135,13 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 }
 
 
-function FriendItem({friendShip}) {
+function FriendItem({friendShip, room}) {
 
     const { authInfos } = useContext(UserContext) || {}
     const { color } = useContext(ApearanceContext) || {}
     const user = friendShip.sender.username === authInfos?.username ? friendShip.receiver : friendShip.sender
     const [ invited, setInvited ] = useState(false)
+    const { type } = useParams()
 
 
     function InviteHandler() {
@@ -150,7 +151,7 @@ function FriendItem({friendShip}) {
             sender: user.username, // Your logged-in user's username
             receiver: authInfos?.username, // Username of the friend to whom the request is sent
             message: `${authInfos?.username} invited you to play`,
-            link: "link"
+            link: `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/${type}/?room_id=${room}`
         });
         setInvited(true)
         setTimeout(() => {
