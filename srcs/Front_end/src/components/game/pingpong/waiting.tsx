@@ -3,7 +3,8 @@ import { gameSocket, notificationSocket } from '@/socket'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
-import { UserType } from "@/Types"
+import { UserType } from "@/types/user"
+
 
 export function PlayerGameCard({player} : { player : UserType }) {
     return (

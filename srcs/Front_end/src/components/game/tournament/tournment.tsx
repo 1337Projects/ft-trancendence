@@ -7,21 +7,25 @@ import Hero from "./Hero";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { FaArrowRight } from "react-icons/fa6";
 import Schema from "./Schema";
+import { UserType } from "@/types/user";
+import { MatchDataType, TournamentDataType } from "@/types/tournament";
+
+
 
 export default function Tournment() {
 
     const { user } = useContext(UserContext) || {}
     const { theme, color } = useContext(ApearanceContext) || {}
-    const [ tournamentData, setTournamentData ] = useState(null)
+    const [ tournamentData, setTournamentData ] = useState<TournamentDataType | null>(null)
     const navigate = useNavigate()
-    const [ ended, setEnded ] = useState(null)
+    const [ ended, setEnded ] = useState<UserType[] | null>(null)
  
 
-    function EndHandler(data) {
+    function EndHandler(data : UserType[]) {
         setEnded(data)
     }
 
-    function DataHandler(data) {
+    function DataHandler(data : TournamentDataType) {
         setTournamentData(data)
     }
 
@@ -39,7 +43,7 @@ export default function Tournment() {
     }, [])
 
 
-    const matchHandler = (match_data) => {
+    const matchHandler = (match_data : MatchDataType) => {
         if (match_data && user) {
             if (match_data.player_1.username == user?.username || match_data.player_2.username == user?.username) {
                 navigate(`play/${match_data.id}`)
@@ -47,6 +51,9 @@ export default function Tournment() {
         }
     }
 
+    if (!tournamentData) {
+        return <>loading</>
+    }
    
     return  (
         <div className={`w-full h-[100vh] ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}  mt-2 p-2`}>

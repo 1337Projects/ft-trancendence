@@ -1,12 +1,10 @@
 import React, { useContext, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { DialogContext } from "@/Contexts/DialogContext"
+import { DialogDataType } from "@/types"
 
 
-type DialogDataType = {
-    members : number,
-    name : string
-}
+
 
 export default function TournmentDialog() {
     const { color, theme } = useContext(ApearanceContext) || {}

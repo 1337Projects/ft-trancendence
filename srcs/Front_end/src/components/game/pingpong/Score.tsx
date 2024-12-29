@@ -1,4 +1,5 @@
-import { UserType } from "@/Types"
+
+import { UserType } from "@/types/user"
 import React from "react"
 
 type Player = {
