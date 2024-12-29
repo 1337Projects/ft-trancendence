@@ -3,11 +3,11 @@ import MyInput from "../ui/Input"
 import { Form, Formik } from "formik"
 import { Link, useNavigate } from "react-router-dom"
 import * as Yup from 'yup' 
-import { AlertType } from "../../Types"
 import Alert from "../ui/Alert"
+import { AlertType } from "@/types"
 
 
-async function requestLinkHandler(values) {
+async function requestLinkHandler(values : {email : string}) {
     try {
         const url = `${import.meta.env.VITE_API_URL}api/users/forgetPassword/`
         console.log(url)
@@ -47,8 +47,7 @@ const PasswordvalidationSchema = Yup.object({
     password :  Yup.string().required('Required').min(10, 'your password must contain at least 10 chars')
 })
 
-async function resetPasswordHandler(values) {
-    console.log(values)
+async function resetPasswordHandler(values : {password : string} ) {
 
     try { 
         const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/confirmPassword/`, {
