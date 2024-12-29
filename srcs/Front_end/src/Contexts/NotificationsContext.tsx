@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, ReactNode } from "react";
 import { notificationSocket } from "@/socket";
 import { UserContext } from "./authContext";
 
@@ -16,7 +16,7 @@ type NotificationsContextType = {
 
 export const NotificationsContext = createContext<null | NotificationsContextType>(null);
 
-export default function NotificationsContextProvider({ children }) {
+export default function NotificationsContextProvider({ children } : {children : ReactNode}) {
     const { authInfos} = useContext(UserContext) || {}; 
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);

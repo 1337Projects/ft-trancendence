@@ -1,13 +1,14 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, ReactNode, useState } from 'react'
 import {jwtDecode} from 'jwt-decode'
-import { AuthInfosType, FirendType, UserContextType, UserType } from '../Types'
+import { AuthInfosType, FirendType, UserContextType, UserType } from '@/types/user'
+
 
 
 
 export const UserContext = createContext<UserContextType | null>(null)
 
 
-export default function UserContextProvider({children}) {
+export default function UserContextProvider({children} : {children : ReactNode}) {
 
     const [authInfos, setAuthInfos] = useState<AuthInfosType | null>(null)
     const [user, setUser] = useState<UserType | null>(null)
@@ -18,7 +19,7 @@ export default function UserContextProvider({children}) {
             setAuthInfos(null)
             return
         }
-        const pyload = jwtDecode(token)
+        const pyload : {username : string} = jwtDecode(token)
         setAuthInfos({accessToken : token, username : pyload.username})
     }
 

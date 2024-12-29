@@ -1,5 +1,6 @@
-import React, { createContext } from "react";
-import { MessageType, UserType } from "../Types";
+import { MessageType } from "@/types/chat"
+import { UserType } from "@/types/user"
+import React, { createContext, ReactNode } from "react"
 
 
 type ChatContextType = {
@@ -12,7 +13,7 @@ type ChatContextType = {
 export const ChatContext = createContext<ChatContextType | null>(null)
 
 
-export default function ChatContextProvider({ value, children }) {
+export default function ChatContextProvider({ value, children } :  { children : ReactNode , value : ChatContextType }) {
 
     return (
         <ChatContext.Provider value={value}>

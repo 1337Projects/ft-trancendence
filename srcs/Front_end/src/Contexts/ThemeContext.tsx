@@ -1,12 +1,13 @@
 
-import React, { createContext, useState } from 'react'
-import { ApearanceContextType } from '../Types';
+import { ApearanceContextType } from '@/types';
+import React, { createContext, ReactNode, useState } from 'react'
+
 
 
 
 export const ApearanceContext = createContext<ApearanceContextType | null>(null);
 
-export default function ApearanceProvider({children}) {
+export default function ApearanceProvider({children} : {children : ReactNode}) {
 
     let currentTheme = window.localStorage.getItem('theme')
     let currentColor = window.localStorage.getItem('color')

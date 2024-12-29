@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, ReactNode, useState } from 'react'
 
 
 type DialogContextType = {
@@ -10,7 +10,7 @@ type DialogContextType = {
 export const DialogContext = createContext<DialogContextType | null>(null)
 
 
-export function DialogContextProvider({children}) {
+export function DialogContextProvider({children} : {children : ReactNode}) {
 
     const [open, setOpen] = useState<boolean>(false)
 
