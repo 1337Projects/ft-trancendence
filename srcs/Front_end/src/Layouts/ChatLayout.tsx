@@ -1,6 +1,6 @@
 
-import { Outlet, useParams } from "react-router-dom"
-import React, { Suspense, useContext, useEffect, useState } from "react"
+import { Outlet } from "react-router-dom"
+import React, { useContext, useEffect, useState } from "react"
 import ConversationsList, {Friends} from '../components/chat/chat'
 import { ApearanceContext } from "../Contexts/ThemeContext"
 import { FaBars } from "react-icons/fa"
@@ -9,7 +9,8 @@ import { UserContext } from "../Contexts/authContext"
 import MyUseEffect from '../hooks/MyUseEffect'
 import { chatSocket } from '../socket'
 import ChatContextProvider from "../Contexts/ChatContext"
-import { MessageType, UserType } from "../Types"
+import { ConversationType, MessageType } from "@/types/chat"
+import { UserType } from "@/types/user"
 
 
 export default function ChatLayout() {
@@ -17,7 +18,7 @@ export default function ChatLayout() {
     const [menu, setMenu] = useState<boolean>(false)
 
     const { user } = useContext(UserContext) || {}
-    const [ cnvs , setCnvs ] = useState<any>(null)
+    const [ cnvs , setCnvs ] = useState<ConversationType[] | null>(null)
 
 
     const [ messages, setMessages ] = useState<MessageType[] | null>(null)
@@ -31,7 +32,7 @@ export default function ChatLayout() {
         setUserData,
     }
 
-    function UpdateConversationsHandler(cnv) {
+    function UpdateConversationsHandler(cnv : ConversationType) {
         setCnvs(prev => [cnv, ...prev.filter(c => c.id != cnv.id)])
     }
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 
 
-function Slide({text, img}) {
+function Slide({text, img} : {text : string, img : string}) {
   return (
     <div className='slide'>
       <div className='relative h-[400px]'>
