@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { UserContext } from "../../Contexts/authContext";
 import MyUseEffect from "../../hooks/MyUseEffect";
+import { ConversationType } from "@/types/chat";
 
 
 
@@ -34,11 +35,7 @@ export async function BlockHandler(user_id : number, partner_id : number) {
 
 
 
-type ConversationType = {
-    content_of_last_message : string,
-    last_message_time : string
 
-}
 
 function ConvItem({c, menu} : {c : ConversationType, menu : boolean}) {
     const [time , setTime] = useState("")

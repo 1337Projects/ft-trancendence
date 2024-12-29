@@ -8,11 +8,8 @@ import { FaArrowLeft } from 'react-icons/fa';
 import ChatInput from './ChatInput';
 import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
-import { GoBlocked } from "react-icons/go";
-import { CgUnblock } from "react-icons/cg";
-import { BlockHandler } from './chat'
-import { MessageType } from '@/Types';
 import { RiGamepadLine } from "react-icons/ri";
+import { MessageType } from '@/types/chat';
 
 
 function calc_time(created_at : string) {
