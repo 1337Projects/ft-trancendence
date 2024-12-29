@@ -4,13 +4,13 @@ import { ApearanceContext } from '@/Contexts/ThemeContext';
 import { Banner } from './Hero';
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
-import { FirendType, UserType } from '@/Types';
 import { FaUserFriends } from 'react-icons/fa';
 import { RiProfileFill } from 'react-icons/ri';
+import { FirendType, UserType } from '@/types/user';
 
 
 export default function Profile() {
-	const appearence = useContext(ApearanceContext)
+	const { theme } = useContext(ApearanceContext) || {}
 	const {authInfos, user, friends} = useContext(UserContext) || {}
 	const {user_name} = useParams()
 	const [currentUser, setCurrentUser] = useState<UserType | null>(null)
@@ -18,7 +18,7 @@ export default function Profile() {
 
 	useEffect(() => {
 		if (currentUser && user && friends) {
-			const currentFriendship = friends.filter(item => 
+			const currentFriendship : FirendType[] = friends.filter((item : FirendType) => 
 				(
 					item.sender.username==user.username 
 					&& item.receiver.username==currentUser.username
@@ -37,7 +37,7 @@ export default function Profile() {
 
 	
 	useEffect(() => {
-		const timer = setTimeout(() => {
+		const timer : NodeJS.Timeout = setTimeout(() => {
 			if (user_name) {
 				fetch(`${import.meta.env.VITE_API_URL}api/profile/${user_name}/`, {
 					method: 'GET',
@@ -59,7 +59,7 @@ export default function Profile() {
 	}, [user_name])
 
 	return (
-		<div className={`w-full mt-2 backdrop-blur-md p-2 ${appearence?.theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
+		<div className={`w-full mt-2 backdrop-blur-md p-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
 			<div className={` w-full h-[calc(100vh-180px)] sm:h-[100vh] overflow-scroll`}>
 				<Banner user={currentUser} />
 				{

@@ -3,8 +3,8 @@ import { useContext } from "react"
 import { Link, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
 import { FaArrowRight } from 'react-icons/fa';
-import { FirendType, UserType } from '@/Types';
 import MyUseEffect from '@/hooks/MyUseEffect';
+import { FirendType, UserType } from '@/types/user';
 
 function FriendCard({friend} : {friend : UserType}) {
 

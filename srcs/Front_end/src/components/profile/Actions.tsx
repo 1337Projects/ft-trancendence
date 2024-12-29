@@ -3,9 +3,9 @@ import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { FaEllipsisV, FaUserMinus } from "react-icons/fa"
 import { GoBlocked } from "react-icons/go";
 import { CgUnblock } from "react-icons/cg";
-import { FirendType, UserType } from "@/Types";
 import { HasRelationWithStatus, RelationsHandler } from "./ActionsHandlers";
 import { UserContext } from "@/Contexts/authContext";
+import { FirendType, UserType } from "@/types/user";
 
 
 export function ActionButton({text, icon, handler} : 
@@ -33,7 +33,7 @@ export function ActionButton({text, icon, handler} :
 	)
 }
 
-export function ActionsList({ friend }) {
+export function ActionsList({ friend } : {friend : UserType}) {
 
 	const [ openMenu, setOpenMenu ] = useState(false)
 	const menuRef = useRef<null | HTMLUListElement>(null)
@@ -59,11 +59,11 @@ export function ActionsList({ friend }) {
 
 	useEffect(() => {
 
-		function clickHandler(event) {
+		function clickHandler(event : MouseEvent) {
 			if ( menuRef.current 
 				&& toggleButtonRef.current 
-				&& !menuRef.current.contains(event.target) 
-				&& !toggleButtonRef.current.contains(event.target)
+				&& !menuRef.current.contains(event.target as Node) 
+				&& !toggleButtonRef.current.contains(event.target as Node)
 			){
 				setOpenMenu(false)
 			}
@@ -88,7 +88,7 @@ export function ActionsList({ friend }) {
 							() => {
 								RelationsHandler(
 									'api/users/unblockUser/',
-									authInfos?.accessToken!,
+									authInfos.accessToken,
 									friend,
 									UpdateFriendCallback
 								)
@@ -105,7 +105,7 @@ export function ActionsList({ friend }) {
 									{
 										RelationsHandler(
 											'api/friends/cancle_friend/',
-											authInfos?.accessToken!,
+											authInfos.accessToken,
 											friend,
 											DeleteFriendRequest
 										)
@@ -119,7 +119,7 @@ export function ActionsList({ friend }) {
 								() => {
 									RelationsHandler(
 										'api/users/blockUser/',
-										authInfos?.accessToken!,
+										authInfos.accessToken,
 										friend,
 										UpdateFriendCallback
 									)

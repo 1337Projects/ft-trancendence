@@ -1,5 +1,4 @@
 import React, { useContext } from "react"
-import { FirendType, UserType } from "@/Types"
 import { FaCommentDots, FaPlus } from "react-icons/fa"
 import { GiSandsOfTime } from "react-icons/gi";
 import { FiCheckCircle } from "react-icons/fi";
@@ -7,6 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import { ActionButton, ActionsList } from "./Actions";
 import { UserContext } from "@/Contexts/authContext";
 import { useNavigate } from "react-router-dom";
+import { FirendType, UserType } from "@/types/user";
 
 export function HasRelationWithStatus(
     friendsList : FirendType[],
@@ -49,7 +49,8 @@ export async function RelationsHandler(url : string, token : string, body : User
     
     
         const { res, id} = await response.json()
-        id ? callback(id) : callback(res)
+        if (id) callback(id)
+        else callback(res)
     } catch(err) {
         console.log(err)
     }
