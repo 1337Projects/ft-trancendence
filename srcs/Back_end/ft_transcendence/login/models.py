@@ -22,6 +22,7 @@ class User(AbstractBaseUser):
     secret_key = models.CharField(max_length=64, default='')
     objects = UserManager()
     google_or_intra = models.BooleanField(default=False)
+    last_notification_seen = models.DateTimeField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']

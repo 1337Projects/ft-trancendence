@@ -53,6 +53,9 @@ services:
     environment:
       VITE_API_URL: "https://localhost:1024/"
       VITE_SOCKET_URL: "wss://localhost:1024/"
+      VITE_EMOJIES_API : "https://emoji-api.com/"
+      VITE_EMOJIES_KEY : "access_key=5f603eacb5994ec1a691d954ed1b809c369c465d"
+
 
   nginx:
     container_name: nginx

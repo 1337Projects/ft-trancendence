@@ -4,8 +4,6 @@ import { ApearanceContext } from '../../Contexts/ThemeContext'
 import { FaSearch } from 'react-icons/fa'
 
 export default function Emojies({TextInputHandler, inputText} : {inputText : string, TextInputHandler : React.Dispatch<React.SetStateAction<string>>}) {
-    // const API = 'https://emoji-api.com/'
-    // const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
     const {theme} = useContext(ApearanceContext) || {}
     const [query, setQuery] = useState('')
     const [search, setSearch] = useState(false)
@@ -34,8 +32,8 @@ export default function Emojies({TextInputHandler, inputText} : {inputText : str
 function EmojiesSearch({query} : {query : string}) {
 
     const [emojis, setEmojis] = useState([])
-    const API = 'https://emoji-api.com/emojis?search='
-    const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
+    const API = `${import.meta.env.VITE_EMOJIES_API}emojis?search=`
+    const KEY = import.meta.env.VITE_EMOJIES_KEY
     const url = API + query + "&" + KEY
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -68,8 +66,8 @@ function EmojiesSearch({query} : {query : string}) {
 }
 
 function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<React.SetStateAction<string>>, text : string}) {
-    const API = 'https://emoji-api.com/'
-    const KEY = 'access_key=5f603eacb5994ec1a691d954ed1b809c369c465d'
+    const API = import.meta.env.VITE_EMOJIES_API
+    const KEY = import.meta.env.VITE_EMOJIES_KEY
     const [def, setDef] = useState(dataa[0].name)
     const [emojis, setEmojis] = useState([])
 
