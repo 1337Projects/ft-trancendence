@@ -13,14 +13,17 @@ import { FirendType } from "@/types/user";
 
 export function NotItem({data} : {data : NotificationType}) {
 
-    const createdAt = new Date(data.created_at);
-
+    const createdAt = new Date(data.created_at)
     const date :string = `${createdAt.getFullYear()}-${(createdAt.getMonth() + 1).toString().padStart(2, '0')}-${createdAt.getDate().toString().padStart(2, '0')}`;
     const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
+    const fiveMinutesLater = new Date(createdAt.getTime() + 5 * 60 * 1000);
 
+    console.log(data)
+
+    const expired = new Date() > fiveMinutesLater
     return (
-        <li className="relative font-popins w-full h-[60px] my-3">
-            <Link className="flex justify-between px-4 items-center w-full h-full" to={data?.link}>
+        <li style={{opacity : expired ? "0.7" : "1", cursor : expired ? "not-allowed" : "pointer"}} className="relative font-popins w-full h-[60px] my-3">
+            <Link className="flex justify-between px-4 items-center w-full h-full" to={`${expired ? "#" : data?.link}`}>
                 <img src={data?.sender?.profile?.avatar} alt="user" className="h-10 w-10 border-[1px] mr-4 border-black/20 rounded-[50%]" />
                 <div className="text text-primaryText">
                     <h1 className="font-bold text-sm">{data.sender.username}</h1>
@@ -45,6 +48,7 @@ export function InviteItem({data} : {data : FirendType}) {
             sender: data?.sender?.username, // Your logged-in user's username
             receiver: data?.receiver?.username, // Username of the friend to whom the request is sent
             message: `${data?.receiver?.username} accept your Invitation`,
+            link : `${import.meta.env.VITE_API_URL}dashboard/profile/${data?.receiver?.username}`,
         });
     };
 

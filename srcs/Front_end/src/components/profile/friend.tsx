@@ -62,7 +62,7 @@ export default function Friends() {
             </div>
             {
                 friends?.length ?
-                <div className='w-full h-fit grid grid-cols-4 gap-2 mt-4'>
+                <div className='w-full h-fit flex flex-wrap'>
                     {
                         friends?.map((friend, index) => (
                             <FriendCard
