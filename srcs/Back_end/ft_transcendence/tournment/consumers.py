@@ -1,11 +1,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 from .models import Tournment
-from  asgiref.sync import sync_to_async, async_to_sync
+from  asgiref.sync import sync_to_async
 from .serializers import TournmentSerializer
-from game_api.serializers import MatchSerializer
-from .test import Builder, Player, Match
-import json, copy
+from game.serializers import GameSerializer
+from .test import Builder
+import json
 from account.serializer import UserWithProfileSerializer
 import threading
 from .utils import debug
@@ -135,20 +135,6 @@ class Tournament:
         self.builder = Builder()
         self.builder.init(data['data']['players'])
 
-    # async def run(self, level, id):
-    #     match  = self.builder.get_player_match(level, id)
-    #     debug(match)
-    #     # # with self.lock:
-    #     if match == None:
-    #         debug("match not found")
-    #     elif isinstance(match.val, Match) and match.val.status == 'waiting':
-    #         match.val.status = 'playing'
-    #     #     debug(f"start match btw left-{match.left.val.data['user_id']['id']} and right-{match.right.val.data['user_id']['id']}")
-    #     #     await asyncio.sleep(4)
-    #         match.val = match.left.val
-    #     elif not isinstance(match.val, Match):
-    #         debug("not a match")
-
 
     async def play(self, lvl, id):
         next_match = self.builder.get_player_match(lvl, id)
@@ -183,9 +169,9 @@ class Tournament:
     @database_sync_to_async
     def create_match(self, match):
         try:
-            serializer = MatchSerializer(data = {
-                "player_1" : int(match.left.val.data['id']),
-                "player_2" : int(match.right.val.data['id']),
+            serializer = GameSerializer(data = {
+                "player1" : int(match.left.val.data['id']),
+                "player2" : int(match.right.val.data['id']),
             })
             if serializer.is_valid():
                 serializer.save()
@@ -232,9 +218,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
             await self.init()
             await self.create_provider()
         
-
-
-
 
     async def init(self):
         if not self.shared_state._tournaments.get(self.tournment_id, None):
@@ -317,9 +300,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                         )
 
 
-
-
-
     async def send_data(self, event):
         json_data = json.dumps({"response" : event["data"]})
         await self.send(text_data=json_data)
@@ -329,13 +309,9 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
         async with self.shared_state.lock:
             self.shared_state._tournaments[self.tournment_id]['user_count'] -= 1
-            # debug(f"dec => {self.shared_state._tournaments[self.tournment_id]['user_count']}")
             if self.shared_state._tournaments[self.tournment_id]['user_count'] == 0:
-                # debug("delete")
                 del self.shared_state._tournaments[self.tournment_id]
                 del self.shared_state.tournaments_providers[self.tournment_id]
-                # debug(self.shared_state.tournaments_providers)
-                # debug(self.shared_state._tournaments)
 
 
 

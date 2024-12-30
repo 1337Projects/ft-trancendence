@@ -1,6 +1,6 @@
 import React, { useRef, useContext, useEffect } from 'react';
 import { ApearanceContext } from "@/Contexts/ThemeContext";
-import { Game } from './game';
+import { Game } from './Game';
 import { GameType } from './PingPong';
 
 interface CanvasProps {
@@ -18,19 +18,19 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
 
     const { theme } = useContext(ApearanceContext) || {}
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        console.log('use effect of canvas conponent.....');
-        if (canvas) {
-            console.log('canva is created .....');
-            // const context = canvas.getContext('2d');
-            // Perform any setup or drawing on the canvas here 
-            // Cleanup function
-            return () => {
-                // Perform any necessary cleanup here
-            };
-        }
-    }, [theme]); // Dependency array
+    // useEffect(() => {
+    //     const canvas = canvasRef.current;
+    //     console.log('use effect of canvas conponent.....');
+    //     if (canvas) {
+    //         console.log('canva is created .....');
+    //         // const context = canvas.getContext('2d');
+    //         // Perform any setup or drawing on the canvas here 
+    //         // Cleanup function
+    //         // return () => {
+    //         //     // Perform any necessary cleanup here
+    //         // };
+    //     }
+    // }, [theme]); // Dependency array
 
     useEffect(() => {
         if (game !== null) {
@@ -38,6 +38,7 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
             const context = canvas?.getContext('2d');
             const { paddles, ball } = game;
             if (context) {
+                console.log('here')
                 const gameInstance = new Game(context, paddles, ball);
                 gameInstance.render();
             } else {

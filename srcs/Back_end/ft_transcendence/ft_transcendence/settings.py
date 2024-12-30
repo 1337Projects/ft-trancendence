@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'game',
     'notifications',
     # 'game_api',
-    # 'tournment',
+    'tournment',
     'channels',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
