@@ -12,6 +12,7 @@ class GameRequest(models.Model):
     is_accepted = models.BooleanField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    link = models.TextField(default="link")
 
     def __str__(self):
         return f"Game Request from {self.sender} to {self.receiver} - Accepted: {self.is_accepted}"

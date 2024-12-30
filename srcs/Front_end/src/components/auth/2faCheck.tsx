@@ -2,22 +2,16 @@ import { OtpInput } from 'reactjs-otp-input';
 import React, { useContext, useState } from 'react'
 import { UserContext } from '../../Contexts/authContext'
 import { useNavigate } from 'react-router-dom'
-import { useLocation } from 'react-router-dom';
 import TwoFImg from "../settings/TwoFImg";
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 
 
 
 export default function TwoFacCheck () {
-    // const [qrCodeUrl, setQr] = useState()
-    // const qr = "otpauth://totp/YourAppName:username?secret=JBSWY3DPEPK3PXP"
-    // const user = useContext(UserContext)
-    // const appearence = useContext(ApearanceContext)
     const [otp, setOtp] = useState('');
     const [errr, setErrr] = useState('Verify');
     // const [bol, setBol] = useState(true);
     const user = useContext(UserContext)
-    const location = useLocation();  // Get location object
     const navigate = useNavigate()
     const { color, theme } = useContext(ApearanceContext) || {}
     const [dataa, setDataa] = useState({

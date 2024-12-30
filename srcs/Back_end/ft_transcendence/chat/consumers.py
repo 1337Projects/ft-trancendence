@@ -161,7 +161,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         to_ = text_data_json.get('partner')
         from_ = text_data_json.get('from')
         sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
-        all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
+        all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id']) # slicing query
         page = text_data_json.get('page', 1)
         limit = text_data_json.get('limit', 30)
         paginator = Paginator(all_messages, limit)

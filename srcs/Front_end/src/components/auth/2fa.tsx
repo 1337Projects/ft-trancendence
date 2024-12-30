@@ -9,10 +9,15 @@ import { OtpInput } from 'reactjs-otp-input';
 
 
 
-export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa} ) {
+export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa} : 
+    {
+        are_you_in:boolean,
+        cancel: boolean,
+        setShowPopup: React.Dispatch<React.SetStateAction<boolean>>
+        setTwofa: React.Dispatch<React.SetStateAction<boolean>>
+    }) {
 
     const [qrCodeUrl, setQr] = useState()
-    const qr = "otpauth://totp/YourAppName:username?secret=JBSWY3DPEPK3PXP"
     const user = useContext(UserContext)
     const appearence = useContext(ApearanceContext)
     const [otp, setOtp] = useState('');

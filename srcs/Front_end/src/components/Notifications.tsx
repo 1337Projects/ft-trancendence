@@ -80,7 +80,7 @@ export function InviteItem({data} : {data : FirendType}) {
                             onClick={
                                 () => RelationsHandler(
                                     'api/friends/accept_friend/',
-                                    authInfos?.accessToken!,
+                                    authInfos?.accessToken,
                                     data.sender,
                                     AcceptFriendCallback
                                 )
@@ -93,7 +93,7 @@ export function InviteItem({data} : {data : FirendType}) {
                             onClick={() => 
                                 RelationsHandler(
                                     'api/friends/reject_friend/',
-                                    authInfos?.accessToken!,
+                                    authInfos?.accessToken,
                                     data.sender,
                                     DeleteFriendRequest
                                 )

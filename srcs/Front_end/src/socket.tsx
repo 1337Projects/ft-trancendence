@@ -171,7 +171,7 @@ class NotificationSocket extends WebSocketService {
 
     eventCallback = (event : MessageEvent) => {
         const data = JSON.parse(event.data)
-        // console.log("nots ==> ", data)
+        console.log("nots ==> ", data)
         switch (data.response.status) {
             case 207:
                 // console.log(this.callbacks)
