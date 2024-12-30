@@ -342,3 +342,16 @@ def get_others_friends(request, username):
     )
     serializer = UserWithFriendsSerializer(friends_filter , many=True)
     return Response({"data" : serializer.data})
+
+
+@api_view(['POST'])
+def set_lst_not_time(request):
+    try:
+        id = get_id(request)
+        time = request.data.get("time")
+        user = User.objects.get(id=id)
+        user.last_notification_seen = time
+        user.save()
+        return Response({"message": "ok"}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)

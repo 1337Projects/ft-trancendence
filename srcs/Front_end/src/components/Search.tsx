@@ -77,17 +77,15 @@ function SearchResult({query, queryHandler} : {query : string, queryHandler : Re
     )
 }
 
-function HeaderItems({icon, hasNew} : {icon : ReactElement, hasNew : true}) {
+export function HeaderItems({icon, hasNew} : {icon : ReactElement, hasNew : number}) {
     return (
         <div className="relative text-[16pt] cursor-pointer ml-6">
             {icon}
-            {
-                hasNew &&
-                <span className="absolute top-0 flex justify-center items-center h-2 left-0 w-2">
-                    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-600 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
-                </span>
-            }
+            <span className="absolute top-[-4px] flex justify-center items-center left-[-4.5px] h-4 w-4">
+                <p className="absolute text-[8pt] top-0 z-20 font-bold">{hasNew > 7 ? '7+' : hasNew}</p>
+                <span className={`${hasNew != 0 && "animate-ping"}  absolute inline-flex h-4 w-4 rounded-full bg-red-600 opacity-75`}></span>
+                <span className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
+            </span>
         </div>
     )
 }
@@ -154,9 +152,9 @@ export default function Search() {
                                 <HeaderItems hasNew={hasNew} icon={<LuBell />} />
                             </button>
                             <button ref={toggleInvitesButtonRef} onClick={() => setInvitesOpen(prev => !prev)}>
-                                <HeaderItems hasNew={Boolean(hasInvites)} icon={<FiUser />} />
+                                <HeaderItems hasNew={hasInvites} icon={<FiUser />} />
                             </button>
-                            { notsOpen && <Nots notsRef={notsRef} /> }
+                            { notsOpen && <Nots notsRef={notsRef} open={notsOpen} /> }
                             { invitesOpen && <Invites invRef={invRef} /> }
                         </div>
                     </div>
@@ -181,19 +179,20 @@ export default function Search() {
     )
 }
 
-function Nots({ notsRef }) {
+function Nots({ notsRef, open }) {
 
     const { notifications, hasNew, setHasNew } = useContext(NotificationsContext) || {}
     const { theme } = useContext(ApearanceContext) || {}
 
     useEffect(() => {
-        if (hasNew) {
-            setHasNew!(false)
+        console.log(open)
+        if (hasNew && open) {
+            setHasNew!(0)
         }
-    }, [])
+    }, [open])
 
     return (
-        <div ref={notsRef} className={`${theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px]  rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
+        <ul ref={notsRef} className={`${theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px]  rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
             {
                 notifications?.length ? 
                 notifications.map((not, index) => {
@@ -206,7 +205,7 @@ function Nots({ notsRef }) {
                     no notifications yet
                 </div>
             }
-        </div>
+        </ul>
     )
 }
 

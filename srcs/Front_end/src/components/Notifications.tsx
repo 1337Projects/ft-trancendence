@@ -8,6 +8,9 @@ import { NotificationsContext } from "@/Contexts/NotificationsContext";
 import { RelationsHandler } from "./profile/ActionsHandlers";
 import { NotificationType } from "@/types";
 import { FirendType } from "@/types/user";
+import { HeaderItems } from "./Search";
+import { LuBell } from "react-icons/lu";
+import { FiUser } from "react-icons/fi";
 
 
 
@@ -115,12 +118,11 @@ export default function Notifications() {
     if (notificationsOpen === null)
         window.localStorage.setItem('showNotifications', "false");
 
-    const { notifications, hasNew, setHasNew } = useContext(NotificationsContext) || {}
+    const { notifications, hasNew, setHasNew , fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {}
+    const { user, authInfos } = useContext(UserContext) || {}
+    
     const [show, setShow] = useState(notificationsOpen == 'true')
     const appearence = useContext(ApearanceContext)
-
-
-    const { fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {};
     const containerRef = useRef(null);
 
 
@@ -133,7 +135,53 @@ export default function Notifications() {
         }
     };
 
+    function isNew(lst_time : string, not_time : string) {
+        return new Date(not_time) > new Date(lst_time)
+    }
+
+    async function UpdateTime(time : string) {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/setLastNotTime/time/`, {
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization' : `Bearer ${authInfos?.accessToken}`
+                },
+                body : JSON.stringify({time}),
+                credentials : 'include'
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to update last notification time')
+            }
+
+            setHasNew!(0)
+        } catch (error) {
+            console.log(error.toString())
+        }
+    }
+
     useEffect(() => {
+        const timer = setTimeout(() => {
+            console.log('aaaaaa')
+            if (
+                    show &&
+                    notifications && 
+                    notifications.length > 0 && 
+                    isNew(user.last_notification_seen, notifications[0].created_at)
+            ) {
+                UpdateTime(notifications[0].created_at)
+            }
+
+        }, 300)
+
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [show, notifications])
+
+    useEffect(() => {
+        // console.log(notifications)
         const container = containerRef.current;
         if (container) {
             container.addEventListener("scroll", handleScroll);
@@ -152,21 +200,14 @@ export default function Notifications() {
         window.localStorage.setItem('showNotifications', String(value));
     }
 
-    useEffect(() => {
-        if (show && hasNew) {
-            setTimeout(() => {
-                setHasNew!(false)
-            }, 3000)
-        }
-    }, [show])
+
 
     return (
         <div className={`min-h-[70px] w-full rounded-sm border-[.3px] ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText border-darkText/10"} shadow-sm w-full` }>
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
-                    <h1 className="mr-2 font-popins">Notifications</h1>
-                    <FaBell />
-                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">{notifications?.length}</div>
+                    <h1 className="font-popins">Notifications</h1>
+                    <HeaderItems icon={<LuBell />} hasNew={hasNew} />
                 </div>
                 <FaCaretDown />
             </div>
@@ -220,9 +261,8 @@ export function Invites() {
         <div className={`w-full min-h-[60px] border-[.1px] rounded-sm mt-2 ${appearence?.theme === 'light' ? "bg-lightItems text-lightTextb border-lightText/10" : " bg-darkItems text-darkText border-darkText/10"}`}>
             <div className="header px-6 h-[60px] relative cursor-pointer flex justify-between w-full items-center" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
-                    <h1 className="mr-2">invites</h1>
-                    <FaUserPlus />
-                    <div className="dot text-white bg-rose-400 w-[12px] h-[12px] text-[10px] rounded-[50%] flex justify-center items-center">{invites?.length}</div>
+                    <h1 className="">invites</h1>
+                    <HeaderItems icon={<FiUser />} hasNew={invites?.length || 0} />
                 </div>
                 <FaCaretDown />
             </div>

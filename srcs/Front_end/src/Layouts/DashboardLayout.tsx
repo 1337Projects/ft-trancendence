@@ -49,7 +49,7 @@ export default function DashboardLayout() {
 
     const navigate = useNavigate();
 
-    const { setNotifications, setHasMore, setHasNew, setCurrentPage, currentPage} = useContext(NotificationsContext) || {}
+    const { setNotifications, setHasMore, setHasNew, setCurrentPage} = useContext(NotificationsContext) || {}
 
     useEffect(() => {
       const timer = setTimeout(() => {

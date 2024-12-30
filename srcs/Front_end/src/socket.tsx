@@ -176,10 +176,11 @@ class NotificationSocket extends WebSocketService {
             case 207:
                 // console.log(this.callbacks)
                 this.callbacks["setNots"]?.(prev => [data.response.not, ...prev])
-                this.callbacks["hasNew"]?.(true)
+                this.callbacks["hasNew"]?.(prev => prev + 1)
                 break;
             case 208:
                 this.callbacks["FirstSetNots"]?.(data.response.nots)
+                this.callbacks["hasNew"]?.(data.response.num_of_notify)
                 break;
             case 209:
                 this.callbacks["appendNots"]?.(data.response.nots);

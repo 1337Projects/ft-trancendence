@@ -18,4 +18,5 @@ urlpatterns = [
     path('2fa/disable/', views.disable_2fa),
     path('<str:username>/', views.get_profile),
     path('getOthersFriends/<str:username>/', views.get_others_friends),
+    path('setLastNotTime/time/', views.set_lst_not_time),
 ]

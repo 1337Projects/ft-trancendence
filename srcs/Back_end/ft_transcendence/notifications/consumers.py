@@ -36,12 +36,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         event = data.get("event")
         if event == "fetch nots":
             try:
+                print('---------------------------------------------------', data)
+                sys.stdout.flush()
                 usernamo = data["sender"]
                 page = data.get("page", 1)
                 page_size = data.get("page_size")
                 user = await sync_to_async(User.objects.get)(username=usernamo)
-                print('---------------------------------------------------', data)
-                sys.stdout.flush()
                 notifications = await self.get_user_notifications(user, page, page_size)
                 await self.send(text_data=json.dumps({
                     "response": {
@@ -101,33 +101,37 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def get_user_notifications(self, user, page=1, page_size=7):
-        offset = (page - 1) * page_size
-        notifications = GameRequest.objects.filter(sender=user)[offset : offset + page_size]
+        try:
+            offset = (page - 1) * page_size
+            notifications = GameRequest.objects.filter(sender=user)[offset : offset + page_size]
 
-        print('-------------------------------------------321--------')
-        sys.stdout.flush()
-        num_of_notify = GameRequest.objects.filter(sender=user, created_at__gt=user.last_notification_seen)[offset : offset + page_size].count()
-        
-        notifications_list = []
-        serializer = GameRequestSerializer(notifications, many=True)
-        for notification in serializer.data:
-            user = User.objects.get(username=notification["receiver_username"])
-            profile = Profile.objects.get(user_id=notification["receiver"])
-            user_ser = UserWithProfileSerializer(user).data
-            user_ser['profile'] = ProfileSerializers(profile).data
-            notifications_list.append({
-                "id": notification["id"],
-                "sender": user_ser,
-                "message": notification["message"],
-                "is_accepted": notification['is_accepted'],
-                "created_at": notification['created_at'],
-                "is_read": notification['is_read'],
-            })
+            num_of_notify = GameRequest.objects.filter(sender=user, created_at__gt=user.last_notification_seen)[offset : offset + page_size].count()
+            
+            notifications_list = []
+            serializer = GameRequestSerializer(notifications, many=True)
+            # print('-------------------------------------------321--------', notifications_list)
+            # sys.stdout.flush()
+            for notification in serializer.data:
+                user = User.objects.get(username=notification["receiver_username"])
+                profile = Profile.objects.get(user_id=notification["receiver"])
+                user_ser = UserWithProfileSerializer(user).data
+                user_ser['profile'] = ProfileSerializers(profile).data
+                notifications_list.append({
+                    "id": notification["id"],
+                    "sender": user_ser,
+                    "message": notification["message"],
+                    "is_accepted": notification['is_accepted'],
+                    "created_at": notification['created_at'],
+                    "is_read": notification['is_read'],
+                })
 
-        return {
-            "notifications": notifications_list,
-            "num_of_notify": num_of_notify,
-            # "current_page": page
-        }
+            return {
+                "notifications": notifications_list,
+                "num_of_notify": num_of_notify,
+                # "current_page": page
+            }
+        except Exception as e:
+            print(e)
+            sys.stdout.flush()
     def get_user_channel_name(self, username):
         return cache.get(f"channel_{username}")

@@ -23,7 +23,7 @@ class UserWithProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'profile')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'profile', 'last_notification_seen')
     
     def get_profile(self, obj):
         profile = Profile.objects.get(user_id=obj.id)
