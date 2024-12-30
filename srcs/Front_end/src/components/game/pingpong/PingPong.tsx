@@ -1,42 +1,42 @@
 
-import React, { useContext, useRef } from "react"
-// import { useNavigate, useParams } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-// import { UserContext } from '@/Contexts/authContext'
-// import { gameSocket, tournamentSocket } from "@/socket";
-// import Game from "../pingpong/Game";
-// import Score from "../pingpong/Score";
+import { gameSocket } from "@/sockets/gameSocket";
+import { useParams } from "react-router-dom";
+import { UserContext } from "@/Contexts/authContext";
+import Canvas from "./Canvas";
 
+export interface GameType {
+    paddles: never; // Replace 'any' with the actual type
+    game: never;   // Replace 'any' with the actual type
+    ball: never;    // Replace 'any' with the actual type
+}
 
-export default function PingPong() {
+function PingPong() {
+    const { game_id }= useParams();
+    const { authInfos } = useContext(UserContext) || {}
+    const [ game, setGame] = useState<GameType | null>(null)
 
-    const canvasRef = useRef<null | HTMLCanvasElement>(null);
-    const canvaParentRef = useRef<null | HTMLDivElement>(null);
-    // const gameRef = useRef<null | Game>(null);
-    // const [data, setData] = useState(null);
-    // const { tournament_id, game_id } = useParams()
-    // const { authInfos, user } = useContext(UserContext) || {}
-    // const navigate = useNavigate()
-    // const [ closed, setClosed ] = useState(false)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            gameSocket.connect(`ws://localhost:8000/ws/game/${game_id}/?token=${authInfos?.accessToken}`);
+            gameSocket.addCallback("init", init);
+        }, 200);
 
-    // useEffect(() => {
-        
-    //     const timer = setTimeout(() => {
-    //         // gameSocket.connect(`ws://localhost:8000/ws/game/${game_id}/?token=${authInfos?.accessToken}`)
-    //         // gameSocket.addCallback("init", init)
-    //         // gameSocket.addCallback("setInitData", setData)
-    //     }, 200)
+        return () => {
+            clearTimeout(timer);
+            gameSocket.close();
+        };
+    }, [game_id, authInfos]);
 
-    //     return () => {
-    //         clearTimeout(timer)
-    //         gameSocket.close()
-    //     }
-    // }, [])
-
-
-    // function init(data) {
-    //     console.log(data)
-    // }
+    function init(data: never) {
+        console.log('init functions with :', data);
+        const {paddles, game, ball} = data;
+        console.log('init function with : ', { paddles, game, ball });
+        const game_data = { paddles, game, ball };
+        console.log('game data: ', game_data);
+        setGame(game_data);
+    }
 
 
     
@@ -93,11 +93,12 @@ export default function PingPong() {
                                 <h1 className=''>{startStatus}</h1>
                                 </div>
                             } */}
-                            <div ref={canvaParentRef} className={` ${theme === 'light' ? "border-lightText" : "border-darkText"} rounded-sm w-full flex justify-center items-center h-5/6 relative transition-transform duration-1000`}>
+                            { game && <Canvas game={game}/>}
+                            {/* <div ref={canvaParentRef} className={` ${theme === 'light' ? "border-lightText" : "border-darkText"} rounded-sm w-full flex justify-center items-center h-5/6 relative transition-transform duration-1000`}>
                                 <div className=''>
                                     <canvas className={`border-[.1px] border-white/50 mr-10 bg-black/30 rounded-sm backdrop-blur-md w-full`} width="600px" height="400px" ref={canvasRef}></canvas>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div> 
@@ -105,3 +106,4 @@ export default function PingPong() {
     )
 }
 
+export default PingPong;

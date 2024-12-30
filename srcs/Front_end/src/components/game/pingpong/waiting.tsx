@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { gameSocket, notificationSocket } from '@/socket'
+import { roomSocket, notificationSocket } from '@/socket'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
@@ -37,14 +37,14 @@ export default function Waiting() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/join/${type}/${room_id}/?token=${authInfos?.accessToken}`)
-            gameSocket.addCallback("setRoom", setRoom)
-            gameSocket.addCallback("startGame", startGameHandler)
+            roomSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/join/${type}/${room_id}/?token=${authInfos?.accessToken}`)
+            roomSocket.addCallback("setRoom", setRoom)
+            roomSocket.addCallback("startGame", startGameHandler)
         }, 100)
 
         return () => {
             clearTimeout(timer)
-            gameSocket.close()
+            roomSocket.close()
         }
     }, [])
 

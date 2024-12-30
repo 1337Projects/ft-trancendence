@@ -8,7 +8,7 @@ interface SocketMessageType {
 }
 
 
-class WebSocketService {
+export class WebSocketService {
 
     callbacks: Record<string, CallBackType>;
     socket: null | WebSocket;
@@ -91,16 +91,17 @@ class WebSocketService {
 }
 
 
-class GameSocket extends WebSocketService {
+class RoomSocket extends WebSocketService {
 
 
     openCallback = () => {
-        console.log("Game web socket connection established")
+        console.log("Room web socket connection established")
         this.flushQueue()
     }
 
     closeCallback = () => {
-        console.log("Game WebSocket connection closed");
+        // this.callbacks['closeHandler'](true)
+        console.log("Room WebSocket connection closed");
     }
     
     eventCallback = (event : MessageEvent) => {
@@ -245,7 +246,7 @@ const Socket = new WebSocketService()
 
 export const notificationSocket = new NotificationSocket()
 export const tournamentSocket = new TournamentSocket()
-export const gameSocket = new GameSocket()
+export const roomSocket = new RoomSocket()
 export const chatSocket = new ChatSocket()
 
 export default Socket
