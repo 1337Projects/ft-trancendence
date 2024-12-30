@@ -18,7 +18,7 @@ export function NotItem({data} : {data : NotificationType}) {
     const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
     const fiveMinutesLater = new Date(createdAt.getTime() + 5 * 60 * 1000);
 
-    console.log(data)
+    // console.log(data)
 
     const expired = new Date() > fiveMinutesLater
     return (
@@ -128,7 +128,7 @@ export default function Notifications() {
         if (!containerRef.current || !hasMore) return;
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
-        if (scrollTop + clientHeight >= scrollHeight - 0.5) {
+        if (scrollTop + clientHeight >= scrollHeight - 1) {
             fetchMoreNotifications();
         }
     };

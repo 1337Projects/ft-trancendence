@@ -46,7 +46,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({
                     "response": {
                         "nots": notifications["notifications"],
-                        # "num_of_notify": notifications["num_of_notify"],
+                        "num_of_notify": notifications["num_of_notify"],
                         # "current_page": notifications["current_page"],
                         "status": 208 if data.get("page") == None else 209,
                     }
@@ -104,9 +104,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         offset = (page - 1) * page_size
         notifications = GameRequest.objects.filter(sender=user)[offset : offset + page_size]
 
-        # print('-------------------------------------------321--------')
-        # sys.stdout.flush()
-        # num_of_notify = GameRequest.objects.filter(sender=user, created_at__gt=user.last_notification_seen)[offset : offset + page_size].count()
+        print('-------------------------------------------321--------')
+        sys.stdout.flush()
+        num_of_notify = GameRequest.objects.filter(sender=user, created_at__gt=user.last_notification_seen)[offset : offset + page_size].count()
         
         notifications_list = []
         serializer = GameRequestSerializer(notifications, many=True)
@@ -126,7 +126,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         return {
             "notifications": notifications_list,
-            # "num_of_notify": num_of_notify,
+            "num_of_notify": num_of_notify,
             # "current_page": page
         }
     def get_user_channel_name(self, username):
