@@ -184,8 +184,32 @@ export default function Search() {
 
 function Nots({ notsRef, open }) {
 
-    const { notifications, hasNew, setHasNew } = useContext(NotificationsContext) || {}
+    const { notifications, hasNew, setHasNew , fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {}
     const { theme } = useContext(ApearanceContext) || {}
+
+    
+    const handleScroll = () => {
+        if (!notsRef.current || !hasMore) return;
+        const { scrollTop, scrollHeight, clientHeight } = notsRef.current;
+
+        if (scrollTop + clientHeight >= scrollHeight - 1) {
+            fetchMoreNotifications();
+        }
+    };
+
+    useEffect(() => {
+        // console.log(notifications)
+        const container = notsRef.current;
+        if (container) {
+            container.addEventListener("scroll", handleScroll);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener("scroll", handleScroll);
+            }
+        };
+    }, [fetchMoreNotifications, hasMore]);
 
     useEffect(() => {
         console.log(open)
