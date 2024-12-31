@@ -78,13 +78,16 @@ function SearchResult({query, queryHandler} : {query : string, queryHandler : Re
 }
 
 export function HeaderItems({icon, hasNew} : {icon : ReactElement, hasNew : number}) {
+
+    const { color } = useContext(ApearanceContext) || {}
+
     return (
         <div className="relative text-[16pt] cursor-pointer ml-6">
             {icon}
-            <span className="absolute top-[-4px] flex justify-center items-center left-[-4.5px] h-4 w-4">
-                <p className="absolute text-[8pt] top-0 z-20 font-bold">{hasNew > 7 ? '7+' : hasNew}</p>
-                <span className={`${hasNew != 0 && "animate-ping"}  absolute inline-flex h-4 w-4 rounded-full bg-red-600 opacity-75`}></span>
-                <span className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
+            <span className="absolute  top-[-4px] flex justify-center rounded-full items-center left-[-5px] h-4 w-4">
+                <p className="absolute text-[8pt] top-0 z-20 font-bold text-white">{hasNew > 7 ? '7+' : hasNew}</p>
+                <span style={{background : color}} className={`${hasNew != 0 && "animate-ping"}  absolute inline-flex h-4 w-4 rounded-full opacity-75`}></span>
+                <span style={{background : color}} className="relative inline-flex rounded-full h-full w-full bg-red-500"></span>
             </span>
         </div>
     )

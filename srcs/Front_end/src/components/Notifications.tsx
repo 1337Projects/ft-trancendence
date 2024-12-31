@@ -114,6 +114,9 @@ export function InviteItem({data} : {data : FirendType}) {
 }
 
 export default function Notifications() {
+
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1124)
+
     const notificationsOpen = window.localStorage.getItem('showNotifications')
     if (notificationsOpen === null)
         window.localStorage.setItem('showNotifications', "false");
@@ -134,6 +137,26 @@ export default function Notifications() {
             fetchMoreNotifications();
         }
     };
+
+    useEffect(() => {
+        setIsLargeScreen(window.innerWidth >= 1124)
+        let timer : NodeJS.Timeout | null = null;
+
+        function callback() {
+            setIsLargeScreen(window.innerWidth >= 1124)
+        }
+
+        window.addEventListener('resize', () => {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(callback, 300)
+        })
+
+        return () => {
+            window.removeEventListener('resize', callback)
+            if (timer) clearTimeout(timer);
+        }
+
+    }, [])
 
     function isNew(lst_time : string, not_time : string) {
         return new Date(not_time) > new Date(lst_time)
@@ -163,8 +186,8 @@ export default function Notifications() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            console.log('aaaaaa')
             if (
+                    isLargeScreen &&
                     show &&
                     notifications && 
                     notifications.length > 0 && 
@@ -178,10 +201,9 @@ export default function Notifications() {
         return () => {
             clearTimeout(timer)
         }
-    }, [show, notifications])
+    }, [show, notifications, isLargeScreen])
 
     useEffect(() => {
-        // console.log(notifications)
         const container = containerRef.current;
         if (container) {
             container.addEventListener("scroll", handleScroll);
