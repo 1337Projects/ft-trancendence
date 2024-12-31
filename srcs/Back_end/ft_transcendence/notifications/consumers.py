@@ -123,6 +123,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     "is_accepted": notification['is_accepted'],
                     "created_at": notification['created_at'],
                     "is_read": notification['is_read'],
+                    "link": notification['link'],
+                    "link_expired": notification['link_expired'],
                 })
 
             return {
