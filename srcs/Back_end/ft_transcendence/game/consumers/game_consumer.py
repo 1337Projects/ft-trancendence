@@ -76,13 +76,26 @@ class GameConsumer(AsyncWebsocketConsumer):
             pass
 
     async def game_loop(self):
-        pass
         # ic(self.player.username, "Game loop started")
         # sys.stdout.flush()
         for i in range(10000):
             await asyncio.sleep(1 / 40)
-            self.pongGameManager.update(self.room_name)
+            rslt = self.pongGameManager.update(self.room_name)
+            if rslt:
+                ic(rslt)
+                sys.stdout.flush()
+                await self.send_score(rslt)
             await self.send_stats()
+
+    async def send_score(self, score):
+       event = {
+           'type': 'broad_cast',
+           'event': 'set_score',
+           'score': score
+       }
+       ic(event)
+       sys.stdout.flush()
+       await self.group_send(event)
 
     async def group_send(self, event):
         await self.channel_layer.group_send(

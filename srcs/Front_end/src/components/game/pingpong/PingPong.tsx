@@ -5,6 +5,7 @@ import { gameSocket } from "@/sockets/gameSocket";
 import { useParams } from "react-router-dom";
 import { UserContext } from "@/Contexts/authContext";
 import Canvas from "./Canvas";
+import Score from "./Score";
 
 export interface GameType {
     paddles: never; // Replace 'any' with the actual type
@@ -12,15 +13,22 @@ export interface GameType {
     ball: never;    // Replace 'any' with the actual type
 }
 
+export interface ScoreType {
+    score1: number;
+    score2: number;
+}
+
 function PingPong() {
     const { game_id }= useParams();
     const { authInfos } = useContext(UserContext) || {}
     const [ game, setGame] = useState<GameType | null>(null)
+    const [ score, setScore] = useState<ScoreType>( { score1: 0, score2: 0 })
 
     useEffect(() => {
         const timer = setTimeout(() => {
             gameSocket.connect(`ws://localhost:8000/ws/game/${game_id}/?token=${authInfos?.accessToken}`);
             gameSocket.addCallback("init", init);
+            gameSocket.addCallback("set_score", set_score);
         }, 200);
 
         return () => {
@@ -36,6 +44,10 @@ function PingPong() {
         const game_data = { paddles, game, ball };
         console.log('game data: ', game_data);
         setGame(game_data);
+    }
+
+    function set_score( { score1, score2 }: ScoreType) {
+        setScore( { score1, score2 });
     }
 
 
@@ -84,21 +96,10 @@ function PingPong() {
                     } */}
                     <div>
                         <div className='flex justify-center'>
-                            {/* <Score data={data} />  */}
+                            <Score score1={score.score1} score2={score.score2} />
                         </div>
                         <div className={`flex justify-center items-center mt-10 h-fit`}>
-                            {/* {
-                                !isStarted && 
-                                <div className='absolute text-[80px] font-kaushan uppercase transition-all p-2 text-center h-fit text-white top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-30'>
-                                <h1 className=''>{startStatus}</h1>
-                                </div>
-                            } */}
                             { game && <Canvas game={game}/>}
-                            {/* <div ref={canvaParentRef} className={` ${theme === 'light' ? "border-lightText" : "border-darkText"} rounded-sm w-full flex justify-center items-center h-5/6 relative transition-transform duration-1000`}>
-                                <div className=''>
-                                    <canvas className={`border-[.1px] border-white/50 mr-10 bg-black/30 rounded-sm backdrop-blur-md w-full`} width="600px" height="400px" ref={canvasRef}></canvas>
-                                </div>
-                            </div> */}
                         </div>
                     </div>
                 </div> 
