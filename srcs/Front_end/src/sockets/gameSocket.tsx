@@ -19,7 +19,7 @@ class GameSocket extends WebSocketService {
     }
     
 
-    eventCallback = (event) => {
+    eventCallback = (event: even) => {
 
         console.log('event: ', event);
         const data = JSON.parse(event.data)
@@ -27,7 +27,10 @@ class GameSocket extends WebSocketService {
         const type = data.event;
         switch (type) {
             case 'init_game':
-                this.callbacks['init'](data)
+                this.callbacks['init'](data);
+                break;
+            case 'update':
+                this.callbacks['update'](data.stats);
                 break;
             default:
                 break;
