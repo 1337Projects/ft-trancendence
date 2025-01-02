@@ -19,12 +19,3 @@ def get_id1(request):
         raise AuthenticationFailed('Invalid or expired token')
     return (user_id)
 
-@api_view(['DELETE'])
-def delete_conversation(request):
-    id = request.data.get('conversation_id')
-    conversation_list = Conversation.objects.filter(id=id)
-    if not conversation_list.exists():
-        return JsonResponse({'error': 'the conversation does not exist'}, status=404)
-    conversation_list.delete()
-    return JsonResponse({'message': 'the conversation has deleted'}, status=200)
-

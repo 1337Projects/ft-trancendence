@@ -23,7 +23,6 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages', null=True)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    seen = models.BooleanField(default=False)
     link = models.TextField(default="link", null=True, blank=True)
 
     @property

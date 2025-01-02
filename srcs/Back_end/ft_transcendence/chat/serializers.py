@@ -10,7 +10,7 @@ class MessageSerializer(serializers.ModelSerializer):
     receiver = UserWithProfileSerializer()
     class Meta:
         model = Message
-        fields = ['id', 'message', 'created_at', 'sender', 'receiver', 'seen', 'link']
+        fields = ['id', 'message', 'created_at', 'sender', 'receiver', 'link']
 
 
 
@@ -19,13 +19,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     receiver = UserWithProfileSerializer()
     last_message_time = serializers.DateTimeField()
     content_of_last_message = serializers.CharField()
-    nbr_of_unread_msgs = serializers.SerializerMethodField()
-
-    def get_nbr_of_unread_msgs(self, obj):
-        unread_msgs = Message.objects.filter(
-            conversation=obj, seen=False).count()
-        return unread_msgs
 
     class Meta:
         model = Conversation
-        fields = ['id', 'sender', 'receiver', 'last_message_time', 'content_of_last_message', 'nbr_of_unread_msgs']
+        fields = ['id', 'sender', 'receiver', 'last_message_time', 'content_of_last_message']

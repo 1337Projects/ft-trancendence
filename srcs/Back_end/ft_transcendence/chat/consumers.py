@@ -135,25 +135,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }
         }))
 
-    # async def send_seen(self, event):
-    #     await self.send(text_data=json.dumps({
-    #         'response': {
-    #             'event': "seen_messages",
-    #             'status': 212,
-    #             'seen': event['seen'],
-    #         }
-    #     }))
-
-    # async def send_error(self, error):
-    #     await self.send(text_data=json.dumps({
-    #         'response': {
-    #                 'event': "seen_messages",
-    #                 'status': 212,
-    #                 'seen': False,
-    #                 'error': error,
-    #         }
-    #     }))
-
     async def fetch_conversations(self):
         conversations = await self.get_conversations(self.user_id)
         await self.send(text_data=json.dumps({
@@ -259,43 +240,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-    # async def seen_message(self,text_data_json):
-    #     from_ = text_data_json.get('sender')
-    #     to_ = text_data_json.get('receiver')
-    #     sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
-    #     if not sender or not receiver:
-    #         await self.send_error('user not found')
-    #         return
-    #     all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
-    #     if all_messages == []:
-    #         await self.send_error('No messages found')
-    #         return        
-    #     last_message = await get_last(all_messages)
-    #     if last_message:
-    #         receiver_id = await sync_to_async(lambda: last_message.receiver.id)()
-    #         last_message_seen = await sync_to_async(lambda: last_message.seen)()
-    #         if receiver_id == sender_ser['id'] and last_message_seen == False:
-    #             for message in all_messages:
-    #                 message.seen = True
-    #                 await sync_to_async(message.save)()
-    #         else:
-    #             await self.send_error('No unseen messages')
-    #             return
-    #     room_group_name, sender_channel, receiver_channel = await self.add_users_to_group(sender_ser['id'], receiver_ser['id'])
-    #     self.room_group_name = room_group_name
-    #     if sender_channel:
-    #         await self.channel_layer.group_add(room_group_name, sender_channel)
-    #     if receiver_channel:
-    #         await self.channel_layer.group_add(room_group_name, receiver_channel)
-    #     await self.channel_layer.group_send(
-    #         self.room_group_name,
-    #         {
-    #             'type': 'send_seen',
-    #             'status': 212,
-    #             'seen': True,
-    #         }
-    #     )
-
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         print(text_data_json)
@@ -307,7 +251,4 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             await self.fetch_messages(text_data_json)
         elif event == 'new_message':
             await self.new_message(text_data_json)
-        # elif event == 'seen_messages':
-        #     await self.seen_message(text_data_json)
-                
 
