@@ -10,7 +10,7 @@ class MessageSerializer(serializers.ModelSerializer):
     receiver = UserWithProfileSerializer()
     class Meta:
         model = Message
-        fields = ['id', 'message', 'created_at', 'sender', 'receiver', 'seen']
+        fields = ['id', 'message', 'created_at', 'sender', 'receiver', 'seen', 'link']
 
 
 

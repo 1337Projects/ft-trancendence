@@ -43,13 +43,14 @@ export default function ChatInput() {
             sendMessage()
     }
 
-    function sendGameInvite() {
+    function sendGameInvite() {//link
         console.log('invite')
         const data = {
             "from" : authInfos?.username,
             "partner": user,
             "type" : "game_invite",
-            "content": `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/private/?room_id=${authInfos?.username}-${user}${generateRandomId()}`,
+            "content": "",
+            "link":  `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/private/?room_id=${authInfos?.username}-${user}${generateRandomId()}`,
             "event" : "new_message"
         }
         chatSocket.sendMessage(data)
