@@ -25,19 +25,26 @@ def get_user_with_profile(username):
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.username = self.scope['url_route']['kwargs']['username']
-        cache.set(f"channel_{self.username}", self.channel_name, timeout=None)
+        user_channels = cache.get(f"channels_{self.username}", [])
+        if self.channel_name not in user_channels:
+            user_channels.append(self.channel_name)
+        cache.set(f"channels_{self.username}", user_channels, timeout=None)
         await self.accept()
 
     async def disconnect(self, close_code):
-        cache.delete(f"channel_{self.username}")
+        user_channels = cache.get(f"channels_{self.username}", [])
+    
+        if self.channel_name in user_channels:
+            user_channels.remove(self.channel_name)
+        cache.set(f"channels_{self.username}", user_channels, timeout=None)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         event = data.get("event")
         if event == "fetch nots":
             try:
-                print('---------------------------------------------------', data)
-                sys.stdout.flush()
+                # print('---------------------------------------------------', data)
+                # sys.stdout.flush()
                 usernamo = data["sender"]
                 page = data.get("page", 1)
                 page_size = data.get("page_size")
@@ -65,26 +72,29 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             
             receiverr = await get_user_with_profile(receiver_username)
             game_request = await self.create_game_request(sender_username, receiver_username, message)
-            sender_channel_name = self.get_user_channel_name(sender_username)
-            if sender_channel_name:
-                await self.channel_layer.send(
-                    sender_channel_name,
-                    {
-                        "type": "send_notification",
-                        "data" : {
-                                "response" : {
-                                    "not": {
-                                        "sender": receiverr,
-                                        "message": game_request.message,
-                                        "created_at": str(game_request.created_at),
-                                        "is_accepted": game_request.is_accepted,
-                                        "link": link,
-                                    },
-                                    "status" : 207
+            sender_channel_names = self.get_user_channel_names(sender_username)
+            # print('---------------------------------------------------', sender_channel_names)
+            # sys.stdout.flush()
+            if sender_channel_names:
+                for channel_name in sender_channel_names:
+                    await self.channel_layer.send(
+                        channel_name,
+                        {
+                            "type": "send_notification",
+                            "data" : {
+                                    "response" : {
+                                        "not": {
+                                            "sender": receiverr,
+                                            "message": game_request.message,
+                                            "created_at": str(game_request.created_at),
+                                            "is_accepted": game_request.is_accepted,
+                                            "link": link,
+                                        },
+                                        "status" : 207
+                                    }
                                 }
-                            }
-                    }
-                )
+                        }
+                    )
 
     async def send_notification(self, event):
         await self.send(text_data=json.dumps(event["data"]))
@@ -130,10 +140,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             return {
                 "notifications": notifications_list,
                 "num_of_notify": num_of_notify,
-                # "current_page": page
             }
         except Exception as e:
             print(e)
             sys.stdout.flush()
-    def get_user_channel_name(self, username):
-        return cache.get(f"channel_{username}")
+    def get_user_channel_names(self, username):
+        return cache.get(f"channels_{username}", [])
