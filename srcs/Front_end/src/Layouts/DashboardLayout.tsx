@@ -67,7 +67,8 @@ export default function DashboardLayout() {
             }
         });
         notificationSocket.addCallback("hasNew", setHasNew)
-        notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/`)
+        console.log(user)
+        notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/?token=${user.authInfos.accessToken}`)
         notificationSocket.sendMessage({
           event : "fetch nots",
           sender : user?.authInfos?.username,

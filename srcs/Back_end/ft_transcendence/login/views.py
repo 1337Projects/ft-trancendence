@@ -79,6 +79,7 @@ def intra_oauth(request):
                 response = JsonResponse({"2fa": "True", "status": 200})
             else:
                 refresh = RefreshToken.for_user(user)
+                refresh['username'] = user.username
                 access_token = str(refresh.access_token)
                 response = JsonResponse({'access': access_token, "userinfo": userinfo, "2fa": "False", "status": 200})
                 refresh_token = str(refresh)
@@ -140,6 +141,7 @@ def google_oauth(request):
                 else:
                     refresh = RefreshToken.for_user(user)
                     access_token = str(refresh.access_token)
+                    refresh['username'] = user.username
                     response = JsonResponse({'access': access_token, "2fa": "False", "status": 200})
                     refresh_token = str(refresh)
                     set_refresh_token_cookie(response, refresh_token)

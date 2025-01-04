@@ -57,6 +57,9 @@ export class WebSocketService {
 
 
     connect(url : string) {
+
+        console.log(url)
+
         if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
             this.socket = new WebSocket(url);
 
