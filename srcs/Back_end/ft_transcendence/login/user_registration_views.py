@@ -11,6 +11,10 @@ from .models import User
 from .serializer import UserRegistrationSerializer, UserLoginSerializer
 from account.utls import create_profile
 
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
+
+@permission_classes([AllowAny])
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
 
@@ -31,7 +35,7 @@ class UserRegistrationView(generics.CreateAPIView):
 from rest_framework_simplejwt.tokens import RefreshToken
 from .views import  set_refresh_token_cookie
    
-
+@permission_classes([AllowAny])
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
 

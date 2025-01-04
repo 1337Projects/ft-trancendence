@@ -13,11 +13,11 @@ from account.utls import create_profile
 from .models import User , PasswordReset
 # from rest_framework.response import Response
 from dotenv import load_dotenv, dotenv_values
-from django.contrib.auth import get_user_model
-from rest_framework.decorators import api_view
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model, authenticate
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
-# from django.contrib.auth import logout as auth_logout
-# from django.contrib.auth.signals import user_logged_out
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.hashers import make_password, check_password
@@ -28,6 +28,8 @@ load_dotenv()
 User = get_user_model()
 
 @csrf_exempt
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
 def intra_oauth(request):
     if request.method == 'GET' :
         return JsonResponse({"url": os.getenv("oauth_url")})
@@ -68,7 +70,7 @@ def intra_oauth(request):
                 first_name=first_name,
                 google_or_intra=True,
             )
-            create_profile(user.id, image)  
+            create_profile(user.id, image)
         try:
             if user.twofa:
                 request.session['user_id'] =  user.id
@@ -76,9 +78,10 @@ def intra_oauth(request):
                 request.session.set_expiry(300)
                 response = JsonResponse({"2fa": "True", "status": 200})
             else:
-                access_token = generate_access_token(user)
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
                 response = JsonResponse({'access': access_token, "userinfo": userinfo, "2fa": "False", "status": 200})
-                refresh_token = generate_refresh_token(user)
+                refresh_token = str(refresh)
                 set_refresh_token_cookie(response, refresh_token)
             return response
         except AuthenticationFailed:
@@ -86,6 +89,7 @@ def intra_oauth(request):
 
 @csrf_exempt
 @api_view(["post"])
+@permission_classes([AllowAny])
 def google_oauth(request):
     code = request.data.get('code')
     if not code:
@@ -134,15 +138,17 @@ def google_oauth(request):
                     request.session.set_expiry(300)
                     response = JsonResponse({"2fa": "True", "status": 200})
                 else:
-                    access_token = generate_access_token(user)
-                    response = JsonResponse({'access': access_token, "userinfo": user_info, "2fa": "False", "status": 200})
-                    refresh_token = generate_refresh_token(user)
+                    refresh = RefreshToken.for_user(user)
+                    access_token = str(refresh.access_token)
+                    response = JsonResponse({'access': access_token, "2fa": "False", "status": 200})
+                    refresh_token = str(refresh)
                     set_refresh_token_cookie(response, refresh_token)
-                return response
+                    return response
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
 @api_view(["post"])
+@permission_classes([AllowAny])
 def forget_password(request):
     if request.method == 'POST':
         email = request.data.get('email')
@@ -167,6 +173,7 @@ def forget_password(request):
 
 
 @api_view(["post"])
+@permission_classes([AllowAny])
 def confirm_password(request):
     if request.method == 'POST':
         email = request.data.get('email')
@@ -193,8 +200,9 @@ def confirm_password(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @api_view(["post"])
+@permission_classes([IsAuthenticated])
 def change_password(request):
-    id = get_id1(request)
+    id = request.user.id
     user = User.objects.get(id=id)
     if user.google_or_intra:
         return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
@@ -217,8 +225,9 @@ def change_password(request):
 from tournment.utils import debug
 
 @api_view(["post"])
+@permission_classes([IsAuthenticated])
 def block_user(request):
-    id = get_id1(request)
+    id = request.user.id
     try:
         target = request.data["data"]['id']
         if id == target:
@@ -250,8 +259,9 @@ def block_user(request):
     
         
 @api_view(["post"])
+@permission_classes([IsAuthenticated])
 def unblock_user(request):
-    id = get_id1(request)
+    id = request.user.id
     try:
         # debug(request.data['data']['id'])
         target = request.data["data"]['id']

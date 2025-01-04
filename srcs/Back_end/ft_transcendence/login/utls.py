@@ -4,6 +4,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.http import JsonResponse
 from .models import User
 from urllib.parse import urlencode
+from rest_framework_simplejwt.tokens import RefreshToken
 
 def generate_refresh_token(user):
     payload = {
@@ -32,11 +33,18 @@ def refresh_token_view(request):
         refresh_token = request.COOKIES.get('refresh_token')
         if not refresh_token:
             raise AuthenticationFailed('Missing refresh token')
+        
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
         user_id = payload['user_id']
+
         user = User.objects.get(pk=user_id)
-        new_access_token = generate_access_token(user)
+        
+        refresh = RefreshToken.for_user(user)
+        new_access_token = str(refresh.access_token)
+        new_refresh_token = str(refresh)
+
         response = JsonResponse({'access_token': new_access_token})
+        response.set_cookie('refresh_token', new_refresh_token, httponly=True, secure=True, samesite='Lax')
         return response
     except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError, User.DoesNotExist, AuthenticationFailed):
         return JsonResponse({'error': 'Invalid refresh token'}, status=401)

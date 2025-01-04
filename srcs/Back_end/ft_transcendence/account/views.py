@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .models import Profile, Friends
 from login.models import User
 from login.views import check_if_duplicate 
@@ -22,32 +22,30 @@ import pyotp, os, io
 from django.core.files.base import ContentFile
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
+from rest_framework.permissions import IsAuthenticated
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_profile_infos(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
+    id = request.user.id
     if not Profile.objects.filter(user_id=id).exists():
         return Response({"message": "this user is not exist", "id": id}, status=400)
-    user = get_infos(id)
+    user = get_infos(id)  
     return Response({"data": user.data}, status=200)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_users(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
+    id = request.user.id
     username = request.GET.get('query')
     users = User.objects.filter(username__startswith=username).exclude(id=id)
     serializer = UserWithProfileSerializer(users, many=True)
     return Response({"data": serializer.data}, status=200)
 
 
-@api_view(['GET'])
+@api_view(['GET'])  
+@permission_classes([IsAuthenticated])
 def get_profile(request, username):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
     if not User.objects.filter(username=username).exists():
         return Response({"message": "this user is not exist"}, status=400)
     user = get_object_or_404(User, username=username)
@@ -55,10 +53,9 @@ def get_profile(request, username):
     return Response({"data": serialiser.data}, status=200)
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def set_infos(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
+    id = request.user.id
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
     user_id = id
@@ -88,16 +85,17 @@ def set_infos(request):
     return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def friends_infos(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    user = User.objects.get(id=id)
+    id = request.user.id
+    # user = User.objects.get(id=id)
+    user = get_object_or_404(User, id=id)
     friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user))
     serializer = UserWithFriendsSerializer(friends, many=True)
     return Response({"data" : serializer.data})
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_friend(request):
     id = get_id(request)
     if not id:
@@ -118,6 +116,7 @@ def add_friend(request):
         return Response({"message": "there is no data recieved"}, status=400)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def accept_friend(request):
     id = get_id(request)
     if not id:
@@ -141,6 +140,7 @@ def accept_friend(request):
     return Response({"message": "there is no data recieved"}, status=400)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def reject_friend(request):
     id = get_id(request)
     if not id:
@@ -163,6 +163,7 @@ def reject_friend(request):
     return Response({"message": "there is no data recieved"}, status=400)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def unfriend(request):
     id = get_id(request)
     if not id:
@@ -183,6 +184,7 @@ def unfriend(request):
 
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_friends(request):
     id = get_id(request)
     if not id:
@@ -193,6 +195,7 @@ def get_friends(request):
     return Response({"data" : serializer.data})
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def set_2fa(request):
     id = get_id(request)
     if not id:
@@ -217,6 +220,7 @@ def set_2fa(request):
 
 @csrf_exempt
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def generate_2fa_qr_code(request):
     id = get_id(request)
     if not id:
@@ -249,6 +253,7 @@ def generate_2fa_qr_code(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def check_topt(request):
     user_id = request.session.get('user_id')
     user_retry = request.session.get('retry_limit')
@@ -278,6 +283,7 @@ def check_topt(request):
         return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def is_2fa_enable(request):
     id = get_id(request)
     if not id:
@@ -289,6 +295,7 @@ def is_2fa_enable(request):
         return Response({"twofa" : "False"}, status=200)
     
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def disable_2fa(request):
     id = get_id(request)
     if not id:
@@ -327,6 +334,7 @@ def disable_2fa(request):
 
 #?query=${query
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_others_friends(request, username):
     id = get_id(request)
     if not id:
@@ -345,6 +353,7 @@ def get_others_friends(request, username):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def set_lst_not_time(request):
     try:
         id = get_id(request)
