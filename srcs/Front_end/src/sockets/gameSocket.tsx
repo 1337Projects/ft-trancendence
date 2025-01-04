@@ -19,15 +19,24 @@ class GameSocket extends WebSocketService {
     }
     
 
-    eventCallback = (event) => {
+    eventCallback = (event: even) => {
 
-        console.log('event: ', event);
         const data = JSON.parse(event.data)
-        console.log('data: ', data);
+        if (data.event !== 'update')
+        {
+            console.log('event: ', event);
+            console.log('data: ', data);
+        }
         const type = data.event;
         switch (type) {
             case 'init_game':
-                this.callbacks['init'](data)
+                this.callbacks['init'](data);
+                break;
+            case 'update':
+                this.callbacks['update'](data.stats);
+                break;
+            case 'set_score':
+                this.callbacks['set_score'](data.score);
                 break;
             default:
                 break;

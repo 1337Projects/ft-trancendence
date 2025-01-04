@@ -135,6 +135,7 @@ class ChatSocket extends WebSocketService {
     eventCallback = (event : MessageEvent) => {
 
         const data = JSON.parse(event.data)
+        console.log("data = >" , data)
         switch (data.response.status) {
             case 205:
                 this.callbacks["setData"]?.((prev) => prev ? [...prev, data.response.message] : [data.response.message])

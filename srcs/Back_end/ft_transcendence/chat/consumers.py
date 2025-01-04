@@ -10,6 +10,7 @@ from .models import Conversation, Message
 from channels.db import database_sync_to_async
 from django.core.paginator import Paginator, EmptyPage
 from channels.generic.websocket import AsyncWebsocketConsumer
+import sys
 
 @database_sync_to_async
 def get_user_with_profile(username):
@@ -109,7 +110,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             sender = User.objects.get(username=from_)
             receiver = User.objects.get(username=to_)
         except User.DoesNotExist:
-            return None, None, 'user not found'
+            return None, None,None, 'user not found'
 
         sender_ser = UserWithProfileSerializer(sender).data
         receiver_ser = UserWithProfileSerializer(receiver).data
@@ -117,9 +118,15 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         return sender, receiver, sender_ser, receiver_ser
 
     async def send_message(self, event):
+        link = event['link']
+        if link != None:
+            the_type = 'game_invite'
+        else:
+            the_type = 'new_message'
         await self.send(text_data=json.dumps({
             'response': {
                 'event': "new_message",
+                'type': the_type,
                 'status': 205,
                 'message': event['message'],
                 'receiver': event['receiver'],
@@ -127,25 +134,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 'conversation': event['conversation'],
             }
         }))
-
-    # async def send_seen(self, event):
-    #     await self.send(text_data=json.dumps({
-    #         'response': {
-    #             'event': "seen_messages",
-    #             'status': 212,
-    #             'seen': event['seen'],
-    #         }
-    #     }))
-
-    # async def send_error(self, error):
-    #     await self.send(text_data=json.dumps({
-    #         'response': {
-    #                 'event': "seen_messages",
-    #                 'status': 212,
-    #                 'seen': False,
-    #                 'error': error,
-    #         }
-    #     }))
 
     async def fetch_conversations(self):
         conversations = await self.get_conversations(self.user_id)
@@ -183,12 +171,13 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }
         }))
 
-    async def create_message(self, sender, receiver, message_content, conversation):
+    async def create_message(self, sender, receiver, message_content, conversation, link):
         message = await sync_to_async(Message.objects.create)(
             message=message_content,
             sender=sender,
             receiver=receiver,
-            conversation=conversation
+            conversation=conversation,
+            link=link,
         )
         conversation.content_of_last_message = message.message
         conversation.last_message_time = message.created_at
@@ -196,6 +185,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         return message
 
     async def new_message(self, text_data_json):
+        link = text_data_json.get('link')
         message_content = text_data_json.get('content')
         from_ = text_data_json.get('from')
         to_ = text_data_json.get('partner')
@@ -217,7 +207,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }))
             return
         conversation = await self.get_or_create_conversation(sender, receiver)
-        message = await self.create_message(sender, receiver, message_content, conversation)
+        message = await self.create_message(sender, receiver, message_content, conversation, link)
         message_ser = await self.serialize_message(message)
         message_ser['sender'] = sender_ser
         message_ser['receiver'] = receiver_ser
@@ -246,48 +236,14 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 'receiver': receiver_ser,
                 'sender': sender_ser,
                 'conversation': conversation_ser,
+                'link' :link,
             }
         )
 
-    # async def seen_message(self,text_data_json):
-    #     from_ = text_data_json.get('sender')
-    #     to_ = text_data_json.get('receiver')
-    #     sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
-    #     if not sender or not receiver:
-    #         await self.send_error('user not found')
-    #         return
-    #     all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id'])
-    #     if all_messages == []:
-    #         await self.send_error('No messages found')
-    #         return        
-    #     last_message = await get_last(all_messages)
-    #     if last_message:
-    #         receiver_id = await sync_to_async(lambda: last_message.receiver.id)()
-    #         last_message_seen = await sync_to_async(lambda: last_message.seen)()
-    #         if receiver_id == sender_ser['id'] and last_message_seen == False:
-    #             for message in all_messages:
-    #                 message.seen = True
-    #                 await sync_to_async(message.save)()
-    #         else:
-    #             await self.send_error('No unseen messages')
-    #             return
-    #     room_group_name, sender_channel, receiver_channel = await self.add_users_to_group(sender_ser['id'], receiver_ser['id'])
-    #     self.room_group_name = room_group_name
-    #     if sender_channel:
-    #         await self.channel_layer.group_add(room_group_name, sender_channel)
-    #     if receiver_channel:
-    #         await self.channel_layer.group_add(room_group_name, receiver_channel)
-    #     await self.channel_layer.group_send(
-    #         self.room_group_name,
-    #         {
-    #             'type': 'send_seen',
-    #             'status': 212,
-    #             'seen': True,
-    #         }
-    #     )
-
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
+        print(text_data_json)
+        sys.stdout.flush()
         event = text_data_json.get('event')
         if event == "fetch_conversations":
             await self.fetch_conversations()
@@ -295,7 +251,4 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             await self.fetch_messages(text_data_json)
         elif event == 'new_message':
             await self.new_message(text_data_json)
-        # elif event == 'seen_messages':
-        #     await self.seen_message(text_data_json)
-                
 

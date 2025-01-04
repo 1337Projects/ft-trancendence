@@ -23,7 +23,13 @@ class Message(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='received_messages', null=True)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    seen = models.BooleanField(default=False)
+    link = models.TextField(default="link", null=True, blank=True)
+
+    @property
+    def is_link_expired(self):
+        """Check if the link has expired (5 minutes after creation)."""
+        expiration_time = self.created_at + timedelta(minutes=5)
+        return timezone.now() > expiration_time
 
     def __str__(self):
         return f"{self.sender}: {self.message[:50]}"

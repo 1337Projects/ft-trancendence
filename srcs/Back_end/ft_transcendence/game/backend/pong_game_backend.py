@@ -147,14 +147,25 @@ class PongGame:
         if self.ball.x - BALL_RADIUS <= self.paddle1.width:
             if self.paddle1.check_collision(self.ball): # check if goal is scored on player 1
                 # update score
+                self.score2 += 1
+                self.ball.reset()
+                return {
+                    'score1': self.score1,
+                    'score2': self.score2
+                }
                 # ic('goal is scored on ', self.player1)
                 # sys.stdout.flush()
-                self.ball.reset()
         if self.ball.x + BALL_RADIUS >= self.paddle2.x:
             if self.paddle2.check_collision(self.ball):
+                self.score1 += 1
                 # ic('goal is scored on ', self.player2)
-                sys.stdout.flush()
+                # sys.stdout.flush()
                 self.ball.reset()
+                return {
+                    'score1': self.score1,
+                    'score2': self.score2
+                }
+        return None
             
 
     def get_stats(self):
@@ -220,7 +231,7 @@ class PongGameManager:
         return self.games[room_name].get_init()
 
     def update(self, room_name):
-        self.games[room_name].update()
+        return self.games[room_name].update()
     
     def move_player(self, room_name: str, player_id: int, key: str):
         return self.games[room_name].move_player(player_id, key)
