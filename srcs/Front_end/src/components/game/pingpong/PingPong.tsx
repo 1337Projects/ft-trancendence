@@ -26,7 +26,7 @@ function PingPong() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            gameSocket.connect(`ws://localhost:8000/ws/game/${game_id}/?token=${authInfos?.accessToken}`);
+            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game_id}/?token=${authInfos?.accessToken}`);
             gameSocket.addCallback("init", init);
             gameSocket.addCallback("set_score", set_score);
         }, 200);

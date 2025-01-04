@@ -40,6 +40,7 @@ def refresh_token_view(request):
         user = User.objects.get(pk=user_id)
         
         refresh = RefreshToken.for_user(user)
+        refresh['username'] = user.username
         new_access_token = str(refresh.access_token)
         new_refresh_token = str(refresh)
 
