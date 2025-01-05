@@ -29,6 +29,7 @@ def generate_access_token(user):
     return token
 
 def refresh_token_view(request):
+    """ hello world"""
     try:
         refresh_token = request.COOKIES.get('refresh_token')
         if not refresh_token:

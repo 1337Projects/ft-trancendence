@@ -75,12 +75,12 @@ def set_infos(request):
     if 'avatar' in request.FILES:
         name = manage_images(user_id, request, 'avatar')
         Profile.objects.filter(user_id=user_id).update(
-            avatar=f'https://127.0.0.1:1024/media/{name}'
+            avatar=f'{os.environ.get("API_URL")}media/{name}'
         )
     if 'banner' in request.FILES:
         name = manage_images(user_id, request, 'banner')
         Profile.objects.filter(user_id=user_id).update(
-            banner=f'https://localhost:1024/media/{name}'
+            banner=f'{os.environ.get("API_URL")}media/{name}'
         )
     return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
 
@@ -249,7 +249,7 @@ def generate_2fa_qr_code(request):
 
     delete_qr_code_image(file_name, schedule=20)
 
-    return Response({"qr_code_image": "https://localhost:1024/media/" + file_name}, status=200)
+    return Response({"qr_code_image": f"{os.environ.get('API_URL')}media/" + file_name}, status=200)
 
 
 @api_view(['POST'])

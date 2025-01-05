@@ -118,7 +118,7 @@ def google_oauth(request):
             email = user_info.get('email')
             name = user_info.get('name')
             username = generate_username(customize_username(name))
-            image = "https://localhost:1024/media/avatar.jpg"
+            image = f"{os.environ.get('API_URL')}media/avatar.jpg"
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
             try:
@@ -160,7 +160,7 @@ def forget_password(request):
                 return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
             token = default_token_generator.make_token(user)
             PasswordReset.objects.create(user=user, token=token)
-            reset_link = f"https://localhost:1024/auth/forgetPassowrd?token={token}&email={email}"
+            reset_link = f"{os.environ.get('API_URL')}auth/forgetPassowrd?token={token}&email={email}"
             send_mail(
                 'Request : Reset Password',
                 f'A password change has been requested for your account. If this was you, please use the link below to reset your password: {reset_link}',

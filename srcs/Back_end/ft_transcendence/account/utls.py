@@ -13,8 +13,8 @@ from functools import wraps
 from django.http import JsonResponse
 
 
-default_banner = "https://localhost:1024/media/default-banner.jpeg"
-default_avatar = "https://localhost:1024/media/avatar.jpg"
+default_banner = f"{os.environ.get('API_URL')}media/default-banner.jpeg"
+default_avatar = f"{os.environ.get('API_URL')}media/avatar.jpg"
 
 def manage_images(user_id, request, type):
     file_url = Profile.objects.filter(user_id=user_id).values(type).first()
