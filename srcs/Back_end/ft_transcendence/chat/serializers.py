@@ -8,9 +8,17 @@ from account.serializer import *
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserWithProfileSerializer()
     receiver = UserWithProfileSerializer()
+    link_expired = serializers.BooleanField(source='is_link_expired', read_only=True)
+    link = serializers.SerializerMethodField()
+
+    def get_link(self, obj):
+        if obj.is_link_expired:
+            return None
+        return obj.link
+
     class Meta:
         model = Message
-        fields = ['id', 'message', 'created_at', 'sender', 'receiver', 'link']
+        fields = ['id', 'message', 'created_at', 'sender', 'receiver', 'link', 'link_expired']
 
 
 
