@@ -62,7 +62,7 @@ function ConvItem({c, menu} : {c : ConversationType, menu : boolean}) {
                             <p className="text-[7pt]">{time}</p>
                         </div>
                         <p className="text-[8pt] truncate w-[140px] overflow-hidden">
-                            {c.content_of_last_message}
+                            {c.content_of_last_message === "" ? "🔗 invite to play" : c.content_of_last_message}
                         </p>
                     </div>
                 </div>

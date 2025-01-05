@@ -50,6 +50,7 @@ export default function Profile() {
                 message : ["your data has been updated successfully"]
             })
         } catch (err) {
+            console.log(err)
             setAlert({
                 type : "error",
                 message : [err.toString()]
