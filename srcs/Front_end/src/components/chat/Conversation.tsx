@@ -41,12 +41,17 @@ function UserMessage({m} : {m : MessageType}) {
                             </div>
                             <div className='flex-grow w-full h-full px-2'>
                                 <p className='text-xs'><span className='font-bold mr-1'>{m.sender.username}</span> invited you to play ping pong match</p>
-                                <Link to={m.link} className='mt-4'>
-                                    <button style={{borderColor : color, color : color}} className='border-[1px] flex justify-center items-center px-4 text-xs p-2 rounded mt-4'>
-                                        <p className='mr-2'>Play now </p>
-                                        <RiGamepadLine className='text-[12pt]' />
-                                    </button>
-                                </Link>
+                                {
+                                    !m.link_expired ?
+                                    <Link to={m.link} className='mt-4'>
+                                        <button style={{borderColor : color, color : color}} className='border-[1px] flex justify-center items-center px-4 text-xs p-2 rounded mt-4'>
+                                            <p className='mr-2'>Play now </p>
+                                            <RiGamepadLine className='text-[12pt]' />
+                                        </button>
+                                    </Link>
+                                    :
+                                    <h2 style={{color: color}} className='text-xs mt-2'>this link has been expired</h2>
+                                }
                             </div>
                         </div>
                         :
