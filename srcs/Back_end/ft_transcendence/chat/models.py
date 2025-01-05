@@ -2,7 +2,8 @@
 from django.db import models
 from login.models import User
 from django.conf import settings
-
+from datetime import timedelta
+from django.utils import timezone
 
 
 class Conversation(models.Model):
