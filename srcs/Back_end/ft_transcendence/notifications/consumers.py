@@ -43,8 +43,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         event = data.get("event")
         if event == "fetch nots":
             try:
-                # print('---------------------------------------------------', data)
-                # sys.stdout.flush()
+                print('---------------------------------------------------', data)
+                sys.stdout.flush()
                 usernamo = data["sender"]
                 page = data.get("page", 1)
                 page_size = data.get("page_size")
@@ -134,7 +134,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     "created_at": notification['created_at'],
                     "is_read": notification['is_read'],
                     "link": notification['link'],
-                    "link_expired": notification['link_expired'],
                 })
 
             return {
@@ -142,7 +141,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "num_of_notify": num_of_notify,
             }
         except Exception as e:
-            print(e)
+            print("errora", e)
             sys.stdout.flush()
     def get_user_channel_names(self, username):
         return cache.get(f"channels_{username}", [])

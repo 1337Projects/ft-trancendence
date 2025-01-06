@@ -19,11 +19,11 @@ export function NotItem({data} : {data : NotificationType}) {
     const createdAt = new Date(data.created_at)
     const date :string = `${createdAt.getFullYear()}-${(createdAt.getMonth() + 1).toString().padStart(2, '0')}-${createdAt.getDate().toString().padStart(2, '0')}`;
     const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
-    const fiveMinutesLater = new Date(createdAt.getTime() + 5 * 60 * 1000);
-
-    // console.log(data)
-
-    const expired = new Date() > fiveMinutesLater
+    
+    // const fiveMinutesLater = new Date(createdAt.getTime() + 5 * 60 * 1000);
+    console.log(data)
+    
+    const expired = data?.link === null ? true : false;
     return (
         <li style={{opacity : expired ? "0.7" : "1", cursor : expired ? "not-allowed" : "pointer"}} className="relative font-popins w-full h-[60px] my-3">
             <Link className="flex justify-between px-4 items-center w-full h-full" to={`${expired ? "#" : data?.link}`}>
