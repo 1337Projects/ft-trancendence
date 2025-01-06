@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import {Route, RouterProvider, createBrowserRouter, createRoutesFromElements} from 'react-router-dom'
 
 
@@ -12,7 +12,6 @@ import ChatLayout from './Layouts/ChatLayout'
 
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
-// import ConfirmeEmail from './components/auth/ConfirmeEmail'
 import { Oauth } from './components/auth/Oauth'
 import TwoFactor from './components/auth/2fa'
 import TwoFacCheck from './components/auth/2faCheck'

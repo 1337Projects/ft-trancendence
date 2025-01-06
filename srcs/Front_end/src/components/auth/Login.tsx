@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Formik } from 'formik'
 import { OauthProviders } from './Oauth';
-import MyInput, { MyCheckbox } from "../ui/Input";
+import MyInput from "../ui/Input";
 import * as yup from 'yup'
 import Alert from "../ui/Alert";
 import { UserContext } from "../../Contexts/authContext";
@@ -18,7 +18,7 @@ export default function Login() {
     const [alert, setAlert] = useState<AlertType | null>(null)
     const { setAuthInfosHandler } = useContext(UserContext) || {}
 
-    const loginHandler = async values => {
+    const loginHandler = async (values : {email : string, password : string}) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/api/login/`, {
                 method : 'POST',
@@ -48,7 +48,7 @@ export default function Login() {
             // else navigation("../../dashboard/game")
 
         } catch (error) {
-            setAlert({message : [error.toString()], type : 'error'})
+            setAlert({message : [error instanceof Error ? error.toString() : "An error has been ocured!"], type : 'error'})
         }
     }
 
@@ -74,11 +74,7 @@ export default function Login() {
                         <Form>
                             <MyInput type="email" name="email" id="email" label="email" placeholder="jhondeo@example.com" />
                             <MyInput type="password" name="password" id="password" label="password" placeholder="*****************" />
-                            <div className="mt-10 flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <MyCheckbox id="remember" name="remember" type="checkbox" />
-                                    <p className="ml-2 lowercase">remember me</p>
-                                </div>
+                            <div className="mt-10 flex items-center">                               
                                 <Link to="../forgetPassowrd" className="font-bold capitalize">forget password ?</Link>
                             </div>
                             <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt]">Login</button>

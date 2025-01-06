@@ -1,9 +1,8 @@
 import { OtpInput } from 'reactjs-otp-input';
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { UserContext } from '../../Contexts/authContext'
 import { useNavigate } from 'react-router-dom'
 import TwoFImg from "../settings/TwoFImg";
-import { ApearanceContext } from "../../Contexts/ThemeContext"
 
 
 
@@ -13,12 +12,11 @@ export default function TwoFacCheck () {
     // const [bol, setBol] = useState(true);
     const user = useContext(UserContext)
     const navigate = useNavigate()
-    const { color, theme } = useContext(ApearanceContext) || {}
     const [dataa, setDataa] = useState({
             topt: ''
     })
 
-    const handleChange = (otp) =>{
+    const handleChange = (otp : string) =>{
         setOtp(otp);
         setDataa({
                 topt: otp
@@ -59,7 +57,7 @@ export default function TwoFacCheck () {
         <div className="w-[100%] h-full flex items-center justify-center bg-[#474747]">
             <div className="w-[96%]  flex flex-col items-center justify-between  h-[600px] p-[30px] ">
                 <div className="w-[70%] min-w-[350px] ">
-                    <TwoFImg color={color} theme={theme} />
+                    <TwoFImg />
                 </div>
                 <div className="flex flex-col items-center w-full">
                     <OtpInput

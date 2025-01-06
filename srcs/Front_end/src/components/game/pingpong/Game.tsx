@@ -115,26 +115,28 @@ class Paddle {
     private height: number;
     private x: number;
     private _y: number;
-    private paddleNum: number;
+    // private paddleNum: number;
 
     constructor(context: CanvasRenderingContext2D, num: number, paddles: { width: number, height: number, paddle1: number, paddle2: number }) {
         this.context = context;
         this.width = paddles.width;
         this.height = paddles.height;
-        this.paddleNum = num;
+        // this.paddleNum = num;
         if (num === 1) {
-            this.x = 0;
+            this.x = 6;
             this._y = paddles.paddle1;
         } else {
-            this.x = context.canvas.width - this.width;
+            this.x = context.canvas.width - this.width - 6;
             this._y = paddles.paddle2;
         }
     }
     
     public render() {
         // console.log('x: ', this.x, 'y: ', this._y);
-        this.context.fillStyle = 'black';
-        this.context.fillRect(this.x, this._y - (this.height / 2), this.width, this.height);
+        this.context.fillStyle = 'white';
+        this.context.beginPath()
+        this.context.roundRect(this.x, this._y - (this.height / 2), this.width, this.height, 5);
+        this.context.fill();
     }
 
     public set Y(y: number) {
@@ -162,7 +164,7 @@ class Ball {
         // Draw the ball
         this.context.beginPath();
         this.context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        this.context.fillStyle = 'blue';
+        this.context.fillStyle = 'white';
         this.context.fill();
         this.context.closePath();
     }
@@ -178,28 +180,28 @@ export class Game {
     private ball: Ball;
     private paddle1: Paddle;
     private paddle2: Paddle;
-    private paddleMove: number;
+    // private paddleMove: number;
 
     constructor(context: CanvasRenderingContext2D, paddles: { width: number, height: number, paddle1: number, paddle2: number }, ball: {x, y}) {
         this.context = context;
         this.ball = new Ball(context, ball);
         this.paddle1 = new Paddle(context, 1, paddles);
         this.paddle2 = new Paddle(context, 2, paddles);
-        this.paddleMove = 10;
+        // this.paddleMove = 10;
     }
 
     renderNet() {
         const netWidth = 10;
         const netHeight = 2;
-        const netColor = 'black';
+        const netColor = 'white';
         const canvasHeight = this.context.canvas.height;
         const canvasWidth = this.context.canvas.width;
 
         this.context.fillStyle = netColor;
         
-        for (let i = 0; i <= canvasWidth; i += 15) {
-            this.context.fillRect(i, canvasHeight / 2 - netHeight / 2, netWidth, netHeight);
-        }
+        // for (let i = 0; i <= canvasWidth; i += 15) {
+        //     this.context.fillRect(i, canvasHeight / 2 - netHeight / 2, netWidth, netHeight);
+        // }
         
         // render i line with the midle of x ray.
         for (let i = 0; i <= canvasHeight; i += 15) {

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import { useContext, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import MyUseEffect from '@/hooks/MyUseEffect'
 // import { MdOutlineTipsAndUpdates } from "react-icons/md";
@@ -63,7 +63,7 @@ export default function Game() {
             <div className={`${appearence?.theme == 'light' ? "bg-lightItems text-lightText " : "bg-darkItems text-darkText"} mt-2 w-full h-[calc(100vh-180px)]  sm:h-[100vh] overflow-scroll p-2`}>
                 <div className="mx-auto max-w-[800px] h-full">
                     <Hero />
-                    <Cards color={appearence?.color} />
+                    <Cards color={appearence?.color || "#ffffff"} />
                     
                     <div className="px-10 mt-16">
                         <h1 className="text-xl font-bold">Avialable Tournments :</h1>

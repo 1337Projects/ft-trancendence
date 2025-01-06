@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react"
+import  { useContext, useState } from "react"
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from "../../Contexts/authContext"
 import { Form, Formik } from "formik"
 import SettingsInput, { TextArea } from "./Input"
-import { AlertType } from "../../Types"
+import { AlertType } from "@/types"
 import Alert from "../ui/Alert"
 
 
@@ -15,13 +15,13 @@ export default function Profile() {
     const [alert, setAlert] = useState<AlertType | null>(null)
 
     const initialValues = {
-        username : user?.username,
-        first_name : user?.first_name,
-        last_name : user?.last_name,
-        bio : user?.profile.bio,
+        username : user?.username || "",
+        first_name : user?.first_name || "",
+        last_name : user?.last_name || "",
+        bio : user?.profile.bio || "",
     }
 
-    const submit_handler = async  values => {
+    const submit_handler = async  (values : {username : string, first_name : string, last_name : string, bio : string}) => {
 
         try {
             const formdata = new FormData()
@@ -53,7 +53,7 @@ export default function Profile() {
             console.log(err)
             setAlert({
                 type : "error",
-                message : [err.toString()]
+                message : [err instanceof Error ? err.toString() : "error occured"]
             })
         }
         setTimeout(() => {
@@ -78,7 +78,7 @@ export default function Profile() {
                         type="file" 
                         className="bg-darkItems/40 backdrop-blur-lg text-white rounded-sm p-2 w-fit absolute top-2 left-2 text-[12px]"
                         onChange={e => setImages(prev => {
-                            return {...prev, banner: e.target.files![0]}
+                            return {...prev, banner: e.target.files![0] ?? null}
                         })}
                     />
                 </div>
@@ -89,7 +89,7 @@ export default function Profile() {
                             type="file" 
                             className=" absolute bg-darkItems/40 backdrop-blur-lg text-white rounded-sm p-2 text-[12px]"
                             onChange={e => setImages(prev => {
-                                return {...prev, avatar: e.target.files![0]}
+                                return {...prev, avatar: e.target.files![0] ?? null}
                             })}
                         />
                     </div>

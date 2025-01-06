@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useContext } from "react"
 import { ApearanceContext } from '@/Contexts/ThemeContext';
 import { Banner } from './Hero';
@@ -61,7 +61,7 @@ export default function Profile() {
 	return (
 		<div className={`w-full mt-2 backdrop-blur-md p-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
 			<div className={` w-full h-[calc(100vh-180px)] sm:h-[100vh] overflow-scroll`}>
-				<Banner user={currentUser} />
+				<Banner user={currentUser!} />
 				{
 					friendship?.status == 'blocked' ?
 					<div className='w-full px-4'>

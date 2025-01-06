@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { roomSocket, notificationSocket } from '@/socket'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
-import { UserType } from "@/types/user"
+import { FirendType, UserType } from "@/types/user"
 
 
-export function PlayerGameCard({player} : { player : UserType }) {
+export function PlayerGameCard({player} : { player : UserType | undefined }) {
     return (
         <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
             <div className=' text-center'>
@@ -136,7 +136,7 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 }
 
 
-function FriendItem({friendShip, room}) {
+function FriendItem({friendShip, room} : { friendShip : FirendType, room : string }) {
 
     const { authInfos } = useContext(UserContext) || {}
     const { color } = useContext(ApearanceContext) || {}

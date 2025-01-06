@@ -29,6 +29,7 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            event.preventDefault()
             const keyData = {
                 event: 'movePaddle',
                 key: event.key,
@@ -71,12 +72,13 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
         <div 
             ref={canvaParentRef}
             className={` ${theme === 'light' ? "border-lightText" : "border-darkText"}
-            rounded-sm w-full flex justify-center items-center h-5/6 relative transition-transform duration-1000`}
+            rounded-sm relative w-full flex justify-center items-center h-full p-4 transition-transform duration-1000`}
         >
-            <div className=''>
+            {/* <div style={{background : color}} className='w-full h-[200px] absolute top-[50%] translate-y-[-50%] z-10'> hello </div> */}
+            <div className='w-full h-full'>
                 <canvas 
-                    className={`border-[.1px] border-white/50 mr-10 bg-white/30 rounded-sm backdrop-blur-md w-full`}
-                    width="800px" height="400px" 
+                    className={`w-full h-full border-[.1px] rounded border-white/50 mx-auto ${theme === 'light' ? "bg-black/60" : "bg-white/10"}  backdrop-blur-md`}
+                    width="550px" height="300px" 
                     ref={canvasRef}></canvas>
             </div>
         </div>

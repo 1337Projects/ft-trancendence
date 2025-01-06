@@ -10,7 +10,8 @@ export type UserProfileType = {
     bio : string,
     level : number,
     rank : number,
-    banner : string
+    banner : string,
+    online : boolean,
 }
 
 export type UserType = {
@@ -18,7 +19,8 @@ export type UserType = {
     username : string,
     first_name : string,
     last_name : string,
-    profile : UserProfileType
+    profile : UserProfileType,
+    last_notification_seen : string,
 }
 
 export type UserContextType = {

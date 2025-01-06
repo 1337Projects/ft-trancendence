@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { notificationSocket } from "@/socket";
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { UserContext } from "@/Contexts/authContext";
-import { FaBell, FaCaretDown, FaCheck, FaTrash, FaUserPlus } from "react-icons/fa";
+import { FaCaretDown, FaCheck, FaTrash } from "react-icons/fa";
 import { NotificationsContext } from "@/Contexts/NotificationsContext";
-import { RelationsHandler } from "./profile/ActionsHandlers";
+import { RelationsHandler, ResType } from "./profile/ActionsHandlers";
 import { NotificationType } from "@/types";
 import { FirendType } from "@/types/user";
 import { HeaderItems } from "./Search";
@@ -45,7 +45,7 @@ export function InviteItem({data} : {data : FirendType}) {
     const appearence = useContext(ApearanceContext)
     const { setFriends , authInfos } = useContext(UserContext) || {}
 
-    const notificationAcceptFriendRequest = (data) => {
+    const notificationAcceptFriendRequest = () => {
         notificationSocket.sendMessage({
             event: "send_request",
             sender: data?.sender?.username, // Your logged-in user's username
@@ -55,14 +55,14 @@ export function InviteItem({data} : {data : FirendType}) {
         });
     };
 
-    function AcceptFriendCallback(response : FirendType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.id), response] : [response])
-        notificationAcceptFriendRequest(data);
+    function AcceptFriendCallback(response : ResType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FirendType).id), response as FirendType] : [response as FirendType])
+        notificationAcceptFriendRequest();
     }
 
     
 
-    function DeleteFriendRequest(response : number) {
+    function DeleteFriendRequest(response : ResType) {
         setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
  
@@ -83,7 +83,7 @@ export function InviteItem({data} : {data : FirendType}) {
                             onClick={
                                 () => RelationsHandler(
                                     'api/friends/accept_friend/',
-                                    authInfos?.accessToken,
+                                    authInfos?.accessToken || "",
                                     data.sender,
                                     AcceptFriendCallback
                                 )
@@ -96,7 +96,7 @@ export function InviteItem({data} : {data : FirendType}) {
                             onClick={() => 
                                 RelationsHandler(
                                     'api/friends/reject_friend/',
-                                    authInfos?.accessToken,
+                                    authInfos?.accessToken || "",
                                     data.sender,
                                     DeleteFriendRequest
                                 )
@@ -126,7 +126,7 @@ export default function Notifications() {
     
     const [show, setShow] = useState(notificationsOpen == 'true')
     const appearence = useContext(ApearanceContext)
-    const containerRef = useRef(null);
+    const containerRef = useRef<null | HTMLDivElement>(null);
 
 
     const handleScroll = () => {
@@ -134,7 +134,7 @@ export default function Notifications() {
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
         if (scrollTop + clientHeight >= scrollHeight - 1) {
-            fetchMoreNotifications();
+            fetchMoreNotifications?.();
         }
     };
 
@@ -180,7 +180,7 @@ export default function Notifications() {
 
             setHasNew!(0)
         } catch (error) {
-            console.log(error.toString())
+            console.log(error instanceof Error ? error.toString() : "Failed to update last notification time")
         }
     }
 
@@ -191,9 +191,9 @@ export default function Notifications() {
                     show &&
                     notifications && 
                     notifications.length > 0 && 
-                    isNew(user.last_notification_seen, notifications[0].created_at)
+                    isNew(user!.last_notification_seen, notifications[0]!.created_at)
             ) {
-                UpdateTime(notifications[0].created_at)
+                UpdateTime(notifications[0]!.created_at)
             }
 
         }, 300)
@@ -229,7 +229,7 @@ export default function Notifications() {
             <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-secondary relative">
                     <h1 className="font-popins">Notifications</h1>
-                    <HeaderItems icon={<LuBell />} hasNew={hasNew} />
+                    <HeaderItems icon={<LuBell />} hasNew={hasNew!} />
                 </div>
                 <FaCaretDown />
             </div>

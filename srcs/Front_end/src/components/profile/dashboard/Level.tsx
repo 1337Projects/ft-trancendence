@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { ApearanceContext } from "../../../Contexts/ThemeContext";
 import { UserContext } from "../../../Contexts/authContext";
 import LevelImg from "../assets/LevelImg";
@@ -21,7 +21,7 @@ export default function Level() {
 	return (
 		<div className="flex items-center">
 			<div className="w-2/5 mr-4 flex justify-center">
-				<LevelImg color={appearence?.color} />
+				<LevelImg color={appearence?.color || "#ffffff"} />
 			</div>
 			<div className="w-3/5">
 				<div className={`pr-4 ${appearence?.theme == 'light' ? "text-lightText" : "text-darkText"} flex items-center text-[10pt] justify-between`}>

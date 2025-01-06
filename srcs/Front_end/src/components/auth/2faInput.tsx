@@ -222,7 +222,7 @@ return (
     onChange={handleChange}
     onPaste={handlePaste}
     onKeyDown={handleKeyDown}
-    maxLength='1'
+    maxLength={1}
     onFocus={handleFocus}
     disabled={isDisabled}
     className="border border-black w-full p-5 text-center text-xl leading-none rounded-[5px]"

@@ -1,10 +1,5 @@
 import { WebSocketService } from "@/socket";
 
-// interface EventType {
-//     event: string;
-//     data: 
-// };
-
 class GameSocket extends WebSocketService {
 
 
@@ -19,7 +14,7 @@ class GameSocket extends WebSocketService {
     }
     
 
-    eventCallback = (event: even) => {
+    eventCallback = (event: MessageEvent) => {
 
         const data = JSON.parse(event.data)
         if (data.event !== 'update')
@@ -30,13 +25,18 @@ class GameSocket extends WebSocketService {
         const type = data.event;
         switch (type) {
             case 'init_game':
-                this.callbacks['init'](data);
+                if (this.callbacks['init']) {
+                    this.callbacks['init'](data);
+                }
                 break;
             case 'update':
-                this.callbacks['update'](data.stats);
+                if (this.callbacks['update']) {
+                    this.callbacks['update'](data.stats);
+                }
                 break;
             case 'set_score':
-                this.callbacks['set_score'](data.score);
+                if (this.callbacks['set_score'])
+                    this.callbacks['set_score'](data.score);
                 break;
             default:
                 break;

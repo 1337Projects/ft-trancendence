@@ -6,7 +6,7 @@ import Notification from '../components/Notifications'
 import {Invites} from '../components/Notifications'
 
 import LastMatch from '../components/profile/LastMatch'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../Contexts/authContext'
 import { TbLogout } from 'react-icons/tb'
 import { ApearanceContext } from '../Contexts/ThemeContext'
@@ -46,29 +46,47 @@ export default function DashboardLayout() {
     const {theme} = useContext(ApearanceContext) || {}
     const location = useLocation()
     const [isLoading, setIsLoading] = useState(true)
-
     const navigate = useNavigate();
 
     const { setNotifications, setHasMore, setHasNew, setCurrentPage} = useContext(NotificationsContext) || {}
 
+    // useEffect(() => {
+    //   const interval = setInterval(async () => {
+    //     console.log('request new access token')
+    //     await fetch(`${import.meta.env.VITE_API_URL}api/auth/refresh/`, 
+    //       {
+    //           method: 'GET',
+    //           credentials : 'include'
+    //       })
+    //       .then(res => res.json())
+    //       .then(res => {
+    //           user?.setAuthInfosHandler(res.access_token)
+    //       })
+    //       .catch(err => console.log(err))
+    //   }, 4 * 60 * 1000);
+    //   return () => clearInterval(interval);
+    // }, []);
+    
+
+
     useEffect(() => {
       const timer = setTimeout(() => {
-        notificationSocket.addCallback("FirstSetNots", setNotifications)
-        notificationSocket.addCallback("setNots", setNotifications)
+        notificationSocket.addCallback("FirstSetNots", setNotifications!)
+        notificationSocket.addCallback("setNots", setNotifications!)
         notificationSocket.addCallback("appendNots", (newNotifications: []) => {
             if (newNotifications.length === 0)
             {
-                setHasMore(false);
+                setHasMore!(false);
             }
             else
             {
-                setNotifications((prev) => [...prev, ...newNotifications]);
+                setNotifications!((prev) => prev ? [...prev, ...newNotifications] : [...newNotifications]);
                 // setCurrentPage(currentPage + 1)
             }
         });
-        notificationSocket.addCallback("hasNew", setHasNew)
+        notificationSocket.addCallback("hasNew", setHasNew!)
         console.log(user)
-        notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/?token=${user.authInfos.accessToken}`)
+        notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/?token=${user?.authInfos?.accessToken}`)
         notificationSocket.sendMessage({
           event : "fetch nots",
           sender : user?.authInfos?.username,
@@ -135,13 +153,13 @@ export default function DashboardLayout() {
         if (response.ok) {
           user?.setAuthInfosHandler(null)
           user?.setUser(null)
-          setHasMore(true);
-          setCurrentPage(1);
+          setHasMore!(true);
+          setCurrentPage!(1);
           navigate("/auth/login")
   
         }
       } catch (err) {
-        console.log(err.toString())
+        // console.log(err.toString())
       }
     }
 

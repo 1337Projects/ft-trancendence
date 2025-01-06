@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import { useContext } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { Link } from "react-router-dom"
 import { FaGamepad } from "react-icons/fa"

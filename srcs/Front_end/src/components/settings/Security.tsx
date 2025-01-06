@@ -53,7 +53,7 @@ function ChangePassword() {
     
             setAlert({"type" : "success", "message" : ["your password has been updated successfully"]})
         } catch (err) {
-            setAlert({"type" : "error" , "message" : [err.error.toString()]})
+            setAlert({"type" : "error" , "message" : [err instanceof Error ? err.message : "error occured"]})
         }
         setTimeout(() => {
             setAlert(null)
@@ -185,7 +185,7 @@ export default function Security() {
                         </div>
                         <div className="w-full h-full p-4 flex justify-center items-center">
                             <div className="w-[160px] ">
-                                <TwoFImg color={color} theme={theme} />
+                                <TwoFImg />
                             </div>
                         </div>
                     </div>

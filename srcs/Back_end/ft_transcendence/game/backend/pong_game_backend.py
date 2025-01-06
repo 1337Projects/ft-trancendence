@@ -8,19 +8,27 @@ from enum import Enum
 # from icecream import ic
 import sys
 
+
+
+
+
+
+
 # Define constants
     # Screen
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 400
+SCREEN_WIDTH = 550
+SCREEN_HEIGHT = 300
     # Paddle
-PADDLE_WIDTH = 20 # could be pair (2k)
-PADDLE_HEIGHT = 100 # could be pair (2k)
+PADDLE_WIDTH = 10 # could be pair (2k)
+PADDLE_HEIGHT = 60 # could be pair (2k)
 PADDLE_SPEED = 20
     # Ball
 BALL_RADIUS = 10
 BALL_SPEEDX = 5
 BALL_SPEEDY = 2
 FPS = 60
+
+
 
 class PaddlePlayer(Enum):
     PLAYER_1_PADDLE = 1

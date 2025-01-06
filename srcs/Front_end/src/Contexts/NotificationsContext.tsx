@@ -1,17 +1,18 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import { notificationSocket } from "@/socket";
 import { UserContext } from "./authContext";
+import { NotificationType } from "@/types";
 
 type NotificationsContextType = {
-    notifications: [] | null;
-    setNotifications: React.Dispatch<React.SetStateAction<null | []>>;
+    notifications: NotificationType[] | null;
+    setNotifications: React.Dispatch<React.SetStateAction<null | NotificationType[]>>;
     fetchMoreNotifications: () => void;
     setHasMore: React.Dispatch<React.SetStateAction<boolean>>;
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
     hasMore : boolean;
     currentPage: number;
-    hasNew : Number,
-    setHasNew : React.Dispatch<React.SetStateAction<Number>>,
+    hasNew : number,
+    setHasNew : React.Dispatch<React.SetStateAction<number>>,
 }
 
 export const NotificationsContext = createContext<null | NotificationsContextType>(null);
@@ -20,7 +21,7 @@ export default function NotificationsContextProvider({ children } : {children : 
     const { authInfos} = useContext(UserContext) || {}; 
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const [ notifications, setNotifications ] = useState<null | []>(null)
+    const [ notifications, setNotifications ] = useState<null | NotificationType[]>(null)
     const [ hasNew, setHasNew ] = useState(0)
 
     const fetchMoreNotifications = async () => {

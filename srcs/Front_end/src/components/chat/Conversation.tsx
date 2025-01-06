@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef, useEffect, useCallback} from 'react'
+import {useContext, useState, useRef, useEffect, useCallback} from 'react'
 import { Link, useParams } from 'react-router-dom';
 
 import { chatSocket } from '../../socket'
@@ -42,7 +42,7 @@ function UserMessage({m} : {m : MessageType}) {
                             <div className='flex-grow w-full h-full px-2'>
                                 <p className='text-xs'><span className='font-bold mr-1'>{m.sender.username}</span> invited you to play ping pong match</p>
                                 {
-                                    !m.link_expired ?
+                                    (!m.link_expired && m.link) ?
                                     <Link to={m.link} className='mt-4'>
                                         <button style={{borderColor : color, color : color}} className='border-[1px] flex justify-center items-center px-4 text-xs p-2 rounded mt-4'>
                                             <p className='mr-2'>Play now </p>
@@ -65,11 +65,10 @@ function UserMessage({m} : {m : MessageType}) {
 
 
 export default function Conversation() {
-    const { userData } = useContext(ChatContext) || {}
     return (
         <div className='w-full h-full flex flex-col space-y-2'>
             <div className='w-full h-[60px]'>
-                <ConversationHeader userData={userData?.user} friendShip={userData?.freindship}  />
+                <ConversationHeader  />
             </div>
             <div className='w-full h-fit relative overflow-y-auto' >
                 <MessagesList />
@@ -130,7 +129,7 @@ function MessagesList() {
     const [ page, setPage ] = useState(1)
     const { authInfos } = useContext(UserContext) || {}
     const { user } = useParams()
-    const { messages, setMessages , userData } = useContext(ChatContext) || {}
+    const { messages, setMessages , userData, setUserData } = useContext(ChatContext) || {}
     const observer = useRef<IntersectionObserver | null>(null);
     const lastItem = useRef(null)
     const [hasMore, setHasMore] = useState(true)
@@ -138,6 +137,7 @@ function MessagesList() {
     useEffect(() => {
         return () => {
             setMessages!(null)
+            setUserData!(null)
             setPage(1)
         }
     }, [user])
@@ -158,7 +158,7 @@ function MessagesList() {
         if (observer.current) observer.current.disconnect()
 
         observer.current = new IntersectionObserver(entries => { 
-            if (entries[0].isIntersecting && hasMore) {
+            if (entries && entries.length > 0 && entries[0]?.isIntersecting && hasMore) {
                 setPage(prev => prev + 1)
             }
         })
@@ -225,17 +225,16 @@ function ConversationHeader() {
 
     if (!userData) {
         return (
-            <div  className={`header  px-4 border-b-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"}  py-8 w-full h-[60px] flex justify-between items-center`}>
+            <div  className={`header border-b-[1px] ${theme == 'light' ? "border-black/20" : "border-white/20"}  py-8 w-full h-[60px] flex justify-between items-center`}>
                 <div className="avatar w-[95%] h-full flex justify-start items-center">
                     <div className='flex'>
-                        <div className="bg-gray-300 animate-pulse w-[35px] h-[35px] rounded-full mx-4" />
+                        <div className="bg-gray-300 animate-pulse w-[35px] h-[35px] rounded-full mx-2" />
                         <div className="infos text-[12px]">
                             <h1 className="w-[140px] h-[16px] bg-gray-300 animate-pulse rounded-full"></h1>
                             <p className="w-[60px] h-[10px] mt-2 bg-gray-300 animate-pulse rounded-full"></p>
                         </div>
                     </div>
                 </div>
-                <div className='h-[20px] w-2 bg-gray-300 animate-pulse rounded-full' />
             </div>
         )
     }
@@ -249,9 +248,7 @@ function ConversationHeader() {
                 <Link to={`/dashboard/profile/${userData?.user.username}`} className='flex'>
                     <div className='relative'>
                         <img src={userData?.user.profile?.avatar} className="bg-white border-[2px] w-[35px] h-[35px] rounded-full mx-4" alt="avatar" />
-                        <div className={`w-3 h-3 rounded-full ${userData.user.profile.online ? "bg-green-500" : "bg-red-500"} absolute bottom-0 right-4`} >
-                            <div className='w-2 h-2 bg-gray-300 absolute left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%] rounded-full' />
-                        </div>
+                        <div className={`w-2 h-2 rounded-full ${userData.user.profile.online ? "bg-green-500" : "bg-gray-300"} absolute bottom-1 right-4`} />
                     </div>
                     <div className="infos text-[12px]">
                         <h1 className="font-bold text-[11pt]">{userData?.user.username}</h1>

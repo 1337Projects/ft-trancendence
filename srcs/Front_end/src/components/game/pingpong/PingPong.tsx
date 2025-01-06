@@ -1,5 +1,5 @@
 
-import React, { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { gameSocket } from "@/sockets/gameSocket";
 import { useParams } from "react-router-dom";
@@ -37,13 +37,13 @@ function PingPong() {
         };
     }, [game_id, authInfos]);
 
-    function init(data: never) {
+    function init(data : any) {
         console.log('init functions with :', data);
         const {paddles, game, ball} = data;
         console.log('init function with : ', { paddles, game, ball });
         const game_data = { paddles, game, ball };
         console.log('game data: ', game_data);
-        setGame(game_data);
+        setGame(game_data as GameType);
     }
 
     function set_score( { score1, score2 }: ScoreType) {

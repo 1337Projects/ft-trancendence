@@ -1,11 +1,11 @@
 
-import React, { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import MyUseEffect from "@/hooks/MyUseEffect"
 import { useNavigate, useParams } from "react-router-dom"
 import { tournamentSocket } from "@/socket"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from "@/Contexts/authContext"
-import { InviteFriendsToPlay, PlayerGameCard } from '../pingpong/waiting'
+// import { InviteFriendsToPlay, PlayerGameCard } from '../pingpong/waiting'
 
 export default function WaitingTournment() {
 
@@ -23,6 +23,7 @@ export default function WaitingTournment() {
     MyUseEffect(() => {
         tournamentSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/join/tournment/${id}/?token=${authInfos?.accessToken}`)
         tournamentSocket.addCallback('roomDataHandler', roomDataHandler)
+        console.log(roomData)
     }, [])
 
     useEffect(() => {
@@ -37,7 +38,7 @@ export default function WaitingTournment() {
         }
     }, [loading])
 
-    function roomDataHandler(data) {
+    function roomDataHandler(data : any) {
         setRoomData(data)
         if (data.players.length == data.data.max_players) {
             setLoading(true)
@@ -56,11 +57,11 @@ export default function WaitingTournment() {
                 <div className="text-center p-2 w-fit ml-[50%] translate-x-[-50%]">
                     <h1 className={`text-3xl font-bold uppercase`}>Waiting for tournament to start</h1>
                     <div className="p-2 mt-6 flex">
-                        <InviteFriendsToPlay data={roomData} />
+                        {/* <InviteFriendsToPlay data={roomData} /> */}
                     </div>
-                    <h1 className="mt-6 text-lg"> {roomData?.players?.length < roomData?.data?.max_players ? "waiting..." : "ready"}</h1>
+                    {/* <h1 className="mt-6 text-lg"> {roomData?.players?.length < roomData?.data?.max_players ? "waiting..." : "ready"}</h1> */}
                 </div>
-                <div className="p-2 grid grid-cols-4 gap-4 mt-20 ">
+                {/* <div className="p-2 grid grid-cols-4 gap-4 mt-20 ">
                     {
                         [...Array(roomData?.data?.max_players)].map((item, index) => {
                             return (
@@ -70,7 +71,7 @@ export default function WaitingTournment() {
                             )
                         })
                     }
-                </div>
+                </div> */}
             </div>
         </div>
     )

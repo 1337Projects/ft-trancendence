@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MyUseEffect from '@/hooks/MyUseEffect'
 import { tournamentSocket } from "@/socket";
 import { UserContext } from '@/Contexts/authContext'
-import Hero from "./Hero";
+// import Hero from "./Hero";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { FaArrowRight } from "react-icons/fa6";
-import Schema from "./Schema";
+// import Schema from "./Schema";
 import { UserType } from "@/types/user";
 import { MatchDataType, TournamentDataType } from "@/types/tournament";
 
@@ -57,10 +57,10 @@ export default function Tournment() {
    
     return  (
         <div className={`w-full h-[100vh] ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}  mt-2 p-2`}>
-            <Hero data={tournamentData} />
+            {/* <Hero data={tournamentData} /> */}
             <div className="w-full h-fit mt-2">
 
-                <Schema data={tournamentData} />
+                {/* <Schema data={tournamentData} /> */}
                 {
                     ended && 
                     <div 

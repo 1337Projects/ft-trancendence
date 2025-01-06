@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import { useContext } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { FaArrowRightLong } from "react-icons/fa6"
 import { DialogContext } from "@/Contexts/DialogContext"

@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import MyInput from "../ui/Input"
 import { Form, Formik } from "formik"
 import { Link, useNavigate } from "react-router-dom"
 import * as Yup from 'yup' 
 import Alert from "../ui/Alert"
-import { AlertType } from "@/types"
+import { AlertType } from "@/types/index"
 
 
 async function requestLinkHandler(values : {email : string}) {
@@ -33,7 +33,7 @@ async function requestLinkHandler(values : {email : string}) {
 
     } catch (err) {
         return {
-            message : [err.toString()],
+            message : [err instanceof Error ? err.message : 'An unknown error occurred'],
             type : "error"
         }
     }
@@ -73,7 +73,7 @@ async function resetPasswordHandler(values : {password : string} ) {
 
     } catch(err) {
         return {
-            message : [err.toString()],
+            message : [err instanceof Error ? err.toString() : "An unknown error occurred"],
             type : "error"
         }
     }
@@ -84,7 +84,6 @@ export default function ForgetPassword() {
     const params = new URLSearchParams(window.location.search)
 
     const token = params.get('token')
-    const email = params.get('email')
     const [alert, setAlert] = useState<AlertType | null>(null)
 
     const navigate = useNavigate()
@@ -118,7 +117,7 @@ export default function ForgetPassword() {
                             initialValues={{ password : '' }}
                             validationSchema={PasswordvalidationSchema}
                             onSubmit={async (values) => {
-                                const ret = await resetPasswordHandler({...values, token , email})
+                                const ret = await resetPasswordHandler({...values})
                                 setAlert(ret)
                                 if (ret.type === "success") {
                                     setTimeout(() => navigate('/auth/login') , 1000 * 3)

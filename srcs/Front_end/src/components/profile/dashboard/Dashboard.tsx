@@ -1,4 +1,3 @@
-import React from "react"
 import Level from "./Level"
 import Chart from "./Chart"
 import MatchStatus from "./Status"

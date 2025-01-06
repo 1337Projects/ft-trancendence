@@ -1,14 +1,18 @@
 
-import { FieldHookConfig, useField } from "formik"
-import React, { useContext, useState } from "react"
+import { useField } from "formik"
+import { useContext, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { FaEye, FaEyeSlash } from "react-icons/fa"
 
-interface SettingInputProps {
-    label : string,
+type InputPropsType = {
+    label: string,
+    id: string,
+    name: string,
+    type?: string,
+    placeholder: string
 }
 
-export default function SettingsInput({label, ...props} : SettingInputProps & FieldHookConfig<string>) {
+export default function SettingsInput({label, ...props} : InputPropsType) {
 
     const { theme } = useContext(ApearanceContext) || {}
     const [field, meta] = useField(props)
@@ -36,7 +40,7 @@ export default function SettingsInput({label, ...props} : SettingInputProps & Fi
 }
 
 
-export function TextArea({label, ...props} : SettingInputProps & FieldHookConfig<string>) {
+export function TextArea({label, ...props} : InputPropsType) {
 
     const [field, meta] = useField(props)
     const { theme } = useContext(ApearanceContext) || {}

@@ -1,13 +1,15 @@
-import React from "react";
+
 import SchemaFour from '@/components/assets/schema/Schema4'
-import { UserType } from "@/Types";
+import { UserType } from '@/types/user';
 
 export type TournamentDataType = {
     id : number,
     max_players : number,
     players : UserType[],
     tournament_name : string,
-    tourament_status : string
+    tourament_status : string,
+    created_at : string,
+    mode : string,
 }
 
 export type TournamnetType = {

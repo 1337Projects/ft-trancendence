@@ -8,14 +8,16 @@ import { LuBell } from "react-icons/lu";
 import { FiUser } from "react-icons/fi";
 import { NotificationsContext } from "../Contexts/NotificationsContext";
 import { InviteItem, NotItem } from "./Notifications";
+import { UserType } from "@/types/user";
 
 
 function SearchResult({query, queryHandler} : {query : string, queryHandler : React.Dispatch<React.SetStateAction<string>>}) {
     const navigate = useNavigate()
     const user = useContext(UserContext)
-    const [data, setData] = useState(null)
+    const [data, setData] = useState<null | UserType[]>(null)
     const [loading, setLoading] = useState(true)
     const {theme} = useContext(ApearanceContext) || {}
+
     useEffect(() => {
         const timer = setTimeout(async () => {
             await fetch(`${import.meta.env.VITE_API_URL}api/profile/users/?query=${query}`, {
@@ -29,7 +31,7 @@ function SearchResult({query, queryHandler} : {query : string, queryHandler : Re
             .then(res => res.json())
             .then(data => {
                 if (data.data != undefined) {
-                    setData(data.data)
+                    setData(data.data as UserType[])
                 }
             })
             .catch(err => console.log("err:", err))
@@ -49,7 +51,7 @@ function SearchResult({query, queryHandler} : {query : string, queryHandler : Re
                 <ul>
                     {
                         (data != null && data?.length) ? 
-                        data.map(i => {
+                        data?.map(i => {
                             return ( 
                                 <li 
                                     key={i?.id} 
@@ -93,29 +95,40 @@ export function HeaderItems({icon, hasNew} : {icon : ReactElement, hasNew : numb
     )
 }
 
+
 export default function Search() {
     const [searchText, seTSearchText] = useState('')
     const user = useContext(UserContext)
     const appearence = useContext(ApearanceContext)
     const { hasNew } = useContext(NotificationsContext) || {}
-    const notsRef = useRef(null)
-    const invRef = useRef(null)
+    const notsRef = useRef<null | HTMLUListElement>(null)
+    const invRef = useRef<null | HTMLDivElement>(null)
     const [ notsOpen, setNotsOpen ] = useState(false)
     const [ invitesOpen, setInvitesOpen ] = useState(false)
-    const toggleNotsButtonRef = useRef(null)
-    const toggleInvitesButtonRef = useRef(null)
+    const toggleNotsButtonRef = useRef<null | HTMLButtonElement>(null)
+    const toggleInvitesButtonRef = useRef<null | HTMLButtonElement>(null)
 
     const hasInvites = user?.friends?.filter(inv => inv.status === 'waiting' && inv.sender.username != user?.user?.username).length
 
 
     useEffect(() => {
 
-        const handleClickOutside = (event) => {
-            if (notsRef.current && !notsRef.current.contains(event.target)  && !toggleNotsButtonRef.current.contains(event.target)) {
-                setNotsOpen(false)
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                notsRef.current 
+                && !notsRef.current.contains(event.target as Node) 
+                && toggleNotsButtonRef.current 
+                && !toggleNotsButtonRef.current.contains(event.target as Node)
+            ) {
+                setNotsOpen(false);
             }
-            if (invRef.current && !invRef.current.contains(event.target) && !toggleInvitesButtonRef.current.contains(event.target)) {
-                setInvitesOpen(false)
+            if (
+                invRef.current 
+                && !invRef.current.contains(event.target as Node) 
+                && toggleInvitesButtonRef.current 
+                && !toggleInvitesButtonRef?.current.contains(event.target as Node)
+            ) {
+                setInvitesOpen(false);
             }
         };
 
@@ -152,10 +165,10 @@ export default function Search() {
                         }
                         <div className="absolute top-0 right-0 w-fit h-full flex items-center lg:hidden">
                             <button ref={toggleNotsButtonRef} onClick={() => setNotsOpen(prev => !prev)}>
-                                <HeaderItems hasNew={hasNew} icon={<LuBell />} />
+                                <HeaderItems hasNew={hasNew!} icon={<LuBell />} />
                             </button>
                             <button ref={toggleInvitesButtonRef} onClick={() => setInvitesOpen(prev => !prev)}>
-                                <HeaderItems hasNew={hasInvites} icon={<FiUser />} />
+                                <HeaderItems hasNew={hasInvites!} icon={<FiUser />} />
                             </button>
                             { notsOpen && <Nots notsRef={notsRef} open={notsOpen} /> }
                             { invitesOpen && <Invites invRef={invRef} /> }
@@ -182,7 +195,7 @@ export default function Search() {
     )
 }
 
-function Nots({ notsRef, open }) {
+function Nots({ notsRef, open } : {open : boolean, notsRef : React.RefObject<HTMLUListElement>}) {
 
     const { notifications, hasNew, setHasNew , fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {}
     const { theme } = useContext(ApearanceContext) || {}
@@ -193,7 +206,7 @@ function Nots({ notsRef, open }) {
         const { scrollTop, scrollHeight, clientHeight } = notsRef.current;
 
         if (scrollTop + clientHeight >= scrollHeight - 1) {
-            fetchMoreNotifications();
+            fetchMoreNotifications?.();
         }
     };
 
@@ -236,7 +249,7 @@ function Nots({ notsRef, open }) {
     )
 }
 
-function Invites({invRef}) {
+function Invites({invRef} : {invRef : React.RefObject<HTMLDivElement>}) {
     const user = useContext(UserContext)
     const { theme } = useContext(ApearanceContext) || {}
     const invites = user?.friends?.filter(item => item.status == 'waiting' && item.sender.username != user?.user?.username)

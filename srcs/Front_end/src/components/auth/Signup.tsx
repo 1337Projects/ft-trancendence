@@ -1,6 +1,6 @@
 import { OauthProviders } from "./Oauth"
 import { Link, useNavigate } from "react-router-dom"
-import React, { useState } from "react"
+import { useState } from "react"
 import { Form, Formik } from "formik"
 import MyInput from "../ui/Input"
 import * as yup  from 'yup'
@@ -22,7 +22,7 @@ export default function Signup() {
     const [alert, setAlert] = useState<AlertType | null>(null)
 
 
-    const signupHandler = async values => {
+    const signupHandler = async (values : {username : string, password : string, email : string, first_name : string, last_name : string}) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/api/register/`, {
                 method : 'POST',
@@ -49,7 +49,17 @@ export default function Signup() {
             }, 1000)
 
         } catch (error) {
-            setAlert(prev => prev ? {message : [...prev.message, error.toString()], type : 'error'} : {message : [error.toString()], type : 'error'})
+            setAlert(
+            prev => prev ? 
+            {
+                message : [...prev.message, error instanceof Error ? error.toString() : "error"], 
+                type : 'error'
+            } 
+            : 
+            {
+                message : [error instanceof Error ? error.toString() : "error"],
+                type : 'error'
+            })
         }
     }
 

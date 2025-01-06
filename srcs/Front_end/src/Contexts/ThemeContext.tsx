@@ -1,6 +1,6 @@
 
 import { ApearanceContextType } from '@/types';
-import React, { createContext, ReactNode, useState } from 'react'
+import { createContext, ReactNode, useState } from 'react'
 
 
 

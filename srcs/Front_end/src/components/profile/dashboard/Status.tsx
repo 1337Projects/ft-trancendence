@@ -1,4 +1,3 @@
-import React from "react"
 
 
 function MatchStatusItem({title, avatar, color} : {title : string, avatar : string, color : string}) {

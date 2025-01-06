@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { ReactElement, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ApearanceContext } from '../Contexts/ThemeContext';
 import { UserContext } from '../Contexts/authContext';
@@ -10,11 +10,10 @@ import { PiMoonStars, PiSunDim } from "react-icons/pi";
 import { GrGamepad } from "react-icons/gr";
 import { RxDashboard } from "react-icons/rx";
 import { IoIosLogOut } from "react-icons/io";
-import { IconType } from 'react-icons';
 
 
 
-function NavItem({text, icon, link} : {text : string, icon : IconType, link : string}) {
+function NavItem({text, icon, link} : {text : string, icon : ReactElement, link : string}) {
 	const {color} = useContext(ApearanceContext) || {}
 	const location = useLocation();
 	const isActive = location.pathname.includes(text)

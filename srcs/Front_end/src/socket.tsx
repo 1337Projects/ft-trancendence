@@ -1,10 +1,20 @@
+import { NotificationType } from "./types";
+import { MessageType } from "./types/chat";
 import { UserType } from "./types/user";
 
 
-type CallBackType = (data : string) => void
+type CallBackType = (data : any) => void
 
 interface SocketMessageType {
-    event : string
+    event : string,
+    partner? : string,
+    from? : string,
+    page? : number,
+    sender? : string,
+    receiver? : string,
+    message? : string,
+    link? : string,
+    page_size? : number,
 }
 
 
@@ -141,11 +151,12 @@ class ChatSocket extends WebSocketService {
         // console.log("data = >" , data)
         switch (data.response.status) {
             case 205:
-                this.callbacks["setData"]?.((prev) => prev ? [...prev, data.response.message] : [data.response.message])
+                this.callbacks["setData"]?.((prev : MessageType[]) => prev ? [...prev, data.response.message] : [data.response.message])
                 this.callbacks["cnvsUpdate"]?.(data.response.conversation)
                 break;
             case 206:
-                this.callbacks["setData"]?.(prev => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
+                console.log(data.response)
+                this.callbacks["setData"]?.((prev : MessageType[]) => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
                 this.callbacks["setUser"]?.(data.response)
                 break;
             case 209:
@@ -179,8 +190,8 @@ class NotificationSocket extends WebSocketService {
         switch (data.response.status) {
             case 207:
                 // console.log(this.callbacks)
-                this.callbacks["setNots"]?.(prev => [data.response.not, ...prev])
-                this.callbacks["hasNew"]?.(prev => prev + 1)
+                this.callbacks["setNots"]?.((prev : NotificationType[]) => [data.response.not, ...prev])
+                this.callbacks["hasNew"]?.((prev : string) => prev + 1)
                 break;
             case 208:
                 this.callbacks["FirstSetNots"]?.(data.response.nots)

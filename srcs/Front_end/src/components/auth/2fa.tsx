@@ -24,7 +24,7 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
     const [errr, setErrr] = useState('Verify');
     const [bol, setBol] = useState(true);
 
-    const handleChange = (otp) =>{
+    const handleChange = (otp : string) =>{
         setOtp(otp);
     }
     

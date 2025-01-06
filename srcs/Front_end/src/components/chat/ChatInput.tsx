@@ -43,8 +43,7 @@ export default function ChatInput() {
             sendMessage()
     }
 
-    function sendGameInvite() {//link
-        console.log('invite')
+    function sendGameInvite() {
         const data = {
             "from" : authInfos?.username,
             "partner": user,
@@ -69,11 +68,11 @@ export default function ChatInput() {
                     { emojie && <Emojies inputText={text} TextInputHandler={setText} /> }
                     <div className="flex w-full max-w-[500px] mx-auto h-full items-center">
                         <div
-                            className={`text-[14pt] mr-2 flex justify-center items-center ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black text-white"} rounded-full h-full w-[45px]`} 
+                            className={`text-[14pt] mr-2 flex justify-center items-center ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black text-white border-[.2px] border-white/40"} rounded-full h-full w-[45px]`} 
                             onClick={sendGameInvite}>
                             <IoGameControllerOutline />
                         </div>
-                        <div className={`input w-full h-full rounded-full px-2 pl-4 text-[16pt] flex items-center justify-between ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black text-white"} `}>
+                        <div className={`input w-full h-full rounded-full px-2 pl-4 text-[16pt] flex items-center justify-between ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black border-[.2px] border-white/40 text-white"} `}>
                             <div onClick={() => setEmojie(prev => !prev)}>
                                 { emojie ? <FaKeyboard /> : <FaRegSmile /> }
                             </div>

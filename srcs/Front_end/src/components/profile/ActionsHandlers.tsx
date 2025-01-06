@@ -1,12 +1,14 @@
-import React, { useContext } from "react"
+import { useContext } from "react"
 import { FaCommentDots, FaPlus } from "react-icons/fa"
 import { GiSandsOfTime } from "react-icons/gi";
 import { FiCheckCircle } from "react-icons/fi";
-import { IoMdClose } from "react-icons/io";
-import { ActionButton, ActionsList } from "./Actions";
+import { ActionsList } from "./Actions";
 import { UserContext } from "@/Contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { FirendType, UserType } from "@/types/user";
+
+
+export type ResType = number | FirendType
 
 export function HasRelationWithStatus(
     friendsList : FirendType[],
@@ -29,7 +31,7 @@ function IsSender(
 
 
 
-export async function RelationsHandler(url : string, token : string, body : UserType, callback : (response : ResponseType) => void) {
+export async function RelationsHandler(url : string, token : string, body : UserType, callback : (response : ResType) => void) {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}${url}`, {
             method : 'POST',
@@ -64,15 +66,15 @@ export function Relations({ friend } : {friend : UserType}) {
     const { friends, authInfos, setFriends } = useContext(UserContext) || {}
     const navigate = useNavigate()
     
-    function AddFriendCallbck(response : FirendType) {
-        setFriends!(prev => [...prev!, response!])
+    function AddFriendCallbck(response : ResType) {
+        setFriends!(prev => prev ? [...prev, response as FirendType] : [])
     }
 
-    function AcceptFriendCallback(response : FirendType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != response.id), response] : [])
+    function AcceptFriendCallback(response : ResType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FirendType).id), response as FirendType] : [])
     }
 
-    function DeleteFriendRequest(response : number) {
+    function DeleteFriendRequest(response : ResType) {
         setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
 
@@ -81,30 +83,34 @@ export function Relations({ friend } : {friend : UserType}) {
     if(friends && IsSender(friends, friend?.id)) {
         return (
             <div className="flex w-[190px] justify-between items-center">
-                <ActionButton 
-                    text="accept" 
-                    icon={<FiCheckCircle />} 
-                    handler={() => 
+                <div 
+                    onClick={() => 
                         RelationsHandler(
                             'api/friends/accept_friend/',
-                            authInfos.accessToken,
+                            authInfos?.accessToken || "",
                             friend,
                             AcceptFriendCallback
                         )
                     }
-                />
-                <ActionButton 
-                    text="reject" 
-                    icon={<IoMdClose />} 
-                    handler={() => 
+                    className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+                >
+                    <p>accept</p>
+                    <FiCheckCircle />
+                </div>
+                <div 
+                    onClick={() => 
                         RelationsHandler(
                             'api/friends/reject_friend/',
-                            authInfos.accessToken,
+                            authInfos?.accessToken || "",
                             friend,
                             DeleteFriendRequest
                         )
                     }
-                />
+                    className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+                >
+                    <p>reject</p>
+                    <FiCheckCircle />
+                </div>
             </div>
         )
     }
@@ -116,11 +122,13 @@ export function Relations({ friend } : {friend : UserType}) {
     ) {
         return (
             <div className="flex w-[120px] justify-between items-center">
-                <ActionButton 
-                    text="contact" 
-                    icon={<FaCommentDots />}
-                    handler={() => navigate(`/dashboard/chat/${friend.username}`)} 
-                />
+                <div 
+                    onClick={() => navigate(`/dashboard/chat/${friend.username}`)} 
+                    className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+                >
+                    <p>contact</p>
+                    <FaCommentDots />
+                </div>
                 <ActionsList friend={friend} />
             </div>
         )
@@ -128,34 +136,38 @@ export function Relations({ friend } : {friend : UserType}) {
 
     if (friends && HasRelationWithStatus(friends, friend?.id, 'waiting')) {
         return (
-            <ActionButton 
-                text="requsted" 
-                icon={<GiSandsOfTime />} 
-                handler={() => 
+            <div 
+                onClick={() => 
                     RelationsHandler(
                         'api/friends/cancle_friend/',
-                        authInfos.accessToken,
+                        authInfos?.accessToken || "",
                         friend,
                         DeleteFriendRequest
                     )
                 }
-            />
+                className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+            >
+                <p>requsted</p>
+                <GiSandsOfTime />
+            </div>
         )
     }
     
     return (
-        <ActionButton 
-            text="new friend" 
-            icon={<FaPlus />} 
-            handler={() => 
+        <div 
+            onClick={() => 
                 RelationsHandler(
                     'api/friends/new_relation/',
-                    authInfos.accessToken,
+                    authInfos?.accessToken || "",
                     friend,
                     AddFriendCallbck
                 )
             }
-        />
+            className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+        >
+            <p>new friend</p>
+            <FaPlus />
+        </div>
     )
 
 }

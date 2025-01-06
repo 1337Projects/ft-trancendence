@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useState } from 'react'
+import { createContext, ReactNode, useState } from 'react'
 import {jwtDecode} from 'jwt-decode'
 import { AuthInfosType, FirendType, UserContextType, UserType } from '@/types/user'
 

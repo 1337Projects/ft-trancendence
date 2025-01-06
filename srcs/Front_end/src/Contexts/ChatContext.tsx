@@ -1,13 +1,21 @@
 import { MessageType } from "@/types/chat"
-import { UserType } from "@/types/user"
+import { FirendType, UserType } from "@/types/user"
 import React, { createContext, ReactNode } from "react"
 
 
-type ChatContextType = {
+export type UserDataType = {
+    status : number,
     messages : MessageType[],
-    userData : UserType | null,
-    setMessages : React.Dispatch<React.SetStateAction<MessageType[]>>,
-    setUserData : React.Dispatch<React.SetStateAction<UserType | null>>,
+    user : UserType
+    nbr_pages : number
+    freindship : FirendType
+}
+
+type ChatContextType = {
+    messages : MessageType[] | null,
+    userData : UserDataType | null,
+    setMessages : React.Dispatch<React.SetStateAction<MessageType[] | null>>,
+    setUserData : React.Dispatch<React.SetStateAction<UserDataType | null>>,
 }
 
 export const ChatContext = createContext<ChatContextType | null>(null)

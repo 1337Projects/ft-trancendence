@@ -1,6 +1,6 @@
 import { IoCloseCircleOutline } from "react-icons/io5";
 import React from "react";
-import { AlertType } from "../../Types";
+import { AlertType } from "@/types";
 
 export default function Alert(
         {alert, alertHandler} : 

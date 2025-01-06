@@ -1,6 +1,6 @@
 
 import { Outlet } from "react-router-dom"
-import React, { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import ConversationsList, {Friends} from '../components/chat/chat'
 import { ApearanceContext } from "../Contexts/ThemeContext"
 import { FaBars } from "react-icons/fa"
@@ -8,9 +8,9 @@ import { TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { UserContext } from "../Contexts/authContext"
 import MyUseEffect from '../hooks/MyUseEffect'
 import { chatSocket } from '../socket'
-import ChatContextProvider from "../Contexts/ChatContext"
+import ChatContextProvider, { UserDataType } from "@/Contexts/ChatContext"
 import { ConversationType, MessageType } from "@/types/chat"
-import { UserType } from "@/types/user"
+
 
 
 export default function ChatLayout() {
@@ -22,7 +22,7 @@ export default function ChatLayout() {
 
 
     const [ messages, setMessages ] = useState<MessageType[] | null>(null)
-    const [ userData, setUserData ] = useState<UserType | null>(null)
+    const [ userData, setUserData ] = useState<UserDataType | null>(null)
 
 
     const value = {
@@ -33,7 +33,7 @@ export default function ChatLayout() {
     }
 
     function UpdateConversationsHandler(cnv : ConversationType) {
-        setCnvs(prev => [cnv, ...prev.filter(c => c.id != cnv.id)])
+        setCnvs(prev => prev ? [cnv, ...prev.filter(c => c.id != cnv.id)] : [cnv])
     }
 
     MyUseEffect(() => {
@@ -60,18 +60,15 @@ export default function ChatLayout() {
             <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-[calc(100vh-180px)] sm:h-[100vh] mt-2 shadow-sm rounded-sm flex-grow`}>
                 <div className="flex w-full h-full ">
                     <div className={`h-full ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px]  ${menu ? "active-menu" : "non-active-menu"}`}>
-                        <div className={`w-full h-fit ${menu && "px-4"}`}>
-                            <div className={`text-[16pt] w-full h-[70px] flex items-center  ${menu ? "justify-end" : "justify-center"}`} onClick={() => setMenu(prev => !prev)}>
-                                {
-                                    menu ? 
-                                    <TbLayoutSidebarRightExpandFilled />
-                                    :
-                                    <FaBars />
-                                }
+                        <div className={`w-full h-fit px-2`}>
+                            <div className={`text-[16pt] w-full h-[70px] flex items-center  ${menu ? "justify-end" : "justify-center"}`}>
+                                <div className="w-fit" onClick={() => setMenu(prev => !prev)}>
+                                    { menu ? <TbLayoutSidebarRightExpandFilled /> : <FaBars /> }
+                                </div>
                             </div>
                             <Friends menu={menu} handler={setMenu} />
-                            <hr className={` ${theme == 'light' ? "border-black/20" : "border-white/20"} mx-4`} />
-                            <ConversationsList menu={menu} data={cnvs} />
+                            <hr className={` ${theme == 'light' ? "border-black/20" : "border-white/20"}`} />
+                            <ConversationsList menu={menu} data={cnvs!} />
                         </div>
                     </div>
                     <div className={`flex-grow w-full`}>

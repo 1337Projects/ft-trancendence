@@ -6,10 +6,13 @@ export type MessageType = {
     receiver : UserType,
     id : number,
     message : string,
-    created_at : string
+    created_at : string,
+    link_expired : boolean,
+    link : string | null,
 }
 
 export type ConversationType = {
+    id : number,
     content_of_last_message : string,
     last_message_time : string
 

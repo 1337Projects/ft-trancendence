@@ -1,5 +1,6 @@
-import { UserType } from "@/Types";
-import React from "react";
+import { UserType } from "@/types/user";
+
+
 
 type MatchType = {
   winner : UserType,
@@ -194,7 +195,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[0][0]["winner"]} />
+            <PlayerImage player={rounds[0]?.[0]?.["winner"]} />
           </pattern>
           <pattern
             id="pattern1_854_121"
@@ -202,7 +203,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[1][0]["player1"]} />
+            <PlayerImage player={rounds[1]?.[0]?.["player1"]} />
           </pattern>
           <pattern
             id="pattern2_854_121"
@@ -210,7 +211,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[1][0]["player2"]} />
+            <PlayerImage player={rounds[1]?.[0]?.["player2"]} />
           </pattern>
           <pattern
             id="pattern3_854_121"
@@ -218,7 +219,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[2][0]["player1"]} />
+            <PlayerImage player={rounds[2]?.[0]?.["player1"]} />
           </pattern>
           <pattern
             id="pattern4_854_121"
@@ -226,7 +227,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[1][1]["player1"]} />
+            <PlayerImage player={rounds[1]?.[1]?.["player1"]} />
           </pattern>
           <pattern
             id="pattern5_854_121"
@@ -234,7 +235,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[1][1]["player2"]} />
+            <PlayerImage player={rounds[1]?.[1]?.["player2"]} />
           </pattern>
           <pattern
             id="pattern6_854_121"
@@ -242,7 +243,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[2][0]["player2"]} />
+            <PlayerImage player={rounds[2]?.[0]?.["player2"]} />
           </pattern>
         </defs>
       </svg>
@@ -250,7 +251,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
 }
 
 
-function PlayerImage({ player } : {player : UserType}) {
+function PlayerImage({ player } : {player : UserType | undefined}) {
     let url = "/_.jpeg"
     if (typeof player === "object") {
         url = player.profile.avatar
