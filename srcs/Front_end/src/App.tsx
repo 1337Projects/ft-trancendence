@@ -60,7 +60,6 @@ const router = createBrowserRouter(
         {/* <Route path='2fa' element={<TwoFactor are_you_in={false} cancel={false} setShowPopup={useState} setTwofa={useState} />} /> */}
         <Route path='2faCheck' element={<TwoFacCheck/>} />
         <Route path='forgetPassowrd' element={<ForgetPassword />} />
-        {/* <Route path='confirme/:id' element={<ConfirmeEmail/>} /> */}
       </Route>
 
       <Route path='/dashboard' element={<DashboardPrivateRoute />}>

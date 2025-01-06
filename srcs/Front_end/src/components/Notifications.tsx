@@ -21,7 +21,7 @@ export function NotItem({data} : {data : NotificationType}) {
     const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
     
     // const fiveMinutesLater = new Date(createdAt.getTime() + 5 * 60 * 1000);
-    console.log(data)
+    // console.log(data)
     
     const expired = data?.link === null ? true : false;
     return (

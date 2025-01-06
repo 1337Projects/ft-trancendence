@@ -10,7 +10,8 @@ import Score from "./Score";
 export interface GameType {
     paddles: never; // Replace 'any' with the actual type
     game: never;   // Replace 'any' with the actual type
-    ball: never;    // Replace 'any' with the actual type
+    ball: never; 
+    game_data : never   // Replace 'any' with the actual type
 }
 
 export interface ScoreType {
@@ -38,15 +39,17 @@ function PingPong() {
     }, [game_id, authInfos]);
 
     function init(data : any) {
-        console.log('init functions with :', data);
-        const {paddles, game, ball} = data;
-        console.log('init function with : ', { paddles, game, ball });
-        const game_data = { paddles, game, ball };
-        console.log('game data: ', game_data);
-        setGame(game_data as GameType);
+        // console.log("data ===> " , data)
+        // console.log('init functions with :', data);
+        const {paddles, game, ball, game_data} = data;
+        // console.log('init function with : ', { paddles, game, ball });
+        const game_data_infos = { paddles, game, ball, game_data };
+        // console.log('game data: ', game_data_infos);
+        setGame(game_data_infos as GameType);
     }
 
     function set_score( { score1, score2 }: ScoreType) {
+        // console.log('set_score function with :', { score1, score2 });
         setScore( { score1, score2 });
     }
 
@@ -95,8 +98,8 @@ function PingPong() {
                         </h1>
                     } */}
                     <div>
-                        <div className='flex justify-center'>
-                            <Score score1={score.score1} score2={score.score2} />
+                        <div className='flex justify-center px-4'>
+                            <Score data={game} score={score} />
                         </div>
                         <div className={`flex justify-center items-center mt-10 h-fit`}>
                             { game && <Canvas game={game}/>}

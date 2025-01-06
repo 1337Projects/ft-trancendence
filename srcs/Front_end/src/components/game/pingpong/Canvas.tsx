@@ -52,6 +52,10 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
     }
 
     useEffect(() => {
+        gameSocket.addCallback('update', update_stats);
+    }, [])
+
+    useEffect(() => {
         if (game !== null) {
             const canvas = canvasRef.current;
             const context = canvas?.getContext('2d');
@@ -59,7 +63,6 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
             if (context) {
                 gameInstanceRef.current = new Game(context, paddles, ball);
                 gameInstanceRef.current.render();
-                gameSocket.addCallback('update', update_stats);
             } else {
                 console.error('Error in getting context of canvas.');
             }

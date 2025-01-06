@@ -109,6 +109,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         # sys.stdout.flush()
         game_serializer = GameSerializer(self.game)
         game_data = await database_sync_to_async(lambda: game_serializer.data)()
+        # print('game_data', game_data)
+        # sys.stdout.flush()
         event = {
             'type': 'broad_cast',
             'event': 'init_game',

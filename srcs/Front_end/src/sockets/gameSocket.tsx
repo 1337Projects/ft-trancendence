@@ -35,8 +35,9 @@ class GameSocket extends WebSocketService {
                 }
                 break;
             case 'set_score':
-                if (this.callbacks['set_score'])
+                if (this.callbacks['set_score']) {
                     this.callbacks['set_score'](data.score);
+                }
                 break;
             default:
                 break;
