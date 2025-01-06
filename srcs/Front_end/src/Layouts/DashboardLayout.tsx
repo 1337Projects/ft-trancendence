@@ -50,22 +50,22 @@ export default function DashboardLayout() {
 
     const { setNotifications, setHasMore, setHasNew, setCurrentPage} = useContext(NotificationsContext) || {}
 
-    // useEffect(() => {
-    //   const interval = setInterval(async () => {
-    //     console.log('request new access token')
-    //     await fetch(`${import.meta.env.VITE_API_URL}api/auth/refresh/`, 
-    //       {
-    //           method: 'GET',
-    //           credentials : 'include'
-    //       })
-    //       .then(res => res.json())
-    //       .then(res => {
-    //           user?.setAuthInfosHandler(res.access_token)
-    //       })
-    //       .catch(err => console.log(err))
-    //   }, 4 * 60 * 1000);
-    //   return () => clearInterval(interval);
-    // }, []);
+    useEffect(() => {
+      const interval = setInterval(async () => {
+        console.log('request new access token')
+        await fetch(`${import.meta.env.VITE_API_URL}api/auth/refresh/`, 
+          {
+              method: 'GET',
+              credentials : 'include'
+          })
+          .then(res => res.json())
+          .then(res => {
+              user?.setAuthInfosHandler(res.access_token)
+          })
+          .catch(err => console.log(err))
+      }, 4 * 60 * 1000);
+      return () => clearInterval(interval);
+    }, []);
     
 
 

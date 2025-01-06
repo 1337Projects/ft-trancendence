@@ -6,6 +6,7 @@ import { ActionsList } from "./Actions";
 import { UserContext } from "@/Contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { FirendType, UserType } from "@/types/user";
+import { ApearanceContext } from "@/Contexts/ThemeContext";
 
 
 export type ResType = number | FirendType
@@ -64,6 +65,7 @@ export async function RelationsHandler(url : string, token : string, body : User
 export function Relations({ friend } : {friend : UserType}) {
     
     const { friends, authInfos, setFriends } = useContext(UserContext) || {}
+    const { color } = useContext(ApearanceContext) || {}
     const navigate = useNavigate()
     
     function AddFriendCallbck(response : ResType) {
@@ -83,7 +85,8 @@ export function Relations({ friend } : {friend : UserType}) {
     if(friends && IsSender(friends, friend?.id)) {
         return (
             <div className="flex w-[190px] justify-between items-center">
-                <div 
+                <div
+                    style={{background: color}} 
                     onClick={() => 
                         RelationsHandler(
                             'api/friends/accept_friend/',
@@ -92,12 +95,13 @@ export function Relations({ friend } : {friend : UserType}) {
                             AcceptFriendCallback
                         )
                     }
-                    className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+                    className="w-full hover:bg-gray-700/40 rounded-full text-white px-4 text-xs p-2 h-[40px] flex items-center justify-between"
                 >
                     <p>accept</p>
                     <FiCheckCircle />
                 </div>
                 <div 
+                    style={{background: color}}
                     onClick={() => 
                         RelationsHandler(
                             'api/friends/reject_friend/',
@@ -106,7 +110,7 @@ export function Relations({ friend } : {friend : UserType}) {
                             DeleteFriendRequest
                         )
                     }
-                    className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+                    className="w-full text-white hover:bg-gray-700/40 rounded-full px-4 text-xs p-2 h-[40px] flex items-center justify-between"
                 >
                     <p>reject</p>
                     <FiCheckCircle />
@@ -123,8 +127,9 @@ export function Relations({ friend } : {friend : UserType}) {
         return (
             <div className="flex w-[120px] justify-between items-center">
                 <div 
+                    style={{background: color}} 
                     onClick={() => navigate(`/dashboard/chat/${friend.username}`)} 
-                    className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+                    className="w-full hover:bg-gray-700/40 rounded-full text-white px-4 text-xs p-2 h-[40px] flex items-center justify-between"
                 >
                     <p>contact</p>
                     <FaCommentDots />
@@ -137,6 +142,7 @@ export function Relations({ friend } : {friend : UserType}) {
     if (friends && HasRelationWithStatus(friends, friend?.id, 'waiting')) {
         return (
             <div 
+                style={{background: color}} 
                 onClick={() => 
                     RelationsHandler(
                         'api/friends/cancle_friend/',
@@ -145,7 +151,7 @@ export function Relations({ friend } : {friend : UserType}) {
                         DeleteFriendRequest
                     )
                 }
-                className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+                className="w-full rounded-full text-white hover:bg-gray-700/40 px-4 text-xs p-2 h-[40px] flex items-center justify-between"
             >
                 <p>requsted</p>
                 <GiSandsOfTime />
@@ -155,6 +161,7 @@ export function Relations({ friend } : {friend : UserType}) {
     
     return (
         <div 
+            style={{background: color}} 
             onClick={() => 
                 RelationsHandler(
                     'api/friends/new_relation/',
@@ -163,7 +170,7 @@ export function Relations({ friend } : {friend : UserType}) {
                     AddFriendCallbck
                 )
             }
-            className="w-full hover:bg-gray-700/40 rounded px-4 text-xs p-2 h-[40px] flex items-center justify-between"
+            className="w-full rounded-full text-white hover:bg-gray-700/40 px-4 text-xs p-2 h-[40px] flex items-center justify-between"
         >
             <p>new friend</p>
             <FaPlus />
