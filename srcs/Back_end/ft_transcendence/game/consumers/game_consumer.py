@@ -5,6 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from game.backend.pong_game_backend import PongGameManager
 from game.models import Game
+from game.serializers import GameSerializer
 from channels.db import database_sync_to_async
 from login.models import User
 from icecream import ic
@@ -20,10 +21,10 @@ class GameConsumer(AsyncWebsocketConsumer):
         # ic(self.player.username, "Connecting")
         # sys.stdout.flush()
 
-        game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
+        self.game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
 
-        player1_id = await database_sync_to_async(lambda: game.player1.id)()
-        player2_id = await database_sync_to_async(lambda: game.player2.id)()
+        player1_id = await database_sync_to_async(lambda: self.game.player1.id)()
+        player2_id = await database_sync_to_async(lambda: self.game.player2.id)()
 
         if self.player.id != player1_id and self.player.id != player2_id:
             await self.close(code=4000)
@@ -35,7 +36,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
-        game_is_full = await self.pongGameManager.add_player_to_game(game, self.player, self.room_name)
+        game_is_full = await self.pongGameManager.add_player_to_game(self.game, self.player, self.room_name)
         if game_is_full:
             await self.init_game()
             asyncio.create_task(self.game_loop())
@@ -80,11 +81,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         # sys.stdout.flush()
         for i in range(10000):
             await asyncio.sleep(1 / 40)
-            rslt = self.pongGameManager.update(self.room_name)
-            if rslt:
-                ic(rslt)
+            score = self.pongGameManager.update(self.room_name)
+            if score:
+                ic(score)
                 sys.stdout.flush()
-                await self.send_score(rslt)
+                await self.send_score(score)
             await self.send_stats()
 
     async def send_score(self, score):
@@ -106,9 +107,12 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def init_game(self):
         # ic(self.player.username, "Initializing game")
         # sys.stdout.flush()
+        game_serializer = GameSerializer(self.game)
+        game_data = await database_sync_to_async(lambda: game_serializer.data)()
         event = {
             'type': 'broad_cast',
             'event': 'init_game',
+            'game_data': game_data
         }
         event.update(self.pongGameManager.get_init(self.room_name))
         await self.group_send(event)
