@@ -256,6 +256,23 @@ class TournamentSocket extends WebSocketService {
     }
 }
 
+class TicTacTeoSocket extends WebSocketService {
+
+    openCallback = () => {
+        console.log("tic tac web socket connection established")
+        this.flushQueue()
+    }
+
+    closeCallback = () => {
+        console.log("tic tac WebSocket connection closed");
+    }
+
+    eventCallback = (event : MessageEvent) => {
+        const data = JSON.parse(event.data)
+        console.log(data)
+    }
+}
+
 
 
 const Socket = new WebSocketService()
@@ -264,5 +281,6 @@ export const notificationSocket = new NotificationSocket()
 export const tournamentSocket = new TournamentSocket()
 export const roomSocket = new RoomSocket()
 export const chatSocket = new ChatSocket()
+export const ticTacTeoSocket = new TicTacTeoSocket()
 
 export default Socket

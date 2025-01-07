@@ -1,5 +1,8 @@
+import { UserContext } from "@/Contexts/authContext"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { useContext, useState } from "react"
+import { ticTacTeoSocket } from "@/socket"
+import { useContext, useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
 
 
 function GameCardItem({cell, handler} : {cell : number[]}) {
@@ -65,7 +68,31 @@ function Players() {
 export default function TicTacTeo() {
 
     const { theme } = useContext(ApearanceContext) || {}
+    const { authInfos } = useContext(UserContext) || {}
     const [grid, setGrid] = useState(my_grid)
+
+    
+    const { game_id } = useParams()
+
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            ticTacTeoSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/tic-tac-teo/play/${game_id}/?token=${authInfos?.accessToken}`)
+        }, 300)
+
+        return () => {
+            clearTimeout(timer)
+        }
+
+    }, [])
+
+    function test(y, x) {
+        ticTacTeoSocket.sendMessage({
+            "event" : "action",
+            x,
+            y
+        })
+    }
 
     return (
         <div className={`p-2 rounded w-full h-full flex flex-row justify-center items-center ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} mt-2`}>
@@ -82,7 +109,7 @@ export default function TicTacTeo() {
                                             {
                                                 row.map((cell, j) => {
                                                     return (
-                                                        <li key={j} className="h-full">
+                                                        <li onClick={() => test(i, j)} key={j} className="h-full">
                                                             <GameCardItem handler={setGrid} cell={cell} />
                                                         </li>
                                                     )

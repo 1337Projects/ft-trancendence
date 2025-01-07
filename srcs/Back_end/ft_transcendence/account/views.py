@@ -22,7 +22,7 @@ import pyotp, os, io
 from django.core.files.base import ContentFile
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -253,7 +253,7 @@ def generate_2fa_qr_code(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def check_topt(request):
     user_id = request.session.get('user_id')
     user_retry = request.session.get('retry_limit')
