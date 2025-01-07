@@ -36,6 +36,7 @@ import Friends from './components/profile/friend'
 import WaitingTournment from './components/game/tournament/Waiting'
 import GameLayout from './Layouts/GameLayout'
 import NotificationsContextProvider from './Contexts/NotificationsContext'
+import TicTacTeo from './components/game/TicTacTeo'
 
 
 function Home() {
@@ -66,9 +67,10 @@ const router = createBrowserRouter(
 
         
         <Route path='game' element={<Game />} />
-        <Route path='game/waiting/room/:type' element={<Waiting />} />
+        <Route path='game/waiting/room/:type/:game' element={<Waiting />} />
         
-        <Route path='game/room/:game_id' element={<PingPong />} />
+        <Route path='game/ping-pong/room/:game_id' element={<PingPong />} />
+        <Route path='game/tic-tac-toe/room/:game_id' element={<TicTacTeo />} />
         
         <Route path='game/tournment/:tournament_id' element={<GameLayout />}>
           <Route index element={<Tournment />} />

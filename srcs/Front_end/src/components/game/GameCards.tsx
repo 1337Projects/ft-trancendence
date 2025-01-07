@@ -59,9 +59,10 @@ export default function Cards({color} : {color : string}) {
                 }
             </div>
             <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
-                <Card color={color} link="waiting/room/public" img="/game/leo-vs-random.jpg" text="random match"/>
+                <Card color={color} link="waiting/room/public/ping-pong" img="/game/leo-vs-random.jpg" text="random match"/>
                 <Card color={color} link="/" img="/game/leo-vs-computer.jpg" text="vs Computer"/>
-                <Card color={color} link="waiting/room/private" img="/game/leo-vs-friend.jpg" text="vs friend"/>
+                <Card color={color} link="waiting/room/private/ping-pong" img="/game/leo-vs-friend.jpg" text="vs friend"/>
+                <Card color={color} link="waiting/room/public/tic-tac-toe" img="/game/leo-vs-friend.jpg" text="tic tak teo"/>
             </div>
         </div>
     )

@@ -8,6 +8,9 @@ from account.serializer import UserWithProfileSerializer
 from game.serializers import GameSerializer
 from tournment.utils import debug
 
+
+
+
 class SharedState:
     _instance = None
 
@@ -131,3 +134,27 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
                 if room['status'] == 'waiting' and room['name'] == room_name and room['privacy'] == room_type:
                     return key
         return -1
+    
+
+from game.serializers import TicTacTeoSerializer
+
+class TicTakTeoMatchMaking(GameMatchMakingConsumer):
+
+    def __init__(self):
+        super().__init__()
+
+    @database_sync_to_async
+    def save_match_to_db(self, room):
+        try:
+            serializer = TicTacTeoSerializer(data={
+                "player1" : room['players'][0]['id'],
+                "player2" : room['players'][1]['id'],
+            })
+            if serializer.is_valid():
+                serializer.save()
+                return serializer.data
+            debug(serializer.errors)
+            return None
+        except Exception as e:
+            debug(e)
+            return None

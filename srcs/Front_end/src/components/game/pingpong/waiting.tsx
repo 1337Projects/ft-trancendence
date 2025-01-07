@@ -23,11 +23,11 @@ export default function Waiting() {
     const [room, setRoom] = useState<{room : RoomType} | null>(null)
     const navigate = useNavigate()
     const { authInfos } = useContext( UserContext ) || {}
-    const { type } = useParams()
+    const { type, game } = useParams()
     const searchUrl = new URLSearchParams(window.location.search)
     let room_id = searchUrl.get('room_id')
 
-    console.log(room_id)
+    // console.log(room_id)
     
     if (!room_id) { 
         room_id = 'any'
@@ -37,7 +37,8 @@ export default function Waiting() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            roomSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/join/${type}/${room_id}/?token=${authInfos?.accessToken}`)
+            console.log(`wss/game/${game}/join/${type}/${room_id}/`)
+            roomSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game}/join/${type}/${room_id}/?token=${authInfos?.accessToken}`)
             roomSocket.addCallback("setRoom", setRoom)
             roomSocket.addCallback("startGame", startGameHandler)
         }, 100)
@@ -49,7 +50,7 @@ export default function Waiting() {
     }, [])
 
     function startGameHandler(id : number) {
-        navigate(`../game/room/${id}`)
+        navigate(`../game/${game}/room/${id}`)
     }
 
     if (!room) {
@@ -142,7 +143,7 @@ function FriendItem({friendShip, room} : { friendShip : FirendType, room : strin
     const { color } = useContext(ApearanceContext) || {}
     const user = friendShip.sender.username === authInfos?.username ? friendShip.receiver : friendShip.sender
     const [ invited, setInvited ] = useState(false)
-    const { type } = useParams()
+    const { type, game } = useParams()
 
 
     function InviteHandler() {
@@ -152,7 +153,7 @@ function FriendItem({friendShip, room} : { friendShip : FirendType, room : strin
             sender: user.username, // Your logged-in user's username
             receiver: authInfos?.username, // Username of the friend to whom the request is sent
             message: `${authInfos?.username} invited you to play`,
-            link: `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/${type}/?room_id=${room}`
+            link: `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/${type}/${game}/?room_id=${room}`
         });
         setInvited(true)
         setTimeout(() => {

@@ -49,7 +49,7 @@ export default function ChatInput() {
             "partner": user,
             "type" : "game_invite",
             "content": "",
-            "link":  `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/private/?room_id=${authInfos?.username}-${user}${generateRandomId()}`,
+            "link":  `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/private/ping-pong/?room_id=${authInfos?.username}-${user}${generateRandomId()}`,
             "event" : "new_message"
         }
         chatSocket.sendMessage(data)

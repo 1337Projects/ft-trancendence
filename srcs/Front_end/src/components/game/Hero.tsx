@@ -18,7 +18,7 @@ export default function Hero() {
                             <p style={{color : color}} >Play Ping Pong</p>
                             <h3 className="text-[2rem] mt-2 font-kav max-w-[270px] font-bold capitalize">its time to play ping pong</h3>
                             <p className="text-[8px] max-w-[260px] leading-4 mt-4">welcome to pong comunity, go play with your friends, and leet them see your amazing skills enjoy.</p>
-                            <Link to="waiting/room/public">
+                            <Link to="waiting/room/public/ping-pong">
                                 <button style={{backgroundColor : color}} className={`flex text-[10pt] justify-between h-[40px] w-[130px] items-center p-2 px-4 text-white rounded-full mt-10`}>
                                     <p className="mr-2 capitalize">Play now</p>
                                     <FaGamepad className="text-[16pt]" />
