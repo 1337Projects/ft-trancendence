@@ -79,14 +79,40 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def game_loop(self):
         # ic(self.player.username, "Game loop started")
         # sys.stdout.flush()
-        for i in range(10000):
+        game_status = 'start'
+        while game_status != 'end':
             await asyncio.sleep(1 / 40)
             score = self.pongGameManager.update(self.room_name)
             if score:
                 ic(score)
                 sys.stdout.flush()
                 await self.send_score(score)
+                if score['score1'] >= 5 or score['score2'] >= 5:
+                    game_status = 'end'
+                    game_data = await self.end_game(score)
+                    event = {
+                        'type': 'broad_cast',
+                        'event': 'end_game',
+                        'game_data': game_data
+                    }
+                    await self.group_send(event)
             await self.send_stats()
+
+    @database_sync_to_async
+    def end_game(self, score):
+        # game: Game = Game.objects.get(id=self.game_id)
+        self.game.score1 = score['score1']
+        self.game.score2 = score['score2']
+        if score['score1'] > score['score2']:
+            self.game.winner = self.game.player1
+            self.game.loser = self.game.player2
+        else:
+            self.game.winner = self.game.player2
+            self.game.loser = self.game.player1
+        self.game.save()
+        serializer = GameSerializer(self.game)
+        game_data = serializer.data
+        return game_data
 
     async def send_score(self, score):
        event = {
@@ -109,8 +135,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         # sys.stdout.flush()
         game_serializer = GameSerializer(self.game)
         game_data = await database_sync_to_async(lambda: game_serializer.data)()
-        # print('game_data', game_data)
-        # sys.stdout.flush()
         event = {
             'type': 'broad_cast',
             'event': 'init_game',
