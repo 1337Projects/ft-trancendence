@@ -269,7 +269,15 @@ class TicTacTeoSocket extends WebSocketService {
 
     eventCallback = (event : MessageEvent) => {
         const data = JSON.parse(event.data)
-        console.log(data)
+        // console.log(data)
+        switch (data.status) {
+            case 201: {
+                this.callbacks["init"]?.(data.data)
+                break;
+            }
+            default:
+                break;
+        }
     }
 }
 
