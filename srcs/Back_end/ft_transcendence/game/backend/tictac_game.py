@@ -13,13 +13,13 @@ class TicTac:
         [[0,2], [1,1], [2,0]]
     ]
     
-    def __init__(self, player1, player2) -> None:
+    def __init__(self, player1, player2, user) -> None:
         self.player1 = player1
         self.player2 = player2
         self.board = [['' for _ in range(3)] for _ in range(3)]
         self.current_turn = player1
     
-    def makeMove(self, row, colom):
+    def make_move(self, row, colom, player):
         try:
             if self.board[row][colom] == '':
                 self.board[row][colom] = 'X' if self.current_turn == self.player1 else 'O'
@@ -27,9 +27,9 @@ class TicTac:
             else:
                 raise NameError("already taken")
         except Exception as e:
-            self.debug(e)
+            print(e)
 
-    def checkComplete(self, player):
+    def check_complete(self, player):
         for line in self.senario_of_success:
             sum = 0
             for item in line:
@@ -40,68 +40,19 @@ class TicTac:
                     return True
         return False
     
+    def play_turn(self, row, col, sender):
+        player = self.current_turn
+        try:
+            self.make_move(row, col, player)
+        except Exception as e:
+            return {'error': str(e)}
+        if self.check_complete('X' if player == self.player1 else 'O'):
+            return {'winner': player}
+        else:
+            return {'turn': self.get_current_turn}
+  
     def get_board(self):
         return self.board
-
-
-
-if __name__ == '__main__':
-    pr = tictak('player1', 'player2')
-    pr.makeMove(0, 0)
-
-    print("make move")
-    if pr.checkComplete('X'):
-        print("game over palyer1")
-    if pr.checkComplete('O'):
-        print("game over palyer2")
-
-    pr.makeMove(0, 2)
-    print("make move")
-
-    if pr.checkComplete('X'):
-        print("game over palyer1")
-    if pr.checkComplete('O'):
-        print("game over palyer2")
-
-    pr.makeMove(0, 1)
-    print("make move")
-
-    if pr.checkComplete('X'):
-        print("game over palyer1")
-    if pr.checkComplete('O'):
-        print("game over palyer2")
-
-    pr.makeMove(1, 1)
-    print("make move")
-
-    if pr.checkComplete('X'):
-        print("game over palyer1")
-    if pr.checkComplete('O'):
-        print("game over palyer2")
-
-    pr.makeMove(1, 2)
-    # pr.debug(pr.board)
-    print("make move")
-    if pr.checkComplete('O'):
-        print("game over palyer2")
-    if pr.checkComplete('X'):
-        print("game over palyer1")
-
-    pr.makeMove(2, 0)
-    # pr.debug(pr.board)
-    print("make move")
-    if pr.checkComplete('O'):
-        print("game over palyer2")
-    if pr.checkComplete('X'):
-        print("game over palyer1")
-    # pr.makeMove(0, 2, 'x')
-    # pr.makeMove(1, 0, 'x')
-    # pr.makeMove(1, 1, 'x')
-    # pr.makeMove(1, 2, 'x')
-    # pr.makeMove(2, 0, 'x')
-    # pr.makeMove(2, 1, 'x')
-    # pr.makeMove(2, 2, 'x')
-    # pr.makeMove(2, 20, 'x')
- 
-    # pr.makeMove(0, 2, 'o')
-    # pr.makeMove(0, 3, 'x')
+    
+    def get_current_turn(self):
+        return self.current_turn

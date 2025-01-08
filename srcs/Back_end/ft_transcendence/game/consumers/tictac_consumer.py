@@ -10,48 +10,91 @@ from game.serializers import TicTacTeoSerializer
 class TicTacConsumer(AsyncWebsocketConsumer):
     games = {}
 
-    def __ini__(self):
+    def __init__(self):
+        super().__init__()
         self.game = None
-        self.tictak = None
+        self.tictac = None
+        self.groups = []
 
     async def   connect(self):
-        try:
-            await self.accept()
-            self.game_id = self.scope['url_route']['kwargs']['game_id']
-            self.player = self.scope['user']
-            self.room_name = f'game_{self.game_id}'
+        self.game_id = self.scope['url_route']['kwargs']['game_id']
+        self.player = self.scope['user']
+        self.room_name = f'tictac_{self.game_id}'
+            
 
-            await self.channel_layer.group_add(self.room_name, self.channel_name)
+        await self.channel_layer.group_add(self.room_name, self.channel_name)
 
-            if not self.game_id in self.games:
-                current_game = await self.get_game()
-                self.games[self.game_id] = current_game
-            else:
-                self.game = self.games[self.game_id]
-                self.tictak = TicTac(self.game["player1"], self.game["player2"])
-                event = {
-                    'type': 'broad_cast',
-                    'data': {
-                        'players' : [self.game["player1"], self.game["player2"]],
-                        'user' : self.tictak.player1,
-                        'board': self.tictak.get_board()
-                    }, 
-                    'status': 201
-                }
-                await self.channel_layer.group_send(self.room_name, event)
-               
-                
-        except Exception as e:
-            print(e)
-            sys.stdout.flush()
+        if not self.game_id in self.games:
+            current_game = await self.get_game()
+            self.games[self.game_id] = current_game
+        self.game = self.games[self.game_id]
+        if self.game["player1"] == self.game["player2"]:
+            await self.close(code=4002)
+            return
+        self.tictac = TicTac(self.game["player1"], self.game["player2"])
+        event = {
+            'type': 'broad_cast',
+            'data': {
+                'players' : [self.game["player1"], self.game["player2"]],
+                'user' : self.tictac.player1,
+                'board': self.tictac.get_board()
+            }, 
+            'status': 201
+        }
+        await self.channel_layer.group_send(self.room_name, event)
+        await self.accept()
 
+    async def disconnect(self, close_code):
+        current_player = self.tictac.player2 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
+        event = {
+            'type': 'broad_cast',
+            'data': {
+                        'user': current_player,
+                        'board': self.tictac.get_board(),
+                    },
+                    'status': 203
+            }
+        await self.channel_layer.group_send(self.room_name, event)
 
+        if self.game_id in self.games:
+            del self.games[self.game_id]
 
+        await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
     async def receive(self, text_data=None):
         data = json.loads(text_data)
-        print(data)
-        sys.stdout.flush()
+        if data["event"] == "action":
+            status = self.tictac.play_turn(row=data.get('y'), col=data.get('x'), sender=self.player.id)
+            if "error" in status:
+                event = {
+                    'type': 'broad_cast',
+                    'data': {
+                        'error': status['error'],
+                        'user': self.tictac.get_current_turn(),
+                        'board': self.tictac.get_board(),
+
+                    },
+                    'status': 400
+                }
+            elif "winner" in status:
+                event = {
+                    'type': 'broad_cast',
+                    'data': {
+                        'winner': status["winner"],
+                        'board': self.tictac.get_board()
+                    },
+                    'status': 203
+                }
+            elif "turn" in status:
+                event = {
+                    'type': 'broad_cast',
+                    'data': {
+                        'user': self.tictac.get_current_turn(),
+                        'board': self.tictac.get_board()
+                    },
+                    'status': 202
+                }
+        await self.channel_layer.group_send(self.room_name, event)
 
     @database_sync_to_async
     def get_game(self):
