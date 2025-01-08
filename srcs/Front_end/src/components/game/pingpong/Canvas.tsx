@@ -19,7 +19,7 @@ interface GameStatsType {
 
 // function Canvas(game: GameType) {
 const Canvas: React.FC<CanvasProps> = ({ game }) => {
-    console.log(game)
+    // console.log(game)
     const canvasRef = useRef<null | HTMLCanvasElement>(null);
     const canvaParentRef = useRef<null | HTMLDivElement>(null);
     const gameInstanceRef = useRef<null | Game>(null);

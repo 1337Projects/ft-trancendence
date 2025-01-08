@@ -17,11 +17,11 @@ class GameSocket extends WebSocketService {
     eventCallback = (event: MessageEvent) => {
 
         const data = JSON.parse(event.data)
-        if (data.event !== 'update')
-        {
-            console.log('event: ', event);
-            console.log('data: ', data);
-        }
+        // if (data.event !== 'update')
+        // {
+        //     console.log('event: ', event);
+        //     console.log('data: ', data);
+        // }
         const type = data.event;
         switch (type) {
             case 'init_game':
@@ -38,6 +38,9 @@ class GameSocket extends WebSocketService {
                 if (this.callbacks['set_score']) {
                     this.callbacks['set_score'](data.score);
                 }
+                break;
+            case 'end_game':
+                console.log(data.game_data)
                 break;
             default:
                 break;
