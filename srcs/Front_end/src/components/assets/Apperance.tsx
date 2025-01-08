@@ -12,7 +12,7 @@ export default function ApearanceAsset() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
     <defs>
-        <clipPath id="freepik--clip-path--inject-70">
+        <clipPath id="freepik--clipPath--inject-70">
             <polygon points="185.71 102.23 82.15 153.18 49.52 112.78 173.63 51.73 185.71 102.23"
             fill="#fff" stroke="#263238" strokeLinecap="round" strokeLinejoin="round"></polygon>
         </clipPath>
@@ -363,7 +363,7 @@ export default function ApearanceAsset() {
             fill="#263238" stroke="#263238" strokeLinecap="round" strokeLinejoin="round"></path>
         <polygon points="185.71 102.23 82.15 153.18 49.52 112.78 173.63 51.73 185.71 102.23" fill="#fff">
         </polygon>
-        <g clip-path="url(#freepik--clip-path--inject-70)">
+        <g clipPath="url(#freepik--clipPath--inject-70)">
             <polygon points="62.21 128.5 64.06 130.78 82.15 153.18 110.32 138.45 62.21 128.5" fill={color}>
             </polygon>
             <polygon points="62.21 128.5 64.06 130.78 82.15 153.18 110.32 138.45 62.21 128.5"

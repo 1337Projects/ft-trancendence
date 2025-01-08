@@ -67,9 +67,9 @@ export default function Game() {
                     
                     <div className="px-10 mt-16">
                         <h1 className="text-xl font-bold">Avialable Tournments :</h1>
-                        <div className="w-full h-[50px] flex items-center mt-6">
-                            {/* <Categories categorie="latest" Handler={null} /> */}
-                        </div>
+                        {/* <div className="w-full h-[50px] flex items-center mt-6">
+                            <Categories categorie="latest" Handler={null} />
+                        </div> */}
                         <div  className="w-full mt-6 h-fit overflow-y-scroll">
                             {
                                 tournments.length ?

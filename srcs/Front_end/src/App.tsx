@@ -37,6 +37,7 @@ import WaitingTournment from './components/game/tournament/Waiting'
 import GameLayout from './Layouts/GameLayout'
 import NotificationsContextProvider from './Contexts/NotificationsContext'
 import TicTacTeo from './components/game/TicTacTeo'
+import ChatAsset from './components/assets/ChatAsset'
 
 
 function Home() {
@@ -102,7 +103,7 @@ function ChatImg() {
   return (
       <div className='w-full h-full p-10 flex justify-center items-center'>
         <div className='text-center'>
-          <img src='/chat/chaat.svg' />
+          <ChatAsset />
           <p className='text-xs max-w-[450px] mx-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium vero asperiores tempora iure ex autem quod. Porro animi pariatur distinctio?</p>
         </div>
       </div>
