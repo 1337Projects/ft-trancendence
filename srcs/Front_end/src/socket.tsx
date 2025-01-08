@@ -272,7 +272,34 @@ class TicTacTeoSocket extends WebSocketService {
         // console.log(data)
         switch (data.status) {
             case 201: {
-                this.callbacks["init"]?.(data.data)
+                this.callbacks["init"]?.((prev) => {
+                    return {
+                        ...prev,
+                        players : data.data.players,
+                        user : data.data.user,
+                        board : data.data.board,
+                    }
+                })
+                break;
+            }
+            case 202: {
+                this.callbacks["init"]?.((prev) => {
+                    return {
+                        ...prev,
+                        user : data.data.user,
+                        board : data.data.board,
+                    }
+                })
+                break;
+            }
+            case 203: {
+                this.callbacks["init"]?.((prev) => {
+                    return {
+                        ...prev,
+                        board : data.data.board,
+                        winner : data.data.winner
+                    }
+                })
                 break;
             }
             default:

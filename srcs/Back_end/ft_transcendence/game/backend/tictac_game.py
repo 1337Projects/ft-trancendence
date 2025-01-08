@@ -13,7 +13,7 @@ class TicTac:
         [[0,2], [1,1], [2,0]]
     ]
     
-    def __init__(self, player1, player2, user) -> None:
+    def __init__(self, player1, player2) -> None:
         self.player1 = player1
         self.player2 = player2
         self.board = [['' for _ in range(3)] for _ in range(3)]
