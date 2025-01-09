@@ -2,10 +2,11 @@
 import { useContext, useEffect, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { gameSocket } from "@/sockets/gameSocket";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "@/Contexts/authContext";
 import Canvas from "./Canvas";
 import Score from "./Score";
+import { tournamentSocket } from "@/socket";
 
 export interface GameType {
     paddles: never; // Replace 'any' with the actual type
@@ -20,16 +21,19 @@ export interface ScoreType {
 }
 
 function PingPong() {
-    const { game_id }= useParams();
-    const { authInfos } = useContext(UserContext) || {}
+    const { game_id, tournament_id }= useParams();
+    const { authInfos, user } = useContext(UserContext) || {}
     const [ game, setGame] = useState<GameType | null>(null)
     const [ score, setScore] = useState<ScoreType>( { score1: 0, score2: 0 })
+    const [ matchResult, setMatchResult ] = useState(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game_id}/?token=${authInfos?.accessToken}`);
             gameSocket.addCallback("init", init);
             gameSocket.addCallback("set_score", set_score);
+            gameSocket.addCallback("set_match_result", setMatchResult);
+            gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game_id}/?token=${authInfos?.accessToken}`);
         }, 200);
 
         return () => {
@@ -39,22 +43,30 @@ function PingPong() {
     }, [game_id, authInfos]);
 
     function init(data : any) {
-        // console.log("data ===> " , data)
-        // console.log('init functions with :', data);
         const {paddles, game, ball, game_data} = data;
-        // console.log('init function with : ', { paddles, game, ball });
         const game_data_infos = { paddles, game, ball, game_data };
-        // console.log('game data: ', game_data_infos);
         setGame(game_data_infos as GameType);
     }
 
     function set_score( { score1, score2 }: ScoreType) {
-        // console.log('set_score function with :', { score1, score2 });
         setScore( { score1, score2 });
     }
 
 
-    
+    useEffect(() => {
+
+        if (matchResult) {
+            setTimeout(() => {
+                if (tournament_id) {
+                    tournamentSocket.sendMessage({"event" : "upgrade", "result" : matchResult})
+                    navigate(`/dashboard/game/tournment/${tournament_id}/`)
+                } else {
+                    navigate(`/dashboard/game/`)
+                }
+            }, 2000)
+        }
+
+    }, [matchResult])
     // useEffect(() => {
     //     const timer = setTimeout(() => {
     //         if (canvasRef.current && data) {
@@ -89,14 +101,14 @@ function PingPong() {
     return (
             <div className={`relative ${theme === 'light' ? " text-lightText bg-lightItems" : " text-darkText bg-darkItems"}  flex justify-center items-center rounded-none w-full h-[100vh] mt-2 p-2`}>
                 <div className={`relative h-fit`}>
-                    {/* {
-                        closed && 
-                        <h1 
+                    {
+                        matchResult && 
+                        <div 
                             className="bg-black/20 h-[150px] flex justify-center items-center absolute z-10 w-full top-[50%] translate-y-[-50%]"
                         > 
-                            <h1 className="text-[30pt] font-bold uppercase">{data.winner == user.id ? "victory" : "ko"} </h1>
-                        </h1>
-                    } */}
+                            <h1 className="text-[30pt] font-bold uppercase">{matchResult.winner == user.id ? "victory" : "ko"} </h1>
+                        </div>
+                    }
                     <div>
                         <div className='flex justify-center px-4'>
                             <Score data={game} score={score} />

@@ -185,6 +185,11 @@ class Tournament:
 
 
 
+
+
+
+
+
 class SharedState:
     _instance = None
 
@@ -263,8 +268,9 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         elif text_to_json_data['event'] == "upgrade":
             self.lvl += 1
             provider = self.shared_state.tournaments_providers[self.tournment_id]
-            if text_to_json_data['winner_id'] == self.scope['user'].id:
-                await provider.upgrade(self.lvl, text_to_json_data['winner_id'])
+            res = text_to_json_data["result"]
+            if res["winner"] == self.scope['user'].id:
+                await provider.upgrade(self.lvl, res['winner'])
                 builder = self.shared_state.tournaments_providers[self.tournment_id].builder
                 self.shared_state._tournaments[self.tournment_id]["rounds"] = builder.get_rounds()
                 

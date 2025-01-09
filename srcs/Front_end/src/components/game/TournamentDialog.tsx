@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { DialogContext } from "@/Contexts/DialogContext"
 import { DialogDataType } from "@/types"
+import { UserContext } from "@/Contexts/authContext"
 
 
 
@@ -9,6 +10,7 @@ import { DialogDataType } from "@/types"
 export default function TournmentDialog() {
     const { color, theme } = useContext(ApearanceContext) || {}
     const { setOpen } = useContext(DialogContext) || {}
+    const {authInfos} = useContext(UserContext) || {}
     const [data, setData] = useState({members : 4, name : ''})
     const [created, setCreated] = useState<null | number>(null)
 
@@ -17,7 +19,8 @@ export default function TournmentDialog() {
         const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/create/`, {
             method : 'POST',
             headers : { 
-                'Content-Type' : 'application/json'
+                'Content-Type' : 'application/json',
+                'Authorization' : `Bearer ${authInfos?.accessToken}`
             },
             credentials : 'include',
             body : JSON.stringify(data)

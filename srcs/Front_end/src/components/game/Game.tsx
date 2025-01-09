@@ -8,6 +8,7 @@ import { DialogContext } from "@/Contexts/DialogContext"
 import { TrItem } from "./tournament/Events"
 // import { IoIosMailUnread } from "react-icons/io"
 import Cards from "./GameCards";
+import { UserContext } from "@/Contexts/authContext"
 
 // function CatButton({icon, text, categorie, handler} : {icon : ReactElement : }) {
 //     const {color, theme} = useContext(ApearanceContext) || {}
@@ -36,6 +37,7 @@ import Cards from "./GameCards";
 
 export default function Game() {
     const appearence = useContext(ApearanceContext)
+    const { authInfos } = useContext(UserContext) || {}
     const [tournments, setTournments] = useState([])
     const { open } = useContext(DialogContext) || {}
 
@@ -43,7 +45,10 @@ export default function Game() {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/get_all/`, {
                 method : 'GET',
-                credentials : 'include'
+                credentials : 'include',
+                headers : {
+                    'Authorization' : `Bearer ${authInfos?.accessToken}`
+                }
             })
 
             if (!response.ok) {

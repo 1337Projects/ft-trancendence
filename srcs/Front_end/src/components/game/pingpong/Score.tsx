@@ -51,7 +51,7 @@ export default function Score({data, score} : {data : GameType, score : ScoreTyp
                         <div className="relative">
                             <h1 className='text-[12pt] font-bold'>{player1.username}</h1>
                             <ul className="flex justify-between w-[90px]">
-                                {[...Array(7)].map((_, index) => <Radio key={index} checked={index < score.score1} />)}
+                                {[...Array(5)].map((_, index) => <Radio key={index} checked={index < score.score1} />)}
                             </ul>
                         </div>
                     </div>
@@ -64,7 +64,7 @@ export default function Score({data, score} : {data : GameType, score : ScoreTyp
                         <div className="text-right">
                             <h1 className="text-[12pt] font-bold">{player2.username}</h1>
                             <ul className="flex justify-between w-[90px]">
-                                {[...Array(7)].map((_, index) => <Radio key={index} checked={index < score.score2} />)}
+                                {[...Array(5)].map((_, index) => <Radio key={index} checked={index >=  (5 - score.score2)} />)}
                             </ul>
                         </div>
                         <div className="ml-4 border-[.3px] w-[40px] h-[40px] flex justify-center items-center rounded-full">

@@ -13,7 +13,7 @@ export default function GameLayout() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            tournamentSocket.connect(`${import.meta.env.VITE_SOCKET_URL}/wss/tournment/${tournament_id}/?token=${authInfos?.accessToken}`)
+            tournamentSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/tournment/${tournament_id}/?token=${authInfos?.accessToken}`)
         }, 300)
 
         return () => {

@@ -40,7 +40,9 @@ class GameSocket extends WebSocketService {
                 }
                 break;
             case 'end_game':
-                console.log(data.game_data)
+                if (this.callbacks['set_match_result']) {
+                    this.callbacks['set_match_result'](data.game_data)
+                }
                 break;
             default:
                 break;

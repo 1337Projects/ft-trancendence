@@ -2,7 +2,8 @@ import { UserContext } from "@/Contexts/authContext"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { ticTacTeoSocket } from "@/socket"
 import { useContext, useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { IoMdCloseCircleOutline } from "react-icons/io";
+import { useNavigate, useParams } from "react-router-dom"
 
 
 function GameCardItem({cell} : {cell : string}) {
@@ -12,7 +13,7 @@ function GameCardItem({cell} : {cell : string}) {
    
 
     return (
-        <div className={`w-full h-full cursor-pointer ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"} flex justify-center items-center text-3xl`}> 
+        <div className={`w-full h-full cursor-pointer rounded ${theme === 'light' ? "bg-lightItems" : "bg-darkItems/60 backdrop-blur-md"} flex justify-center items-center text-3xl`}> 
             <p>{cell}</p>
         </div>
     )
@@ -68,23 +69,34 @@ export default function TicTacTeo() {
 
     const { theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
-    const [data, setData] = useState({players : null, user: null, board : null, winner : null })
-
-    
+    const [data, setData] = useState({players : null, user: null, board : null, winner : null, error : null })
+    const navigate = useNavigate()
     const { game_id } = useParams()
+    const [ time, setTime ] = useState(10)
 
 
     useEffect(() => {
         const timer = setTimeout(() => {
+            setInterval(() => {
+                setTime(prev => prev - 1)
+            }, 1000)
             ticTacTeoSocket.addCallback("init", setData)
             ticTacTeoSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/tic-tac-teo/play/${game_id}/?token=${authInfos?.accessToken}`)
         }, 300)
 
         return () => {
             clearTimeout(timer)
+            ticTacTeoSocket.close()
         }
-
     }, [])
+
+    useEffect(() => {
+        if (data.winner) {
+            setTimeout(() => {
+                navigate('/dashboard/game')
+            }, 2000)
+        }
+    }, [data])
 
     function test(y, x) {
         ticTacTeoSocket.sendMessage({
@@ -93,6 +105,8 @@ export default function TicTacTeo() {
             y
         })
     }
+
+    
 
   
 
@@ -107,19 +121,32 @@ export default function TicTacTeo() {
     const {players, user, board} = data
     
     return (
-        <div className={`p-2 rounded w-full h-full flex flex-row justify-center items-center ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} mt-2`}>
-            
-            <div className="w-[500px] h-[400px] p-2 translate-y-[-40%]">
-                <Players data={players} current={user} />
-                <div className="w-full h-full mt-32 p-4 relative">
+        <div className={`p-2 rounded w-full h-full flex flex-row items-center justify-center ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} mt-2`}>
+            <div className="w-[500px] h-fit p-2">
+                {
+                    data.error && 
+                    <div className="w-full h-[100px]">
+                        <div className="bg-red-500 text-white p-4 rounded relative">
+                            <p className="text-xs">{data.error}</p>
+                            <IoMdCloseCircleOutline className="absolute top-2 right-2" />
+                        </div>
+                    </div>
+                }
+                <div className="w-full h-fit relative">
+                    <Players data={players} current={user} />
+                </div>
+                <div className="w-full h-[100px] flex justify-center items-center">
+                    <p className="text-2xl">00 : {time < 10 && "0"}{time}</p>
+                </div>
+                <div className="w-full h-[400px] t mt-2 rounded p-4 relative">
                     {
                         data.winner !== null &&
                         <div 
                             className="absolute w-full h-[100px] bg-gray-700/50 top-[50%] backdrop-blur-xl uppercase text-3xl left-0 translate-y-[-50%] flex items-center justify-center">
-                                match ended, { data.winner.username } won
+                                {/* match ended, { data.winner?.username } won */}
                         </div>
                     }
-                    <ul className={`grid grid-cols-1 ${theme === 'light' ? "bg-darkItems" : "bg-lightItems"} h-full gap-1`}>
+                    <ul className={`grid grid-cols-1 h-full gap-1`}>
                         {
                             board.map((row, i) => {
                                 return (

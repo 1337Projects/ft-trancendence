@@ -7,6 +7,12 @@ export type TournamentDataType =  {
 
 export type MatchDataType = {
     id : number
-    player_1 : UserType
-    player_2 : UserType
+    player1 : UserType
+    player2 : UserType
+    score1 : number
+    score2 : number
+    updated_at : string
+    created_at : string
+    winner : UserType | null
+    loser : UserType | null
 }

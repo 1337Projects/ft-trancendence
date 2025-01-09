@@ -251,6 +251,7 @@ class TournamentSocket extends WebSocketService {
                 this.callbacks["winner_data"]?.(data.response.data)
                 break;
             default:
+                console.log(data)
                 break;
         }
     }
@@ -288,6 +289,7 @@ class TicTacTeoSocket extends WebSocketService {
                         ...prev,
                         user : data.data.user,
                         board : data.data.board,
+                        error : null
                     }
                 })
                 break;
@@ -297,15 +299,21 @@ class TicTacTeoSocket extends WebSocketService {
                     return {
                         ...prev,
                         board : data.data.board,
-                        winner : data.data.winner
+                        winner : data.data.winner,
+                        error : null
                     }
                 })
                 break;
             }
             case 400: {
-                console.log(data.data)
+                this.callbacks["init"]?.((prev) => {
+                    return {
+                        ...prev,
+                        error : data.data.error,
+                    }
+                })
                 break;
-            }
+            };
             default:
                 break;
         }

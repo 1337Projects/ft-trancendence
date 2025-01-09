@@ -7,6 +7,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.t {
+    /* background-image: linear-gradient(to right, #243949 0%, #517fa4 100%);
+     */
+     background-image: linear-gradient(-225deg, #FFE29F 0%, #FFA99F 48%, #FF719A 100%);
+}
+
 * {
     margin: 0;
     padding: 0;
