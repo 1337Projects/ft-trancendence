@@ -31,7 +31,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         if self.game["player1"] == self.game["player2"]:
             await self.close(code=4002)
             return
-        self.tictac = TicTac(self.game["player1"], self.game["player2"])
+        self.tictac = TicTac(self.game_id, self.game["player1"], self.game["player2"])
         event = {
             'type': 'broad_cast',
             'data': {
@@ -41,6 +41,8 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             }, 
             'status': 201
         }
+        print(event)
+        sys.stdout.flush()
         await self.channel_layer.group_send(self.room_name, event)
         await self.accept()
 
@@ -55,7 +57,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     'status': 203
             }
         await self.channel_layer.group_send(self.room_name, event)
-
+        self.tictac.remove_game(game_id=self.game_id)
         if self.game_id in self.games:
             del self.games[self.game_id]
 
@@ -94,6 +96,8 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     },
                     'status': 202
                 }
+        print(event)
+        sys.stdout.flush()
         await self.channel_layer.group_send(self.room_name, event)
 
     @database_sync_to_async
