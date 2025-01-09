@@ -15,23 +15,28 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         self.game = None
         self.tictac = None
         self.groups = []
+        self.user_channels = {}
 
     async def   connect(self):
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.player = self.scope['user']
         self.room_name = f'tictac_{self.game_id}'
+        self.user_channels[self.player.id] = self.channel_name
             
-
         await self.channel_layer.group_add(self.room_name, self.channel_name)
 
         if not self.game_id in self.games:
             current_game = await self.get_game()
             self.games[self.game_id] = current_game
+
         self.game = self.games[self.game_id]
+
         if self.game["player1"] == self.game["player2"]:
             await self.close(code=4002)
             return
+        
         self.tictac = TicTac(self.game_id, self.game["player1"], self.game["player2"])
+
         event = {
             'type': 'broad_cast',
             'data': {
@@ -41,8 +46,10 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             }, 
             'status': 201
         }
+
         print(event)
         sys.stdout.flush()
+
         await self.channel_layer.group_send(self.room_name, event)
         await self.accept()
 
@@ -60,6 +67,8 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         self.tictac.remove_game(game_id=self.game_id)
         if self.game_id in self.games:
             del self.games[self.game_id]
+        if self.player.id in self.user_channels:
+            del self.user_channels[self.player.id]
 
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
@@ -69,7 +78,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             status = self.tictac.play_turn(row=data.get('y'), col=data.get('x'), sender=self.player.id)
             if "error" in status:
                 event = {
-                    'type': 'broad_cast',
+                    'type': 'send_to_user',
                     'data': {
                         'error': status['error'],
                         'user': self.tictac.get_current_turn(),
@@ -78,6 +87,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     },
                     'status': 400
                 }
+                await self.send_to_user(self.player.id, event=event)
             elif "winner" in status:
                 event = {
                     'type': 'broad_cast',
@@ -87,6 +97,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     },
                     'status': 203
                 }
+                await self.channel_layer.group_send(self.room_name, event)
             elif "turn" in status:
                 event = {
                     'type': 'broad_cast',
@@ -96,9 +107,11 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     },
                     'status': 202
                 }
+                await self.channel_layer.group_send(self.room_name, event)
+
         print(event)
         sys.stdout.flush()
-        await self.channel_layer.group_send(self.room_name, event)
+        
 
     @database_sync_to_async
     def get_game(self):
@@ -108,5 +121,16 @@ class TicTacConsumer(AsyncWebsocketConsumer):
 
     async def broad_cast(self, event):
         await self.send(text_data=json.dumps(event))
+    
+    async def  send_to_user(self, user_id, event):
+        user_channel_name = self.user_channels.get(user_id)
+        if user_channel_name:
+            await self.channel_layer.send(user_channel_name, {
+                'type': 'user.message',
+                'event': event
+            })
+    
+    async def  user_message(self, event):
+        await self.send(text_data=json.dumps(event['event']))
         
 

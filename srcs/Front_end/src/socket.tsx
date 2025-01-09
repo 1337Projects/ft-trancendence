@@ -302,6 +302,10 @@ class TicTacTeoSocket extends WebSocketService {
                 })
                 break;
             }
+            case 400: {
+                console.log(data.data)
+                break;
+            }
             default:
                 break;
         }
