@@ -104,7 +104,6 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     'data': {
                         'winner': status["winner"],
                         'board': self.tictac.get_board(),
-                        'error' : error
                     },
                     'status': 203
                 }
@@ -121,7 +120,6 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     'data': {
                         'user': self.tictac.get_current_turn(),
                         'board': self.tictac.get_board(),
-                        'error': error
                     },
                     'status': 202
                 }

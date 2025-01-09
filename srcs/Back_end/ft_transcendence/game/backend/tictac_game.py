@@ -37,7 +37,7 @@ class TicTac:
             else:
                 raise NameError("already taken")
         except Exception as e:
-            print(e)
+            raise e
 
     def check_complete(self, sign, player):
         for line in self.senario_of_success:
