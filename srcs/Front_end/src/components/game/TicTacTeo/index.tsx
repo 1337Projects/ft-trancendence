@@ -72,12 +72,13 @@ export default function TicTacTeo() {
     const [data, setData] = useState({players : null, user: null, board : null, winner : null, error : null })
     const navigate = useNavigate()
     const { game_id } = useParams()
-    const [ time, setTime ] = useState(12)
+    const [ time, setTime ] = useState(0)
 
 
     useEffect(() => {
         const timer = setTimeout(() => {
             ticTacTeoSocket.addCallback("init", setData)
+            ticTacTeoSocket.addCallback("time", setTime)
             ticTacTeoSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/tic-tac-teo/play/${game_id}/?token=${authInfos?.accessToken}`)
         }, 300)
 
@@ -89,16 +90,11 @@ export default function TicTacTeo() {
 
     useEffect(() => {
         let interval : NodeJS.Timeout;
-        if (data.winner) {
+        if (data.winner != null) {
             setTimeout(() => {
                 navigate('/dashboard/game')
-            }, 2000)
-        } else {
-            setTime(12)
-            interval = setInterval(() => {
-                setTime(prev => prev - 1)
-            }, 1000)
-        }
+            }, 6000)
+        } 
 
         return () => {
             clearInterval(interval)
@@ -113,11 +109,6 @@ export default function TicTacTeo() {
         })
     }
 
-    
-
-  
-
-    
     
     if (!data.players || !data.board || !data.user) {
         return (

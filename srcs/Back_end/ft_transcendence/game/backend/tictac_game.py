@@ -50,7 +50,7 @@ class TicTac:
                     self.winner = player
                     return True
         
-        return self.is_board_full()
+        return False
     
     def is_board_full(self):
         for row in self.board:
@@ -71,6 +71,8 @@ class TicTac:
                 return {'error': str(e)}
             if self.check_complete(sign='X' if player == self.player1 else 'O', player=player):
                 return {'winner': player}
+            if self.is_board_full():
+                return {'winner': None}
             else:
                 return {'turn': self.get_current_turn}
         return {'error': "not your turn"}

@@ -299,10 +299,14 @@ class TicTacTeoSocket extends WebSocketService {
                     return {
                         ...prev,
                         board : data.data.board,
-                        winner : data?.data?.winner,
+                        winner : data?.data?.winner || undefined,
                         error : null
                     }
                 })
+                break;
+            }
+            case 204: {
+                this.callbacks["time"]?.(data.data.time)
                 break;
             }
             case 400: {

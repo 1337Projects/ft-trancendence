@@ -4,7 +4,7 @@ from channels.db import database_sync_to_async
 from game.backend.tictac_game import TicTac
 from game.models import Game1
 from game.serializers import TicTacTeoSerializer
-
+import math
 
 class TicTacConsumer(AsyncWebsocketConsumer):
     games = {}
@@ -58,7 +58,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         if self.game_id in self.turn_check_tasks:
             self.turn_check_tasks[self.game_id].cancel()
             del self.turn_check_tasks[self.game_id]
-        current_player = self.tictac.player1 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
+        current_player = self.tictac.player2 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
         event = {
             'type': 'broad_cast',
             'data': {
@@ -171,5 +171,12 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                 }
                 await self.channel_layer.group_send(self.room_name, event)
                 break
+            await self.channel_layer.group_send(self.room_name, {
+                 'type': 'broad_cast',
+                    'data': {
+                        'time' : math.floor(time_limit - (current_time - start_time)) 
+                    },
+                    'status': 204
+            })
         
 
