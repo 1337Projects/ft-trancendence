@@ -51,7 +51,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         event = {
             'type': 'broad_cast',
             'data': {
-                        'user': current_player,
+                        'winner': self.tictac.get_winner(),
                         'board': self.tictac.get_board(),
                     },
                     'status': 203

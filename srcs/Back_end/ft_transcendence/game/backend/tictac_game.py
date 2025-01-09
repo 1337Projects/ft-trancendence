@@ -71,6 +71,9 @@ class TicTac:
     
     def get_current_turn(self):
         return self.current_turn
+
+    def get_winner(self):
+        return self.winner
         
     def remove_game(self, game_id):
         if game_id in self._instances:
