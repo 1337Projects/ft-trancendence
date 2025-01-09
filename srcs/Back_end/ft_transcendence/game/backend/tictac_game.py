@@ -49,7 +49,15 @@ class TicTac:
                 if sum == 3:
                     self.winner = player
                     return True
-        return False
+        
+        return self.is_board_full()
+    
+    def is_board_full(self):
+        for row in self.board:
+            for cell in row:
+                if cell == '':
+                    return False
+        return True
     
     def play_turn(self, row, col, sender):
         if self.winner:
