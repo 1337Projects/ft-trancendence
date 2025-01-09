@@ -299,7 +299,7 @@ class TicTacTeoSocket extends WebSocketService {
                     return {
                         ...prev,
                         board : data.data.board,
-                        winner : data.data.winner,
+                        winner : data?.data?.winner,
                         error : null
                     }
                 })

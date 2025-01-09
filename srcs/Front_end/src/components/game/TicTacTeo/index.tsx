@@ -72,14 +72,11 @@ export default function TicTacTeo() {
     const [data, setData] = useState({players : null, user: null, board : null, winner : null, error : null })
     const navigate = useNavigate()
     const { game_id } = useParams()
-    const [ time, setTime ] = useState(10)
+    const [ time, setTime ] = useState(12)
 
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setInterval(() => {
-                setTime(prev => prev - 1)
-            }, 1000)
             ticTacTeoSocket.addCallback("init", setData)
             ticTacTeoSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/tic-tac-teo/play/${game_id}/?token=${authInfos?.accessToken}`)
         }, 300)
@@ -91,10 +88,20 @@ export default function TicTacTeo() {
     }, [])
 
     useEffect(() => {
+        let interval : NodeJS.Timeout;
         if (data.winner) {
             setTimeout(() => {
                 navigate('/dashboard/game')
             }, 2000)
+        } else {
+            setTime(12)
+            interval = setInterval(() => {
+                setTime(prev => prev - 1)
+            }, 1000)
+        }
+
+        return () => {
+            clearInterval(interval)
         }
     }, [data])
 
@@ -142,8 +149,8 @@ export default function TicTacTeo() {
                     {
                         data.winner !== null &&
                         <div 
-                            className="absolute w-full h-[100px] bg-gray-700/50 top-[50%] backdrop-blur-xl uppercase text-3xl left-0 translate-y-[-50%] flex items-center justify-center">
-                                {/* match ended, { data.winner?.username } won */}
+                            className="absolute z-10 w-full h-[100px] bg-gray-700/50 top-[50%] backdrop-blur-xl uppercase text-3xl left-0 translate-y-[-50%] flex items-center justify-center">
+                                {data.winner == undefined ? "match end" : (data.winner.username == authInfos?.username ? "victory" : "ko")}
                         </div>
                     }
                     <ul className={`grid grid-cols-1 h-full gap-1`}>
