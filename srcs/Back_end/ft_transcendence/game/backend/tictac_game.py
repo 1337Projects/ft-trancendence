@@ -1,5 +1,4 @@
-import sys
-
+import sys, time
 
 class TicTac:
     _instances = {}
@@ -25,9 +24,11 @@ class TicTac:
             self.player2 = player2
             self.game_id = game_id
             self.board = [['' for _ in range(3)] for _ in range(3)]
-            self.current_turn = player1
             self.initialized = True
             self.winner = None
+            self.current_turn = player1
+            self.start_time = None
+            self.turn_time_limit = 12
     
     def make_move(self, row, colom, player):
         try:
@@ -74,7 +75,26 @@ class TicTac:
 
     def get_winner(self):
         return self.winner
+    
+    def set_winner(self, player):
+        self.winner = player
+
         
     def remove_game(self, game_id):
         if game_id in self._instances:
             del self._instances[game_id]
+    
+    def turn_start_time(self):
+        self.start_time = time.time()
+    
+    def get_start_time(self):
+        return self.start_time
+
+    def get_time_limit(self):
+        return self.turn_time_limit
+    
+    def get_player1(self):
+        return self.player1
+    
+    def get_player2(self):
+        return self.player2

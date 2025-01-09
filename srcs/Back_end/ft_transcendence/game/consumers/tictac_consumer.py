@@ -1,5 +1,4 @@
-import json
-import sys
+import json, sys, asyncio, time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from game.backend.tictac_game import TicTac
@@ -9,6 +8,7 @@ from game.serializers import TicTacTeoSerializer
 
 class TicTacConsumer(AsyncWebsocketConsumer):
     games = {}
+    turn_check_tasks = {}
 
     def __init__(self):
         super().__init__()
@@ -47,13 +47,17 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             'status': 201
         }
 
-        print(event)
-        sys.stdout.flush()
-
         await self.channel_layer.group_send(self.room_name, event)
         await self.accept()
 
+        self.tictac.turn_start_time()
+        if self.game_id not in self.turn_check_tasks:
+            self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
+
     async def disconnect(self, close_code):
+        if self.game_id in self.turn_check_tasks:
+            self.turn_check_tasks[self.game_id].cancel()
+            del self.turn_check_tasks[self.game_id]
         current_player = self.tictac.player2 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
         event = {
             'type': 'broad_cast',
@@ -89,28 +93,41 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                 }
                 await self.send_to_user(self.player.id, event=event)
             elif "winner" in status:
+                if self.game_id in self.turn_check_tasks:
+                    try:
+                        self.turn_check_tasks[self.game_id].cancel()
+                        del self.turn_check_tasks[self.game_id]
+                    except Exception as e:
+                        error =  f"Error cancelling turn check task for game {self.game_id}: {e}"
                 event = {
                     'type': 'broad_cast',
                     'data': {
                         'winner': status["winner"],
-                        'board': self.tictac.get_board()
+                        'board': self.tictac.get_board(),
+                        'error' : error
                     },
                     'status': 203
                 }
                 await self.channel_layer.group_send(self.room_name, event)
             elif "turn" in status:
+                if self.game_id in self.turn_check_tasks:
+                    try:
+                        self.turn_check_tasks[self.game_id].cancel()
+                        del self.turn_check_tasks[self.game_id]
+                    except Exception as e:
+                        error = f"Error cancelling turn check task for game {self.game_id}: {e}"
                 event = {
                     'type': 'broad_cast',
                     'data': {
                         'user': self.tictac.get_current_turn(),
-                        'board': self.tictac.get_board()
+                        'board': self.tictac.get_board(),
+                        'error': error
                     },
                     'status': 202
                 }
                 await self.channel_layer.group_send(self.room_name, event)
-
-        print(event)
-        sys.stdout.flush()
+                self.tictac.turn_start_time()
+                self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
         
 
     @database_sync_to_async
@@ -132,5 +149,27 @@ class TicTacConsumer(AsyncWebsocketConsumer):
     
     async def  user_message(self, event):
         await self.send(text_data=json.dumps(event['event']))
+
+    async def check_turn_timing(self):
+        start_time = self.tictac.get_start_time()
+        time_limit = self.tictac.get_time_limit()
+        current_turn = self.tictac.get_current_turn()
+        player1 = self.tictac.get_player1()
+        player2 = self.tictac.get_player2()
+        while True:
+            await asyncio.sleep(1)
+            current_time = time.time()
+            if current_time - start_time > time_limit:
+                self.tictac.set_winner(player=player2 if current_turn == player1 else player1)
+                event = {
+                    'type': 'broad_cast',
+                    'data': {
+                        'winner': self.tictac.get_winner(),
+                        'board': self.tictac.get_board(),
+                    },
+                    'status': 203
+                }
+                await self.channel_layer.group_send(self.room_name, event)
+                break
         
 
