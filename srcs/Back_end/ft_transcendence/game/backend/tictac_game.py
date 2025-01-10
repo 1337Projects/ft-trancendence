@@ -1,4 +1,6 @@
 import sys, time
+from game.models import Game1
+from login.models import User   
 
 class TicTac:
     _instances = {}
@@ -29,6 +31,7 @@ class TicTac:
             self.current_turn = player1
             self.start_time = None
             self.turn_time_limit = 12
+            self.match_stored = False
     
     def make_move(self, row, colom, player):
         try:
@@ -49,7 +52,6 @@ class TicTac:
                 if sum == 3:
                     self.winner = player
                     return True
-        
         return False
     
     def is_board_full(self):
@@ -70,12 +72,26 @@ class TicTac:
             except Exception as e:
                 return {'error': str(e)}
             if self.check_complete(sign='X' if player == self.player1 else 'O', player=player):
+                self.set_winner(player=player)
                 return {'winner': player}
-            if self.is_board_full():
+            elif self.is_board_full():
                 return {'winner': None}
-            else:
+            else:  
                 return {'turn': self.get_current_turn}
         return {'error': "not your turn"}
+    
+    def store_match(self):
+        if not self.match_stored:
+            try:
+                winner = User.objects.get(id=self.winner["id"]) if isinstance(self.winner, dict) else self.winner
+                game = Game1.objects.get(id=self.game_id)
+                game.winner = winner
+                game.save()
+                self.match_stored = True
+            except Game1.DoesNotExist:
+                print(f"Game with id {self.game_id} does not exist")
+            except User.DoesNotExist:
+                print(f"User with id {self.winner['id']} does not exist")
 
     def get_board(self):
         return self.board
@@ -88,8 +104,7 @@ class TicTac:
     
     def set_winner(self, player):
         self.winner = player
-
-        
+      
     def remove_game(self, game_id):
         if game_id in self._instances:
             del self._instances[game_id]
@@ -108,3 +123,6 @@ class TicTac:
     
     def get_player2(self):
         return self.player2
+    
+    def is_match_stored(self):
+        return self.match_stored
