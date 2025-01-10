@@ -128,13 +128,13 @@ export default function Notifications() {
     const appearence = useContext(ApearanceContext)
     const containerRef = useRef<null | HTMLDivElement>(null);
 
-
     const handleScroll = () => {
         if (!containerRef.current || !hasMore) return;
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
         if (scrollTop + clientHeight >= scrollHeight - 1) {
             fetchMoreNotifications?.();
+            containerRef.current.scrollTop -= 5;
         }
     };
 
@@ -214,7 +214,7 @@ export default function Notifications() {
                 container.removeEventListener("scroll", handleScroll);
             }
         };
-    }, [fetchMoreNotifications, hasMore]);
+    }, [fetchMoreNotifications]);
 
 
     function handler(value : boolean) {

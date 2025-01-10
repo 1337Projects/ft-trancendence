@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SideBar from '../components/sidebar'
 import Search from '../components/Search'
 import Notification from '../components/Notifications'
-import {Invites} from '../components/Notifications'
+import Notifications, {Invites} from '../components/Notifications'
 
 import LastMatch from '../components/profile/LastMatch'
 import { useContext, useEffect, useState } from 'react'
@@ -48,7 +48,7 @@ export default function DashboardLayout() {
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate();
 
-    const { setNotifications, setHasMore, setHasNew, setCurrentPage} = useContext(NotificationsContext) || {}
+    const { setNotifications, setHasMore, setHasNew, setCurrentPage, notifications} = useContext(NotificationsContext) || {}
 
     useEffect(() => {
       const interval = setInterval(async () => {
@@ -63,7 +63,7 @@ export default function DashboardLayout() {
               user?.setAuthInfosHandler(res.access_token)
           })
           .catch(err => console.log(err))
-      }, 4 * 60 * 1000);
+      }, 12 * 60 * 1000);
       return () => clearInterval(interval);
     }, []);
     
@@ -85,7 +85,7 @@ export default function DashboardLayout() {
             }
         });
         notificationSocket.addCallback("hasNew", setHasNew!)
-        console.log(user)
+        // console.log(user)
         notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/?token=${user?.authInfos?.accessToken}`)
         notificationSocket.sendMessage({
           event : "fetch nots",
