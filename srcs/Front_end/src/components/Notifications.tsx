@@ -132,7 +132,7 @@ export default function Notifications() {
         if (!containerRef.current || !hasMore) return;
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
-        if (scrollTop + clientHeight >= scrollHeight - 1) {
+        if (scrollTop + clientHeight >= scrollHeight - 5) {
             fetchMoreNotifications?.();
             containerRef.current.scrollTop -= 5;
         }

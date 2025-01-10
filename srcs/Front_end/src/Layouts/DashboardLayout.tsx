@@ -48,7 +48,7 @@ export default function DashboardLayout() {
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate();
 
-    const { setNotifications, setHasMore, setHasNew, setCurrentPage, notifications} = useContext(NotificationsContext) || {}
+    const { setNotifications, setHasMore, setHasNew, setCurrentPage} = useContext(NotificationsContext) || {}
 
     useEffect(() => {
       const interval = setInterval(async () => {

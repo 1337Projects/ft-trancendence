@@ -27,7 +27,7 @@ import Conversation from './components/chat/Conversation'
 import Waiting from './components/game/pingpong/waiting'
 import PingPong from './components/game/pingpong/PingPong'
 
-import NotFound from './components/NotFound'
+import NotFound from './components/NotFound.tsx'
 import ForgetPassword from './components/auth/ForgetPassword'
 import { DialogContext, DialogContextProvider } from './Contexts/DialogContext'
 import Tournment from './components/game/tournament/tournment'

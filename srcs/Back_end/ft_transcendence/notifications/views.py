@@ -5,18 +5,18 @@ from asgiref.sync import async_to_sync
 from .models import GameRequest
 from .serializers import GameRequestSerializer
 
-@receiver(post_save, sender=GameRequest)
-def notify_user(sender, instance, created, **kwargs):
-    if created:
-        channel_layer = get_channel_layer()
-        notification_data = GameRequestSerializer(instance).data
-        async_to_sync(channel_layer.group_send)(
-            f"user_{instance.receiver.id}", 
-            {
-                "type": "send_notification",
-                "notification": notification_data
-            }
-        )
+# @receiver(post_save, sender=GameRequest)
+# def notify_user(sender, instance, created, **kwargs):
+#     if created:
+#         channel_layer = get_channel_layer()
+#         notification_data = GameRequestSerializer(instance).data
+#         async_to_sync(channel_layer.group_send)(
+#             f"user_{instance.receiver.id}", 
+#             {
+#                 "type": "send_notification",
+#                 "notification": notification_data
+#             }
+#         )
 
 # from rest_framework import generics, permissions
 # from .models import GameRequest

@@ -71,7 +71,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             link = data.get("link")
             
             receiverr = await get_user_with_profile(receiver_username)
-            game_request = await self.create_game_request(sender_username, receiver_username, message)
+            game_request = await self.create_game_request(sender_username, receiver_username, message, link)
             sender_channel_names = self.get_user_channel_names(sender_username)
             # print('---------------------------------------------------', sender_channel_names)
             # sys.stdout.flush()
@@ -100,10 +100,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event["data"]))
 
     @sync_to_async
-    def create_game_request(self, sender_username, receiver_username, message):
+    def create_game_request(self, sender_username, receiver_username, message, link):
         sender = User.objects.get(username=sender_username)
         receiver = User.objects.get(username=receiver_username)
-        return GameRequest.objects.create(sender=sender, receiver=receiver, message=message)
+        return GameRequest.objects.create(sender=sender, receiver=receiver, message=message, link=link)
 
     @sync_to_async
     def get_unread_requests(self):
