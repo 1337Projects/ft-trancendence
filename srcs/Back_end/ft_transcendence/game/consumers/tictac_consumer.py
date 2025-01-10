@@ -59,16 +59,15 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             self.turn_check_tasks[self.game_id].cancel()
             del self.turn_check_tasks[self.game_id]
         current_player = self.tictac.player2 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
-        event = {
-            'type': 'broad_cast',
-            'data': {
-                        'winner': current_player,
-                        'board': self.tictac.get_board(),
-                    },
-                    'status': 203
-            }
-         
-        await self.channel_layer.group_send(self.room_name, event)
+        if not self.tictac.get_winner():
+            await self.channel_layer.group_send(self.room_name, {
+                'type': 'broad_cast',
+                'data': {
+                            'winner': current_player,
+                            'board': self.tictac.get_board(),
+                        },
+                        'status': 203
+                })
 
         self.tictac.remove_game(game_id=self.game_id)
         if self.game_id in self.games:
