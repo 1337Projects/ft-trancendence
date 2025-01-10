@@ -59,7 +59,9 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             self.turn_check_tasks[self.game_id].cancel()
             del self.turn_check_tasks[self.game_id]
         current_player = self.tictac.player2 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
-        if not self.tictac.get_winner() and not self.tictac.is_board_full():
+        if not self.tictac.get_winner() and not self.tictac.is_board_full() and not self.tictac.is_match_stored(): 
+            self.tictac.set_winner(player=current_player)
+            await self.store_match()
             await self.channel_layer.group_send(self.room_name, {
                 'type': 'broad_cast',
                 'data': {
@@ -93,13 +95,15 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     'status': 400
                 }
                 await self.send_to_user(self.player.id, event=event)
-            elif "winner" in status:
+            elif "winner" in status: 
                 if self.game_id in self.turn_check_tasks:
                     try:
                         self.turn_check_tasks[self.game_id].cancel()
                         del self.turn_check_tasks[self.game_id]
                     except Exception as e:
                         error =  f"Error cancelling turn check task for game {self.game_id}: {e}"
+                await self.store_match()
+                sys.stdout.flush()
                 event = {
                     'type': 'broad_cast',
                     'data': {
@@ -108,6 +112,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     },
                     'status': 203
                 }
+
                 await self.channel_layer.group_send(self.room_name, event)
             elif "turn" in status:
                 if self.game_id in self.turn_check_tasks:
@@ -134,6 +139,10 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         game = Game1.objects.get(id=self.game_id)
         serializer = TicTacTeoSerializer(game)
         return serializer.data
+    
+    @database_sync_to_async
+    def store_match(self):
+        self.tictac.store_match()
 
     async def broad_cast(self, event):
         await self.send(text_data=json.dumps(event))
@@ -160,6 +169,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             current_time = time.time()
             if current_time - start_time > time_limit:
                 self.tictac.set_winner(player=player2 if current_turn == player1 else player1)
+                await self.store_match()
                 event = {
                     'type': 'broad_cast',
                     'data': {
