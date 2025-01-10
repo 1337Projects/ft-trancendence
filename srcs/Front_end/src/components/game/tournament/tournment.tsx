@@ -45,7 +45,7 @@ export default function Tournment() {
 
 
     const matchHandler = (match_data : MatchDataType) => {
-            console.log(match_data)
+        //     console.log(match_data)
         if (match_data && user) {
             if (match_data.player1.username == user?.username || match_data.player2.username == user?.username) {
                 navigate(`play/${match_data.id}`)
