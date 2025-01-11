@@ -1,7 +1,6 @@
 from django.db import models
 from login.models import User
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
@@ -14,8 +13,6 @@ class ProfileManager(BaseUserManager):
         profile.save(using=self._db)
         return  profile
         
-
-
 class Profile(models.Model): 
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     bio = models.TextField(default='', blank=True)
@@ -30,3 +27,8 @@ class Friends(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='send_requests')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_requests')
     blocker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='the_blocker', null=True, blank=True)
+
+class ExperienceLog(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='experience_logs')
+    experience_gained = models.IntegerField(default=0)
+    date_logged = models.DateTimeField(auto_now_add=True)

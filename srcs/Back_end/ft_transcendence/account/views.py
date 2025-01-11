@@ -3,10 +3,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .models import Profile, Friends
+from .models import (
+        Profile, 
+        Friends, 
+        ExperienceLog,
+)
 from login.models import User
+from game.models import Game1
 from login.views import check_if_duplicate 
-from .serializer import ProfileSerializers, UserWithProfileSerializer, UserWithFriendsSerializer
+from .serializer import ProfileSerializers, UserWithProfileSerializer, UserWithFriendsSerializer, ExperienceLogSerializer
 import json, jwt, sys
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
@@ -19,13 +24,13 @@ from .tasks import delete_qr_code_image
 
 import qrcode
 import pyotp, os, io
-from django.core.files.base import ContentFile
+from django.core.files.base import ContentFile    
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])   
 def get_profile_infos(request):
     id = request.user.id
     if not Profile.objects.filter(user_id=id).exists():
@@ -364,3 +369,35 @@ def set_lst_not_time(request):
         return Response({"message": "ok"}, status=200)
     except Exception as e:
         return Response({"error": str(e)}, status=400)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_experiences(request):
+    user = request.user
+    try:
+        profile = Profile.objects.get(user=user)
+        experiences = ExperienceLog.objects.filter(profile=profile).order_by('-date_logged')[:10]
+        serializer = ExperienceLogSerializer(experiences, many=True)
+        return Response({'data': serializer.data, 'status': 200}, status=200)
+    except Profile.DoesNotExist:
+        return Response({'message': 'Profile does not exist', 'status': 404}, status=404)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_score_tictac(request):
+    user = request.user
+    try:
+        matches_won = Game1.objects.filter(winner=user).count()
+        matches_lost = Game1.objects.filter(Q(player1=user) | Q(player2=user),~Q(winner=user)).count()
+        total = Game1.objects.filter(Q(player1=user) | Q(player2=user)).count()
+        data = {
+            'matches_won': matches_won,
+            'matches_lost': matches_lost,
+            'total': total
+        }
+
+        return Response({'data' : data, 'status': 200}, status=200)
+    except Game1.DoesNotExist:
+        return Response({'message': 'Game does not exist', 'status': 404}, status=404)
+    
+

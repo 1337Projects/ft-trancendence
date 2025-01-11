@@ -5,6 +5,8 @@ urlpatterns = [
     path('get_friends/', views.get_friends),
     path('profile_data/', views.get_profile_infos),
     path('users/', views.get_users),
+    path('experiences/', views.get_experiences),
+    path('score/', views.get_score_tictac),
     path('set_profile_data/', views.set_infos),
     path('info/friends/', views.friends_infos),
     path('new_relation/', views.add_friend),

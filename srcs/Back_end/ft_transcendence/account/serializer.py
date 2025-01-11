@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Friends
+from .models import Profile, Friends, ExperienceLog
 from login.serializer import UserSerializer
 from login.models import User
 from datetime import timedelta
@@ -36,4 +36,9 @@ class UserWithFriendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friends
         fields = ('id', 'status', 'sender', 'receiver', 'blocker')
+
+class ExperienceLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExperienceLog
+        fields = ['experience_gained', 'date_logged']
 

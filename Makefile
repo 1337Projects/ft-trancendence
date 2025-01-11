@@ -72,7 +72,7 @@ freeze:
 	docker-compose exec $(back_end_sevice) pip freeze > srcs/Back_end/requirements.txt
 
 migrate:
-	docker-compose exec $(back_end_sevice) python manage.py makemigrations login account chat notifications game background_task
+	docker-compose exec $(back_end_sevice) python manage.py makemigrations login account chat notifications tournment game background_task
 	docker-compose exec $(back_end_sevice) python manage.py migrate
 
 # all:

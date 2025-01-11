@@ -1,6 +1,8 @@
 import sys, time
 from game.models import Game1
-from login.models import User   
+from login.models import User
+from account.models import Profile, ExperienceLog
+from django.db import models
 
 class TicTac:
     _instances = {}
@@ -83,15 +85,38 @@ class TicTac:
     def store_match(self):
         if not self.match_stored:
             try:
+                loser = self.player1 if self.player1 != self.winner else self.player2
                 winner = User.objects.get(id=self.winner["id"]) if isinstance(self.winner, dict) else self.winner
+                loser = User.objects.get(id=loser["id"]) if isinstance(loser, dict) else loser
                 game = Game1.objects.get(id=self.game_id)
                 game.winner = winner
                 game.save()
+
+                winner_profile = Profile.objects.get(user=winner)
+                loser_profile = Profile.objects.get(user=loser)
+
+                winner_experience = 10
+                loser_experience = 5
+
+                ExperienceLog.objects.create(profile=winner_profile, experience_gained=winner_experience)
+                ExperienceLog.objects.create(profile=loser_profile, experience_gained=loser_experience)
+
+                winner_total_experience = ExperienceLog.objects.filter(profile=winner_profile).aggregate(total=models.Sum('experience_gained'))['total']
+                loser_total_experience = ExperienceLog.objects.filter(profile=loser_profile).aggregate(total=models.Sum('experience_gained'))['total']
+
+                winner_profile.level = winner_total_experience // 100
+                loser_profile.level = loser_total_experience // 100
+
+                winner_profile.save()
+                loser_profile.save()
+
                 self.match_stored = True
             except Game1.DoesNotExist:
                 print(f"Game with id {self.game_id} does not exist")
             except User.DoesNotExist:
                 print(f"User with id {self.winner['id']} does not exist")
+            except Profile.DoesNotExist:
+                print(f"Profile for user with id {self.winner['id']} or {self.loser['id']} does not exist")
 
     def get_board(self):
         return self.board
