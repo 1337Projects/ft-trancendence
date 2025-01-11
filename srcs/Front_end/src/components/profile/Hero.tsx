@@ -40,6 +40,17 @@ export function Banner({ user } : { user : UserType }) {
 	const appearence = useContext(ApearanceContext)
 	const { authInfos } = useContext(UserContext) || {}
 
+
+	// useEffect(() => {
+	// 	if (!user) {
+	// 	  const timer = setTimeout(() => {
+	// 		toast.error("Failed loading data, please refresh");
+	// 	  }, 1000);
+	
+	// 	  return () => clearTimeout(timer);
+	// 	}
+	//   }, [user]);
+
 	if (!user) {
 		return (
 			<BannerSkeleton />

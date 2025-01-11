@@ -8,6 +8,8 @@ import { FaUserFriends } from 'react-icons/fa';
 import { RiProfileFill } from 'react-icons/ri';
 import { FirendType, UserType } from '@/types/user';
 
+import 'react-toastify/dist/ReactToastify.css';
+import{ ToastContainer, toast } from 'react-toastify'
 
 export default function Profile() {
 	const { theme } = useContext(ApearanceContext) || {}
@@ -48,16 +50,35 @@ export default function Profile() {
 				})
 				.then(res => res.json())
 				.then(res => {
+					if (res.data == undefined)
+					{
+						toast.error("Failed to load data! try refresh")
+					}
 					setCurrentUser(res.data)
 				})
-				.catch(err => console.log(err))
+				.catch(err => {
+						console.log(err, "++");
+						toast.error("Failed to load profile data!");
+					}
+				)
 			} else 
 				setCurrentUser(user!)
 		}, 300)
 		return () => clearTimeout(timer)
 
 	}, [user_name])
+	
+	
+	// useEffect(() => {
+	// 	if (!user) {
+	// 		toast.error("No user found!");
+	// 	}
+	// }, [user]);
 
+	// if (!user) {
+	// 	console.log("no user");
+	// }
+	
 	return (
 		<div className={`w-full mt-2 backdrop-blur-md p-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
 			<div className={` w-full h-[calc(100vh-180px)] sm:h-[100vh] overflow-scroll`}>
@@ -74,6 +95,7 @@ export default function Profile() {
 					</>
 				}
 			</div>
+			<ToastContainer/>
 		</div>
 	)
 }

@@ -13,6 +13,9 @@ import { ApearanceContext } from '../Contexts/ThemeContext'
 import { NotificationsContext } from '../Contexts/NotificationsContext'
 import { notificationSocket } from '../socket'
 
+import 'react-toastify/dist/ReactToastify.css';
+import{ ToastContainer, toast } from 'react-toastify'
+
 
 function LogoImg() {
   const { theme, color } = useContext(ApearanceContext) || {}
@@ -116,7 +119,9 @@ export default function DashboardLayout() {
           user?.setUser(res.data)
           setIsLoading(false)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+        })
       }, 300)
       return () => clearTimeout(timer)
     }, [])
@@ -132,6 +137,10 @@ export default function DashboardLayout() {
         })
         .then(res => res.json())
         .then(res => {
+          if (res.data == undefined)
+          {
+            toast.error("Failed to load data! try refresh");
+          }
           user?.setFriends(res.data)
         })
         .catch(err => console.log(err))
@@ -140,7 +149,7 @@ export default function DashboardLayout() {
     }, [location])
 
     if (isLoading) {
-      return (<></>)
+      return (<>loading</>)
     }
 
     async function logoutHandler() {
@@ -163,7 +172,10 @@ export default function DashboardLayout() {
       }
     }
 
-
+    if (!user)
+    {
+      console.log("eorrata")
+    }
     return (
       <>
         <div className="flex justify-between w-full">
@@ -210,6 +222,7 @@ export default function DashboardLayout() {
             </div>
           </main>
         </div>
+        <ToastContainer/>
       </>
     )
 }

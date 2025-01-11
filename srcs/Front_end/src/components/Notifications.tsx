@@ -129,6 +129,7 @@ export default function Notifications() {
     const containerRef = useRef<null | HTMLDivElement>(null);
 
     const handleScroll = () => {
+        console.log("in")
         if (!containerRef.current || !hasMore) return;
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
@@ -218,6 +219,7 @@ export default function Notifications() {
 
 
     function handler(value : boolean) {
+        console.log(containerRef.current?.scrollHeight, "scroll height");
         setShow(value)
         window.localStorage.setItem('showNotifications', String(value));
     }
@@ -234,9 +236,7 @@ export default function Notifications() {
                 <FaCaretDown />
             </div>
             {
-                show === true && 
-                <div ref={containerRef} className="list-none p-2 w-full max-h-[360px] overflow-auto rounded-sm">
-                    
+                 <div ref={containerRef} className={`list-none p-2 w-full max-h-[360px] overflow-auto rounded-sm ${show ? '' : 'hidden'}`}>
                     {
                         notifications?.length ? 
                         notifications.map((not, index) => <NotItem key={index} data={not}/>)
