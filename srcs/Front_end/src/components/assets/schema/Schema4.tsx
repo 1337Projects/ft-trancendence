@@ -251,12 +251,18 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
 }
 
 
-function PlayerImage({ player } : {player : UserType | undefined}) {
+export function PlayerImage({ player } : {player : UserType | undefined}) {
     let url = "/_.jpeg"
     if (typeof player === "object") {
         url = player.profile.avatar
     }
     return (
-        <image href={url}  transform="scale(0.00153846)" />
+        <image 
+          href={url}  
+          transform="scale(0.00153846)"
+          preserveAspectRatio="none"
+          // width="1"
+          // height="1"
+        />
     )
 }
