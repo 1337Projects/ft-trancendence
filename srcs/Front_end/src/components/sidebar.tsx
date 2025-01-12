@@ -64,7 +64,7 @@ function SideBar() {
 	}
 
 	return (
-		<div className={`w-[100vw] h-[110px] absolute ${theme === 'light' ? "bg-lightItems border-black/40" : "bg-darkItems border-white/40"} bottom-0 border-t-[.6px]  sm:border-none  sm:relative  sm:w-full sm:h-full xl:w-[260px] z-20`}>
+		<div className={`w-full h-full ${theme === 'light' ? "bg-lightItems text-lightText  border-black/40" : "bg-darkItems text-darkText border-white/40"} xl:w-[260px]`}>
 			<header 
 				className={`w-full h-full  shadow-sm rounded-sm relative`}>
 				<div className='w-full h-full  sm:grid xl:px-4 px-2'>

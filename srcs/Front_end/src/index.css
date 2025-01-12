@@ -13,17 +13,15 @@
      background-image: linear-gradient(-225deg, #FFE29F 0%, #FFA99F 48%, #FF719A 100%);
 }
 
+
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     user-select: none;
-    /* pointer-events: none; */
 }
 
-body {
-    overflow: hidden;
-}
 
 ::-webkit-scrollbar {
     width: 10px;

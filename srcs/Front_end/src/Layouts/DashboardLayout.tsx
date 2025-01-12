@@ -178,8 +178,8 @@ export default function DashboardLayout() {
     }
     return (
       <>
-        <div className="flex justify-between w-full">
-          <div className='flex flex-col space-y-2'>
+        <div className="flex h-screen justify-between w-full">
+          <div className='flex h-screen flex-col space-y-2'>
 
             <div className='h-[100px] flex-shrink-0'>
               <div className={`hidden sm:flex justify-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} rounded sm:block h-full cursor-pointer  items-center justify-center text-center w-full text-[22px]`}>
@@ -190,8 +190,7 @@ export default function DashboardLayout() {
             </div>
 
             <div
-              className={`overflow-y-auto flex-shrink-1 ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/0"}`}
-              style={{ height: `calc(100vh - 200px)` }}
+              className={`absolute bottom-0 sm:relative overflow-y-auto flex-shrink-1 h-[100px] w-full sm:h-[calc(100vh-220px)]`}
             >
               <SideBar />
             </div>
@@ -212,7 +211,9 @@ export default function DashboardLayout() {
               <div className="nav w-full flex-grow">
                 <Search />
               </div>
-              <Outlet />
+              <div className='w-full h-[calc(100vh-170px)] mt-2 rounded sm:h-[calc(100vh-70px)] overflow-scroll'>
+                <Outlet />
+              </div>
             </div>
 
             <div className="side ml-2 flex-grow max-w-[300px] min-w-[300px] hidden lg:block">

@@ -42,14 +42,14 @@ export default function Setings() {
     const {theme} = useContext(ApearanceContext) || {}
 
     return (
-        <div className={`overflow-scroll ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} p-1 w-full flex-grow h-[94vh] rounded mt-2`}>
-            <div className="w-full md:flex px-10 max-w-[800px] mx-auto mt-4">
+        <div className={`overflow-scroll p-2 ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-full`}>
+            <div className="w-full md:flex px-10 max-w-[800px] mx-auto">
                 <div className="w-full  md:w-[300px] md:mr-4 px-2">
                     <ul className={`grid grid-cols-3 content-start p-2 md:grid-cols-1 gap-4 min-h-[45px] h-full border-[1px] ${theme == 'light' ? "border-black/10" : "border-white/10"}  rounded-md`}>
                         {listItems.map(it => <ListItem key={it.text} item={it} isActive={it.text == item} handler={setItem}  />)}
                     </ul>
                 </div>
-                <div className="flex-grow w-full mt-2 md:mt-0">
+                <div className="flex-grow w-full">
 
                     {item === 'Profile' && <Profile /> || item === 'Security' && <Security /> || item === 'Apperance' && <Apperance />}
                 </div>

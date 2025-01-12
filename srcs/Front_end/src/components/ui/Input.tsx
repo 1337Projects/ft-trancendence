@@ -19,7 +19,7 @@ export default function MyInput({label , ...props} : InputPropsType) {
     return (
         <div>
             <label 
-                className="text-[11pt] capitalize w-full flex justify-between mb-1 mt-10" 
+                className="text-[11pt] capitalize w-full flex justify-between mb-1 mt-4" 
                 htmlFor={props.id || props.name}
             > { label }</label>
             <div className="relative">

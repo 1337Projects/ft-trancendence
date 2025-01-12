@@ -8,7 +8,6 @@ function Slide({text, img} : {text : string, img : string}) {
   return (
     <div className='slide'>
       <div className='relative h-[400px]'>
-        {/* <img src="/Ellipse.svg" alt="" /> */}
         <img className='absolute top-0 left-[50%] translate-x-[-50%] mx-auto max-w-[400px] w-full h-full' src={img} alt="img" />
       </div>
       <div className='text-center'>
@@ -24,7 +23,6 @@ export default function AuthLayout() {
   const [slide, setSlide] = useState(1)
   useEffect(() => {
     const timer = setTimeout(() => {
-      // console.log('timer created')
       setSlide(prev => prev < 3 ? prev += 1 : 1)
     }, 1000 * 8)
 

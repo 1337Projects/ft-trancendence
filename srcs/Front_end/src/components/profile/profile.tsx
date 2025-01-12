@@ -80,8 +80,8 @@ export default function Profile() {
 	// }
 	
 	return (
-		<div className={`w-full mt-2 backdrop-blur-md p-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
-			<div className={` w-full h-[calc(100vh-180px)] sm:h-[100vh] overflow-scroll`}>
+		<div className={`w-full h-full overflow-scroll p-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
+			<div className={` w-full h-full sm:h-[100vh]`}>
 				<Banner user={currentUser!} />
 				{
 					friendship?.status == 'blocked' ?
