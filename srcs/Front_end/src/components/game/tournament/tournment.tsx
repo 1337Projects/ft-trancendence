@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MyUseEffect from '@/hooks/MyUseEffect'
 import { tournamentSocket } from "@/socket";
@@ -6,9 +6,9 @@ import { UserContext } from '@/Contexts/authContext'
 import Hero from "./Hero";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { FaArrowRight } from "react-icons/fa6";
-import Schema from "./Schema";
+import Schema, { TournamnetType } from "./Schema";
 import { UserType } from "@/types/user";
-import { MatchDataType, TournamentDataType } from "@/types/tournament";
+import { MatchDataType } from "@/types/tournament";
 
 
 
@@ -16,7 +16,7 @@ export default function Tournment() {
 
     const { user } = useContext(UserContext) || {}
     const { theme, color } = useContext(ApearanceContext) || {}
-    const [ tournamentData, setTournamentData ] = useState<TournamentDataType | null>(null)
+    const [ tournamentData, setTournamentData ] = useState<TournamnetType | null>(null)
     const navigate = useNavigate()
     const [ ended, setEnded ] = useState<UserType[] | null>(null)
  
@@ -25,7 +25,7 @@ export default function Tournment() {
         setEnded(data)
     }
 
-    function DataHandler(data : TournamentDataType) {
+    function DataHandler(data : TournamnetType) {
         setTournamentData(data)
     }
 
@@ -35,7 +35,6 @@ export default function Tournment() {
             tournamentSocket.addCallback("match_data", matchHandler)
             tournamentSocket.addCallback("winner_data", EndHandler)
             tournamentSocket.sendMessage({"event" : "get_data"})
-            // console.log('get data')
         }, 100)
 
         return () => {
@@ -45,7 +44,6 @@ export default function Tournment() {
 
 
     const matchHandler = (match_data : MatchDataType) => {
-        //     console.log(match_data)
         if (match_data && user) {
             if (match_data.player1.username == user?.username || match_data.player2.username == user?.username) {
                 navigate(`play/${match_data.id}`)

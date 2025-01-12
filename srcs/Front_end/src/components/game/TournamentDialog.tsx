@@ -130,8 +130,8 @@ function ParticipantsList({handler , data } : {data : DialogDataType , handler :
     return (
         <div>
             <h1>participents number :</h1>
-            <div className="flex mt-4 justify-between items-center max-w-[380px]">
-                { ["4", "8", "16"].map((elm) => <ParticaipantElm data={data} handler={handler} elm={elm} />) }
+            <div className="flex mt-4 justify-between items-center max-w-[250px]">
+                { ["4", "8"].map((elm) => <ParticaipantElm data={data} handler={handler} elm={elm} />) }
             </div>
         </div>
     )

@@ -83,7 +83,7 @@ export default function Game() {
                                         <TrItem data={item} />
                                     </div> )
                                 :
-                                <div className={`w-full rounded h-[270px] border-[1px] ${appearence?.theme == "light" ? "border-black/20" : "border-white/20"} text-sm flex justify-center items-center`}>
+                                <div className={`w-full rounded h-[170px] border-[1px] ${appearence?.theme == "light" ? "border-black/20" : "border-white/20"} text-sm flex justify-center items-center`}>
                                     <p>not tournaments yet, create one</p>
                                     <span style={{color : appearence?.color}} className="ml-2 font-bold text-md cursor-pointer">Create !</span>
                                 </div>
