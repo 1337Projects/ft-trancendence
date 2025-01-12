@@ -29,6 +29,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])   
 def get_profile_infos(request):
