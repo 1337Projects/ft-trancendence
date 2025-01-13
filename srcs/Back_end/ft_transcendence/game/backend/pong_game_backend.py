@@ -81,6 +81,9 @@ class Paddle:
                 ball.x = min(self.x - r, ball.x)
 
         return False
+    
+    def reset(self):
+        self.y = SCREEN_HEIGHT // 2
 
 class Ball:
     def __init__(self):
@@ -139,13 +142,18 @@ class PongGame:
         
         return self.player1 and self.player2    
 
+    def reset(self):
+        self.ball.reset()
+        self.paddle1.reset()
+        self.paddle2.reset()
+
     def update(self):    
         self.ball.move()
         if self.ball.x - BALL_RADIUS <= self.paddle1.width:
             if self.paddle1.check_collision(self.ball): # check if goal is scored on player 1
                 # update score
                 self.score2 += 1
-                self.ball.reset()
+                self.reset()
                 return {
                     'score1': self.score1,
                     'score2': self.score2
@@ -155,9 +163,9 @@ class PongGame:
         if self.ball.x + BALL_RADIUS >= self.paddle2.x:
             if self.paddle2.check_collision(self.ball):
                 self.score1 += 1
+                self.reset()
                 # ic('goal is scored on ', self.player2)
                 # sys.stdout.flush()
-                self.ball.reset()
                 return {
                     'score1': self.score1,
                     'score2': self.score2

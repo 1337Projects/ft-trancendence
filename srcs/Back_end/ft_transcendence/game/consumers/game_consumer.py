@@ -44,14 +44,11 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         data = json.loads(text_data)
         event_type = data.get('event')
-        ic(event_type)
-        sys.stdout.flush()
         if event_type == 'movePaddle':
             key = data.get('key')
             self.pongGameManager.move_player(self.room_name, self.player.id, key)
             # await self.send_stats()
-        
-    
+ 
     async def send_stats(self):
         # ic('send_stats')
         # sys.stdout.flush()
@@ -62,8 +59,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             'stats': stats
         }
         await self.group_send(event)
-        
-    
+ 
     async def disconnect(self, close_code):
         """ Handles the WebSocket disconnection for a game."""
         score = None
@@ -89,8 +85,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_name,
             self.channel_name
         )
-        
-        
+
     async def game_loop(self):
         # ic(self.player.username, "Game loop started")
         # sys.stdout.flush()
