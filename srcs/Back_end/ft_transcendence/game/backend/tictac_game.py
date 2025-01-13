@@ -34,11 +34,13 @@ class TicTac:
             self.start_time = None
             self.turn_time_limit = 12
             self.match_stored = False
+            self.moves = 0
     
     def make_move(self, row, colom, player):
         try:
             if self.board[row][colom] == '':
                 self.board[row][colom] = 'X' if self.current_turn == self.player1 else 'O'
+                self.moves += 1
             else:
                 raise NameError("already taken")
         except Exception as e:
@@ -57,11 +59,7 @@ class TicTac:
         return False
     
     def is_board_full(self):
-        for row in self.board:
-            for cell in row:
-                if cell == '':
-                    return False
-        return True
+        return True if self.moves == 9 else False
     
     def play_turn(self, row, col, sender):
         if self.winner:

@@ -223,8 +223,6 @@ def set_2fa(request):
     else:
         return Response({"status": 400, "message": "Invalild data"}, status=400)
 
-
-
 @csrf_exempt
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
