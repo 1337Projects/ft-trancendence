@@ -156,7 +156,7 @@ class Tournament:
         return None
     
     async def upgrade(self,lvl, id):
-        match = self.current_matches[id]
+        match = self.current_matches.get(id, None)
         if match:
             if match.left.val.data['id'] == id:
                 match.val = match.left.val
@@ -164,6 +164,18 @@ class Tournament:
             elif match.right.val.data['id'] == id:
                 match.val = match.right.val
                 debug("upgrade right up")
+
+
+    async def disconnect_handler(self, lvl, id):
+
+        next_match = self.builder.get_player_match(lvl, id)
+        if next_match and next_match.left.val.data['id'] == id:
+            next_match.val  = next_match.right.val
+        elif next_match and next_match.right.val.data['id'] == id:
+            next_match.val  = next_match.left.val
+        else:
+            debug(f"match not found or incorrect id {next_match}")
+            
         
 
     @database_sync_to_async
@@ -312,13 +324,37 @@ class TournmentConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
         async with self.shared_state.lock:
             self.shared_state._tournaments[self.tournment_id]['user_count'] -= 1
+            # level up
+            # try:
+            #     provider = self.shared_state.tournaments_providers[self.tournment_id]
+            #     await provider.disconnect_handler(self.lvl, self.scope['user'].id)
+            #     builder = self.shared_state.tournaments_providers[self.tournment_id].builder
+            #     self.shared_state._tournaments[self.tournment_id]["rounds"] = builder.get_rounds()
+            #     data = self.shared_state._tournaments.get(self.tournment_id, None)
+            #     debug(data)
+            #     if data:
+            #         await self.channel_layer.group_send(
+            #             self.group_name,
+            #             {
+            #                 "type" : "send_data",
+            #                 "data" : {
+            #                     "teeeessssttt" : 234,
+            #                     "data" : data,
+            #                     "status" : 210
+            #                 },
+            #             }
+            #         )
+            # except Exception as e:
+            #     debug(e)
+            #     debug(self.scope['user'].id)
+            
             if self.shared_state._tournaments[self.tournment_id]['user_count'] == 0:
                 del self.shared_state._tournaments[self.tournment_id]
                 del self.shared_state.tournaments_providers[self.tournment_id]
 
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
 
     def get_tournemnt_data(self, id):

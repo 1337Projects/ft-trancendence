@@ -20,6 +20,17 @@ class SharedState:
             cls._instance.lock = asyncio.Lock()
             cls._instance.rooms = {}
         return cls._instance
+    
+
+class SharedStateT:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(SharedStateT, cls).__new__(cls)
+            cls._instance.lock = asyncio.Lock()
+            cls._instance.rooms = {}
+        return cls._instance
 
 class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
@@ -41,7 +52,9 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         async with self.shared_data._instance.lock:
 
             self.room_id = self.get_room(room_name, room_type)
-            debug(self.room_id)
+                # await self.send(text_data=json.dumps({"response" : {"status" : 202}}))
+                # return
+            # debug(self.room_id)
             if self.room_id == -1:
                 name = room_name
                 if name == 'any':
@@ -113,7 +126,6 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
             return None
 
 
-
     @database_sync_to_async
     def get_user_from_db(self):
         try:
@@ -122,17 +134,22 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
             return None
         
     def get_room(self, room_name, room_type):
-
+        debug(self.shared_data._instance.rooms)
         if room_name == 'any' and room_type == 'public':
             for key, room in self.shared_data._instance.rooms.items():
-                # debug(key)
-                if room['status'] == 'waiting' and room['privacy'] == 'public':
+                if room['status'] == 'waiting' and \
+                    room['privacy'] == 'public' and \
+                    room['players'][0]['id'] != self.serialized_user['id']:
                     return key
         else:
             for key, room in self.shared_data._instance.rooms.items():
-                # debug(room)
-                if room['status'] == 'waiting' and room['name'] == room_name and room['privacy'] == room_type:
+                if room['status'] == 'waiting' and \
+                    room['name'] == room_name and \
+                    room['privacy'] == room_type and \
+                    room['players'][0]['id'] != self.serialized_user['id']:
                     return key
+                
+        
         return -1
     
 
@@ -142,6 +159,10 @@ class TicTakTeoMatchMaking(GameMatchMakingConsumer):
 
     def __init__(self):
         super().__init__()
+        self.shared_data = SharedStateT()
+        self.serialized_user = None
+        self.room_id = None
+
 
     @database_sync_to_async
     def save_match_to_db(self, room):
