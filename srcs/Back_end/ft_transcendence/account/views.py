@@ -373,7 +373,7 @@ def set_lst_not_time(request):
         return Response({"error": str(e)}, status=400)
     
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_experiences(request):
     user = request.user
     # user = get_object_or_404(User,id=get_id(request))   
