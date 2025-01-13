@@ -14,12 +14,10 @@ class GameConsumer(AsyncWebsocketConsumer):
     pongGameManager = PongGameManager()
 
     async def connect(self):
+        await self.accept()
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.player = self.scope['user']
         self.room_name = f'game_{self.game_id}'
-
-        # ic(self.player.username, "Connecting")
-        # sys.stdout.flush()
 
         self.game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
 
@@ -35,7 +33,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_name,
             self.channel_name
         )
-        await self.accept()
+        # await self.accept()
+        status = self.pongGameManager.get_game_status(self.room_name)
+        if status == 'end':
+            await self.disconnect(10)
         game_is_full = await self.pongGameManager.add_player_to_game(self.game, self.player, self.room_name)
         if game_is_full:
             await self.init_game()

@@ -221,14 +221,15 @@ class PongGameManager:
             self.games[room_name] = PongGame(game, room_name)
             await self.games[room_name].initialize()
         return await self.games[room_name].join(player)
-    
-    async def remove_player_from_game(self, room_name, player_id):
-        '''Finish the game and make this player luses.'''
-        pass
 
     def get_stats(self, room_name):
         return self.games[room_name].get_stats()
 
+    def get_game_status(self, room_name):
+        if room_name not in self.games:
+            return None
+        return self.games[room_name].status
+        
     def get_init(self, room_name):
         '''
         get the init stat of the game.
