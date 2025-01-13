@@ -21,7 +21,11 @@ export type TournamnetType = {
 export default function Schema({data} : {data : TournamnetType}) {
 
     if (!data || !data.rounds) {
-        return ("loading ....")
+        return (
+            <div className='p-2'>
+                <div className="w-[600px] mx-auto h-[150px] mt-16 animate-pulse"></div>
+            </div>
+        )
     }
 
     return (

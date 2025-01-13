@@ -21,8 +21,8 @@ export default function Hero({ data } : {data : TournamnetType}) {
                     <img src="/game/winner.svg" alt="" />
                 </div>
                 <div className="text-white ml-[20px]">
-                    <p style={{background:color}} className="py-2 text-white px-4 uppercase w-fit text-xs rounded">{data?.data?.mode}</p>
-                    <h1 className="uppercase text-2xl mt-4 font-bold">tournment name</h1>
+                    <p style={{background:color}} className="py-2 text-white px-4 uppercase w-fit text-xs rounded">{data?.data?.tourament_status}</p>
+                    <h1 className="uppercase text-2xl mt-4 font-bold">{data?.data?.tournament_name}</h1>
                     <div className="mt-4 text-sm flex items-center">
                         <FiUsers className="mr-2" /> 
                         <p className="mr-2 uppercase">max players :</p>
