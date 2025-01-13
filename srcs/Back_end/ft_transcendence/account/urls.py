@@ -6,6 +6,7 @@ urlpatterns = [
     path('profile_data/', views.get_profile_infos),
     path('users/', views.get_users),
     path('experiences/', views.get_experiences),
+    path('matchs', views.get_matchs),
     path('score/', views.get_score_tictac),
     path('set_profile_data/', views.set_infos),
     path('info/friends/', views.friends_infos),

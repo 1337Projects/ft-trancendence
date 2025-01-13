@@ -1,4 +1,4 @@
-import sys, time
+import sys, time, random
 from game.models import Game1
 from login.models import User
 from account.models import Profile, ExperienceLog
@@ -30,7 +30,7 @@ class TicTac:
             self.board = [['' for _ in range(3)] for _ in range(3)]
             self.initialized = True
             self.winner = None
-            self.current_turn = player1
+            self.current_turn = None
             self.start_time = None
             self.turn_time_limit = 12
             self.match_stored = False
@@ -87,17 +87,19 @@ class TicTac:
             try:
                 user1 = User.objects.get(id=self.player1["id"]) if isinstance(self.player1, dict) else self.player1
                 user2 = User.objects.get(id=self.player2["id"]) if isinstance(self.player2, dict) else self.player2
-
-                if self.winner == None:
-                    self.store_game(winner=None)
-                else:
-                    self.store_game(winner=user1 if self.player1 == self.winner else user2)
-
                 player1_profile = Profile.objects.get(user=user1)
                 player2_profile = Profile.objects.get(user=user2)
 
-                winner_experience, loser_experience = self.get_amount_experience()
-                self.store_experience_log(player1_profile, player2_profile, winner_experience, loser_experience)
+                if self.winner == None:
+                    self.store_game(winner=None)
+                    player1_experience = 10
+                    player2_experience = 10
+                else:
+                    self.store_game(winner=user1 if self.player1 == self.winner else user2)
+                    player1_experience = 20 if self.player1 == self.winner else 10
+                    player2_experience = 20 if self.player2 == self.winner else 10 
+
+                self.store_experience_log(player1_profile, player2_profile, player1_experience, player2_experience)
 
                 player1_total_experience, player2_total_experience = self.get_total_experience(player1=player1_profile, player2=player2_profile)
 
@@ -115,9 +117,9 @@ class TicTac:
             except Profile.DoesNotExist:
                 print(f"Profile for user with id {self.winner['id']} or {self.loser['id']} does not exist")
 
-    def store_experience_log(self, player1_profile, player2_profile, winner_experience, loser_experience):
-        ExperienceLog.objects.create(profile=player1_profile, experience_gained=winner_experience)
-        ExperienceLog.objects.create(profile=player2_profile, experience_gained=loser_experience)
+    def store_experience_log(self, player1_profile, player2_profile, player1_experience, player2_experience):
+        ExperienceLog.objects.create(profile=player1_profile, experience_gained=player1_experience)
+        ExperienceLog.objects.create(profile=player2_profile, experience_gained=player2_experience)
 
     def store_game(self, winner):
         game = Game1.objects.get(id=self.game_id)
@@ -125,14 +127,13 @@ class TicTac:
         game.save()
 
     def get_total_experience(self, player1, player2):
-        winner_total_experience = ExperienceLog.objects.filter(profile=player1).aggregate(total=models.Sum('experience_gained'))['total']
-        loser_total_experience = ExperienceLog.objects.filter(profile=player2).aggregate(total=models.Sum('experience_gained'))['total']
-        return winner_total_experience, loser_total_experience
-
-    def get_amount_experience(self):
-        return (10, 5) if self.winner is not None else (5, 5)
+        player1_total_experience = ExperienceLog.objects.filter(profile=player1).aggregate(total=models.Sum('experience_gained'))['total']
+        player2_total_experience = ExperienceLog.objects.filter(profile=player2).aggregate(total=models.Sum('experience_gained'))['total']
+        return player1_total_experience, player2_total_experience
     
     def get_current_turn(self):
+        if self.current_turn is None:
+            self.current_turn =  self.player1 if random.randint(0, 1) == 0 else self.player2
         return self.current_turn
 
     def get_winner(self):

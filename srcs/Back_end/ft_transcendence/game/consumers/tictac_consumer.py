@@ -41,7 +41,7 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             'type': 'broad_cast',
             'data': {
                 'players' : [self.game["player1"], self.game["player2"]],
-                'user' : self.tictac.player1,
+                'user' : self.tictac.get_current_turn(),
                 'board': self.tictac.get_board()
             }, 
             'status': 201

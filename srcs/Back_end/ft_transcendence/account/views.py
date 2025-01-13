@@ -12,6 +12,7 @@ from login.models import User
 from game.models import Game1
 from login.views import check_if_duplicate 
 from .serializer import ProfileSerializers, UserWithProfileSerializer, UserWithFriendsSerializer, ExperienceLogSerializer
+from game.serializers import TicTacTeoSerializer
 import json, jwt, sys
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 from django.conf import settings
@@ -374,8 +375,8 @@ def set_lst_not_time(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_experiences(request):
-    # user = request.user
-    user = get_object_or_404(User,id=get_id(request))    
+    user = request.user
+    # user = get_object_or_404(User,id=get_id(request))   
     try:
         profile = Profile.objects.get(user=user)
         experiences = ExperienceLog.objects.filter(profile=profile).order_by('-date_logged')[:10]
@@ -385,11 +386,11 @@ def get_experiences(request):
         return Response({'message': 'Profile does not exist', 'status': 404}, status=404)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_score_tictac(request):
-    # user = request.user
-    user = get_object_or_404(User,id=get_id(request)) 
+    user = request.user
     try:
+        # user = get_object_or_404(User,id=get_id(request))
         matches_won = Game1.objects.filter(winner=user).count()
         matches_lost = Game1.objects.filter(Q(player1=user) | Q(player2=user), ~Q(winner=user), ~Q(winner__isnull=True)).count()
         total = Game1.objects.filter(Q(player1=user) | Q(player2=user)).count()
@@ -403,4 +404,17 @@ def get_score_tictac(request):
     except Game1.DoesNotExist:
         return Response({'message': 'Game does not exist', 'status': 404}, status=404)
     
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_matchs(requset):
+    user = requset.user
+    try:
+        # user = get_object_or_404(User, id=get_id(requset))
+        games = (Game1.objects.filter(player1=user) | Game1.objects.filter(player2=user)).order_by('-created_at')
+        serializer = TicTacTeoSerializer(games, many=True)
+        return Response({'data' : serializer.data, 'status': 200}, status=200)
+    except Exception as e:
+        return Response({'message': str(e), 'status': 404}, status=404)
 
