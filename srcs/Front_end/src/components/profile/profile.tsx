@@ -110,7 +110,7 @@ function ProfileNav({ currentUser } : { currentUser : UserType | null}) {
 		<div className='px-4'>
 			<ul className='flex items-center py-4 text-[12pt]'>
 				<li style={{color : isDashboard ? color : ""}} className={`mr-6 cursor-pointer`} >
-					<Link to={`../profile/${currentUser?.username}`} className='flex items-center'>
+					<Link to={`./../${currentUser?.username}`} className='flex items-center'>
 						<RiProfileFill className='mr-2' />
 						Dashboard
 					</Link>

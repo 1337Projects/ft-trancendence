@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import {Route, RouterProvider, createBrowserRouter, createRoutesFromElements} from 'react-router-dom'
+import {Navigate, Route, RouterProvider, createBrowserRouter, createRoutesFromElements} from 'react-router-dom'
 
 
 import UserContextProvider from './Contexts/authContext'
@@ -43,17 +43,17 @@ import ChatAsset from './components/assets/ChatAsset'
 function Home() {
 
   return (
-    <>
-      <h1 className='h-[100vh] text-white  sm:text-red-500'>landing page</h1> 
-    </>
+    <Navigate to="/dashboard/game" />
   )
 }
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/'>
+
       <Route index element={<Home />} />
-      {/* auth */}
+
+
       <Route path='auth' element={<AuthLayout />}>
         <Route path='oauth/google' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/google_callback/`} />} />
         <Route path='oauth/42' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`} />} />
@@ -63,44 +63,47 @@ const router = createBrowserRouter(
         <Route path='forgetPassowrd' element={<ForgetPassword />} />
       </Route>
 
-      <Route path='/dashboard' element={<DashboardPrivateRoute />}>
-
-        
-        <Route path='game' element={<Game />} />
-        <Route path='game/waiting/room/:type/:game' element={<Waiting />} />
-        
-        <Route path='game/ping-pong/room/:game_id' element={<PingPong />} />
-        <Route path='game/tic-tac-toe/room/:game_id' element={<TicTacTeo />} />
-        
-        <Route path='game/tournment/:tournament_id' element={<GameLayout />}>
-          <Route index element={<Tournment />} />
-          <Route path='play/:game_id' element={<PingPong />} />
+ 
+      <Route element={<DashboardPrivateRoute />}>
+        <Route path='dashboard/game' >
+          <Route index element={<Game />} />
+          <Route path='waiting/room/:type/:game' element={<Waiting />} />
+          <Route path='ping-pong/room/:game_id' element={<PingPong />} />
+          <Route path='tic-tac-toe/room/:game_id' element={<TicTacTeo />} />
+          <Route path='tournment/waiting/:id' element={<WaitingTournment />} />
+          <Route path='tournment/:tournament_id' element={<GameLayout />}>
+            <Route index element={<Tournment />} />
+            <Route path='play/:game_id' element={<PingPong />} />
+          </Route>
         </Route>
-        <Route path='game/tournment/waiting/:id' element={<WaitingTournment />} />
+        
 
-
-
-        <Route path='profile/:user_name' element={<Profile />}>
+        <Route path='dashboard/profile/:user_name' element={<Profile />}>
           <Route index element={<Dashboard />} />
           <Route path='friends' element={<Friends />} />
         </Route>
 
-        <Route path='chat' element={<ChatLayout />}>
+
+        <Route path='dashboard/chat' element={<ChatLayout />}>
           <Route index element={<ChatImg />} />
           <Route path=':user' element={<Conversation/>} />
         </Route>
 
-        <Route  path='setings' element={<Setings />} />
+
+        <Route  path='dashboard/settings' element={<Setings />} />
+    
       </Route>
 
+
       <Route path='*' element={<NotFound/>} />
+
     </Route>
   )
 )
   
 function ChatImg() {
   return (
-      <div className='w-full h-full p-10 flex justify-center items-center'>
+      <div className='w-full h-fit p-10 flex justify-center items-center'>
         <div className='text-center'>
           <ChatAsset />
           <p className='text-xs max-w-[450px] mx-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium vero asperiores tempora iure ex autem quod. Porro animi pariatur distinctio?</p>

@@ -50,7 +50,7 @@ export default function Waiting() {
     }, [])
 
     function startGameHandler(id : number) {
-        navigate(`../game/${game}/room/${id}`)
+        navigate(`../${game}/room/${id}`)
     }
 
     if (!room) {

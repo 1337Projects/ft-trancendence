@@ -40,22 +40,22 @@ function SideBar() {
 		{
 			text: 'profile',
 			icon : <RxDashboard />,
-			link : `profile/${user?.user?.username}`
+			link : `dashboard/profile/${user?.user?.username}`
 		},
 		{
 			text: 'game',
 			icon : <GrGamepad />,
-			link : `game`
+			link : `dashboard/game`
 		},
 		{
 			text: 'chat',
 			icon : <HiOutlineChatBubbleLeftRight />,
-			link : `chat`
+			link : `dashboard/chat`
 		},
 		{
-			text: 'setings',
+			text: 'settings',
 			icon : <TbSettings2 />,
-			link : `setings`
+			link : `dashboard/settings`
 		},
 	]
 	

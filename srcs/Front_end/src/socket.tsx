@@ -238,7 +238,7 @@ class TournamentSocket extends WebSocketService {
                 this.callbacks["setRoom"]?.(data.response.room)
                 break;
             case 210:
-                // console.log(data.response.data)
+                console.log(data.response)
                 this.callbacks["tr_data"]?.(data.response.data)
                 setTimeout(() => {
                     this.sendMessage({"event" : "start"})
