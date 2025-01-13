@@ -8,12 +8,6 @@ from enum import Enum
 # from icecream import ic
 import sys
 
-
-
-
-
-
-
 # Define constants
     # Screen
 SCREEN_WIDTH = 550
@@ -27,8 +21,6 @@ BALL_RADIUS = 10
 BALL_SPEEDX = 5
 BALL_SPEEDY = 2
 FPS = 60
-
-
 
 class PaddlePlayer(Enum):
     PLAYER_1_PADDLE = 1
@@ -90,8 +82,6 @@ class Paddle:
 
         return False
 
-
-
 class Ball:
     def __init__(self):
         self.x = SCREEN_WIDTH // 2
@@ -118,11 +108,10 @@ class Ball:
         self.y = SCREEN_HEIGHT // 2
         self.speed_x *= -1
         self.speed_y *= -1
-            
         
-
 class PongGame:
     def __init__(self, game: Game, room_name):
+        self.status = 'waiting'
         self.width = SCREEN_WIDTH
         self.height = SCREEN_HEIGHT
         self.game = game
@@ -236,10 +225,17 @@ class PongGameManager:
         '''
         get the init stat of the game.
         '''
-        return self.games[room_name].get_init()
-
+        game = self.games[room_name]
+        game.status = 'start'
+        return game.get_init()
     def update(self, room_name):
         return self.games[room_name].update()
     
     def move_player(self, room_name: str, player_id: int, key: str):
         return self.games[room_name].move_player(player_id, key)
+
+    def game_is_starting(self, room_name):
+        return self.games[room_name].status == 'start'
+    
+    def end_game(self, room_name):
+        self.games[room_name].status = 'end'

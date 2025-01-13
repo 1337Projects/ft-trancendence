@@ -66,35 +66,49 @@ class GameConsumer(AsyncWebsocketConsumer):
     
     async def disconnect(self, close_code):
         """ Handles the WebSocket disconnection for a game."""
-        # ic(self.player.username, "Disconnecting", close_code)
-        # sys.stdout.flush()
-        if close_code == 1000:
-            await self.channel_layer.group_discard(
-                self.room_name,
-                self.channel_name
-            )
+        score = None
+        if self.player.id == self.game.player1.id:
+            score = {
+                'score1': 0,
+                'score2': 5
+            }
         else:
-            pass
-
+            score = {
+                'score1': 5,
+                'score2': 0
+            }
+        game_data = await self.end_game(score)
+        event = {
+            'type': 'broad_cast',
+            'event': 'end_game',
+            'game_data': game_data
+        }
+        self.pongGameManager.end_game(self.room_name)
+        await self.group_send(event)
+        await self.channel_layer.group_discard(
+            self.room_name,
+            self.channel_name
+        )
+        
+        
     async def game_loop(self):
         # ic(self.player.username, "Game loop started")
         # sys.stdout.flush()
-        game_status = 'start'
-        while game_status != 'end':
+        while self.pongGameManager.game_is_starting(self.room_name):
             await asyncio.sleep(1 / 40)
             score = self.pongGameManager.update(self.room_name)
             if score:
-                ic(score)
-                sys.stdout.flush()
+                # ic(score)
+                # sys.stdout.flush()
                 await self.send_score(score)
                 if score['score1'] >= 5 or score['score2'] >= 5:
-                    game_status = 'end'
                     game_data = await self.end_game(score)
                     event = {
                         'type': 'broad_cast',
                         'event': 'end_game',
                         'game_data': game_data
                     }
+                    self.pongGameManager.end_game(self.room_name)
                     await self.group_send(event)
             await self.send_stats()
 
@@ -120,8 +134,6 @@ class GameConsumer(AsyncWebsocketConsumer):
            'event': 'set_score',
            'score': score
        }
-       ic(event)
-       sys.stdout.flush()
        await self.group_send(event)
 
     async def group_send(self, event):
