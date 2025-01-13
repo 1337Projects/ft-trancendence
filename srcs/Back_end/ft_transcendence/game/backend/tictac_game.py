@@ -85,30 +85,27 @@ class TicTac:
     def store_match(self):
         if not self.match_stored:
             try:
-                loser = self.player1 if self.player1 != self.winner else self.player2
-                winner = User.objects.get(id=self.winner["id"]) if isinstance(self.winner, dict) else self.winner
-                loser = User.objects.get(id=loser["id"]) if isinstance(loser, dict) else loser
-                game = Game1.objects.get(id=self.game_id)
-                game.winner = winner
-                game.save()
+                user1 = User.objects.get(id=self.player1["id"]) if isinstance(self.player1, dict) else self.player1
+                user2 = User.objects.get(id=self.player2["id"]) if isinstance(self.player2, dict) else self.player2
 
-                winner_profile = Profile.objects.get(user=winner)
-                loser_profile = Profile.objects.get(user=loser)
+                if self.winner == None:
+                    self.store_game(winner=None)
+                else:
+                    self.store_game(winner=user1 if self.player1 == self.winner else user2)
 
-                winner_experience = 10
-                loser_experience = 5
+                player1_profile = Profile.objects.get(user=user1)
+                player2_profile = Profile.objects.get(user=user2)
 
-                ExperienceLog.objects.create(profile=winner_profile, experience_gained=winner_experience)
-                ExperienceLog.objects.create(profile=loser_profile, experience_gained=loser_experience)
+                winner_experience, loser_experience = self.get_amount_experience()
+                self.store_experience_log(player1_profile, player2_profile, winner_experience, loser_experience)
 
-                winner_total_experience = ExperienceLog.objects.filter(profile=winner_profile).aggregate(total=models.Sum('experience_gained'))['total']
-                loser_total_experience = ExperienceLog.objects.filter(profile=loser_profile).aggregate(total=models.Sum('experience_gained'))['total']
+                player1_total_experience, player2_total_experience = self.get_total_experience(player1=player1_profile, player2=player2_profile)
 
-                winner_profile.level = winner_total_experience // 100
-                loser_profile.level = loser_total_experience // 100
+                player1_profile.level = player1_total_experience / 100
+                player2_profile.level = player2_total_experience / 100        
 
-                winner_profile.save()
-                loser_profile.save()
+                player1_profile.save()
+                player2_profile.save()
 
                 self.match_stored = True
             except Game1.DoesNotExist:
@@ -118,8 +115,22 @@ class TicTac:
             except Profile.DoesNotExist:
                 print(f"Profile for user with id {self.winner['id']} or {self.loser['id']} does not exist")
 
-    def get_board(self):
-        return self.board
+    def store_experience_log(self, player1_profile, player2_profile, winner_experience, loser_experience):
+        ExperienceLog.objects.create(profile=player1_profile, experience_gained=winner_experience)
+        ExperienceLog.objects.create(profile=player2_profile, experience_gained=loser_experience)
+
+    def store_game(self, winner):
+        game = Game1.objects.get(id=self.game_id)
+        game.winner = winner
+        game.save()
+
+    def get_total_experience(self, player1, player2):
+        winner_total_experience = ExperienceLog.objects.filter(profile=player1).aggregate(total=models.Sum('experience_gained'))['total']
+        loser_total_experience = ExperienceLog.objects.filter(profile=player2).aggregate(total=models.Sum('experience_gained'))['total']
+        return winner_total_experience, loser_total_experience
+
+    def get_amount_experience(self):
+        return (10, 5) if self.winner is not None else (5, 5)
     
     def get_current_turn(self):
         return self.current_turn
@@ -151,3 +162,6 @@ class TicTac:
     
     def is_match_stored(self):
         return self.match_stored
+    
+    def get_board(self):
+        return self.board

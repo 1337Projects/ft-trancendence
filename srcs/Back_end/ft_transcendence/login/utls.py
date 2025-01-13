@@ -1,4 +1,4 @@
-import datetime, jwt, string, random, os, re
+import datetime, jwt, string, random, os, re, sys
 from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed
 from django.http import JsonResponse
@@ -29,7 +29,6 @@ def generate_access_token(user):
     return token
 
 def refresh_token_view(request):
-    """ hello world"""
     try:
         refresh_token = request.COOKIES.get('refresh_token')
         if not refresh_token:
@@ -48,7 +47,10 @@ def refresh_token_view(request):
         response = JsonResponse({'access_token': new_access_token})
         response.set_cookie('refresh_token', new_refresh_token, httponly=True, secure=True, samesite='Lax')
         return response
-    except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError, User.DoesNotExist, AuthenticationFailed):
+    except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError, User.DoesNotExist, AuthenticationFailed) as e:
+        print(e)
+        print('hello')
+        sys.stdout.flush()
         return JsonResponse({'error': 'Invalid refresh token'}, status=401)
 
 def logout(request):

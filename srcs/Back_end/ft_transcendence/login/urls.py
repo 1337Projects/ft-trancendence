@@ -19,5 +19,5 @@ urlpatterns = [
     path('confirmPassword/', confirm_password, name='confirm_password'),
     path('changePassword/', change_password, name='change_password'),
     path('blockUser/', block_user, name='block_user'),
-    path('unblockUser/', unblock_user, name='unblock_user'),
+    path('unblockUser/', unblock_user, name='unblock_user'),   
 ]

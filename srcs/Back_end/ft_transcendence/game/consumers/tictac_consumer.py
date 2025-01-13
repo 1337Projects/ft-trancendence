@@ -103,7 +103,6 @@ class TicTacConsumer(AsyncWebsocketConsumer):
                     except Exception as e:
                         error =  f"Error cancelling turn check task for game {self.game_id}: {e}"
                 await self.store_match()
-                sys.stdout.flush()
                 event = {
                     'type': 'broad_cast',
                     'data': {

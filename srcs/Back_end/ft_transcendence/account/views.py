@@ -31,12 +31,12 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])   
+@permission_classes([IsAuthenticated])
 def get_profile_infos(request):
     id = request.user.id
     if not Profile.objects.filter(user_id=id).exists():
         return Response({"message": "this user is not exist", "id": id}, status=400)
-    user = get_infos(id)  
+    user = get_infos(id)
     return Response({"data": user.data}, status=200)
 
 @api_view(['GET'])
@@ -50,7 +50,7 @@ def get_users(request):
 
 
 @api_view(['GET'])  
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_profile(request, username):
     if not User.objects.filter(username=username).exists():
         return Response({"message": "this user is not exist"}, status=400)
@@ -372,9 +372,10 @@ def set_lst_not_time(request):
         return Response({"error": str(e)}, status=400)
     
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_experiences(request):
-    user = request.user
+    # user = request.user
+    user = get_object_or_404(User,id=get_id(request))    
     try:
         profile = Profile.objects.get(user=user)
         experiences = ExperienceLog.objects.filter(profile=profile).order_by('-date_logged')[:10]
@@ -384,12 +385,13 @@ def get_experiences(request):
         return Response({'message': 'Profile does not exist', 'status': 404}, status=404)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_score_tictac(request):
-    user = request.user
+    # user = request.user
+    user = get_object_or_404(User,id=get_id(request)) 
     try:
         matches_won = Game1.objects.filter(winner=user).count()
-        matches_lost = Game1.objects.filter(Q(player1=user) | Q(player2=user),~Q(winner=user)).count()
+        matches_lost = Game1.objects.filter(Q(player1=user) | Q(player2=user), ~Q(winner=user), ~Q(winner__isnull=True)).count()
         total = Game1.objects.filter(Q(player1=user) | Q(player2=user)).count()
         data = {
             'matches_won': matches_won,
