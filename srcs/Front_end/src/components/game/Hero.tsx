@@ -10,7 +10,7 @@ export default function Hero() {
     const { color } = useContext(ApearanceContext) || {}
 
     return (
-        <div className="h-2/3 sm:h-1/2 max-h-[400px] sm:max-h-[400px]">
+        <div className="h-fit max-h-[400px] sm:max-h-[400px]">
             <div className="flex items-center justify-center h-full w-full rounded-sm p-1">
                 <div className="place-items-center flex items-center justify-center w-full">
                     <div className="centent w-[50%] h-full leading-snug px-8 flex justify-between items-center">

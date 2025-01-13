@@ -11,7 +11,7 @@ type MatchType = {
 export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
   return (
       <svg
-        className="max-w-full"
+        className="max-w-full h-auto"
         width="627"
         height="166"
         viewBox="0 0 627 166"
@@ -258,11 +258,10 @@ export function PlayerImage({ player } : {player : UserType | undefined}) {
     }
     return (
         <image 
-          href={url}  
-          transform="scale(0.00153846)"
+          href={url}
+          width="1"
+          height="1"
           preserveAspectRatio="none"
-          // width="1"
-          // height="1"
         />
     )
 }

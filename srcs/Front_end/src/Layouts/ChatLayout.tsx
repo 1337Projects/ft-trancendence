@@ -57,7 +57,7 @@ export default function ChatLayout() {
 
     return (
         <>
-            <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} h-full w-full overflow-scroll rounded-sm flex-grow`}>
+            <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} h-full w-full rounded-sm flex-grow`}>
                 <div className="flex w-full h-full ">
                     <div className={`h-full ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px]  ${menu ? "active-menu" : "non-active-menu"}`}>
                         <div className={`w-full h-fit px-2`}>
@@ -72,7 +72,7 @@ export default function ChatLayout() {
                         </div>
                     </div>
                     <div className={`flex-grow w-full`}>
-                        <div className={`w-full h-full p-2 `}>
+                        <div className={`w-full h-full p-2 overflow-scroll`}>
                             <ChatContextProvider value={value}>
                                 <Outlet />
                             </ChatContextProvider>

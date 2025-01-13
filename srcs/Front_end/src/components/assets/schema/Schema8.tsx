@@ -5,6 +5,7 @@ export default function Schema8({ rounds }) {
 
   return (
     <svg
+       className="max-w-full h-auto"
       width="879"
       height="358"
       viewBox="0 0 879 358"

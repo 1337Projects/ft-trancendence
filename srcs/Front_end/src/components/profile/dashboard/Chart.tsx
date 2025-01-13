@@ -6,17 +6,17 @@ import { ApearanceContext } from "../../../Contexts/ThemeContext"
 defaults.responsive = true
 defaults.maintainAspectRatio = false
 
+export function hexToRgb(hex : string, a : number) {
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	if (result && result.length >= 4) {
+		return  `rgba(${parseInt(result[1]!, 16)},${parseInt(result[2]!, 16)},${parseInt(result[3]!, 16)},${a})`;
+	}
+	return "rgba(0,0,0,0)";
+}
 export default function Chart() {
 
 	const {color} = useContext(ApearanceContext) || {}
 
-	function hexToRgb(hex : string, a : number) {
-		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		if (result && result.length >= 4) {
-			return  `rgba(${parseInt(result[1]!, 16)},${parseInt(result[2]!, 16)},${parseInt(result[3]!, 16)},${a})`;
-		}
-		return "rgba(0,0,0,0)";
-	}
 
 	
 	return(
