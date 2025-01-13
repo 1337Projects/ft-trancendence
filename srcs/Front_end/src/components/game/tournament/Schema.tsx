@@ -27,7 +27,6 @@ export default function Schema({data} : {data : TournamnetType}) {
             </div>
         )
     }
-
     return (
         <div className="p-2">
             <div className="w-fit mx-auto h-auto mt-16">

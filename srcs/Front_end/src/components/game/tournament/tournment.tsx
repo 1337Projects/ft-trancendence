@@ -9,7 +9,6 @@ import { FaAnglesUp, FaArrowRight } from "react-icons/fa6";
 import Schema, { TournamnetType } from "./Schema";
 import { UserType } from "@/types/user";
 import { MatchDataType } from "@/types/tournament";
-import { hexToRgb } from "@/components/profile/dashboard/Chart";
 
 
 export default function Tournment() {
