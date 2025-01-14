@@ -372,12 +372,11 @@ def set_lst_not_time(request):
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_experiences(request):
-    user = request.user
-    # user = get_object_or_404(User,id=get_id(request))   
+def get_experiences(request, username):
     try:
+        user = get_object_or_404(User, username=username)
         profile = Profile.objects.get(user=user)
-        experiences = ExperienceLog.objects.filter(profile=profile).order_by('-date_logged')[:10]
+        experiences = ExperienceLog.objects.filter(profile=profile).order_by('-date_logged')[:7][::-1]
         serializer = ExperienceLogSerializer(experiences, many=True)
         return Response({'data': serializer.data, 'status': 200}, status=200)
     except Profile.DoesNotExist:
@@ -385,10 +384,9 @@ def get_experiences(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_score_tictac(request):
-    user = request.user
+def get_score_tictac(request, username):
     try:
-        # user = get_object_or_404(User,id=get_id(request))
+        user = get_object_or_404(User,username=username)
         matches_won = Game1.objects.filter(winner=user).count()
         matches_lost = Game1.objects.filter(Q(player1=user) | Q(player2=user), ~Q(winner=user), ~Q(winner__isnull=True)).count()
         total = Game1.objects.filter(Q(player1=user) | Q(player2=user)).count()
@@ -406,10 +404,9 @@ def get_score_tictac(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_matchs(requset):
-    user = requset.user
+def get_matchs(requset, username):
     try:
-        # user = get_object_or_404(User, id=get_id(requset))
+        user = get_object_or_404(User, username=username)
         games = (Game1.objects.filter(player1=user) | Game1.objects.filter(player2=user)).order_by('-created_at')
         serializer = TicTacTeoSerializer(games, many=True)
         return Response({'data' : serializer.data, 'status': 200}, status=200)
