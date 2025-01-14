@@ -89,16 +89,20 @@ export default function TicTacTeo() {
     }, [])
 
     useEffect(() => {
-        let interval : NodeJS.Timeout;
+        let interval : NodeJS.Timeout | null = null;
         if (data.winner !== null) {
-            setTimeout(() => {
+            interval = setTimeout(() => {
                 navigate('/dashboard/game')
             }, 4000)
-        } 
+
+        }
 
         return () => {
-            clearInterval(interval)
+            if (interval) {
+                clearInterval(interval)
+            }
         }
+
     }, [data])
 
     function test(y, x) {

@@ -17,7 +17,7 @@ function FriendCard({friend} : {friend : UserType}) {
                     <h2 className='text-[16px] font-bold capitalize'>{friend?.username}</h2>
                     <p className='text-xs'>level {friend?.profile.level}</p>
                     <Link
-                        to={`../../profile/${friend?.username}`}  
+                        to={`./../../${friend?.username}`}  
                         className='text-[14px]'
                         
                     >

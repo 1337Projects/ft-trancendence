@@ -4,9 +4,13 @@ import MatchStatus from "./Status"
 
 
 export default function Dashboard() {
+
+
+	
+
 	return (
 		<div className='mx-2 flex h-fit'>
-			<div className='w-full mx-auto max-w-[700px] mt-10'>
+			<div className='w-full mx-auto max-w-[650px] mt-10'>
 				<div>
 					<Level />
 				</div>
