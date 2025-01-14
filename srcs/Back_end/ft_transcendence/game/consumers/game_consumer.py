@@ -38,9 +38,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         if status == 'end':
             await self.disconnect(10)
         game_is_full = await self.pongGameManager.add_player_to_game(self.game, self.player, self.room_name)
+
+        self.timeout_task = None
         if game_is_full:
             await self.init_game()
             asyncio.create_task(self.game_loop())
+            return
+
+        self.timeout_task = asyncio.create_task(self.player_timeout())
+
+    async def player_timeout(self):
+        await asyncio.sleep(3)  # Set timeout period (e.g., 30 seconds)
+        await self.disconnect(4001, timeout=True)  # Disconnect the player if timeout expires
     
     async def receive(self, text_data=None):
         data = json.loads(text_data)
@@ -60,20 +69,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             'stats': stats
         }
         await self.group_send(event)
- 
-    async def disconnect(self, close_code):
-        """ Handles the WebSocket disconnection for a game."""
-        score = None
+
+    async def disconnect_in_game(self):
         if self.player.id == self.game.player1.id:
-            score = {
-                'score1': 0,
-                'score2': 5
-            }
+            score = { 'score1': 0, 'score2': 5 }
         else:
-            score = {
-                'score1': 5,
-                'score2': 0
-            }
+            score = { 'score1': 5, 'score2': 0 }
         game_data = await self.end_game(score)
         event = {
             'type': 'broad_cast',
@@ -82,20 +83,58 @@ class GameConsumer(AsyncWebsocketConsumer):
         }
         self.pongGameManager.end_game(self.room_name)
         await self.group_send(event)
+        
+    async def timeout_disconnect(self):
+        if self.player.id == self.game.player1.id:
+            score = { 'score1': 5, 'score2': 0 }
+        else:
+            score = { 'score1': 0, 'score2': 5 }
+        game_data = await self.end_game(score)
+        event = {
+            'type': 'broad_cast',
+            'event': 'end_game',
+            'game_data': game_data
+        }
+        self.pongGameManager.end_game(self.room_name)
+        await self.group_send(event)
+
+    async def disconnect(self, close_code, timeout=False):
+        """
+        Handles the WebSocket disconnection for a game.
+
+        Args:
+            close_code (int): The WebSocket close code.
+            timeout (bool): A flag indicating if the disconnection was due to a timeout.
+
+        Behavior:
+            - If the disconnection is due to a timeout, the player is set as the winner.
+            - If the game is still ongoing, the game is ended and the player is set as the loser.
+            - If the game has already ended, no additional actions are taken.
+            - The player is removed from the channel group.
+        """
+        player = self.player.username
+        ic(player, close_code, timeout)
+        sys.stdout.flush()
+        if timeout:
+            # Set the player as the winner if they disconnect due to a timeout
+            # ic(player, 'timeout disconect game')
+            await self.timeout_diconnect()
+        elif self.pongGameManager.get_game_status(self.room_name) != 'end':
+            # ic(player, 'disconect in game')
+            await self.disconnet_in_game()
+        # else:
+        #     ic(player, 'disconect after game')
+
         await self.channel_layer.group_discard(
             self.room_name,
             self.channel_name
         )
 
     async def game_loop(self):
-        # ic(self.player.username, "Game loop started")
-        # sys.stdout.flush()
         while self.pongGameManager.game_is_starting(self.room_name):
             await asyncio.sleep(1 / 40)
             score = self.pongGameManager.update(self.room_name)
             if score:
-                # ic(score)
-                # sys.stdout.flush()
                 await self.send_score(score)
                 if score['score1'] >= 5 or score['score2'] >= 5:
                     game_data = await self.end_game(score)
@@ -110,7 +149,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def end_game(self, score):
-        # game: Game = Game.objects.get(id=self.game_id)
         self.game.score1 = score['score1']
         self.game.score2 = score['score2']
         if score['score1'] > score['score2']:
@@ -152,4 +190,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.group_send(event)
 
     async def broad_cast(self, event):
+        if event['event'] == 'init_game':
+            if self.timeout_task != None:
+                self.timeout_task.cancel()
+            # ic('timeout is cancled form ', self.player.username)
         await self.send(text_data=json.dumps(event))
