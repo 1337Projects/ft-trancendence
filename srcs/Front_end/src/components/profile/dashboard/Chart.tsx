@@ -1,7 +1,10 @@
-import { useContext } from "react"
-import {Line} from 'react-chartjs-2'
+import { useContext, useEffect, useState } from "react"
+import {Line, Bar} from 'react-chartjs-2'
 import {defaults}  from 'chart.js/auto'
 import { ApearanceContext } from "../../../Contexts/ThemeContext"
+import { useOutletContext } from "react-router-dom"
+import { UserType } from "@/types/user"
+import { UserContext } from "@/Contexts/authContext"
 
 defaults.responsive = true
 defaults.maintainAspectRatio = false
@@ -13,24 +16,74 @@ export function hexToRgb(hex : string, a : number) {
 	}
 	return "rgba(0,0,0,0)";
 }
+
+
+
 export default function Chart() {
 
 	const {color} = useContext(ApearanceContext) || {}
+	const {authInfos} = useContext(UserContext) || {}
+	const currentUser : UserType = useOutletContext()
+	const [data, setData] = useState({labels : null, datasets : null})
+
+	async function fetchData() {
+		try {
+			const res = await fetch(`${import.meta.env.VITE_API_URL}api/profile/experiences/${currentUser.username}/`, {
+				method : 'GET',
+				credentials : 'include',
+				headers : {
+					'Authorization' : `Bearer ${authInfos?.accessToken}`,
+				}
+			})
+			if (!res.ok) {
+				throw new Error('error')
+			} 
 
 
+			const {data} = await res.json()
+			const datasets = []
+			const labels = []
+			data.forEach((d) => {
+				// datasets.push(d.experience_gained)
+				datasets.push((datasets.length ? datasets[datasets.length - 1] : 0) + d.experience_gained)
+				const time = new Date(d.date_logged)
+				labels.push(`${time.getHours()}:${time.getMinutes()}`)
+			})
+			
+			// console.log(datasets, labels)
+			setData({labels, datasets})
+
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+
+	useEffect(() => {
+
+		if (currentUser) {
+			const timer = setTimeout(fetchData, 100)
+			return () => clearTimeout(timer)
+		}
+
+	}, [currentUser])
+
+	if (!data.datasets || !data.labels) {
+		return <div className="w-full h-[200px] bg-gray-300 animate-pulse rounded"></div>
+	}
 	
 	return(
 		<div className='w-full' >
-			<Line
+			<Bar
 			className="max-w-full w-full"
 				data={{
-					labels: ["Jan", "Fev", "Mar", "Avr", "Mai", "Jun"],
+					labels: data.labels,
 					datasets : [
 						{
 							label : "xp",
-							data : [0, 80, 70, 130, 100 , 150, 10],
-							tension : 0.4,
-							fill : "start",
+							data : data.datasets,
+							borderRadius : 4,
+							borderWidth: 2,
 							backgroundColor : (context) => {
 								const ctx = context.chart.ctx
 								const cc = ctx.createLinearGradient(0,60,0,300);
@@ -44,20 +97,10 @@ export default function Chart() {
 				}}
 				options={{
 					scales : {
-						x : {
-							grid : {
-								display : false
-							}
-						},
-						y : {
-							grid : {
-								display : false
-							}
-						}
+						x : {grid : {display : false}},
+						y : {grid : {display : false}}
 					},
-					layout : {
-						padding : 0
-					}
+					layout : {padding : 0}
 				}}
 				
 			/>

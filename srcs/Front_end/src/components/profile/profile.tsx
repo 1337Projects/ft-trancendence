@@ -91,7 +91,7 @@ export default function Profile() {
 					:
 					<>
 						<ProfileNav currentUser={currentUser} />
-						<Outlet />
+						<Outlet context={currentUser} />
 					</>
 				}
 			</div>
