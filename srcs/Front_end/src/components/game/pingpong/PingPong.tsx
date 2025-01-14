@@ -114,7 +114,7 @@ function PingPong() {
                             <Score data={game} score={score} />
                         </div>
                         <div className={`flex justify-center items-center mt-10 h-fit`}>
-                            { game && <Canvas game={game}/>}
+                            <Canvas game={game}/>
                         </div>
                     </div>
                 </div> 

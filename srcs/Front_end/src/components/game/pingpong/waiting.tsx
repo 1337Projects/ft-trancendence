@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { roomSocket, notificationSocket } from '@/socket'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
@@ -26,6 +26,7 @@ export default function Waiting() {
     const { type, game } = useParams()
     const searchUrl = new URLSearchParams(window.location.search)
     let room_id = searchUrl.get('room_id')
+    const timeoutRef = useRef(null)
 
     // console.log(room_id)
     
@@ -46,13 +47,20 @@ export default function Waiting() {
         return () => {
             clearTimeout(timer)
             roomSocket.close()
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
         }
     }, [])
 
+    // function startGameHandler(id : number) {
+    //     navigate(`../${game}/room/${id}`)
+    // }
     function startGameHandler(id : number) {
-        navigate(`../${game}/room/${id}`)
+        timeoutRef.current = setTimeout(() => {
+            navigate(`../${game}/room/${id}`)
+        }, 3000)
     }
-
     if (!room) {
         return (
             <div className={`w-full ${ theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-white"}  p-2 mt-2 rounded-sm h-[100vh] flex items-center justify-center`}>

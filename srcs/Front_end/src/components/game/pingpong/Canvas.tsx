@@ -71,6 +71,12 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
         }
     }, [game]);
 
+    if (!game) {
+        return (
+            <div className='w-full h-[200px] rounded bg-gray-300 animate-pulse'></div>
+        )
+    }
+
     return (
         <div 
             ref={canvaParentRef}
