@@ -14,13 +14,13 @@ class GameConsumer(AsyncWebsocketConsumer):
     pongGameManager = PongGameManager()
 
     async def connect(self):
-        await self.accept()
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.player = self.scope['user']
         self.room_name = f'game_{self.game_id}'
 
         self.game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
 
+    
         player1_id = await database_sync_to_async(lambda: self.game.player1.id)()
         player2_id = await database_sync_to_async(lambda: self.game.player2.id)()
 
@@ -29,14 +29,15 @@ class GameConsumer(AsyncWebsocketConsumer):
             return
 
         self.channel_layer = get_channel_layer()
+        status = self.pongGameManager.get_game_status(self.room_name)
+        if status == 'end':
+            await self.disconnect(10)
+            return
+        await self.accept()
         await self.channel_layer.group_add(
             self.room_name,
             self.channel_name
         )
-        # await self.accept()
-        status = self.pongGameManager.get_game_status(self.room_name)
-        if status == 'end':
-            await self.disconnect(10)
         game_is_full = await self.pongGameManager.add_player_to_game(self.game, self.player, self.room_name)
 
         self.timeout_task = None
@@ -117,13 +118,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         sys.stdout.flush()
         if timeout:
             # Set the player as the winner if they disconnect due to a timeout
-            # ic(player, 'timeout disconect game')
-            await self.timeout_diconnect()
+            ic(player, 'timeout disconect game')
+            await self.timeout_disconnect()
         elif self.pongGameManager.get_game_status(self.room_name) != 'end':
-            # ic(player, 'disconect in game')
-            await self.disconnet_in_game()
-        # else:
-        #     ic(player, 'disconect after game')
+            ic(player, 'disconect in game')
+            await self.disconnect_in_game()
+        else:
+            ic(player, 'disconect after game')
 
         await self.channel_layer.group_discard(
             self.room_name,
