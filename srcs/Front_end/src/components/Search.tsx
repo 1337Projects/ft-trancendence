@@ -177,7 +177,7 @@ export default function Search() {
                 </div>
                 <div className={`
                     ${appearence?.theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText border-darkText/10"}
-                   w-[170px] border-[0px] h-full z-10 rounded-sm ml-2 shadow-sm cursor-pointer`}>
+                   w-[170px] border-[0px] h-full z-10 rounded-sm ml-2 shadow-sm`}>
                     <div className="flex items-center justify-center h-full">
                         <div className="infos">
                             <div className="top flex text-small mb-1 justify-between items-center">
@@ -196,7 +196,7 @@ export default function Search() {
 }
 
 function Nots({ notsRef, open } : {open : boolean, notsRef : React.RefObject<HTMLUListElement>}) {
-
+    const { user, authInfos } = useContext(UserContext) || {}
     const { notifications, hasNew, setHasNew , fetchMoreNotifications, hasMore } = useContext(NotificationsContext) || {}
     const { theme } = useContext(ApearanceContext) || {}
 
@@ -211,7 +211,6 @@ function Nots({ notsRef, open } : {open : boolean, notsRef : React.RefObject<HTM
     };
 
     useEffect(() => {
-        // console.log(notifications)
         const container = notsRef.current;
         if (container) {
             container.addEventListener("scroll", handleScroll);
@@ -224,12 +223,50 @@ function Nots({ notsRef, open } : {open : boolean, notsRef : React.RefObject<HTM
         };
     }, [fetchMoreNotifications, hasMore]);
 
-    useEffect(() => {
-        console.log(open)
-        if (hasNew && open) {
+    function isNew(lst_time : string, not_time : string) {
+        return new Date(not_time) > new Date(lst_time)
+    }
+    
+    async function UpdateTime(time : string) {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/setLastNotTime/time/`, {
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization' : `Bearer ${authInfos?.accessToken}`
+                },
+                body : JSON.stringify({time}),
+                credentials : 'include'
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to update last notification time')
+            }
+
             setHasNew!(0)
+        } catch (error) {
+            console.log(error instanceof Error ? error.toString() : "Failed to update last notification time")
         }
-    }, [open])
+    }
+
+    useEffect(() => {
+
+        const timer = setTimeout(() => {
+            if (
+                user &&
+                notifications && 
+                hasNew &&
+                open &&
+                notifications.length > 0 &&
+                isNew(user?.last_notification_seen, notifications[0]!.created_at)
+            ) {
+                UpdateTime(notifications[0]!.created_at)
+                setHasNew!(0)
+            }
+        }, 300)
+
+        return () => clearTimeout(timer)
+    }, [open, notifications, hasNew])
 
     return (
         <ul ref={notsRef} className={`${theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} overflow-scroll border-[.3px]  rounded p-2 absolute top-12 right-[-10px] w-[300px] h-fit max-h-[400px] z-10`}>
