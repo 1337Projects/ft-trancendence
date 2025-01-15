@@ -47,6 +47,7 @@ function Home() {
   )
 }
 
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/'>
@@ -103,8 +104,8 @@ const router = createBrowserRouter(
   
 function ChatImg() {
   return (
-      <div className='w-full h-fit p-10 flex justify-center items-center'>
-        <div className='text-center'>
+      <div className='w-full h-full min-h-fit p-10 flex justify-center items-center overflow-scroll'>
+        <div className='text-center h-fit'>
           <ChatAsset />
           <p className='text-xs max-w-[450px] mx-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium vero asperiores tempora iure ex autem quod. Porro animi pariatur distinctio?</p>
         </div>

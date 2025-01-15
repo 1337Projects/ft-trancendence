@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { tournamentSocket } from "@/socket"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from "@/Contexts/authContext"
-import { InviteFriendsToPlay, PlayerGameCard } from '../pingpong/waiting'
+import { PlayerGameCard } from '../pingpong/waiting'
 
 export default function WaitingTournment() {
 
@@ -16,7 +16,7 @@ export default function WaitingTournment() {
     const [ loading, setLoading ] = useState(false)
     const [ num, setNum ] = useState(3)
     const { authInfos } = useContext( UserContext ) || {}
-    const timeoutRef = useRef(null)
+    const timeoutRef = useRef<null | NodeJS.Timeout>(null)
     
 
 
@@ -55,7 +55,7 @@ export default function WaitingTournment() {
     
 
     return (
-        <div style={{height : `calc(100vh - 60px)`}} className={`relative mt-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full rounded p-2 flex items-center`}>
+        <div className={`relative h-full min-h-fit ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full rounded p-2 flex items-center`}>
             <div className="max-w-[600px] mx-auto h-fit">
                 <div className="text-center p-2 w-fit ml-[50%] translate-x-[-50%]">
                     <h1 className={`text-3xl font-bold uppercase`}>Waiting for tournament to start</h1>

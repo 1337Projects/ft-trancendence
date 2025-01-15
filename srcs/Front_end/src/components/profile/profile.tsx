@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useContext } from "react"
 import { ApearanceContext } from '@/Contexts/ThemeContext';
 import { Banner } from './Hero';
-import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
+import { NavLink, Outlet, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
 import { FaUserFriends } from 'react-icons/fa';
 import { RiProfileFill } from 'react-icons/ri';
@@ -103,23 +103,34 @@ export default function Profile() {
 function ProfileNav({ currentUser } : { currentUser : UserType | null}) {
 
 	const { theme , color } = useContext(ApearanceContext) || {}
-	const location = useLocation()
-	const isDashboard = !location.pathname.includes('friends')
+
+	const ActiveStyle = {
+		color
+	}
 
 	return (
 		<div className='px-4'>
 			<ul className='flex items-center py-4 text-[12pt]'>
-				<li style={{color : isDashboard ? color : ""}} className={`mr-6 cursor-pointer`} >
-					<Link to={`./../${currentUser?.username}`} className='flex items-center'>
+				<li  className={`mr-6 cursor-pointer`} >
+					<NavLink 
+						end
+						style={({isActive}) => isActive ? ActiveStyle : {}} 
+						to={`./../${currentUser?.username}`} 
+						className='flex items-center'
+					>
 						<RiProfileFill className='mr-2' />
 						Dashboard
-					</Link>
+					</NavLink>
 				</li>
-				<li style={{color : isDashboard ? "" : color}} className='cursor-pointer'>
-					<Link to="friends" className='flex items-center'>
+				<li className='cursor-pointer'>
+					<NavLink 
+						style={({isActive}) => isActive ? ActiveStyle : {}}
+						to="friends" 
+						className='flex items-center'
+					>
 						<FaUserFriends className='mr-2' />
 						friends
-					</Link>
+					</NavLink>
 				</li>
 			</ul>
 			<hr className={`${theme == 'light' ? "border-black/30" : "border-white/30"}`} />

@@ -46,12 +46,26 @@ export default function Setings() {
             <div className="w-full md:flex px-10 max-w-[800px] mx-auto">
                 <div className="w-full  md:w-[300px] md:mr-4 px-2">
                     <ul className={`grid grid-cols-3 content-start p-2 md:grid-cols-1 gap-4 min-h-[45px] h-full border-[1px] ${theme == 'light' ? "border-black/10" : "border-white/10"}  rounded-md`}>
-                        {listItems.map(it => <ListItem key={it.text} item={it} isActive={it.text == item} handler={setItem}  />)}
+                        {
+                            listItems.map(it => 
+                            (<ListItem 
+                                key={it.text} 
+                                item={it} 
+                                isActive={it.text == item} 
+                                handler={setItem}  
+                            />))
+                        }
                     </ul>
                 </div>
                 <div className="flex-grow w-full">
-
-                    {item === 'Profile' && <Profile /> || item === 'Security' && <Security /> || item === 'Apperance' && <Apperance />}
+                    {
+                        item === 'Profile' && 
+                            <Profile /> || 
+                        item === 'Security' &&
+                            <Security /> ||
+                        item === 'Apperance' && 
+                            <Apperance />
+                    }
                 </div>
             </div>
         </div>

@@ -26,14 +26,11 @@ export default function Waiting() {
     const { type, game } = useParams()
     const searchUrl = new URLSearchParams(window.location.search)
     let room_id = searchUrl.get('room_id')
-    const timeoutRef = useRef(null)
+    const timeoutRef = useRef<null | NodeJS.Timeout>(null)
 
-    // console.log(room_id)
-    
     if (!room_id) { 
         room_id = 'any'
     }
-
 
     useEffect(() => {
 
@@ -53,9 +50,7 @@ export default function Waiting() {
         }
     }, [])
 
-    // function startGameHandler(id : number) {
-    //     navigate(`../${game}/room/${id}`)
-    // }
+    
     function startGameHandler(id : number) {
         timeoutRef.current = setTimeout(() => {
             navigate(`../${game}/room/${id}`)
@@ -76,23 +71,20 @@ export default function Waiting() {
     }
 
     return (
-        <div 
-            className={`w-full flex mt-2 h-[100vh] rounded-sm`}>
-            <div className={`flex justify-center items-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-full`}>
-                <div className="h-fit relative">
-                    <div className="text-center uppercase">
-                        <h1 className='font-bold'>waiting for player to join</h1>
-                        <h1 className="mt-2">{room?.room?.status}</h1>
+        <div className={`flex justify-center items-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-full min-h-fit rounded overflow-scroll`}>
+            <div className="h-fit relative">
+                <div className="text-center uppercase">
+                    <h1 className='font-bold'>waiting for player to join</h1>
+                    <h1 className="mt-2">{room?.room?.status}</h1>
+                </div>
+                <InviteFriendsToPlay data={room?.room} />
+                <div className="flex items-center mt-20 justify-center">
+                    <PlayerGameCard player={room?.room?.players[0]} />
+                    <div className="w-[100px] text-center">
+                        <h1 className='text-[40px]'>vs</h1>
+                        <h1 className='mt-2'>0 / 0</h1>
                     </div>
-                    <InviteFriendsToPlay data={room?.room} />
-                    <div className="flex items-center mt-20 justify-center">
-                        <PlayerGameCard player={room?.room?.players[0]} />
-                        <div className="w-[100px] text-center">
-                            <h1 className='text-[40px]'>vs</h1>
-                            <h1 className='mt-2'>0 / 0</h1>
-                        </div>
-                        <PlayerGameCard player={room?.room?.players[1]} />
-                    </div>
+                    <PlayerGameCard player={room?.room?.players[1]} />
                 </div>
             </div>
         </div>
@@ -111,26 +103,56 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
     const [invite, setInvite] = useState(false)
     const { color } = useContext(ApearanceContext) || {}
     const { friends } = useContext(UserContext) || {}
+    const FriendsListRef = useRef<HTMLDivElement | null>(null)
+    const buttonRef = useRef<HTMLButtonElement | null>(null)
+
+    const myFriends = friends?.filter(fr => fr.status === 'accept')
+
+    useEffect(() => {
+
+        function handleClick(e : MouseEvent) {
+            if (
+                FriendsListRef.current &&
+                !FriendsListRef.current.contains(e.target as Node) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(e.target as Node)
+            ) {
+                setInvite(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClick)
+        return () => {
+            document.removeEventListener('mousedown', handleClick)
+        }
+    }, [])
 
     return (
         <div className="relative">
             <div className='w-full flex items-center bg-white text-gray-700 h-[50px] border-[1px] mt-8 rounded'>
                 <div className='w-full  flex items-center justify-between px-2'>
                     <h1 className='ml-4 w-[300px] overflow-hidden h-[18px] text-[10px] uppercase'>http://localhost:5173/dashboard/game/waiting/?room={data?.name}</h1>
-                    <button onClick={() => {
-                        setInvite(prev => !prev)
-                    }} style={{background : color}} className='border-white/80 text-white border-[1px] p-1 rounded-full text-[12px] h-[35px] w-[60px] uppercase'>{invite ? "invited" : "invite"}</button>
+                    <button 
+                        ref={buttonRef} 
+                        onClick={() => {
+                            setInvite(prev => !prev)
+                        }} 
+                        style={{background : color}} 
+                        className='border-white/80 text-white border-[1px] p-1 rounded-full text-[12px] h-[35px] w-[60px]'
+                    >
+                        {invite ? "close" : "invite"}
+                    </button>
                 </div>
             </div>
             {
                 invite && 
-                <div className="bg-white absolute top-[52px] left-0 text-lightText w-full h-[150px] p-2 mt-2 rounded">
+                <div ref={FriendsListRef} className="bg-white border-[.4px] border-black/20 overflow-scroll absolute top-[52px] left-0 text-lightText w-full h-fit max-h-[150px] p-2 mt-2 rounded">
                     {
-                        friends?.length ?
+                        myFriends?.length ?
                         <ul className="h-full overflow-scroll">
                             {
-                                friends.map((fr, index) => 
-                                    <li key={index} >
+                                myFriends.map((fr, index) => 
+                                    <li key={index} className="my-2">
                                         <FriendItem room={data.name} friendShip={fr} />
                                     </li>)
                             }
@@ -152,22 +174,31 @@ function FriendItem({friendShip, room} : { friendShip : FirendType, room : strin
     const user = friendShip.sender.username === authInfos?.username ? friendShip.receiver : friendShip.sender
     const [ invited, setInvited ] = useState(false)
     const { type, game } = useParams()
-
+    const timeoutRef = useRef<null | NodeJS.Timeout>(null)
 
     function InviteHandler() {
-        console.log(user)
-        notificationSocket.sendMessage({
-            event: "send_request",
-            sender: user.username, // Your logged-in user's username
-            receiver: authInfos?.username, // Username of the friend to whom the request is sent
-            message: `${authInfos?.username} invited you to play`,
-            link: `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/${type}/${game}/?room_id=${room}`
-        });
-        setInvited(true)
-        setTimeout(() => {
-            setInvited(false)
-        }, 5000)
+        if (!invited) {
+            notificationSocket.sendMessage({
+                event: "send_request",
+                sender: user.username,
+                receiver: authInfos?.username,
+                message: `${authInfos?.username} invited you to play`,
+                link: `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/${type}/${game}/?room_id=${room}`
+            });
+            setInvited(true)
+            timeoutRef.current = setTimeout(() => {
+                setInvited(false)
+            }, 5000)
+        }
     }
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
+        }
+    }, [])
 
     return (
         <div className={`h-[40px] flex justify-between items-center ${invited && "opacity-30"} p-2`}>
@@ -178,7 +209,11 @@ function FriendItem({friendShip, room} : { friendShip : FirendType, room : strin
                     <p className="text-xs">level : {user.profile.level}</p>
                 </div>  
             </div>
-            <button style={{background : color}} onClick={InviteHandler} className="p-2 px-4 text-xs text-white rounded">invite</button>
+            <button 
+                style={{background : color}} 
+                onClick={InviteHandler} 
+                className="p-2 px-4 text-xs text-white rounded"
+            >invite</button>
         </div>
     )
 }

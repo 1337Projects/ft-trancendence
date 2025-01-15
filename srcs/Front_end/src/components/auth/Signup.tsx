@@ -64,8 +64,8 @@ export default function Signup() {
     }
 
     return (
-        <div className="h-full overflow-y-scroll flex items-center justify-center">
-            <div className="h-fit h-full max-h-[700px]">
+        <div className="h-full overflow-scroll flex items-center justify-center">
+            <div className="h-full max-h-[700px]">
                 <div className="heading w-full p-1 text-center">
                     <h1 className="text-[40pt] font-semibold uppercase">Hello</h1>
                     <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>

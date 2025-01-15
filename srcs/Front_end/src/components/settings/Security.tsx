@@ -89,7 +89,7 @@ function ChangePassword() {
 
 export default function Security() {
     const [changePass, setChangePass] = useState(true)
-    const [twoF, setTwoF] = useState(false)
+    const [twoF, setTwoF] = useState(true)
     const { color, theme } = useContext(ApearanceContext) || {}
     const [showPopup, setShowPopup] = useState(false);
     const [showCheck, setCheck] = useState(false);

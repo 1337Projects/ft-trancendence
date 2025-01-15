@@ -3,9 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import SideBar from '../components/sidebar'
 import Search from '../components/Search'
 import Notification from '../components/Notifications'
-import Notifications, {Invites} from '../components/Notifications'
-
-import LastMatch from '../components/profile/LastMatch'
+import {Invites} from '../components/Notifications'
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../Contexts/authContext'
 import { TbLogout } from 'react-icons/tb'
@@ -168,7 +166,7 @@ export default function DashboardLayout() {
   
         }
       } catch (err) {
-        // console.log(err.toString())
+        console.log(err.toString())
       }
     }
 
@@ -216,10 +214,9 @@ export default function DashboardLayout() {
               </div>
             </div>
 
-            <div className="side ml-2 flex-grow max-w-[300px] min-w-[300px] hidden lg:block">
+            <div className="side ml-2 h-full overflow-scroll flex-grow max-w-[300px] min-w-[300px] hidden lg:block">
               <Notification />
               <Invites />
-              <LastMatch />    
             </div>
           </main>
         </div>

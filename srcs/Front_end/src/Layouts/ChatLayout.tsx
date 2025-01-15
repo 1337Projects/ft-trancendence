@@ -57,9 +57,9 @@ export default function ChatLayout() {
 
     return (
         <>
-            <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} h-full w-full rounded-sm flex-grow`}>
+            <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} h-full min-h-fit w-full rounded-sm flex-grow`}>
                 <div className="flex w-full h-full ">
-                    <div className={`h-full ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px]  ${menu ? "active-menu" : "non-active-menu"}`}>
+                    <div className={`h-full overflow-scroll ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px]  ${menu ? "active-menu" : "non-active-menu"}`}>
                         <div className={`w-full h-fit px-2`}>
                             <div className={`text-[16pt] w-full h-[70px] flex items-center  ${menu ? "justify-end" : "justify-center"}`}>
                                 <div className="w-fit" onClick={() => setMenu(prev => !prev)}>
@@ -67,7 +67,7 @@ export default function ChatLayout() {
                                 </div>
                             </div>
                             <Friends menu={menu} handler={setMenu} />
-                            <hr className={` ${theme == 'light' ? "border-black/20" : "border-white/20"}`} />
+                            <hr className={`mt-2 ${theme == 'light' ? "border-black/20" : "border-white/20"}`} />
                             <ConversationsList menu={menu} data={cnvs!} />
                         </div>
                     </div>

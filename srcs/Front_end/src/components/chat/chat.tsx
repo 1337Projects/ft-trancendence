@@ -83,9 +83,9 @@ export function Friends({menu, handler} : {menu : boolean, handler : React.Dispa
     const { theme } = useContext(ApearanceContext) || {}
     const myFriends = friends?.filter(f => f.status == 'accept')
 
-    if (!myFriends || myFriends.length == 0) {
+    if (!myFriends || myFriends.length === 0) {
         return (
-            <div className={`text-xs text-center w-full ${menu ? "block test-style" : "hidden"} ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.6px] rounded-md p-6`}>no firends yet</div>
+            <div className={`text-xs capitalize text-center w-full ${menu ? "block test-style" : "hidden"} ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.6px] rounded p-6`}>you have no friends yet</div>
         )
     } 
 
