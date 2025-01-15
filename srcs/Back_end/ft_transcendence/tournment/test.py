@@ -116,27 +116,26 @@ class Builder:
         return  root.val.data
     
 
-    def get_player_match(self, level, id):
-        if level >= len(self.rounds_list):
-            return None
-        my_list = self.rounds_list[level]
-        for item in my_list:
-            if isinstance(item.val, Player):
-                continue
-            try:
-                left_node = item.left
-                if left_node and isinstance(left_node.val, Player):
-                    user = left_node.val.data
-                    if user['id'] == id and isinstance(item.right.val, Player):
-                        return item
-                    
-                right_node = item.right
-                if right_node and isinstance(right_node.val, Player):
-                    user = right_node.val.data
-                    if user['id'] == id and isinstance(item.left.val, Player):
-                        return item
-            except:
-                pass
+    def get_player_match(self, id):
+
+        for level in self.rounds_list:
+            for item in level:
+                if isinstance(item.val, Player):
+                    continue
+                try:
+                    left_node = item.left
+                    if left_node and isinstance(left_node.val, Player):
+                        user = left_node.val.data
+                        if user['id'] == id and isinstance(item.right.val, Player):
+                            return item
+                        
+                    right_node = item.right
+                    if right_node and isinstance(right_node.val, Player):
+                        user = right_node.val.data
+                        if user['id'] == id and isinstance(item.left.val, Player):
+                            return item
+                except:
+                    pass
         return None
 
 
