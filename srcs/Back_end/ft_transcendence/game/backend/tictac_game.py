@@ -164,3 +164,10 @@ class TicTac:
     
     def get_board(self):
         return self.board
+
+    def get_best_move(self, board):
+        for row in range(3):
+            for col in range(3):
+                if board[row][col] == '':
+                    return {'row': row, 'col': col}
+        return None

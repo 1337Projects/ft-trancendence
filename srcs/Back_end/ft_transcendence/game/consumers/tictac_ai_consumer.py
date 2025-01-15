@@ -49,6 +49,8 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         self.tictac.turn_start_time()
         if self.game_id not in self.turn_check_tasks:
             self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
+        if self.tictac.get_current_turn() == self.ai:
+            asyncio.create_task(self.turn_ai())
 
     async def disconnect(self, close_code):
         if self.game_id in self.turn_check_tasks:
@@ -111,6 +113,42 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                 }
                 await self.channel_layer.group_send(self.room_name, event)
                 self.tictac.turn_start_time()
+                self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
+                print(self.tictac.get_current_turn())
+                sys.stdout.flush()
+                if self.tictac.get_current_turn() == self.ai:
+                    asyncio.create_task(self.turn_ai())
+
+    async def turn_ai(self):
+        await asyncio.sleep(2)
+        board = self.tictac.get_board()
+        move = self.tictac.get_best_move(board)
+        status = self.tictac.play_turn(row=move['row'], col=move['col'], sender=self.ai['id'])
+        print('---turn-ai----')
+        print(status)
+        sys.stdout.flush()
+        if "winner" in status:
+            event = {
+                'type': 'broad_cast',
+                'data': {
+                    'winner': status["winner"],
+                    'board': self.tictac.get_board(),
+                },
+                'status': 203
+            }
+            await self.channel_layer.group_send(self.room_name, event)
+        elif "turn" in status:
+            event = {
+                'type': 'broad_cast',
+                'data': {
+                    'user': self.tictac.get_current_turn(),
+                    'board': self.tictac.get_board(),
+                },
+                'status': 202
+            }
+            await self.channel_layer.group_send(self.room_name, event)
+            self.tictac.turn_start_time()
+            if self.game_id not in self.turn_check_tasks:
                 self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
 
     @database_sync_to_async
