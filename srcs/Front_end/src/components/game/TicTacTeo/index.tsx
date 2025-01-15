@@ -1,16 +1,14 @@
+import Alert from "@/components/ui/Alert";
 import { UserContext } from "@/Contexts/authContext"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { ticTacTeoSocket } from "@/socket"
 import { useContext, useEffect, useState } from "react"
-import { IoMdCloseCircleOutline } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom"
 
 
-function GameCardItem({cell} : {cell : string}) {
+export function GameCardItem({cell} : {cell : string}) {
 
     const {theme} = useContext(ApearanceContext) || {}
-
-   
 
     return (
         <div className={`w-full h-full cursor-pointer rounded ${theme === 'light' ? "bg-lightItems" : "bg-darkItems/60 backdrop-blur-md"} flex justify-center items-center text-3xl`}> 
@@ -20,7 +18,7 @@ function GameCardItem({cell} : {cell : string}) {
 }
 
 
-function Players({data, current} : {data : any, current : any}) {
+export function Players({data, current} : {data : any, current : any}) {
 
     const { color } = useContext(ApearanceContext) || {}
 
@@ -76,6 +74,7 @@ export default function TicTacTeo() {
 
 
     useEffect(() => {
+        
         const timer = setTimeout(() => {
             ticTacTeoSocket.addCallback("init", setData)
             ticTacTeoSocket.addCallback("time", setTime)
@@ -116,7 +115,7 @@ export default function TicTacTeo() {
     
     if (!data.players || !data.board || !data.user) {
         return (
-            <div>loading ....</div>
+            <div>loading...</div>
         )
     }
     
@@ -127,12 +126,12 @@ export default function TicTacTeo() {
             <div className="w-[500px] h-fit p-2">
                 {
                     data.error && 
-                    <div className="w-full h-[100px]">
-                        <div className="bg-red-500 text-white p-4 rounded relative">
-                            <p className="text-xs">{data.error}</p>
-                            <IoMdCloseCircleOutline className="absolute top-2 right-2" />
-                        </div>
-                    </div>
+                    (<div className="h-[100px]">
+                        <Alert 
+                        alert={{message : [data.error], type : "error"}} 
+                        alertHandler={null} 
+                    />
+                    </div>)
                 }
                 <div className="w-full h-fit relative">
                     <Players data={players} current={user} />
@@ -150,23 +149,19 @@ export default function TicTacTeo() {
                     }
                     <ul className={`grid grid-cols-1 h-full gap-1`}>
                         {
-                            board.map((row, i) => {
-                                return (
-                                    <li key={i} className="h-full">
-                                        <ul className="grid h-full grid-cols-3 gap-1">
-                                            {
-                                                row.map((cell, j) => {
-                                                    return (
-                                                        <li onClick={() => test(i, j)} key={j} className="h-full">
-                                                            <GameCardItem cell={cell} />
-                                                        </li>
-                                                    )
-                                                })
-                                            }
-                                        </ul>
-                                    </li>
-                                )
-                            })
+                            board.map((row, i) => (
+                                <li key={i} className="h-full">
+                                    <ul className="grid h-full grid-cols-3 gap-1">
+                                        {
+                                            row.map((cell, j) => (
+                                                <li onClick={() => test(i, j)} key={j} className="h-full">
+                                                    <GameCardItem cell={cell} />
+                                                </li>
+                                            ))
+                                        }
+                                    </ul>
+                                </li>
+                            ))
                         }   
                     </ul>
                 </div>

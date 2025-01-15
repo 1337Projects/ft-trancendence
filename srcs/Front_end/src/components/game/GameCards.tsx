@@ -63,6 +63,7 @@ export default function Cards({color} : {color : string}) {
                 {/* <Card color={color} link="/" img="/game/leo-vs-computer.jpg" text="vs Computer"/> */}
                 <Card color={color} link="waiting/room/private/ping-pong" img="/game/leo-vs-friend.jpg" text="vs friend"/>
                 <Card color={color} link="waiting/room/public/tic-tac-toe" img="/game/random-tic.jpg" text="tic tak teo"/>
+                <Card color={color} link="tic-tac-toe/room/ai" img="/game/random-tic.jpg" text="tic tak teo computer"/>
             </div>
         </div>
     )

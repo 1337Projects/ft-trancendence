@@ -16,6 +16,7 @@ export default function TournmentDialog() {
 
 
     async function createHandler() {
+        if (!data.name) return ;
         const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/create/`, {
             method : 'POST',
             headers : { 
@@ -75,16 +76,12 @@ export default function TournmentDialog() {
                 {
                     !created ? 
                     <div>
-                        <button 
-        
-                            className={`px-4 mr-2 h-[40px] rounded text-sm border-[.3px] ${theme == 'light' ? "border-black/20" : "border-white/20"}`}
-                            onClick={() => setOpen!(false)}
-                        >cancel</button>
-                        <button 
-                            onClick={createHandler}
-                            style={{background: color}}
-                            className="px-4 h-[40px] rounded text-sm text-white"
-                        >create</button>
+                        <button className={`px-4 mr-2 h-[40px] rounded text-sm border-[.3px] ${theme == 'light' ? "border-black/20" : "border-white/20"}`} onClick={() => setOpen!(false)}>
+                            cancel
+                        </button>
+                        <button onClick={createHandler} style={{background: color}} className="px-4 h-[40px] rounded text-sm text-white">
+                            create
+                        </button>
                     </div>
                     :
                     <div>
