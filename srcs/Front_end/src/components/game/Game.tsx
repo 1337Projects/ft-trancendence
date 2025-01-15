@@ -6,15 +6,26 @@ import { GiSandsOfTime } from "react-icons/gi";
 import Hero from './Hero'
 import { DialogContext } from "@/Contexts/DialogContext"
 import { TrItem } from "./tournament/Events"
-import { IoIosMailUnread } from "react-icons/io"
 import Cards from "./GameCards";
 import { UserContext } from "@/Contexts/authContext"
+import { useSearchParams } from "react-router-dom";
+import { LuHistory } from "react-icons/lu";
 
-function CatButton({icon, text, categorie, handler}) {
+export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
+
+    const [searchParams, setSearchParams] = useSearchParams()
+    const category = searchParams.get('category')
+
     const {color, theme} = useContext(ApearanceContext) || {}
-    const t = categorie === text ? color : ""
+    const selectedColor = (category === text || (!category && (text === 'latest' || text === 'all'))) ? color : "" 
     return (
-        <button style={{color:t, borderColor : t}} className={`border-[.1px] ${theme == 'light' ? "border-black" : "border-white"} h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} onClick={()=> handler(text)}>
+        <button 
+            style={{color:selectedColor, borderColor : selectedColor}} 
+            className={`border-[.1px] ${theme == 'light' ? "border-black" : "border-white"} h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} 
+            onClick={()=> {
+                setSearchParams({category : text})
+            }}
+        >
             <p className="mr-2">{text}</p>
             <div className="text-[12pt]">
                 {icon}
@@ -23,13 +34,30 @@ function CatButton({icon, text, categorie, handler}) {
     )
 }
 
-export function Categories({categorie, Handler}) {
+const categories = [
+    {
+        text : 'latest',
+        icon : <MdOutlineTipsAndUpdates />
+    },
+    {
+        text : 'ongoing',
+        icon : <GiSandsOfTime />
+    },
+    {
+        text : 'ended',
+        icon : <LuHistory />
+    }
+]
+
+export function Categories() {
     
     return (
         <div className="w-full h-[30px] flex">
-            <CatButton text="latest" icon={<MdOutlineTipsAndUpdates />} categorie={categorie} handler={Handler} />
-            <CatButton text="ongoing" icon={<GiSandsOfTime />} categorie={categorie}  handler={Handler} />
-            <CatButton text="ended" icon={<IoIosMailUnread />} categorie={categorie}  handler={Handler} />
+            {
+                categories.map((item, index) => 
+                    <CatButton key={index} text={item.text} icon={item.icon} />
+                )
+            }
         </div>
     )
 }
@@ -40,6 +68,8 @@ export default function Game() {
     const { authInfos } = useContext(UserContext) || {}
     const [tournments, setTournments] = useState([])
     const { open } = useContext(DialogContext) || {}
+
+    // const [searchParams, setSearchParams] = useSearchParams()
 
     MyUseEffect(async () => {
         try {
@@ -73,7 +103,7 @@ export default function Game() {
                     <div className="px-10 mt-16">
                         <h1 className="text-xl font-bold">Avialable Tournments :</h1>
                         <div className="w-full h-[50px] flex items-center mt-6">
-                            <Categories categorie="latest" Handler={null} />
+                            <Categories />
                         </div>
                         <div  className="w-full mt-6 h-fit">
                             {

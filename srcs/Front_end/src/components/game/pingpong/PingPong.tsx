@@ -28,11 +28,20 @@ function PingPong() {
     const [ matchResult, setMatchResult ] = useState(null)
     const navigate = useNavigate()
 
+    const navigateBack = () => {
+        if (tournament_id) {
+            navigate(`/dashboard/game/tournment/${tournament_id}/`)
+        } else {
+            navigate(`/dashboard/game/`)
+        }
+    }
+
     useEffect(() => {
         const timer = setTimeout(() => {
             gameSocket.addCallback("init", init);
             gameSocket.addCallback("set_score", set_score);
             gameSocket.addCallback("set_match_result", setMatchResult);
+            gameSocket.addCallback("back", navigateBack)
             gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game_id}/?token=${authInfos?.accessToken}`);
         }, 200);
 
@@ -54,47 +63,12 @@ function PingPong() {
 
 
     useEffect(() => {
-
         if (matchResult) {
-            setTimeout(() => {
-                if (tournament_id) {
-                    tournamentSocket.sendMessage({"event" : "upgrade", "result" : matchResult})
-                    navigate(`/dashboard/game/tournment/${tournament_id}/`)
-                } else {
-                    navigate(`/dashboard/game/`)
-                }
-            }, 2000)
+            tournamentSocket.sendMessage({"event" : "upgrade", "result" : matchResult})
+            const timer = setTimeout(navigateBack, 2000)
+            return () =>  clearTimeout(timer)
         }
-
     }, [matchResult])
-    // useEffect(() => {
-    //     const timer = setTimeout(() => {
-    //         if (canvasRef.current && data) {
-    //             const  ctx = canvasRef?.current?.getContext("2d");
-    //             gameRef.current = new Game(ctx, setData);
-    //             gameRef.current.setup(data)
-    //             if (data.ended) {
-    //                 gameSocket.close()
-    //                 setClosed(true)
-    //                 setTimeout(() => {
-    //                     tournamentSocket.sendMessage({"event" : "upgrade", "winner_id" : data.winner})
-    //                     if (tournament_id) {
-    //                         navigate(`/dashboard/game/tournment/${tournament_id}/`)
-    //                     } else {
-    //                         navigate(`/dashboard/game/`)
-    //                     }
-    //                 }, 2000)
-    //             }
-    //         }
-    //     }, 50)
-
-    //     return () =>  {
-    //         // delete gameRef.current;
-    //         gameRef.current = null
-    //         clearTimeout(timer)
-           
-    //     }
-    // }, [data])
 
     const { theme } = useContext(ApearanceContext) || {}
 
@@ -109,7 +83,7 @@ function PingPong() {
                             <h1 className="text-[30pt] font-bold uppercase">{matchResult.winner == user.id ? "victory" : "ko"} </h1>
                         </div>
                     }
-                    <div>
+                    <div className="w-full">
                         <div className='flex justify-center px-4'>
                             <Score data={game} score={score} />
                         </div>

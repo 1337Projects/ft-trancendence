@@ -43,6 +43,9 @@ export class WebSocketService {
         }
 
         this.errorCallback = (error : Event) => {
+            if (this.callbacks["back"]) {
+                this.callbacks["back"](error)
+            }
             console.log("WebSocket error:", error);
         }
 
@@ -68,11 +71,11 @@ export class WebSocketService {
 
     connect(url : string) {
 
-        console.log(url)
+        // console.log(url)
 
         if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+            
             this.socket = new WebSocket(url);
-
             this.socket.onopen = this.openCallback
             this.socket.onclose = this.closeCallback        
             this.socket.onerror = this.errorCallback
@@ -238,7 +241,6 @@ class TournamentSocket extends WebSocketService {
                 this.callbacks["setRoom"]?.(data.response.room)
                 break;
             case 210:
-                console.log(data.response)
                 this.callbacks["tr_data"]?.(data.response.data)
                 setTimeout(() => {
                     this.sendMessage({"event" : "start"})

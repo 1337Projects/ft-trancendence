@@ -1,5 +1,5 @@
 
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import MyUseEffect from "@/hooks/MyUseEffect"
 import { useNavigate, useParams } from "react-router-dom"
 import { tournamentSocket } from "@/socket"
@@ -16,7 +16,7 @@ export default function WaitingTournment() {
     const [ loading, setLoading ] = useState(false)
     const [ num, setNum ] = useState(3)
     const { authInfos } = useContext( UserContext ) || {}
-
+    const timeoutRef = useRef(null)
     
 
 
@@ -26,7 +26,12 @@ export default function WaitingTournment() {
     }, [])
 
     useEffect(() => {
-        return () => tournamentSocket.close()
+        return () => {
+            tournamentSocket.close()
+            if (timeoutRef.current){
+                clearTimeout(timeoutRef.current)
+            }
+        }
     }, [])
 
     MyUseEffect(() => {
@@ -41,7 +46,7 @@ export default function WaitingTournment() {
         setRoomData(data)
         if (data.players.length == data.data.max_players) {
             setLoading(true)
-            setTimeout(() => {
+            timeoutRef.current = setTimeout(() => {
                 tournamentSocket.sendMessage({"event" : "start_tournament"})
                 navigate(`/dashboard/game/tournment/${id}/`)
             }, 1000 * 3)

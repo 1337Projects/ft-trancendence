@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MyUseEffect from '@/hooks/MyUseEffect'
 import { tournamentSocket } from "@/socket";
 import { UserContext } from '@/Contexts/authContext'
@@ -18,6 +18,7 @@ export default function Tournment() {
     const [ tournamentData, setTournamentData ] = useState<TournamnetType | null>(null)
     const navigate = useNavigate()
     const [ ended, setEnded ] = useState<UserType[] | null>(null)
+    const { tournament_id } = useParams()
  
 
     function EndHandler(data : UserType[]) {
@@ -45,7 +46,7 @@ export default function Tournment() {
     const matchHandler = (match_data : MatchDataType) => {
         if (match_data && user) {
             if (match_data.player1.username == user?.username || match_data.player2.username == user?.username) {
-                navigate(`play/${match_data.id}`)
+                navigate(`/dashboard/game/tournment/${tournament_id}/play/${match_data.id}`)
             }
         }
     }
