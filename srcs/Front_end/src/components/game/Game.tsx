@@ -10,6 +10,7 @@ import Cards from "./GameCards";
 import { UserContext } from "@/Contexts/authContext"
 import { useSearchParams } from "react-router-dom";
 import { LuHistory } from "react-icons/lu";
+import { TournamentDataType } from "./tournament/Schema";
 
 export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
 
@@ -66,10 +67,17 @@ export function Categories() {
 export default function Game() {
     const appearence = useContext(ApearanceContext)
     const { authInfos } = useContext(UserContext) || {}
-    const [tournments, setTournments] = useState([])
+    const [tournments, setTournments] = useState<TournamentDataType[]>([])
     const { open } = useContext(DialogContext) || {}
+    const [searchParams, ] = useSearchParams()
 
-    // const [searchParams, setSearchParams] = useSearchParams()
+
+    const categorie = searchParams.get('category')
+
+    const filtredTournments = (categorie && categorie != 'latest')  ? 
+        tournments.filter((item) => item.tourament_status === categorie) :
+        tournments.filter((item) => item.tourament_status === 'waiting')
+
 
     MyUseEffect(async () => {
         try {
@@ -107,8 +115,8 @@ export default function Game() {
                         </div>
                         <div  className="w-full mt-6 h-fit">
                             {
-                                tournments.length ?
-                                tournments.map((item, index) => 
+                                filtredTournments.length ?
+                                filtredTournments.map((item, index) => 
                                     <div className="" key={index}>
                                         <TrItem data={item} />
                                     </div> )
