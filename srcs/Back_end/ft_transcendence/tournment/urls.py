@@ -1,6 +1,8 @@
 from django.urls import  path
-from . import consumers
+from .consumers.MatchMakingConsumer import MatchMakeingConsumer
+from .consumers.TournamentConsumer import TournmentConsumer
 from . import views
+
 
 urlpatterns = [
     path('create/', views.TournmentViews.as_view({"post" : "create_tournment"})),
@@ -8,6 +10,6 @@ urlpatterns = [
 ]
 
 websocket_urlpatterns = [
-    path('wss/tournment/<str:id>/',  consumers.TournmentConsumer.as_asgi()),
-    path('wss/join/tournment/<str:id>/',  consumers.MatchMakeingConsumer.as_asgi()),
+    path('wss/tournment/<str:id>/',  TournmentConsumer.as_asgi()),
+    path('wss/join/tournment/<str:id>/',  MatchMakeingConsumer.as_asgi()),
 ]

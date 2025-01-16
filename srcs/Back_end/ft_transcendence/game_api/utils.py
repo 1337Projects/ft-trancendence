@@ -1,6 +1,6 @@
 import math
 import json
-from tournment.utils import debug
+from tournment.utils.utils import debug
 import random
 
 class Game:

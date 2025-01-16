@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import GameRequest
-from datetime import timedelta, datetime
-from tournment.utils import debug
+from tournment.utils.utils import debug
 
 
 

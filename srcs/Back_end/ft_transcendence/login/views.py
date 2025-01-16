@@ -224,7 +224,7 @@ def change_password(request):
 
 
 
-from tournment.utils import debug
+from tournment.utils.utils import debug
 
 @api_view(["post"])
 @permission_classes([IsAuthenticated])
