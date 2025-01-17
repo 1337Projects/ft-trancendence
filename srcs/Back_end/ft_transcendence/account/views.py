@@ -67,7 +67,7 @@ def set_infos(request):
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
     bio = user_infos_dict.get('profile')['bio']
-    if check_duplicate_username(username=username, id=id):
+    if check_duplicate_username(username=username, id=user_id):
         return Response({"status": 400, "res": get_infos(user_id).data ,"message": "This username is duplicated"}, status=400)
     User.objects.filter(id=user_id).update(
         username=username,
@@ -308,7 +308,6 @@ def disable_2fa(request):
         return JsonResponse({'status': '200', 'message': 'Secret key deleted successfully'}, status=200)
     except Exception as e:
         return Response({"error": str(e)}, status=401)
-
 
 # @api_view(['GET'])
 # def get_others_friends(request, username):
