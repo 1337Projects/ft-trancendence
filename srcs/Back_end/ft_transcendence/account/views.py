@@ -34,18 +34,16 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_profile_infos(request):
-    id = request.user.id
-    if not Profile.objects.filter(user_id=id).exists():
+    if not Profile.objects.filter(user_id=request.user.id).exists():
         return Response({"message": "this user is not exist", "id": id}, status=400)
-    user = get_infos(id)
+    user = get_infos(request.user.id)
     return Response({"data": user.data}, status=200)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_users(request):
-    id = request.user.id
     username = request.GET.get('query')
-    users = User.objects.filter(username__startswith=username).exclude(id=id)
+    users = User.objects.filter(username__startswith=username).exclude(id=request.user.id)
     serializer = UserWithProfileSerializer(users, many=True)
     return Response({"data": serializer.data}, status=200)
 
@@ -62,10 +60,9 @@ def get_profile(request, username):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def set_infos(request):
-    id = request.user.id
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
-    user_id = id
+    user_id = request.user.id
     username = user_infos_dict.get('username')
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
@@ -94,167 +91,168 @@ def set_infos(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def friends_infos(request):
-    id = request.user.id
-    # user = User.objects.get(id=id)
-    user = get_object_or_404(User, id=id)
-    friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user))
-    serializer = UserWithFriendsSerializer(friends, many=True)
-    return Response({"data" : serializer.data})
+    try:
+        user = get_object_or_404(User, id=request.user.id)
+        friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user))
+        serializer = UserWithFriendsSerializer(friends, many=True)
+        return Response({"data" : serializer.data})
+    except Exception as e:
+        return Response({"error": str(e)}, status=401)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_friend(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    sender = User.objects.get(id=id)
-    if 'data' in request.data:
-        data = request.data.get('data')
-        receiver_id = data.get('id')
-        receiver = User.objects.get(id=receiver_id)
-        if Friends.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)):
-            return Response({"message": "there is a relation between him"}, status=400)
+    try:
+        sender = User.objects.get(id=request.user.id)
+        if 'data' in request.data:
+            data = request.data.get('data')
+            receiver_id = data.get('id')
+            receiver = User.objects.get(id=receiver_id)
+            if Friends.objects.filter(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender)):
+                return Response({"message": "there is a relation between him"}, status=400)
+            else:
+                new_relation = Friends.objects.create(status="waiting", sender=sender, receiver=receiver)
+                new_relation.save()
+                serializer = UserWithFriendsSerializer(new_relation)
+                return Response({"res": serializer.data}, status=200)
         else:
-            new_relation = Friends.objects.create(status="waiting", sender=sender, receiver=receiver)
-            new_relation.save()
-            serializer = UserWithFriendsSerializer(new_relation)
-            return Response({"res": serializer.data}, status=200)
-    else:
-        return Response({"message": "there is no data recieved"}, status=400)
+            return Response({"message": "there is no data recieved"}, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def accept_friend(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    receiver = User.objects.get(id=id)
-    if 'data' in request.data:
-        data = request.data.get('data')
-        sender_id = data.get('id')
-        sender = User.objects.get(id=sender_id)
-        relationship = Friends.objects.filter(sender=receiver, receiver=sender)
-        if relationship:
-            return Response({"message": "can't serve this request"}, status=400)
-        try:
-            relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
-            relation_friend.status = "accept"
-            relation_friend.save()
-            serializer = UserWithFriendsSerializer(relation_friend)
-            return Response({"res": serializer.data}, status=200)
-        except ObjectDoesNotExist:
-            return Response({"message": "the Friends object does not exist"}, status=400)
-    return Response({"message": "there is no data recieved"}, status=400)
+    try:
+        receiver = User.objects.get(id=request.user.id)
+        if 'data' in request.data:
+            data = request.data.get('data')
+            sender_id = data.get('id')
+            sender = User.objects.get(id=sender_id)
+            relationship = Friends.objects.filter(sender=receiver, receiver=sender)
+            if relationship:
+                return Response({"message": "can't serve this request"}, status=400)
+            try:
+                relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
+                relation_friend.status = "accept"
+                relation_friend.save()
+                serializer = UserWithFriendsSerializer(relation_friend)
+                return Response({"res": serializer.data}, status=200)
+            except ObjectDoesNotExist:
+                return Response({"message": "the Friends object does not exist"}, status=400)
+        return Response({"message": "there is no data recieved"}, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def reject_friend(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    receiver = User.objects.get(id=id)
-    if 'data' in request.data:
-        data = request.data.get('data')
-        sender_id = data.get('id')
-        sender = User.objects.get(id=sender_id)
-        relationship = Friends.objects.filter(sender=receiver, receiver=sender)
-        if relationship:
-            return Response({"message": "can't serve this request"}, status=400)
-        try:
-            relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
-            query_id = relation_friend.id
-            relation_friend.delete()
-            return Response({"message": "reject successful", "id": query_id}, status=200)
-        except ObjectDoesNotExist:
-            return Response({"message": "the Friends object does not exist"}, status=400)
-    return Response({"message": "there is no data recieved"}, status=400)
+    try:
+        receiver = User.objects.get(id=request.user.id)
+        if 'data' in request.data:
+            data = request.data.get('data')
+            sender_id = data.get('id')
+            sender = User.objects.get(id=sender_id)
+            relationship = Friends.objects.filter(sender=receiver, receiver=sender)
+            if relationship:
+                return Response({"message": "can't serve this request"}, status=400)
+            try:
+                relation_friend = Friends.objects.get(sender=sender, receiver=receiver)
+                query_id = relation_friend.id
+                relation_friend.delete()
+                return Response({"message": "reject successful", "id": query_id}, status=200)
+            except ObjectDoesNotExist:
+                return Response({"message": "the Friends object does not exist"}, status=400)
+        return Response({"message": "there is no data recieved"}, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def unfriend(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    sender = User.objects.get(id=id)
-    if 'data' in request.data:
-        data = request.data.get('data')
-        receiver_id = data.get('id')
-        receiver = User.objects.get(id=receiver_id)
-        try :
-            relationship = Friends.objects.get(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender))
-            query_id = relationship.id 
-            relationship.delete()
-            return Response({"message": "unfriend successul", "id": query_id}, status=200)
-        except ObjectDoesNotExist:
-            return Response({"message": "the Friends object does not exist"}, status=400)
-    return Response({"message": "there is no data recieved"}, status=400)
+    try:
+        sender = User.objects.get(id=request.user.id)
+        if 'data' in request.data:
+            data = request.data.get('data')
+            receiver_id = data.get('id')
+            receiver = User.objects.get(id=receiver_id)
+            try :
+                relationship = Friends.objects.get(Q(sender=sender, receiver=receiver) | Q(sender=receiver, receiver=sender))
+                query_id = relationship.id 
+                relationship.delete()
+                return Response({"message": "unfriend successul", "id": query_id}, status=200)
+            except ObjectDoesNotExist:
+                return Response({"message": "the Friends object does not exist"}, status=400)
+        return Response({"message": "there is no data recieved"}, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
 
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_friends(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    user = User.objects.get(id=id)
-    friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept')
-    serializer = UserWithFriendsSerializer(friends, many=True)
-    return Response({"data" : serializer.data})
+    try:
+        user = User.objects.get(id=request.user.id)
+        friends = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept')
+        serializer = UserWithFriendsSerializer(friends, many=True)
+        return Response({"data" : serializer.data})
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def set_2fa(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    user = User.objects.get(id=id)
-    if 'data' in request.data:
-        data = request.data.get('data')
-        if 'topt' in data:
-            code = data.get('topt')
-            if validate_totp(user=user, otp=code):
-                user.twofa = True
-                user.save()
-                return Response({"status": 200, "message": "Successful"}, status=200)
+    try:
+        user = User.objects.get(id=request.user.id)
+        if 'data' in request.data:
+            data = request.data.get('data')
+            if 'topt' in data:
+                code = data.get('topt')
+                if validate_totp(user=user, otp=code):
+                    user.twofa = True
+                    user.save()
+                    return Response({"status": 200, "message": "Successful"}, status=200)
+                else:
+                    return Response({"status": 401, "message": "Invalid TOPT"}, status=401)
             else:
-                return Response({"status": 401, "message": "Invalid TOPT"}, status=401)
+                return Response({"status": 400, "message": "Invalild data"}, status=400)
         else:
             return Response({"status": 400, "message": "Invalild data"}, status=400)
-    else:
-        return Response({"status": 400, "message": "Invalild data"}, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=401)
 
 @csrf_exempt
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def generate_2fa_qr_code(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    user = User.objects.get(id=id)
-    totp = pyotp.TOTP(pyotp.random_base32())
-    user.secret_key = totp.secret
-    user.save()
-    uri = totp.provisioning_uri(name=user.email, issuer_name="FT_TRANCANDENCE")
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(uri)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
+    try:
+        user = User.objects.get(id=request.user.id)
+        totp = pyotp.TOTP(pyotp.random_base32())
+        user.secret_key = totp.secret
+        user.save()
+        uri = totp.provisioning_uri(name=user.email, issuer_name="FT_TRANCANDENCE")
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(uri)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
 
-    img_io = io.BytesIO()
-    img.save(img_io, format='PNG')
-    img_io.seek(0)
+        img_io = io.BytesIO()
+        img.save(img_io, format='PNG')
+        img_io.seek(0)
 
-    file_name = f"{uuid.uuid4()}-qr_code_image.png"
-    default_storage.save(file_name, ContentFile(img_io.read()))
+        file_name = f"{uuid.uuid4()}-qr_code_image.png"
+        default_storage.save(file_name, ContentFile(img_io.read()))
 
-    delete_qr_code_image(file_name, schedule=20)
+        delete_qr_code_image(file_name, schedule=20)
 
-    return Response({"qr_code_image": f"{os.environ.get('API_URL')}media/" + file_name}, status=200)
+        return Response({"qr_code_image": f"{os.environ.get('API_URL')}media/" + file_name}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=401)
 
 
 @api_view(['POST'])
@@ -290,26 +288,26 @@ def check_topt(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def is_2fa_enable(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    user = get_object_or_404(User, id=id)
-    if user.twofa:
-        return Response({"twofa" : "True"}, status=200)
-    else:
-        return Response({"twofa" : "False"}, status=200)
+    try:
+        user = get_object_or_404(User, id=request.user.id)
+        if user.twofa:
+            return Response({"twofa" : "True"}, status=200)
+        else:
+            return Response({"twofa" : "False"}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=401)
     
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def disable_2fa(request):
-    id = get_id(request)
-    if not id:
-        return Response({"message": "Invalid token"}, status=400)
-    user = get_object_or_404(User, id=id)
-    user.twofa = False
-    user.secret_key = 'DEFAULT_SECRET'
-    user.save()
-    return JsonResponse({'status': '200', 'message': 'Secret key deleted successfully'}, status=200)
+    try:
+        user = get_object_or_404(User, id=request.user.id)
+        user.twofa = False
+        user.secret_key = 'DEFAULT_SECRET'
+        user.save()
+        return JsonResponse({'status': '200', 'message': 'Secret key deleted successfully'}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=401)
 
 
 # @api_view(['GET'])
