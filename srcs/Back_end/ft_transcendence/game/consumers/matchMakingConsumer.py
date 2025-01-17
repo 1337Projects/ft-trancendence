@@ -6,7 +6,7 @@ import secrets
 import json
 from account.serializer import UserWithProfileSerializer
 from game.serializers import GameSerializer
-from tournment.utils import debug
+from tournment.utils.utils import debug
 
 
 

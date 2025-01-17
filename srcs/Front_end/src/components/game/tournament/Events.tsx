@@ -24,9 +24,12 @@ export function TrItem({data} : {data : TournamentDataType}) {
                             </h1>
                         </div>
                     </div>
-                    <div className="w-full h-[80px] flex justify-end items-center p-2">
-                        <Link style={{ background: color }} className="uppercase text-sm text-white flex justify-center items-center w-[100px] h-[40px] rounded" to={`tournment/waiting/${data.id}`}>join</Link>
-                    </div>
+                    {
+                        data.tourament_status === 'waiting' && 
+                        <div className="w-full h-[80px] flex justify-end items-center p-2">
+                            <Link style={{ background: color }} className="uppercase text-sm text-white flex justify-center items-center w-[100px] h-[40px] rounded" to={`tournment/waiting/${data.id}`}>join</Link>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

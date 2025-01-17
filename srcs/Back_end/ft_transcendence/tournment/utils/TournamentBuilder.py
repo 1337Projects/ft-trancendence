@@ -1,5 +1,7 @@
-from tournment.utils import debug
+from tournment.utils.utils import debug
 import copy
+
+
 class TreeNode:
     def __init__(self, data, depth):
         self.left = None
@@ -7,7 +9,9 @@ class TreeNode:
         self.val = data
         self.depth = depth
 
-# waiting | started |  finished
+    def __str__(self):
+        return self.vat
+
 class Match:
     def __init__(self):
         self.status = 'waiting'
@@ -22,7 +26,7 @@ class  Player:
 
     def __str__(self):
         return self.data
-
+    
 class Builder:
 
     def __init__(self):
@@ -49,7 +53,6 @@ class Builder:
     def build_tree(self, index):
         if index == 0:
             root = TreeNode(Player(self.data.pop()), index)
-            # self.rounds_list[index].append(root)
             return root
         root = TreeNode(Match(), index)
         self.rounds_list[index].append(root)
@@ -57,17 +60,13 @@ class Builder:
         root.right = self.build_tree(index-1)
         return root
     
+
     def get_val2(self, root):
         if isinstance(root.val, Match):
             return 'unknown'
         return  root.val.data["username"]
     
-    def myprint(self, root):
-        if root == None:
-            return
-        debug(f"print tree node {root.depth} => {self.get_val2(root)}")
-        self.myprint(root.left)
-        self.myprint(root.right)
+
 
 
     def get_rounds(self):
@@ -77,25 +76,18 @@ class Builder:
             for match in r:
                 rounds[-1].append({"player1" : self.get_val(match.left), "player2" : self.get_val(match.right)})
         rounds[0].append({"winner" : self.get_val(self.rounds_list[-1][0])})
-        # rounds.reverse()
-        # rounds.pop()
-        # rounds.reverse()
         return rounds
     
 
     def tournament_rank(self, root):
         queue = []
-
         if root is None:
             return self.rank
-        
         queue.append(root)
         if not root.val.data in self.rank:
             self.rank.append(root.val.data)
         while queue:
-
             current_node = queue.pop(0)
-
             if current_node.left:
                 queue.append(current_node.left)
                 if not current_node.left.val.data in self.rank:
@@ -104,7 +96,6 @@ class Builder:
                 queue.append(current_node.right)
                 if not current_node.right.val.data in self.rank:
                     self.rank.append(current_node.right.val.data)
-
         return self.rank
         
     
@@ -117,7 +108,6 @@ class Builder:
     
 
     def get_player_match(self, id):
-
         for level in self.rounds_list:
             for item in level:
                 if isinstance(item.val, Player):
@@ -139,7 +129,3 @@ class Builder:
         return None
 
 
-
-if __name__ == "__main__":
-    for i in range(0, 10, 2):
-        print(f"{i} - {i + 1}")

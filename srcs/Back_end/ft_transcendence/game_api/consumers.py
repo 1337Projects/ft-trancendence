@@ -14,7 +14,7 @@ from account.serializer import UserWithProfileSerializer
 from .serializers import MatchSerializer
 from .models import Match
 
-from tournment.utils import debug
+from tournment.utils.utils import debug
 
 ROOMDATA_STATUS = 201
 GAMEDATA_STATUS = 202
