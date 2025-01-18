@@ -62,15 +62,15 @@ def get_profile(request, username):
 def set_infos(request):
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
-    user_id = request.user.id
-    username = user_infos_dict.get('username')
+    user_id = id
+    # username = user_infos_dict.get('username')
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
     bio = user_infos_dict.get('profile')['bio']
-    if check_duplicate_username(username=username, id=user_id):
-        return Response({"status": 400, "res": get_infos(user_id).data ,"message": "This username is duplicated"}, status=400)
+    # if check_duplicate_username(username=username, id=id):
+    #     return Response({"status": 400, "res": get_infos(user_id).data ,"message": "This username is duplicated"}, status=400)
+        # username=username,
     User.objects.filter(id=user_id).update(
-        username=username,
         first_name=first_name,
         last_name=last_name,
     )
