@@ -4,15 +4,16 @@ import time
 from copy import deepcopy
 from .tictac_game import TicTac
 
-def get_ai_move(board):
+def get_ai_move(board, ai_symbol):
     best_score = float('-inf')
     best_move = None
+    human_symbol = 'X' if ai_symbol == 'O' else 'O'
     
     for row in range(3):
         for col in range(3):
             if board[row][col] == '':
-                board[row][col] = 'O'
-                score = minimax(board, 0, False)
+                board[row][col] = ai_symbol
+                score = minimax(board, False, ai_symbol, human_symbol)
                 board[row][col] = ''
                 if score > best_score:
                     best_score = score
@@ -20,12 +21,12 @@ def get_ai_move(board):
     
     return best_move
 
-def minimax(board, depth, is_maximizing):
+def minimax(board, is_maximizing, ai_symbol, human_symbol):
     result = check_winner(board)
     if result is not None:
         return {
-            'O': 1, 
-            'X': -1,
+            ai_symbol: 1, 
+            human_symbol: -1,
             'tie': 0
         }[result]
     
@@ -34,8 +35,8 @@ def minimax(board, depth, is_maximizing):
         for row in range(3):
             for col in range(3):
                 if board[row][col] == '':
-                    board[row][col] = 'O'
-                    score = minimax(board, depth + 1, False)
+                    board[row][col] = ai_symbol
+                    score = minimax(board, False, ai_symbol, human_symbol)
                     board[row][col] = ''
                     best_score = max(score, best_score)
         return best_score
@@ -44,8 +45,8 @@ def minimax(board, depth, is_maximizing):
         for row in range(3):
             for col in range(3):
                 if board[row][col] == '':
-                    board[row][col] = 'X'
-                    score = minimax(board, depth + 1, True)
+                    board[row][col] = human_symbol
+                    score = minimax(board, True, ai_symbol, human_symbol)     
                     board[row][col] = ''
                     best_score = min(score, best_score)
         return best_score
@@ -64,10 +65,9 @@ def check_winner(board):
     
     for line in winning_combinations:
         values = [board[r][c] for r, c in line]
-        if values.count('X') == 3:
-            return 'X'
-        if values.count('O') == 3:
-            return 'O'
+        symbol = values[0]
+        if symbol != '' and all(cell == symbol for cell in values):
+            return symbol
 
     if all(board[i][j] != '' for i in range(3) for j in range(3)):
         return 'tie'

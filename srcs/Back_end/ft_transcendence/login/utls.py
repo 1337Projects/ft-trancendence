@@ -48,9 +48,6 @@ def refresh_token_view(request):
         response.set_cookie('refresh_token', new_refresh_token, httponly=True, secure=True, samesite='Lax')
         return response
     except (jwt.exceptions.DecodeError, jwt.exceptions.ExpiredSignatureError, User.DoesNotExist, AuthenticationFailed) as e:
-        print(e)
-        print('hello')
-        sys.stdout.flush()
         return JsonResponse({'error': 'Invalid refresh token'}, status=401)
 
 def logout(request):

@@ -19,6 +19,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         self.groups = []
         self.user_channels = {}
         self.task_ai = None
+        self.ai_symbol = None
 
     async def connect(self):
         self.player = await self.get_user()
@@ -36,16 +37,18 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_name, self.channel_name)
 
         self.tictac = TicTac(self.game_id, self.player, self.ai)
+        first_turn = self.tictac.get_current_turn()
+        self.ai_symbol = 'X' if first_turn == self.ai else 'O'
+        
         event = {
             'type': 'broad_cast',
             'data': {
                 'players' : [self.player, self.ai],
-                'user' : self.tictac.get_current_turn(),
+                'user' : first_turn,
                 'board': self.tictac.get_board()
             }, 
             'status': 201
         }
-
         await self.channel_layer.group_send(self.room_name, event)
         await self.accept()
 
@@ -109,12 +112,8 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
             elif "turn" in status:
                 if self.game_id in self.turn_check_tasks:
                     try:
-                        print("ENTRY TO REMOVE")
-                        print(self.turn_check_tasks)
                         self.turn_check_tasks[self.game_id].cancel()
                         del self.turn_check_tasks[self.game_id]
-                        print("REMOVE")
-                        print(self.turn_check_tasks)
                     except Exception as e:
                         error = f"Error cancelling turn check task for game {self.game_id}: {e}"
                 event = {
@@ -174,7 +173,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                 self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
 
     async def   ai_move(self, board):
-        return get_ai_move(board)
+        return get_ai_move(board, self.ai_symbol)
 
     @database_sync_to_async
     def get_user(self):
