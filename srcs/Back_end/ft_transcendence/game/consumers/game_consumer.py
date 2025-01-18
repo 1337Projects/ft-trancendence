@@ -1,4 +1,5 @@
 import json
+import math
 import sys
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -8,7 +9,9 @@ from game.models import Game
 from game.serializers import GameSerializer
 from channels.db import database_sync_to_async
 from login.models import User
+from account.models import ExperienceLog, Profile
 from icecream import ic
+from django.db import models
 
 class GameConsumer(AsyncWebsocketConsumer):
     pongGameManager = PongGameManager()
@@ -118,7 +121,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         sys.stdout.flush()
         if timeout:
             # Set the player as the winner if they disconnect due to a timeout
-            ic(player, 'timeout disconect game')
+            # ic(player, 'timeout disconect game')
             await self.timeout_disconnect()
         elif self.pongGameManager.get_game_status(self.room_name) != 'end':
             # ic(player, 'disconect in game')
@@ -164,9 +167,20 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.game.winner = self.game.player2
             self.game.loser = self.game.player1
         self.game.save()
+        
+        self.add_xp(self.game.winner.profile, 100)
+        self.add_xp(self.game.loser.profile, 20)
         serializer = GameSerializer(self.game)
         game_data = serializer.data
         return game_data
+    
+    def add_xp(self, profile: Profile, xp: int):
+        # profile: Profile = Profile.objects.get(user=player)
+        
+        ExperienceLog.objects.create(profile=profile, experience_gained=xp)
+        total_xp = ExperienceLog.objects.filter(profile=profile).aggregate(total=models.Sum('experience_gained'))['total']
+        profile.level = round(math.sqrt(total_xp / 100), 1)
+        profile.save()
 
     async def send_score(self, score):
        event = {
