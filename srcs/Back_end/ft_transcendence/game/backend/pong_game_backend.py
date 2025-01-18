@@ -19,7 +19,7 @@ PADDLE_SPEED = 20
     # Ball
 BALL_RADIUS = 10
 BALL_SPEEDX = 5
-BALL_SPEEDY = 2
+BALL_SPEEDY = 1
 FPS = 60
 
 class PaddlePlayer(Enum):
@@ -56,6 +56,25 @@ class Paddle:
             # Ensure the paddle stays within the screen bounds
             self.y = max(self.height // 2, min(self.y, SCREEN_HEIGHT - self.height // 2))
 
+    def update_speed(self, ball):
+        ball_y = ball.y
+        middle = self.height // 2
+        if ball_y < self.y - middle // 2 or ball_y > self.y + middle // 2:
+            ball.speed_y = ball.speed_y if abs(ball.speed_y) == 2 else ball.speed_y * 2
+        else:
+            ball.speed_y = ball.speed_y if abs(ball.speed_y) == 1 else ball.speed_y // 2
+        # if ball_y < self.y - middle // 2:
+        #     ball.speed_y = -3
+        # elif ball_y > self.y + middle // 2:
+        #     ball.speed_y = 3
+        # else:
+        #     if ball_y < self.y:
+        #         ball.speed_y = -1
+        #     else:
+        #         ball.speed_y = 1
+
+            
+        
     def check_collision(self, ball) -> bool:
         '''
         Check if the ball collides with the paddle or a goal is scored.
@@ -71,6 +90,7 @@ class Paddle:
                     # ic('ball', ball.get(), 'paddle', self.x, self.y)
                     return True
                 ball.speed_x = -ball.speed_x
+                self.update_speed(ball)
                 ball.x = max(self.x + self.width, ball.x)
         else:
             if x + r >= self.x:
@@ -78,6 +98,7 @@ class Paddle:
                     # ic('ball', ball.get(), 'paddle', self.x, self.y - self.height // 2, self.y + self.height // 2)
                     return True
                 ball.speed_x = -ball.speed_x
+                self.update_speed(ball)
                 ball.x = min(self.x - r, ball.x)
 
         return False
@@ -111,7 +132,7 @@ class Ball:
         self.y = SCREEN_HEIGHT // 2
         self.speed_x *= -1
         self.speed_y *= -1
-        
+
 class PongGame:
     def __init__(self, game: Game, room_name):
         self.status = 'waiting'

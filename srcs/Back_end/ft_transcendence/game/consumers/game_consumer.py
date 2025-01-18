@@ -121,10 +121,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             ic(player, 'timeout disconect game')
             await self.timeout_disconnect()
         elif self.pongGameManager.get_game_status(self.room_name) != 'end':
-            ic(player, 'disconect in game')
+            # ic(player, 'disconect in game')
             await self.disconnect_in_game()
-        else:
-            ic(player, 'disconect after game')
+        # else:
+        #     ic(player, 'disconect after game')
 
         await self.channel_layer.group_discard(
             self.room_name,
