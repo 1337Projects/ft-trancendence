@@ -5,7 +5,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from enum import Enum
-# from icecream import ic
+from icecream import ic
 import sys
 
 # Define constants
@@ -113,6 +113,12 @@ class Ball:
         self.speed_x = BALL_SPEEDX
         self.speed_y = BALL_SPEEDY
     
+    def increse_speed(self):
+        sign = 1 if self.speed_x > 0 else -1
+        self.speed_x += sign
+        ic(self.speed_x)
+        sys.stdout.flush()
+    
     def get(self):
         return {
             'x': self.x,
@@ -163,10 +169,14 @@ class PongGame:
         
         return self.player1 and self.player2    
 
+    def increse_ball_speed(self):
+        self.ball.increse_speed()
+
     def reset(self):
         self.ball.reset()
         self.paddle1.reset()
         self.paddle2.reset()
+        self.ball.speed_x = BALL_SPEEDX
 
     def update(self):    
         self.ball.move()
@@ -269,3 +279,6 @@ class PongGameManager:
     
     def end_game(self, room_name):
         self.games[room_name].status = 'end'
+    
+    def increse_speed(self, room_name):
+        self.games[room_name].increse_ball_speed()

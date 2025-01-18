@@ -61,7 +61,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             # await self.send_stats()
  
     async def send_stats(self):
-        # ic('send_stats')
+        # ic(stats)
         # sys.stdout.flush()
         stats = self.pongGameManager.get_stats(self.room_name)
         event = {
@@ -132,6 +132,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
 
     async def game_loop(self):
+        speed_increment_time = 0
         while self.pongGameManager.game_is_starting(self.room_name):
             await asyncio.sleep(1 / 40)
             score = self.pongGameManager.update(self.room_name)
@@ -146,6 +147,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                     }
                     self.pongGameManager.end_game(self.room_name)
                     await self.group_send(event)
+            current_time = asyncio.get_event_loop().time()
+            if current_time - speed_increment_time >= 5:
+                self.pongGameManager.increse_speed(self.room_name)
+                speed_increment_time = current_time
             await self.send_stats()
 
     @database_sync_to_async
