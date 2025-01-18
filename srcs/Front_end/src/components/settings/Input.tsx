@@ -3,14 +3,9 @@ import { useField } from "formik"
 import { useContext, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { FaEye, FaEyeSlash } from "react-icons/fa"
+import { InputPropsType } from "@/types/indexTypes"
 
-type InputPropsType = {
-    label: string,
-    id: string,
-    name: string,
-    type?: string,
-    placeholder: string
-}
+
 
 export default function SettingsInput({label, ...props} : InputPropsType) {
 

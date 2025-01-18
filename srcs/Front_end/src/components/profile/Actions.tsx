@@ -3,37 +3,10 @@ import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { FaEllipsisV, FaUserMinus } from "react-icons/fa"
 import { GoBlocked } from "react-icons/go";
 import { CgUnblock } from "react-icons/cg";
-import { HasRelationWithStatus, RelationsHandler, ResType } from "./ActionsHandlers";
+import { HasRelationWithStatus, RelationsHandler } from "./ActionsHandlers";
 import { UserContext } from "@/Contexts/authContext";
-import { FirendType, UserType } from "@/types/user";
+import { FriendsActionsResType, FriendType, UserType } from "@/types/userTypes";
 
-
-
-
-// export function ActionButton({text, icon, handler} : 
-// 	{ 
-// 		text : string,
-// 		icon : ReactElement,
-// 		handler : (
-// 			url : string,
-// 			token : string,
-// 			friend : UserType,
-// 			callback : HandlerType
-// 		) => void
-// 	}
-// ) {
-// 	const appearence = useContext(ApearanceContext)
-// 	return (
-// 		<button 
-// 			onClick={handler} 
-// 			style={{background: appearence?.color}} 
-// 			className='text-white px-4 rounded-full w-fit h-[38px] text-[10pt] flex items-center justify-center'
-// 		>
-// 			<h1 className='mr-2 capitalize'>{text}</h1>
-// 			{icon}
-// 		</button>
-// 	)
-// }
 
 export function ActionsList({ friend } : {friend : UserType}) {
 
@@ -51,11 +24,11 @@ export function ActionsList({ friend } : {friend : UserType}) {
 	}, [friends])
 
 
-	function UpdateFriendCallback(response : ResType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FirendType).id), response as FirendType] : [response as FirendType])
+	function UpdateFriendCallback(response : FriendsActionsResType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FriendType).id), response as FriendType] : [response as FriendType])
     }
 
-	function DeleteFriendRequest(response : ResType) {
+	function DeleteFriendRequest(response : FriendsActionsResType) {
         setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
 

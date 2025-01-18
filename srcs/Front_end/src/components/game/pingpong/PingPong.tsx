@@ -6,26 +6,17 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "@/Contexts/authContext";
 import Canvas from "./Canvas";
 import Score from "./Score";
-import { tournamentSocket } from "@/socket";
+import { GameType, MatchDataType, ScoreType } from "@/types/gameTypes";
+import { tournamentSocket } from "@/sockets/tournamentSocket";
 
-export interface GameType {
-    paddles: never; // Replace 'any' with the actual type
-    game: never;   // Replace 'any' with the actual type
-    ball: never; 
-    game_data : never   // Replace 'any' with the actual type
-}
 
-export interface ScoreType {
-    score1: number;
-    score2: number;
-}
 
 function PingPong() {
     const { game_id, tournament_id }= useParams();
     const { authInfos, user } = useContext(UserContext) || {}
     const [ game, setGame] = useState<GameType | null>(null)
     const [ score, setScore] = useState<ScoreType>( { score1: 0, score2: 0 })
-    const [ matchResult, setMatchResult ] = useState(null)
+    const [ matchResult, setMatchResult ] = useState<MatchDataType | null>(null)
     const navigate = useNavigate()
 
     const navigateBack = () => {
@@ -51,7 +42,7 @@ function PingPong() {
         };
     }, [game_id, authInfos]);
 
-    function init(data : any) {
+    function init(data : GameType) {
         const {paddles, game, ball, game_data} = data;
         const game_data_infos = { paddles, game, ball, game_data };
         setGame(game_data_infos as GameType);
@@ -80,7 +71,7 @@ function PingPong() {
                         <div 
                             className="bg-black/20 h-[150px] flex justify-center items-center absolute z-10 w-full top-[50%] translate-y-[-50%]"
                         > 
-                            <h1 className="text-[30pt] font-bold uppercase">{matchResult.winner == user.id ? "victory" : "ko"} </h1>
+                            <h1 className="text-[30pt] font-bold uppercase">{matchResult.winner == user?.id ? "victory" : "ko"} </h1>
                         </div>
                     }
                     <div className="w-full">

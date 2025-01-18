@@ -6,7 +6,7 @@ import MyInput from "../ui/Input";
 import * as yup from 'yup'
 import Alert from "../ui/Alert";
 import { UserContext } from "../../Contexts/authContext";
-import { AlertType } from "@/types";
+import { AlertType } from "@/types/indexTypes";
 
 const validate = yup.object({
     email : yup.string().required('required !').email(),

@@ -2,9 +2,9 @@ import React, { SetStateAction, useContext, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ApearanceContext } from "../../Contexts/ThemeContext";
 import { UserContext } from "../../Contexts/authContext";
-import MyUseEffect from "../../hooks/MyUseEffect";
-import { ConversationType } from "@/types/chat";
+import { ConversationType } from "@/types/chatTypes";
 import { ObjectFilter } from "@/utils/utils";
+import { UserType } from "@/types/userTypes";
 
 
 
@@ -40,7 +40,7 @@ function ConvItem({c, menu} : {c : ConversationType, menu : boolean}) {
     const [time , setTime] = useState("")
     const {user} = useContext(UserContext) || {}
 
-    const data = ObjectFilter(c, i => typeof i === "object" && i?.username !== user?.username)[0]
+    const data = ObjectFilter(c, i => typeof i === "object" && (i as UserType)?.username !== user?.username)[0] as UserType
     const { color } = useContext(ApearanceContext) || {}
     
     useEffect(() => {
@@ -96,7 +96,7 @@ export function Friends({menu, handler} : {menu : boolean, handler : React.Dispa
                 {
                     myFriends.map((f, index) => {
 
-                        const data = ObjectFilter(f, (elm) => typeof elm === "object" && elm?.username !== authInfos?.username)[0]
+                        const data : UserType = ObjectFilter(f, (elm) => typeof elm === "object" && (elm as UserType)?.username !== authInfos?.username)[0] as UserType
                        
                         return (
                             <li 
@@ -126,17 +126,15 @@ export default function ConversationsList({menu, data} : {menu : boolean, data :
     
     const { theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
-
     const [query, setQuery] = useState<string>('')
-
     const [cnvs, setcnvs] = useState<ConversationType[] | null>(null)
 
     
-    MyUseEffect(() => {
+    useEffect(() => {
         setcnvs(data)
         if (query != '') {
             setcnvs(prev => prev ? prev.filter(cnv => {
-                const partner = ObjectFilter(cnv, i =>  typeof i === "object" && i?.username !== authInfos?.username)[0]
+                const partner : UserType = ObjectFilter(cnv, elm =>  typeof elm === "object" && (elm as UserType)?.username !== authInfos?.username)[0] as UserType
                 return partner.username.includes(query)
             }) : null)
         }

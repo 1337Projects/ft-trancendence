@@ -1,6 +1,6 @@
 
 import React, {useState, useContext, useEffect} from 'react'
-import { ApearanceContext } from '../../Contexts/ThemeContext'
+import { ApearanceContext } from '@/Contexts/ThemeContext'
 import { FaSearch } from 'react-icons/fa'
 
 export default function Emojies({TextInputHandler, inputText} : {inputText : string, TextInputHandler : React.Dispatch<React.SetStateAction<string>>}) {
@@ -31,24 +31,31 @@ export default function Emojies({TextInputHandler, inputText} : {inputText : str
 
 function EmojiesSearch({query} : {query : string}) {
 
-    const [emojis, setEmojis] = useState([])
+    const [emojis, setEmojis] = useState<{character : string}[] | null>(null)
     const API = `${import.meta.env.VITE_EMOJIES_API}emojis?search=`
     const KEY = import.meta.env.VITE_EMOJIES_KEY
     const url = API + query + "&" + KEY
     useEffect(() => {
-        const timer = setTimeout(() => {
-            console.log('fetch')
-            fetch(url)
-            .then(res => res.json())
-            .then(res => {
-                if (!res.status)
-                    setEmojis(res)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        }, 500)
+        const timer = setTimeout(async () => {
 
+            try {
+                const response = await fetch(url)
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json()
+                if (data.status !==  "error") {
+                    setEmojis(data)
+                }
+
+            } catch (error) {
+                console.log(error)
+            }
+        }, 200)
+            
+            
         return () => {
             clearTimeout(timer);
         }
@@ -57,7 +64,7 @@ function EmojiesSearch({query} : {query : string}) {
     return (
         <ul className='flex w-full text-[14px] flex-wrap p-1 h-[16vh] overflow-y-auto font-noto'>
             {
-                emojis?.map((i, index) => {
+                emojis != null && emojis?.map((i, index) => {
                     return <li className='m-1'  key={index}>{i.character}</li>
                 })
             }
@@ -68,8 +75,8 @@ function EmojiesSearch({query} : {query : string}) {
 function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<React.SetStateAction<string>>, text : string}) {
     const API = import.meta.env.VITE_EMOJIES_API
     const KEY = import.meta.env.VITE_EMOJIES_KEY
-    const [def, setDef] = useState(dataa[0].name)
-    const [emojis, setEmojis] = useState([])
+    const [def, setDef] = useState("smileys-emotion")
+    const [emojis, setEmojis] = useState<{character : string}[] | null>(null)
 
 
 
@@ -82,7 +89,7 @@ function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<Re
             }).catch(err => {
                 console.log(err)
             }) 
-        }, 500)
+        }, 150)
 
         return () => {
             clearTimeout(timer)
@@ -93,7 +100,7 @@ function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<Re
     return (
         <div>
             <ul className='flex my-2 justify-between rounded-sm m-2'>
-                {dataa?.map(c => {
+                {categories?.map(c => {
                     return (
                         <li className={`${def === c.name && "border-primary border-[.2px] bg-primary/20"} rounded p-1 w-full h-fit flex items-center justify-center text-[18px]`} onClick={() => setDef(c.name)} key={c.name} >{c.character}</li>
                     )
@@ -101,7 +108,7 @@ function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<Re
             </ul>
             <ul className='flex w-full text-[14px] flex-wrap p-1 h-[16vh] overflow-y-auto font-noto'>
                 {
-                    emojis?.map((i, index) => {
+                    emojis != null && emojis.map((i, index) => {
                         return <li className='m-1' onClick={() => textHandler(text + i.character)}  key={index}>{i.character}</li>
                     })
                 }
@@ -112,7 +119,7 @@ function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<Re
 
 
 
-const dataa = [
+const categories = [
     {name : "smileys-emotion" , character :'😀'},
     {name : "people-body", character :'🤝🏻'},
     {name : "animals-nature" , character :'🐶'},

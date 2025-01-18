@@ -2,11 +2,11 @@
 
 
 
-export function ObjectFilter(obj: { [key: string]: any }, fn: (value: any) => boolean) {
+export function ObjectFilter<Type>(obj: { [key: string]: Type }, fn: (value: Type) => boolean) {
 
     try {
         return Object.keys(obj)
-                     .filter(key => fn(obj[key]) )
+                     .filter(key => obj[key] !== undefined && fn(obj[key]) )
                      .map(key => obj[key]);
     } catch (error) {
         console.error('Error in ObjectFilter : ', error);
@@ -15,10 +15,10 @@ export function ObjectFilter(obj: { [key: string]: any }, fn: (value: any) => bo
 }
 
 
-export function ObjectMap(obj: { [key: string]: any }, fn: (value: any) => any) {
+export function ObjectMap<Type>(obj: { [key: string]: Type }, fn: (value: Type) => Type) {
     try {
         return Object.keys(obj)
-                     .map(key => fn(obj[key]) );
+                     .map(key => obj[key] !== undefined && fn(obj[key]) );
     } catch (error) {
         console.error('Error in ObjectMap : ', error);
         return [];

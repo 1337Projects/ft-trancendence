@@ -1,19 +1,9 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
-import { notificationSocket } from "@/socket";
+import { createContext, useState, useContext, ReactNode } from "react";
 import { UserContext } from "./authContext";
-import { NotificationType } from "@/types";
+import { NotificationsContextType, NotificationType } from "@/types/indexTypes";
+import { notificationSocket } from "@/sockets/notificationsSocket";
 
-type NotificationsContextType = {
-    notifications: NotificationType[] | null;
-    setNotifications: React.Dispatch<React.SetStateAction<null | NotificationType[]>>;
-    fetchMoreNotifications: () => void;
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>;
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-    hasMore : boolean;
-    currentPage: number;
-    hasNew : number,
-    setHasNew : React.Dispatch<React.SetStateAction<number>>,
-}
+
 
 export const NotificationsContext = createContext<null | NotificationsContextType>(null);
 
@@ -35,7 +25,6 @@ export default function NotificationsContextProvider({ children } : {children : 
                 page_size: 7,
             });
             setCurrentPage(currentPage + 1);
-            // console.log("current page:", currentPage, nextPage)
         }
         catch (error)
         {

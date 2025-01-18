@@ -9,10 +9,10 @@ import { UserContext } from '../Contexts/authContext'
 import { TbLogout } from 'react-icons/tb'
 import { ApearanceContext } from '../Contexts/ThemeContext'
 import { NotificationsContext } from '../Contexts/NotificationsContext'
-import { notificationSocket } from '../socket'
 
 import 'react-toastify/dist/ReactToastify.css';
 import{ ToastContainer, toast } from 'react-toastify'
+import { notificationSocket } from '@/sockets/notificationsSocket'
 
 
 function LogoImg() {
@@ -147,7 +147,7 @@ export default function DashboardLayout() {
     }, [location])
 
     if (isLoading) {
-      return (<>loading</>)
+      return (<></>)
     }
 
     async function logoutHandler() {
@@ -166,7 +166,7 @@ export default function DashboardLayout() {
   
         }
       } catch (err) {
-        console.log(err.toString())
+        console.log(err instanceof Error ? err.toString() : "An error occured")
       }
     }
 
@@ -181,7 +181,7 @@ export default function DashboardLayout() {
 
             <div className='h-[100px] flex-shrink-0'>
               <div className={`hidden sm:flex justify-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} rounded sm:block h-full cursor-pointer  items-center justify-center text-center w-full text-[22px]`}>
-                <div className='w-[60px] mx-16'>
+                <div className='w-[70px] mx-14'>
                   <LogoImg />
                 </div>
               </div>

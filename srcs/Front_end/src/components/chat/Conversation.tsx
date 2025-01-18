@@ -1,15 +1,14 @@
 import {useContext, useState, useRef, useEffect, useCallback} from 'react'
 import { Link, useParams } from 'react-router-dom';
 
-import { chatSocket } from '../../socket'
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { UserContext } from '../../Contexts/authContext';
 import { FaArrowLeft } from 'react-icons/fa';
 import ChatInput from './ChatInput';
-import MyUseEffect from '../../hooks/MyUseEffect';
 import { ChatContext } from '../../Contexts/ChatContext';
 import { RiGamepadLine } from "react-icons/ri";
-import { MessageType } from '@/types/chat';
+import { MessageType } from '@/types/chatTypes';
+import { chatSocket } from '@/sockets/chatSocket';
 
 
 function calc_time(created_at : string) {
@@ -20,7 +19,7 @@ function calc_time(created_at : string) {
 
 function UserMessage({m} : {m : MessageType}) {
     const [time, setTime] = useState<string>('')
-    MyUseEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
+    useEffect(() => setTime(calc_time(m?.created_at)), [m?.created_at])
     const { color, theme } = useContext(ApearanceContext) || {}
 
     return (
@@ -173,7 +172,7 @@ function MessagesList() {
         }
     }, [user])
 
-    MyUseEffect(() => {
+    useEffect(() => {
         if (lastItem.current && messages) {
             setTimeout(() => {
                 topitem()
@@ -197,7 +196,7 @@ function MessagesList() {
             <div className='px-2 h-[calc(100vh-350px)] sm:h-[calc(100vh-240px)] overflow-y-auto scroll-bottom flex flex-col-reverse'>
                 <div className='flex flex-col '>
                     {
-                        messages.map((message, index) => {
+                        messages.map((message : MessageType, index : number) => {
                             if (index === 0) {
                                 return (
                                     <div className='w-full' ref={lastItem} key={index}>

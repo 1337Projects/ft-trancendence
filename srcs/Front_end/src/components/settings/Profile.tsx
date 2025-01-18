@@ -3,7 +3,7 @@ import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { UserContext } from "../../Contexts/authContext"
 import { Form, Formik } from "formik"
 import SettingsInput, { TextArea } from "./Input"
-import { AlertType } from "@/types"
+import { AlertType } from "@/types/indexTypes"
 import Alert from "../ui/Alert"
 
 
@@ -15,17 +15,16 @@ export default function Profile() {
     const [alert, setAlert] = useState<AlertType | null>(null)
 
     const initialValues = {
-        username : user?.username || "",
         first_name : user?.first_name || "",
         last_name : user?.last_name || "",
         bio : user?.profile.bio || "",
     }
 
-    const submit_handler = async  (values : {username : string, first_name : string, last_name : string, bio : string}) => {
+    const submit_handler = async  (values : {first_name : string, last_name : string, bio : string}) => {
 
         try {
             const formdata = new FormData()
-            formdata.append("user", JSON.stringify({username : values.username,  first_name : values.first_name, last_name : values.last_name, profile : {bio : values.bio}}))
+            formdata.append("user", JSON.stringify({first_name : values.first_name, last_name : values.last_name, profile : {bio : values.bio}}))
             if (images.avatar)
                 formdata.append("avatar" , images.avatar)
             if (images.banner)
@@ -60,6 +59,7 @@ export default function Profile() {
             setAlert(null)
         }, 2000)
     }
+
 
     return (
         <div className="px-2 md:px-6 w-full">
@@ -101,7 +101,6 @@ export default function Profile() {
                     onSubmit={submit_handler}
                 >
                     <Form>
-                        <SettingsInput type="text" name="username" id="username" placeholder="joedeo" label="username" />
                         <SettingsInput type="text" name="first_name" id="first_name" placeholder="joe" label="first name" />
                         <SettingsInput type="text" name="last_name" id="last_name" placeholder="deo" label="last name" />
                         <TextArea name="bio" id="bio" label="bio" placeholder="bio" />

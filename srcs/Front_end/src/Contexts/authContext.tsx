@@ -1,8 +1,6 @@
 import { createContext, ReactNode, useState } from 'react'
 import {jwtDecode} from 'jwt-decode'
-import { AuthInfosType, FirendType, UserContextType, UserType } from '@/types/user'
-
-
+import { AuthInfosType, FriendType, UserContextType, UserType } from '@/types/userTypes'
 
 
 export const UserContext = createContext<UserContextType | null>(null)
@@ -12,7 +10,7 @@ export default function UserContextProvider({children} : {children : ReactNode})
 
     const [authInfos, setAuthInfos] = useState<AuthInfosType | null>(null)
     const [user, setUser] = useState<UserType | null>(null)
-    const [friends, setFriends] = useState<FirendType[] | null>(null)
+    const [friends, setFriends] = useState<FriendType[] | null>(null)
 
     function setAuthInfosHandler(token : string | null) {
         if (!token) {

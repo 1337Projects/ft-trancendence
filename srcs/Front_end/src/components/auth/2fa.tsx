@@ -1,8 +1,7 @@
 
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../Contexts/authContext'
 import { Link } from 'react-router-dom';
-import MyUseEffect from '../../hooks/MyUseEffect';
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { OtpInput } from 'reactjs-otp-input';
 
@@ -66,8 +65,9 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
         }
     }
 
-    MyUseEffect(
-        async () => {
+    useEffect(() => {
+
+        const fetchQr = async () => {
             try
             {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/2fa/qr/`, {
@@ -88,6 +88,9 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
             catch(err) {
                 console.log(err)
             }
+        }
+
+        fetchQr()
 
         }, []
     )

@@ -8,7 +8,7 @@ import { LuBell } from "react-icons/lu";
 import { FiUser } from "react-icons/fi";
 import { NotificationsContext } from "../Contexts/NotificationsContext";
 import { InviteItem, NotItem } from "./Notifications";
-import { UserType } from "@/types/user";
+import { UserType } from "@/types/userTypes";
 
 
 function SearchResult({query, queryHandler} : {query : string, queryHandler : React.Dispatch<React.SetStateAction<string>>}) {

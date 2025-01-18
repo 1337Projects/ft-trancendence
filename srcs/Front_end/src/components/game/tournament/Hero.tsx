@@ -3,10 +3,10 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { Link } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { FiUsers } from "react-icons/fi";
-import { TournamnetType } from "./Schema";
+import { TournamentType } from "@/types/tournamentTypes"
 
 
-export default function Hero({ data } : {data : TournamnetType}) {
+export default function Hero({ data } : {data : TournamentType}) {
     const { color } = useContext(ApearanceContext) || {}
     return (
         <div className="relative overflow-hidden h-[200px] rounded">

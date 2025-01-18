@@ -6,7 +6,7 @@ import { NavLink, Outlet, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
 import { FaUserFriends } from 'react-icons/fa';
 import { RiProfileFill } from 'react-icons/ri';
-import { FirendType, UserType } from '@/types/user';
+import { FriendType, UserType } from '@/types/userTypes';
 
 import 'react-toastify/dist/ReactToastify.css';
 import{ ToastContainer, toast } from 'react-toastify'
@@ -16,11 +16,11 @@ export default function Profile() {
 	const {authInfos, user, friends} = useContext(UserContext) || {}
 	const {user_name} = useParams()
 	const [currentUser, setCurrentUser] = useState<UserType | null>(null)
-	const [ friendship, setFriendShhip ] = useState<FirendType | null>(null)
+	const [ friendship, setFriendShhip ] = useState<FriendType | null>(null)
 
 	useEffect(() => {
 		if (currentUser && user && friends) {
-			const currentFriendship : FirendType[] = friends.filter((item : FirendType) => 
+			const currentFriendship : FriendType[] = friends.filter((item : FriendType) => 
 				(
 					item.sender.username==user.username 
 					&& item.receiver.username==currentUser.username

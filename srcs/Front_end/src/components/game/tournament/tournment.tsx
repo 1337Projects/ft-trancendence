@@ -1,35 +1,35 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import MyUseEffect from '@/hooks/MyUseEffect'
-import { tournamentSocket } from "@/socket";
 import { UserContext } from '@/Contexts/authContext'
 import Hero from "./Hero";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { FaAnglesUp, FaArrowRight } from "react-icons/fa6";
-import Schema, { TournamnetType } from "./Schema";
-import { UserType } from "@/types/user";
-import { MatchDataType } from "@/types/tournament";
+import Schema from "./Schema";
+import { UserType } from "@/types/userTypes";
+import { TournamentType } from "@/types/tournamentTypes";
+import { MatchDataType } from "@/types/gameTypes";
+import { tournamentSocket } from "@/sockets/tournamentSocket";
 
 
 export default function Tournment() {
 
     const { user } = useContext(UserContext) || {}
     const { theme } = useContext(ApearanceContext) || {}
-    const [ tournamentData, setTournamentData ] = useState<TournamnetType | null>(null)
+    const [ tournamentData, setTournamentData ] = useState<TournamentType | null>(null)
     const navigate = useNavigate()
     const [ ended, setEnded ] = useState<UserType[] | null>(null)
     const { tournament_id } = useParams()
  
 
-    function EndHandler(data : UserType[]) {
+    const EndHandler = (data: UserType[]) => {
         setEnded(data)
     }
 
-    function DataHandler(data : TournamnetType) {
+    function DataHandler(data: TournamentType) {
         setTournamentData(data)
     }
 
-    MyUseEffect(() => {
+    useEffect(() => {
         const timer = setTimeout(() => {
             tournamentSocket.addCallback("tr_data", DataHandler)
             tournamentSocket.addCallback("match_data", matchHandler)

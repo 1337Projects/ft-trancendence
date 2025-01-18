@@ -1,6 +1,5 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import MyUseEffect from '@/hooks/MyUseEffect'
 import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { GiSandsOfTime } from "react-icons/gi";
 import Hero from './Hero'
@@ -10,7 +9,7 @@ import Cards from "./GameCards";
 import { UserContext } from "@/Contexts/authContext"
 import { useSearchParams } from "react-router-dom";
 import { LuHistory } from "react-icons/lu";
-import { TournamentDataType } from "./tournament/Schema";
+import { TournamentDataType } from "@/types/tournamentTypes";
 
 export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
 
@@ -78,8 +77,7 @@ export default function Game() {
         tournments.filter((item) => item.tourament_status === categorie) :
         tournments.filter((item) => item.tourament_status === 'waiting')
 
-
-    MyUseEffect(async () => {
+    const fetchTournamanets = async () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/get_all/`, {
                 method : 'GET',
@@ -99,6 +97,10 @@ export default function Game() {
         } catch(err) {
             console.log(err)
         }
+    }
+
+    useEffect(() => {
+        fetchTournamanets()
     }, [open])
 
     return (

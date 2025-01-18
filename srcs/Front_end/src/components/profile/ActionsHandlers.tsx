@@ -5,14 +5,14 @@ import { FiCheckCircle } from "react-icons/fi";
 import { ActionsList } from "./Actions";
 import { UserContext } from "@/Contexts/authContext";
 import { useNavigate } from "react-router-dom";
-import { FirendType, UserType } from "@/types/user";
+import { FriendsActionsResType, FriendType, UserType } from "@/types/userTypes";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 
 
-export type ResType = number | FirendType
+
 
 export function HasRelationWithStatus(
-    friendsList : FirendType[],
+    friendsList : FriendType[],
     friendId : number,
     status : string
 ) {
@@ -24,7 +24,7 @@ export function HasRelationWithStatus(
 }
 
 function IsSender(
-    friendsList : FirendType[],
+    friendsList : FriendType[],
     friendId : number
 ) {
     return friendsList.filter(fr => (fr.sender.id === friendId && fr.status === 'waiting')).length
@@ -32,7 +32,7 @@ function IsSender(
 
 
 
-export async function RelationsHandler(url : string, token : string, body : UserType, callback : (response : ResType) => void) {
+export async function RelationsHandler(url : string, token : string, body : UserType, callback : (response : FriendsActionsResType) => void) {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}${url}`, {
             method : 'POST',
@@ -68,15 +68,15 @@ export function Relations({ friend } : {friend : UserType}) {
     const { color } = useContext(ApearanceContext) || {}
     const navigate = useNavigate()
     
-    function AddFriendCallbck(response : ResType) {
-        setFriends!(prev => prev ? [...prev, response as FirendType] : [])
+    function AddFriendCallbck(response : FriendsActionsResType) {
+        setFriends!(prev => prev ? [...prev, response as FriendType] : [])
     }
 
-    function AcceptFriendCallback(response : ResType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FirendType).id), response as FirendType] : [])
+    function AcceptFriendCallback(response : FriendsActionsResType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FriendType).id), response as FriendType] : [])
     }
 
-    function DeleteFriendRequest(response : ResType) {
+    function DeleteFriendRequest(response : FriendsActionsResType) {
         setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
 

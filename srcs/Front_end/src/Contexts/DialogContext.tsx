@@ -1,10 +1,5 @@
-import React, { createContext, ReactNode, useState } from 'react'
-
-
-type DialogContextType = {
-    open : boolean,
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
+import { DialogContextType } from '@/types/indexTypes'
+import { createContext, ReactNode, useState } from 'react'
 
 
 export const DialogContext = createContext<DialogContextType | null>(null)

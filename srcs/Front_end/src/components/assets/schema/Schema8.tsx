@@ -1,6 +1,9 @@
-import { PlayerImage } from "./Schema4";
 
-export default function Schema8({ rounds }) {
+import { MatchDataType } from "@/types/gameTypes";
+import { PlayerImage } from "./Schema4";
+import { UserType } from "@/types/userTypes";
+
+export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
   console.log(rounds);
 
   return (
@@ -430,15 +433,15 @@ export default function Schema8({ rounds }) {
       <defs>
 
 
-        <pattern
+        {/* <pattern
           id="Rectangle 299"
           className="winner"
           patternContentUnits="objectBoundingBox"
           width="1"
           height="1"
         >
-          <PlayerImage player={rounds[0]?.[0]?.["winner"]} />
-        </pattern>
+          <PlayerImage player={rounds[0]?.[0]?.["winner"] as UserType} />
+        </pattern> */}
 
         {/* from one to 4 */}
         <pattern
@@ -569,7 +572,7 @@ export default function Schema8({ rounds }) {
           width="1"
           height="1"
         >
-          <PlayerImage player={rounds[0]?.[0]?.["winner"]} />
+          <PlayerImage player={rounds[0]?.[0]?.["winner"] as UserType} />
         </pattern>
         
       </defs>

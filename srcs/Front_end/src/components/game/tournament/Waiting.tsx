@@ -1,17 +1,17 @@
 
 import { useContext, useEffect, useRef, useState } from "react"
-import MyUseEffect from "@/hooks/MyUseEffect"
 import { useNavigate, useParams } from "react-router-dom"
-import { tournamentSocket } from "@/socket"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from "@/Contexts/authContext"
 import { PlayerGameCard } from '../pingpong/waiting'
+import { tournamentSocket } from "@/sockets/tournamentSocket"
+import { TournamentRoomType } from "@/types/tournamentTypes"
 
 export default function WaitingTournment() {
 
     const { theme } = useContext(ApearanceContext) || {}
     const { id } = useParams()
-    const [ roomData, setRoomData ] = useState({})
+    const [ roomData, setRoomData ] = useState<null | TournamentRoomType>(null)
     const navigate = useNavigate()
     const [ loading, setLoading ] = useState(false)
     const [ num, setNum ] = useState(3)
@@ -20,7 +20,7 @@ export default function WaitingTournment() {
     
 
 
-    MyUseEffect(() => {
+    useEffect(() => {
         tournamentSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/join/tournment/${id}/?token=${authInfos?.accessToken}`)
         tournamentSocket.addCallback('roomDataHandler', roomDataHandler)
     }, [])
@@ -34,7 +34,7 @@ export default function WaitingTournment() {
         }
     }, [])
 
-    MyUseEffect(() => {
+    useEffect(() => {
         if (loading) {
             setInterval(() => {
                 setNum(prev => prev - 1)
@@ -42,7 +42,8 @@ export default function WaitingTournment() {
         }
     }, [loading])
 
-    function roomDataHandler(data : any) {
+    function roomDataHandler(data : TournamentRoomType) {
+        console.log(data)
         setRoomData(data)
         if (data.players.length == data.data.max_players) {
             setLoading(true)
@@ -51,6 +52,10 @@ export default function WaitingTournment() {
                 navigate(`/dashboard/game/tournment/${id}/`)
             }, 1000 * 3)
         }
+    }
+
+    if (!roomData) {
+        return <div className="h-screen w-full flex items-center justify-center">Loading...</div>
     }
     
 
@@ -67,10 +72,12 @@ export default function WaitingTournment() {
                 </div>
                 <div className="p-2 grid grid-cols-4 gap-4 mt-20 ">
                     {
-                        [...Array(roomData?.data?.max_players)].map((item, index) => {
+                        [...Array(roomData?.data?.max_players)].map((_, index) => {
                             return (
                                 <div key={index}>
-                                    <PlayerGameCard player={index < roomData?.players?.length ? roomData?.players[index] : null} />
+                                    <PlayerGameCard 
+                                        player={index < roomData?.players?.length ? roomData?.players[index] : undefined}
+                                    />
                                 </div>
                             )
                         })

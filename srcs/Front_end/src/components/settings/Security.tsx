@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { FaAngleDown, FaAngleUp } from "react-icons/fa"
 import { Formik, Form } from 'formik'
 import SettingsInput from "./Input"
@@ -6,10 +6,9 @@ import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
 import TwoFImg from "./TwoFImg"
 import TwoFactor from "../auth/2fa"
-import MyUseEffect from "@/hooks/MyUseEffect"
 import Alert from "../ui/Alert"
 import * as Yup from 'yup'
-import { AlertType } from "@/types"
+import { AlertType } from "@/types/indexTypes"
 
 
 function SecurityItem({children} : { children : React.ReactNode }) {
@@ -122,7 +121,9 @@ export default function Security() {
         })
     }
 
-    MyUseEffect ( async () => {
+    useEffect (() => {
+
+        const fetchTwofa = async () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/2fa/state/`, {
                     method: 'GET',
@@ -148,6 +149,9 @@ export default function Security() {
             catch(err) {
                 console.log(err)
             }
+        }
+
+        fetchTwofa()
     }, [twofaa])
     return (
         <div className="h-full">

@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from "react"
-import {Line, Bar} from 'react-chartjs-2'
+import { Bar} from 'react-chartjs-2'
 import {defaults}  from 'chart.js/auto'
 import { ApearanceContext } from "../../../Contexts/ThemeContext"
 import { useOutletContext } from "react-router-dom"
-import { UserType } from "@/types/user"
+import { UserType } from "@/types/userTypes"
 import { UserContext } from "@/Contexts/authContext"
+import { XpRecordType } from "@/types/gameTypes"
 
 defaults.responsive = true
 defaults.maintainAspectRatio = false
@@ -24,7 +25,8 @@ export default function Chart() {
 	const {color} = useContext(ApearanceContext) || {}
 	const {authInfos} = useContext(UserContext) || {}
 	const currentUser : UserType = useOutletContext()
-	const [data, setData] = useState({labels : null, datasets : null})
+	const [data, setData] = useState<null | {datasets : number[], labels : string[]}>(null)
+	
 
 	async function fetchData() {
 		try {
@@ -40,13 +42,13 @@ export default function Chart() {
 			} 
 
 
-			const {data} = await res.json()
-			const datasets = []
-			const labels = []
-			data.forEach((d) => {
-				// datasets.push(d.experience_gained)
-				datasets.push((datasets.length ? datasets[datasets.length - 1] : 0) + d.experience_gained)
-				const time = new Date(d.date_logged)
+			const {data} : {data : XpRecordType[]} = await res.json()
+			const datasets : number[] = []
+			const labels : string[] = []
+			data.forEach(item => {
+				const dataset = datasets ? datasets[datasets.length - 1] || 0 : 0
+				datasets.push(dataset + item.experience_gained)
+				const time = new Date(item.date_logged)
 				labels.push(`${time.getHours()}:${time.getMinutes()}`)
 			})
 			
@@ -68,7 +70,7 @@ export default function Chart() {
 
 	}, [currentUser])
 
-	if (!data.datasets || !data.labels) {
+	if (!data || !data.datasets || !data.labels) {
 		return <div className="w-full h-[200px] bg-gray-300 animate-pulse rounded"></div>
 	}
 	

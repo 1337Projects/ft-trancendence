@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { ApearanceContext } from "../../../Contexts/ThemeContext";
 import LevelImg from "../assets/LevelImg";
 import { useOutletContext } from "react-router-dom";
-import { UserType } from "@/types/user";
+import { UserType } from "@/types/userTypes";
 
 
 export function Avatar() {

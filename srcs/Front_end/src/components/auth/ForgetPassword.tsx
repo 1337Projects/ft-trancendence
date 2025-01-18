@@ -4,7 +4,7 @@ import { Form, Formik } from "formik"
 import { Link, useNavigate } from "react-router-dom"
 import * as Yup from 'yup' 
 import Alert from "../ui/Alert"
-import { AlertType } from "@/types/index"
+import { AlertType } from "@/types/indexTypes"
 
 
 async function requestLinkHandler(values : {email : string}) {

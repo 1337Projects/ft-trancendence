@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState, useRef } from "react";
-import { notificationSocket } from "@/socket";
 import { Link } from "react-router-dom";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { UserContext } from "@/Contexts/authContext";
 import { FaCaretDown, FaCheck, FaTrash } from "react-icons/fa";
 import { NotificationsContext } from "@/Contexts/NotificationsContext";
-import { RelationsHandler, ResType } from "./profile/ActionsHandlers";
-import { NotificationType } from "@/types";
-import { FirendType } from "@/types/user";
+import { RelationsHandler } from "./profile/ActionsHandlers";
+import { NotificationType } from "@/types/indexTypes";
+import { FriendsActionsResType, FriendType } from "@/types/userTypes";
 import { HeaderItems } from "./Search";
 import { LuBell } from "react-icons/lu";
 import { FiUser } from "react-icons/fi";
+import { notificationSocket } from "@/sockets/notificationsSocket";
 
 
 
@@ -41,7 +41,7 @@ export function NotItem({data} : {data : NotificationType}) {
     )
 }
 
-export function InviteItem({data} : {data : FirendType}) {
+export function InviteItem({data} : {data : FriendType}) {
     const appearence = useContext(ApearanceContext)
     const { setFriends , authInfos } = useContext(UserContext) || {}
 
@@ -55,14 +55,14 @@ export function InviteItem({data} : {data : FirendType}) {
         });
     };
 
-    function AcceptFriendCallback(response : ResType) {
-        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FirendType).id), response as FirendType] : [response as FirendType])
+    function AcceptFriendCallback(response : FriendsActionsResType) {
+        setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FriendType).id), response as FriendType] : [response as FriendType])
         notificationAcceptFriendRequest();
     }
 
     
 
-    function DeleteFriendRequest(response : ResType) {
+    function DeleteFriendRequest(response : FriendsActionsResType) {
         setFriends!(prev => prev ? prev.filter(item => item.id != response) : [])
     }
  
@@ -260,7 +260,7 @@ export function Invites() {
     if(showInvites === null)
             window.localStorage.setItem('showInvites', "false");
 
-    const [invites, setInvites] = useState<FirendType[] | undefined>([])
+    const [invites, setInvites] = useState<FriendType[] | undefined>([])
     const [show, setShow] = useState(showInvites == 'true')
     const appearence = useContext(ApearanceContext)
     const {friends, user} = useContext(UserContext) || {}

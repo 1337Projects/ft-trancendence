@@ -6,10 +6,9 @@ import { ApearanceContext } from "../Contexts/ThemeContext"
 import { FaBars } from "react-icons/fa"
 import { TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { UserContext } from "../Contexts/authContext"
-import MyUseEffect from '../hooks/MyUseEffect'
-import { chatSocket } from '../socket'
-import ChatContextProvider, { UserDataType } from "@/Contexts/ChatContext"
-import { ConversationType, MessageType } from "@/types/chat"
+import ChatContextProvider from "@/Contexts/ChatContext"
+import { ChatUserDataType, ConversationType, MessageType } from "@/types/chatTypes"
+import { chatSocket } from "@/sockets/chatSocket"
 
 
 
@@ -22,7 +21,7 @@ export default function ChatLayout() {
 
 
     const [ messages, setMessages ] = useState<MessageType[] | null>(null)
-    const [ userData, setUserData ] = useState<UserDataType | null>(null)
+    const [ userData, setUserData ] = useState<ChatUserDataType | null>(null)
 
 
     const value = {
@@ -36,16 +35,21 @@ export default function ChatLayout() {
         setCnvs(prev => prev ? [cnv, ...prev.filter(c => c.id != cnv.id)] : [cnv])
     }
 
-    MyUseEffect(() => {
-        console.log(import.meta.env.VITE_SOCKET_URL)
-        chatSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/chat/${user?.id}/`)
-        chatSocket.addCallback('cnvsHandler', setCnvs)
-        chatSocket.addCallback('cnvsUpdate', UpdateConversationsHandler)
-        chatSocket.addCallback("setData", setMessages)
-        chatSocket.addCallback("setUser", setUserData)
-        chatSocket.sendMessage({
-            "event" : "fetch_conversations"
-        })
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            chatSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/chat/${user?.id}/`)
+            chatSocket.addCallback('cnvsHandler', setCnvs)
+            chatSocket.addCallback('cnvsUpdate', UpdateConversationsHandler)
+            chatSocket.addCallback("setData", setMessages)
+            chatSocket.addCallback("setUser", setUserData)
+            chatSocket.sendMessage({
+                "event" : "fetch_conversations"
+            })
+        }, 150)
+
+        return () => {
+            clearTimeout(timer)
+        }
     }, [])
 
     useEffect(() => {

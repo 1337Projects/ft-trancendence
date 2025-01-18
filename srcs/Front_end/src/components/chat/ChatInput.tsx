@@ -2,12 +2,12 @@ import React, { useContext, useState } from "react"
 import { FaKeyboard, FaRegSmile } from "react-icons/fa"
 import Emojies from './Emojies';
 import { ApearanceContext } from "../../Contexts/ThemeContext"
-import { chatSocket } from '../../socket'
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../Contexts/authContext"
 import { FiSend } from "react-icons/fi";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { ChatContext } from "@/Contexts/ChatContext";
+import { chatSocket } from "@/sockets/chatSocket";
 
 
 function generateRandomId() {
@@ -23,6 +23,7 @@ export default function ChatInput() {
     const { userData } = useContext(ChatContext) || {}
     const [ text, setText ] = useState('');
     const { user } = useParams()
+    const [emojie, setEmojie] = useState<boolean>(false)
      
     function sendMessage() {
         if (text != '') {
@@ -33,14 +34,15 @@ export default function ChatInput() {
                 "event" : "new_message"
             }
             chatSocket.sendMessage(data)
-            console.log('sent')
         }
-        setText('');
+        setText('')
+        setEmojie(false)
     }
 
     function inputHandler(e : React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key == 'Enter')
+        if (e.key == 'Enter') {
             sendMessage()
+        }
     }
 
     function sendGameInvite() {
@@ -55,7 +57,6 @@ export default function ChatInput() {
         chatSocket.sendMessage(data)
     }
 
-    const [emojie, setEmojie] = useState<boolean>(false)
 
   
 

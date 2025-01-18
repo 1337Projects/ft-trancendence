@@ -1,7 +1,10 @@
 import Alert from "@/components/ui/Alert";
 import { UserContext } from "@/Contexts/authContext"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { ticTacTeoSocket } from "@/socket"
+import { ticTacTeoSocket } from "@/sockets/ticTacToeSocket";
+import { TicTacTeoType } from "@/types/gameTypes";
+import { AlertType } from "@/types/indexTypes";
+import { UserType } from "@/types/userTypes";
 import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
@@ -18,7 +21,7 @@ export function GameCardItem({cell} : {cell : string}) {
 }
 
 
-export function Players({data, current} : {data : any, current : any}) {
+export function Players({data, current} : {data : UserType[], current : UserType}) {
 
     const { color } = useContext(ApearanceContext) || {}
 
@@ -30,7 +33,7 @@ export function Players({data, current} : {data : any, current : any}) {
         <div className="w-full h-[100px] rounded p-4">
             <div className="flex w-full relative justify-between items-center h-full">
                 <div 
-                    style={current.username === data[0].username ? activeStyle : {}} 
+                    style={current.username === data[0]?.username ? activeStyle : {}} 
                     className="w-[200px] pl-4 rounded h-full justify-start flex items-center"
                 >
                     <img className="w-[50px] h-[50px] mr-4 rounded-full" src={data[0]?.profile?.avatar} />
@@ -39,12 +42,12 @@ export function Players({data, current} : {data : any, current : any}) {
                         <p className="text-xs mt-1 uppercase">Player X</p>
                     </div>
                     {
-                        current.username === data[0].username && 
+                        current.username === data[0]?.username && 
                         <h1 style={{color : color}} className="absolute uppercase left-2 text-xs top-[-40px]">player x play now</h1>
                     }
                 </div>
                 <div 
-                    style={current.username === data[1].username ? activeStyle : {}}  
+                    style={current.username === data[1]?.username ? activeStyle : {}}  
                     className="w-[200px] pr-4 rounded h-full flex justify-end items-center"
                 >
                     <div className="flex flex-col items-end justify-center">
@@ -54,7 +57,7 @@ export function Players({data, current} : {data : any, current : any}) {
                     <img className="w-[50px] h-[50px] ml-4 rounded-full" src={data[1]?.profile?.avatar} />
                 </div>
                 {
-                    current.username === data[1].username && 
+                    current.username === data[1]?.username && 
                     <h1 style={{color : color}} className="absolute uppercase right-2 text-xs top-[-40px]">player O play now</h1>
                 }
             </div>
@@ -63,14 +66,17 @@ export function Players({data, current} : {data : any, current : any}) {
 }
 
 
+
+
 export default function TicTacTeo() {
 
     const { theme } = useContext(ApearanceContext) || {}
     const { authInfos } = useContext(UserContext) || {}
-    const [data, setData] = useState({players : null, user: null, board : null, winner : null, error : null })
+    const [data, setData] = useState<null | TicTacTeoType>(null)
     const navigate = useNavigate()
     const { game_id } = useParams()
     const [ time, setTime ] = useState(0)
+    const [ error, setError ] = useState<null | AlertType>(null)
 
 
     useEffect(() => {
@@ -78,6 +84,7 @@ export default function TicTacTeo() {
         const timer = setTimeout(() => {
             ticTacTeoSocket.addCallback("init", setData)
             ticTacTeoSocket.addCallback("time", setTime)
+            ticTacTeoSocket.addCallback("err", setError)
             ticTacTeoSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/tic-tac-teo/play/${game_id}/?token=${authInfos?.accessToken}`)
         }, 300)
 
@@ -89,7 +96,7 @@ export default function TicTacTeo() {
 
     useEffect(() => {
         let interval : NodeJS.Timeout | null = null;
-        if (data.winner !== null) {
+        if (data?.winner !== null) {
             interval = setTimeout(() => {
                 navigate('/dashboard/game')
             }, 4000)
@@ -104,7 +111,7 @@ export default function TicTacTeo() {
 
     }, [data])
 
-    function test(y, x) {
+    function test(y : number, x : number) {
         ticTacTeoSocket.sendMessage({
             "event" : "action",
             x,
@@ -113,7 +120,7 @@ export default function TicTacTeo() {
     }
 
     
-    if (!data.players || !data.board || !data.user) {
+    if (!data || !data.players || !data.board || !data.user) {
         return (
             <div>loading...</div>
         )
@@ -125,11 +132,11 @@ export default function TicTacTeo() {
         <div className={`p-2 rounded w-full h-full flex flex-row items-center justify-center ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} mt-2`}>
             <div className="w-[500px] h-fit p-2">
                 {
-                    data.error && 
+                    error && 
                     (<div className="h-[100px]">
                         <Alert 
-                        alert={{message : [data.error], type : "error"}} 
-                        alertHandler={null} 
+                        alert={error} 
+                        alertHandler={setError} 
                     />
                     </div>)
                 }
@@ -144,16 +151,16 @@ export default function TicTacTeo() {
                         data.winner !== null &&
                         <div 
                             className="absolute z-10 w-full h-[100px] bg-gray-700/50 top-[50%] backdrop-blur-xl uppercase text-3xl left-0 translate-y-[-50%] flex items-center justify-center">
-                                {data.winner == undefined ? "match end" : (data.winner.username == authInfos?.username ? "victory" : "ko")}
+                                {data.winner == undefined ? "match end" : (data?.winner?.username == authInfos?.username ? "victory" : "ko")}
                         </div>
                     }
                     <ul className={`grid grid-cols-1 h-full gap-1`}>
                         {
-                            board.map((row, i) => (
+                            board.map((row, i : number) => (
                                 <li key={i} className="h-full">
                                     <ul className="grid h-full grid-cols-3 gap-1">
                                         {
-                                            row.map((cell, j) => (
+                                            row.map((cell, j : number) => (
                                                 <li onClick={() => test(i, j)} key={j} className="h-full">
                                                     <GameCardItem cell={cell} />
                                                 </li>

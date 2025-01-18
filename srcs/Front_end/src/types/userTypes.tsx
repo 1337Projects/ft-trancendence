@@ -26,16 +26,18 @@ export type UserType = {
 export type UserContextType = {
     authInfos : AuthInfosType | null,
     user : UserType | null,
-    friends : FirendType[] | null,
+    friends : FriendType[] | null,
     setAuthInfosHandler : (token : string | null) => void,
     setUser : React.Dispatch<React.SetStateAction<UserType | null>>
-    setFriends : React.Dispatch<React.SetStateAction<FirendType[] | null>>
+    setFriends : React.Dispatch<React.SetStateAction<FriendType[] | null>>
 
 }
 
-export type FirendType = {
+export type FriendType = {
     id : number,
     sender : UserType,
     receiver : UserType,
     status : string
 }
+
+export type FriendsActionsResType = number | FriendType

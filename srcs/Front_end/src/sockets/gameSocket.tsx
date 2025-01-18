@@ -1,4 +1,4 @@
-import { WebSocketService } from "@/socket";
+import { WebSocketService } from '@/sockets/index'
 
 class GameSocket extends WebSocketService {
 

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { DialogContext } from "@/Contexts/DialogContext"
-import { DialogDataType } from "@/types"
+import { DialogDataType } from "@/types/indexTypes"
 import { UserContext } from "@/Contexts/authContext"
 
 

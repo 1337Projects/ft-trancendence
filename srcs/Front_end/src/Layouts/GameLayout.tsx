@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
-import { tournamentSocket } from '../socket'
 import { UserContext } from '../Contexts/authContext'
+import { tournamentSocket } from '@/sockets/tournamentSocket'
 
 
 export default function GameLayout() {

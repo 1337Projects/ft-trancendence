@@ -1,24 +1,11 @@
 
 import SchemaFour from '@/components/assets/schema/Schema4'
 import Schema8 from '@/components/assets/schema/Schema8';
-import { UserType } from '@/types/user';
+import { TournamentType } from '@/types/tournamentTypes';
 
-export type TournamentDataType = {
-    id : number,
-    max_players : number,
-    players : UserType[],
-    tournament_name : string,
-    tourament_status : string,
-    created_at : string,
-}
 
-export type TournamnetType = {
-    rounds : []
-    data : TournamentDataType
-    user_count : number
-}
 
-export default function Schema({data} : {data : TournamnetType}) {
+export default function Schema({data} : {data : TournamentType}) {
 
     if (!data || !data.rounds) {
         return (

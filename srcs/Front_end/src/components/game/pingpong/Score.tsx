@@ -1,7 +1,7 @@
 
 import { useContext } from "react"
-import { GameType, ScoreType } from "./PingPong"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
+import { GameType, ScoreType } from "@/types/gameTypes"
 
 
 
@@ -14,7 +14,7 @@ function Radio({checked} : {checked : boolean}) {
     )
 }
 
-export default function Score({data, score} : {data : GameType, score : ScoreType}) {
+export default function Score({data, score} : {data : GameType | null, score : ScoreType}) {
 
     
     if (!data) {

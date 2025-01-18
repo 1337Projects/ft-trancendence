@@ -2,7 +2,8 @@ import { useContext } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { TbUsers } from "react-icons/tb";
 import { Link } from "react-router-dom";
-import { TournamentDataType } from "./Schema";
+import { TournamentDataType } from "@/types/tournamentTypes";
+
 
 
 export function TrItem({data} : {data : TournamentDataType}) {

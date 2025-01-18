@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useContext } from "react"
 import { Link, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
 import { FaArrowRight } from 'react-icons/fa';
-import MyUseEffect from '@/hooks/MyUseEffect';
-import { FirendType, UserType } from '@/types/user';
+import { FriendType, UserType } from '@/types/userTypes';
 
 function FriendCard({friend} : {friend : UserType}) {
 
@@ -37,10 +36,10 @@ function FriendCard({friend} : {friend : UserType}) {
 export default function Friends() {
 	const {authInfos} = useContext(UserContext) || {}
 	const {user_name} = useParams()
-	const [friends, setFriends] = useState<FirendType[] | null>()
+	const [friends, setFriends] = useState<FriendType[] | null>()
     
     
-    MyUseEffect(() => {
+    useEffect(() => {
         fetch(`${import.meta.env.VITE_API_URL}api/profile/getOthersFriends/${user_name}/`, {
             method: 'GET',
             credentials : 'include',

@@ -1,8 +1,6 @@
 
-import { ApearanceContextType } from '@/types';
+import { ApearanceContextType } from '@/types/indexTypes';
 import { createContext, ReactNode, useState } from 'react'
-
-
 
 
 export const ApearanceContext = createContext<ApearanceContextType | null>(null);

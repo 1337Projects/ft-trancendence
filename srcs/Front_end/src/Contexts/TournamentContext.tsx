@@ -1,12 +1,5 @@
-import { TournamentDataType } from "@/types/tournament";
+import { TournamentContextType } from "@/types/tournamentTypes";
 import { createContext, ReactNode } from "react";
-import React from "react";
-
-
-type TournamentContextType = {
-    data : TournamentDataType,
-    setData : React.Dispatch<React.SetStateAction<TournamentDataType>>,
-}
 
 
 export const Touramentcontext = createContext<null | TournamentContextType>(null)

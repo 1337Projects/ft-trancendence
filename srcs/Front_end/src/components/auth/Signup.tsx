@@ -5,7 +5,7 @@ import { Form, Formik } from "formik"
 import MyInput from "../ui/Input"
 import * as yup  from 'yup'
 import Alert from "../ui/Alert"
-import { AlertType } from "@/types"
+import { AlertType } from "@/types/indexTypes"
 
 export default function Signup() {
 

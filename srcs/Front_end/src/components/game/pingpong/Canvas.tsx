@@ -1,21 +1,10 @@
 import React, { useRef, useContext, useEffect } from 'react';
 import { ApearanceContext } from "@/Contexts/ThemeContext";
 import { Game } from './Game';
-import { GameType } from './PingPong';
 import { gameSocket } from '@/sockets/gameSocket';
+import { CanvasProps, GameStatsType } from '@/types/gameTypes';
 
-interface CanvasProps {
-    game: GameType,
-};
 
-interface GameStatsType {
-    paddle1: number,
-    paddle2: number,
-    ball: {
-        x: number,
-        y: number
-    } 
-};
 
 // function Canvas(game: GameType) {
 const Canvas: React.FC<CanvasProps> = ({ game }) => {

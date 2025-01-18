@@ -1,9 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { roomSocket, notificationSocket } from '@/socket'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from '@/Contexts/authContext'
-import { FirendType, UserType } from "@/types/user"
+import { FriendType, UserType } from "@/types/userTypes"
+import { RoomType } from "@/types/gameTypes"
+import { roomSocket } from "@/sockets/MatchMakingSocket"
+import { notificationSocket } from "@/sockets/notificationsSocket"
 
 
 export function PlayerGameCard({player} : { player : UserType | undefined }) {
@@ -92,11 +94,7 @@ export default function Waiting() {
     )
 }
 
-export type RoomType = {
-    players : UserType[],
-    status : string,
-    name : string
-}
+
 
 export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 
@@ -167,7 +165,7 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 }
 
 
-function FriendItem({friendShip, room} : { friendShip : FirendType, room : string }) {
+function FriendItem({friendShip, room} : { friendShip : FriendType, room : string }) {
 
     const { authInfos } = useContext(UserContext) || {}
     const { color } = useContext(ApearanceContext) || {}

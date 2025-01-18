@@ -1,5 +1,5 @@
 import { UserContext } from "@/Contexts/authContext"
-import { UserType } from "@/types/user"
+import { UserType } from "@/types/userTypes"
 import { useContext, useEffect, useState } from "react"
 import { useOutletContext } from "react-router-dom"
 
@@ -23,7 +23,7 @@ function MatchStatusItem({title, avatar, color, num} : {title : string, avatar :
 export default function MatchStatus() {
 
 	const { authInfos  } = useContext(UserContext) || {}
-	const [ data, setData ] = useState(null)
+	const [ data, setData ] = useState<null | {total : number, matches_won : number, matches_lost : number}>(null)
 	const currentUser : UserType = useOutletContext()
 	
 	async function fetchData() {

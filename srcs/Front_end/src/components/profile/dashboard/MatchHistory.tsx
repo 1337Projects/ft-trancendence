@@ -5,7 +5,9 @@ import { MdOutlineTipsAndUpdates } from "react-icons/md"
 import { CatButton } from "@/components/game/Game"
 import { IoTimeOutline } from "react-icons/io5"
 import { FaArrowTrendUp } from "react-icons/fa6"
-import { GiStarMedal } from "react-icons/gi"
+import { BiSolidMedal } from "react-icons/bi";
+import { MatchDataType } from "@/types/gameTypes"
+
 
 
 const categories = [
@@ -28,7 +30,7 @@ const categories = [
 
 export default function MatchHistory() {
 
-	const [matches, setMatches] = useState(null)
+	const [matches, setMatches] = useState<MatchDataType[] | null>(null)
 	const { authInfos, user } = useContext(UserContext) || {}
 	
     useEffect(() => {
@@ -95,9 +97,8 @@ export default function MatchHistory() {
 	)
 }
 
-import { BiSolidMedal } from "react-icons/bi";
 
-export function History ({data}) {
+export function History ({data} : {data : MatchDataType}) {
 	const { color } = useContext(ApearanceContext) || {}
 	const date = new Date(data?.created_at)
 
@@ -115,7 +116,7 @@ export function History ({data}) {
 				<div className='flex items-center'>
                     <div className="relative">
                         {
-                            data?.winner == data?.player1?.id && 
+                            data?.winner === data?.player1?.id && 
                                 <div style={{background : color}} className="absolute flex justify-center items-center p-1 w-[20px] h-[20px] rounded-full bottom-0 right-2">
                                     <BiSolidMedal className="white"  />
                                 </div>

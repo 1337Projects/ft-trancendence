@@ -1,14 +1,8 @@
-import { UserType } from "@/types/user";
 
+import { MatchDataType } from "@/types/gameTypes";
+import { UserType } from "@/types/userTypes";
 
-
-type MatchType = {
-  winner : UserType,
-  player1 : UserType,
-  player2 : UserType
-}
-
-export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
+export default function SchemaFour({rounds} : {rounds : MatchDataType[][]}) {
   return (
       <svg
         className="max-w-full h-auto"
@@ -195,7 +189,7 @@ export default function SchemaFour({rounds} : {rounds : MatchType[][]}) {
             width="1"
             height="1"
           >
-            <PlayerImage player={rounds[0]?.[0]?.["winner"]} />
+            <PlayerImage player={rounds[0]?.[0]?.["winner"] as UserType} />
           </pattern>
           <pattern
             id="pattern1_854_121"
