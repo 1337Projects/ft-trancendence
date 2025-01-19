@@ -132,27 +132,36 @@ function MessagesList() {
     const observer = useRef<IntersectionObserver | null>(null);
     const lastItem = useRef(null)
     const [hasMore, setHasMore] = useState(true)
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
         return () => {
+            setPage(1)
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
             setMessages!(null)
             setUserData!(null)
-            setPage(1)
         }
     }, [user])
 
     useEffect(() => {
-        const timer = setTimeout(() => {
+        if (userData) setHasMore(page < userData.nbr_pages)
+    }, [userData])
+    
+    useEffect(() => {
+        timeoutRef.current = setTimeout(() => {
             send_fetch_event(page)
-            if (userData) setHasMore(page < userData.nbr_pages)
-        }, 300)
+        }, 1000)
 
         return () => {
-            clearTimeout(timer)
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current) 
+            }
         }
     }, [page, user])
 
- 
+    
     const topitem = useCallback(() => {
         if (observer.current) observer.current.disconnect()
 
@@ -163,22 +172,26 @@ function MessagesList() {
         })
 
         if (lastItem.current) observer.current.observe(lastItem.current)
+
     }, [lastItem, hasMore, user])
-
-
-    useEffect(() => {
-        return () => {
-            if (observer.current) observer.current.disconnect()
-        }
-    }, [user])
-
-    useEffect(() => {
+        
+        
+        
+        useEffect(() => {
         if (lastItem.current && messages) {
-            setTimeout(() => {
+            const timer = setTimeout(() => {
                 topitem()
             }, 1000)
+
+            return () => {
+                clearTimeout(timer)
+                if (observer.current) observer.current.disconnect()
+            }
         }
-    }, [messages, user])
+    }, [messages,hasMore, user])
+
+   
+
 
     function send_fetch_event(page : number) {
         chatSocket.sendMessage({
@@ -197,7 +210,7 @@ function MessagesList() {
                 <div className='flex flex-col '>
                     {
                         messages.map((message : MessageType, index : number) => {
-                            if (index === 0) {
+                            if (index === 2) {
                                 return (
                                     <div className='w-full' ref={lastItem} key={index}>
                                         <UserMessage m={message}  />

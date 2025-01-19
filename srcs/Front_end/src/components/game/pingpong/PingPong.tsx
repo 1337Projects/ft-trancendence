@@ -32,7 +32,6 @@ function PingPong() {
             gameSocket.addCallback("init", init);
             gameSocket.addCallback("set_score", set_score);
             gameSocket.addCallback("set_match_result", setMatchResult);
-            gameSocket.addCallback("back", navigateBack)
             gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game_id}/?token=${authInfos?.accessToken}`);
         }, 200);
 
@@ -54,8 +53,10 @@ function PingPong() {
 
 
     useEffect(() => {
-        if (matchResult && tournament_id) {
-            tournamentSocket.sendMessage({"event" : "upgrade", "result" : matchResult})
+        if (matchResult) {
+            if (tournament_id) {
+                tournamentSocket.sendMessage({"event" : "upgrade", "result" : matchResult})
+            }
             const timer = setTimeout(navigateBack, 2000)
             return () =>  clearTimeout(timer)
         }

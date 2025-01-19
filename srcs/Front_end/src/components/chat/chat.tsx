@@ -60,9 +60,9 @@ function ConvItem({c, menu} : {c : ConversationType, menu : boolean}) {
             <div className={`flex justify-start items-center w-full ${menu && "test-style"}`}>
                 <div className={`flex  ${menu ? "test-style" : "justify-center"} items-center w-full`}>
                     <div className={`w-[35px] h-[35px] ${menu && "test-style"}`}>
-                        <img src={data?.profile?.avatar} className="w-full bg-white h-full rounded-full" alt="img" />
+                        <img src={data?.profile?.avatar} className="w-[35px] h-[35px] bg-white rounded-full" alt="img" />
                     </div>
-                    <div className={`content w-fit ml-4 ${menu ? "test-style" : "hidden"}`}>
+                    <div className={`content w-fit max-w-[100px] ml-4 ${menu ? "test-style" : "hidden"}`}>
                         <div className="flex justify-between items-center">
                             <h1 className="font-bold text-[10pt] max-w-[100px] truncate">{data?.username}</h1>
                             <p className="text-[7pt]">{time}</p>

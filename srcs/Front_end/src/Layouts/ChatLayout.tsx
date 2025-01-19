@@ -35,6 +35,7 @@ export default function ChatLayout() {
         setCnvs(prev => prev ? [cnv, ...prev.filter(c => c.id != cnv.id)] : [cnv])
     }
 
+
     useEffect(() => {
         const timer = setTimeout(() => {
             chatSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/chat/${user?.id}/`)
@@ -63,7 +64,7 @@ export default function ChatLayout() {
         <>
             <div className={` ${theme === 'light' ? " bg-lightItems text-lightText" : "bg-darkItems text-darkText"} h-full min-h-fit w-full rounded-sm flex-grow`}>
                 <div className="flex w-full h-full ">
-                    <div className={`h-full overflow-scroll ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10 w-[90px]  ${menu ? "active-menu" : "non-active-menu"}`}>
+                    <div className={`h-full overflow-scroll ${theme == 'light' ? "border-black/20" : "border-white/20"} border-r-[.3px] rounded-sm z-10  ${menu ? "active-menu" : "non-active-menu"}`}>
                         <div className={`w-full h-fit px-2`}>
                             <div className={`text-[16pt] w-full h-[70px] flex items-center  ${menu ? "justify-end" : "justify-center"}`}>
                                 <div className="w-fit" onClick={() => setMenu(prev => !prev)}>

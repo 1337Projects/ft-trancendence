@@ -14,6 +14,9 @@ class RoomSocket extends WebSocketService {
             case 203:
                 this.callbacks["startGame"]?.(data.response.game_id)
                 break;
+            case 400:
+                this.callbacks["error"]?.(data.response.error)
+                break;
             default:
                 break;
         }

@@ -38,11 +38,12 @@
 
 
 .active-menu {
-    width: 300px;
+    min-width: 250px;
     transition: opacity .3s ease;
 }
 
 .non-active-menu {
+    width: 90px;
     transition: opacity .3s ease;
 }
 
@@ -73,121 +74,8 @@
 
 
 
-@keyframes slide {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-
 .scroll-bottom {
     overflow-anchor: none;
 }
 
 
-svg#freepik_stories-messaging-fun:not(.animated) .animable {
-    opacity: 0;
-}
-
-svg#freepik_stories-messaging-fun.animated #freepik--background-complete--inject-113 {
-    animation: 1s 1 forwards cubic-bezier(.36, -0.01, .5, 1.38) slideRight;
-    animation-delay: 0s;
-}
-
-svg#freepik_stories-messaging-fun.animated #freepik--Shadow--inject-113 {
-    animation: 1s 1 forwards cubic-bezier(.36, -0.01, .5, 1.38) slideLeft;
-    animation-delay: 0s;
-}
-
-svg#freepik_stories-messaging-fun.animated #freepik--bubble-speech--inject-113 {
-    animation: 1s 1 forwards cubic-bezier(.36, -0.01, .5, 1.38) zoomIn;
-    animation-delay: 0s;
-}
-
-svg#freepik_stories-messaging-fun.animated #freepik--Emoji--inject-113 {
-    animation: 1s 1 forwards cubic-bezier(.36, -0.01, .5, 1.38) zoomIn;
-    animation-delay: 0s;
-}
-
-svg#freepik_stories-messaging-fun.animated #freepik--Heart--inject-113 {
-    animation: 1s 1 forwards cubic-bezier(.36, -0.01, .5, 1.38) lightSpeedLeft;
-    animation-delay: 0s;
-}
-
-svg#freepik_stories-messaging-fun.animated #freepik--Character--inject-113 {
-    animation: 1s 1 forwards cubic-bezier(.36, -0.01, .5, 1.38) slideDown;
-    animation-delay: 0s;
-}
-
-@keyframes slideRight {
-    from {
-        opacity: 0;
-        transform: translateX(30px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes zoomIn {
-    from {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes lightSpeedLeft {
-    from {
-        transform: translate3d(-50%, 0, 0) skewX(20deg);
-        opacity: 0;
-    }
-
-    60% {
-        transform: skewX(-10deg);
-        opacity: 1;
-    }
-
-    80% {
-        transform: skewX(2deg);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}

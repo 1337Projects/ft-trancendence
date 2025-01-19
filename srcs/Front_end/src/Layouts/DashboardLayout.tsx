@@ -64,7 +64,7 @@ export default function DashboardLayout() {
               user?.setAuthInfosHandler(res.access_token)
           })
           .catch(err => console.log(err))
-      }, 12 * 60 * 1000);
+      }, 14 * 60 * 1000);
       return () => clearInterval(interval);
     }, []);
     

@@ -29,6 +29,7 @@ export default function Waiting() {
     const searchUrl = new URLSearchParams(window.location.search)
     let room_id = searchUrl.get('room_id')
     const timeoutRef = useRef<null | NodeJS.Timeout>(null)
+    const [error , setError] = useState<string | null>(null)
 
     if (!room_id) { 
         room_id = 'any'
@@ -37,10 +38,10 @@ export default function Waiting() {
     useEffect(() => {
 
         const timer = setTimeout(() => {
-            console.log(`wss/game/${game}/join/${type}/${room_id}/`)
-            roomSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game}/join/${type}/${room_id}/?token=${authInfos?.accessToken}`)
+            roomSocket.addCallback("error", setError)
             roomSocket.addCallback("setRoom", setRoom)
             roomSocket.addCallback("startGame", startGameHandler)
+            roomSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game}/join/${type}/${room_id}/?token=${authInfos?.accessToken}`)
         }, 100)
 
         return () => {
@@ -58,19 +59,20 @@ export default function Waiting() {
             navigate(`../${game}/room/${id}`)
         }, 3000)
     }
-    if (!room) {
+    if (error) {
         return (
             <div className={`w-full ${ theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-white"}  p-2 mt-2 rounded-sm h-[100vh] flex items-center justify-center`}>
                 <div className='w-fit h-fit text-center'>
                     <h1 className='text-[20px] capitalize'>room not found!</h1>
                     <p className="text-xs mt-4 w-[400px]">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere odit sapiente totam nihil accusamus dolores!</p>
                     <div className='w-full mt-4 flex justify-center'>
-                        <Link to="../game" style={{background:color}} className='p-2 rounded w-[100px] text-white text-[16px] capitalize'>back</Link>
+                        <Link to="/dashboard/game" style={{background:color}} className='p-2 rounded w-[100px] text-white text-[16px] capitalize'>back</Link>
                     </div>
                 </div>
             </div>
         )
     }
+
 
     return (
         <div className={`flex justify-center items-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} w-full h-full min-h-fit rounded overflow-scroll`}>
@@ -79,14 +81,17 @@ export default function Waiting() {
                     <h1 className='font-bold'>waiting for player to join</h1>
                     <h1 className="mt-2">{room?.room?.status}</h1>
                 </div>
-                <InviteFriendsToPlay data={room?.room} />
+                {
+                    room &&
+                    <InviteFriendsToPlay data={room?.room} />
+                }
                 <div className="flex items-center mt-20 justify-center">
                     <PlayerGameCard player={room?.room?.players[0]} />
                     <div className="w-[100px] text-center">
                         <h1 className='text-[40px]'>vs</h1>
                         <h1 className='mt-2'>0 / 0</h1>
                     </div>
-                    <PlayerGameCard player={room?.room?.players[1]} />
+                    <PlayerGameCard player={room?.room?.players[1]} />   
                 </div>
             </div>
         </div>
