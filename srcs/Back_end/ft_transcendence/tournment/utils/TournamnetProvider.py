@@ -40,7 +40,7 @@ class Tournament:
         if not next_match:
             return None
         async with self.state.lock:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
             if next_match.val.status == 'waiting':
                 self.state.current_matches.append(next_match)
                 next_match.val.status = 'created'
@@ -59,6 +59,14 @@ class Tournament:
                 match.val = match.right.val
             # debug("--------------------------------")
             self.state.current_matches.remove(match)
+
+    async def disconnectHandler(self, id):
+        async with self.state.lock:
+            match = self.builder.get_player_match(id)
+            if match and match.left.val.data['id'] == id:
+                match.val = match.right.val
+            elif match and match.right.val.data['id'] == id:
+                match.val = match.left.val
 
 
     @database_sync_to_async

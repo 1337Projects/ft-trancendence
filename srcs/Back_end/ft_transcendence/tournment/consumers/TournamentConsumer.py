@@ -41,37 +41,57 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         )
 
 
+    async def senderror(self, error):
+        res = {
+            "status" : 400,
+            "error" : error
+        }
+        await self.send(text_data=json.dumps({"response" : res}))
+
 
     async def connect(self):
-        await self.accept()
-        self.tournment_id = self.scope['url_route']['kwargs']['id']
-        self.group_name = f"tournment_{self.tournment_id}"
-        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        try:
+            await self.accept()
+            self.tournment_id = self.scope['url_route']['kwargs']['id']
+            self.group_name = f"tournment_{self.tournment_id}"
+            await self.channel_layer.group_add(self.group_name, self.channel_name)
 
-        async with self.state.lock:
-            await asyncio.sleep(0.5)
-            await self.init()
-            await self.create_provider()
+            async with self.state.lock:
+                await asyncio.sleep(0.1)
+                await self.init()
+                await self.create_provider()
+        except Exception as e:
+            debug(f"connect => {e}")
+            await self.senderror("error in connection")
         
+
+    def check_if_user_in_tournment(self, user_id):
+        for player in self.state.tournaments[self.tournment_id]["data"]["players"]:
+            if player["id"] == user_id:
+                return True
+        return False
+
 
     async def init(self):
-        if not self.state.tournaments.get(self.tournment_id, None):
-            current_tourament = await sync_to_async(self.get_tournemnt_data)(self.tournment_id)
-            if current_tourament is None:
-                return
-            self.state.tournaments[self.tournment_id] = {"data" : current_tourament, "user_count" : 0}
+        current_tourament = self.state.tournaments.get(self.tournment_id, None)
+        if not current_tourament:
+            tourament = await sync_to_async(self.get_tournemnt_data)(self.tournment_id)
+            if tourament is None:
+                raise Exception("tourament is None")
+            self.state.tournaments[self.tournment_id] = {"data" : tourament, "user_count" : 0}
+            current_tourament = self.state.tournaments[self.tournment_id]
+        if current_tourament["data"]["tourament_status"] == "ended" or \
+            (current_tourament["data"]["tourament_status"] == "ongoing" and \
+            not self.check_if_user_in_tournment(self.scope['user'].id)):
+                raise Exception("tourament is ended or user not in tournment")
         self.state.tournaments[self.tournment_id]['user_count'] += 1
         
-
+        
 
     def set_tournament_status(self, status):
-        try:
-            tr = Tournment.objects.get(id=self.tournment_id)
-            debug(tr)
-            tr.tourament_status = status
-            tr.save(0)
-        except Exception as e:
-            debug(f"set status fn {e}")
+        tr = Tournment.objects.get(id=self.tournment_id)
+        tr.tourament_status = status
+        tr.save(0)
 
 
 
@@ -82,14 +102,17 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                 await sync_to_async(self.set_tournament_status)("ongoing")
                 self.state.tournaments_providers[self.tournment_id] = Tournament(self.state.tournaments[self.tournment_id])
                 self.state.tournaments[self.tournment_id]["rounds"] = self.state.tournaments_providers[self.tournment_id].builder.get_rounds()
-                await asyncio.sleep(3)
+                await asyncio.sleep(2)
                 await self.brodcast({
                     "data" : self.state.tournaments[self.tournment_id],
                     "status" : 210
                 })
         except Exception as e:
             debug(f"create provider {e}")
+            raise Exception("error in create provider")
         
+
+
 
     async def receive(self, text_data=None):
         try:
@@ -104,6 +127,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                     })
 
             elif text_to_json_data["event"] == "upgrade":
+                debug("upgrade")
                 provider = self.state.tournaments_providers[self.tournment_id]
                 res = text_to_json_data["result"]
                 if res["player1"]["id"] == self.scope['user'].id or \
@@ -119,6 +143,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                     "status" : 210
                 })
                 if data["rounds"][0][0]["winner"] != 'unknown':
+                    self.state.tournaments[self.tournment_id]["data"]["tourament_status"] = "ended"
                     await sync_to_async(self.set_tournament_status)("ended")
                     builder = self.state.tournaments_providers[self.tournment_id].builder
                     await self.brodcast({
@@ -128,6 +153,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
 
         except Exception as e:
             debug(f"receive => {e}")
+            self.senderror("error in receive")
 
 
     async def send_data(self, event):
@@ -136,14 +162,18 @@ class TournmentConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        async with self.state.lock:
-            self.state.tournaments[self.tournment_id]['user_count'] -= 1
-            if self.state.tournaments[self.tournment_id]['user_count'] == 0:
-                del self.state.tournaments[self.tournment_id]
-                del self.state.tournaments_providers[self.tournment_id]
+        try:
+            async with self.state.lock:
+                await self.state.tournaments_providers[self.tournment_id].disconnectHandler(self.scope['user'].id)
+                self.state.tournaments[self.tournment_id]['user_count'] -= 1
+                if self.state.tournaments[self.tournment_id]['user_count'] == 0:
+                    del self.state.tournaments[self.tournment_id]
+                    del self.state.tournaments_providers[self.tournment_id]
 
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
-
+            await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        except Exception as e:
+            debug(f"disconnect => {e}")
+            self.senderror("error in disconnect")
 
     def get_tournemnt_data(self, id):
         try:

@@ -19,7 +19,7 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
         self.serialized_user = None
 
 
-    async def send_data_handler(self, data):
+    async def brodcast(self, data):
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -27,6 +27,13 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
                 "data" : data
             }
         )
+    
+    async def senderror(self, error):
+        res = {
+            "status" : 400,
+            "error" : error
+        }
+        await self.send(text_data=json.dumps({"response" : res}))
 
 
     async def connect(self):
@@ -47,7 +54,7 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
             current_turnament = self.tournaments.get(self.tournment_id, None)
             if current_turnament:
                 current_turnament['players'][self.serialized_user['id']] = self.serialized_user
-                await self.send_data_handler({
+                await self.brodcast({
                     "data" : current_turnament,
                     "status" : 100
                 })
@@ -55,10 +62,7 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
             if len(current_turnament['players']) == current_turnament['data']['max_players']:
                 await sync_to_async(self.add_players_to_db)()
         except Exception as e:
-            await self.send_data_handler({
-                "error" : e,
-                "status" : 400
-            })
+            await self.senderror(e)
             debug(e)
             
 
@@ -68,19 +72,19 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         try:
-            current_tournament = self.tournaments[self.tournment_id]
-            del current_tournament['players'][self.scope['user'].id]
+            del self.tournaments[self.tournment_id]['players'][self.scope['user'].id]
+            if len(self.tournaments[self.tournment_id]['players']) == 0:
+                del self.tournaments[self.tournment_id]
+                debug(self.tournaments)
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
-            await self.send_data_handler({
+            await self.brodcast({
                 "status" : 100,
-                "data" : current_tournament
+                "data" : self.tournaments[self.tournment_id]
             })
         except Exception as e:
-            await self.send_data_handler({
-                "error" : e,
-                "status" : 400
-            })
+            await self.senderror(e)
             debug(e)
+
 
 
     def add_players_to_db(self):

@@ -7,6 +7,7 @@ import json
 from account.serializer import UserWithProfileSerializer
 from game.serializers import GameSerializer
 from tournment.utils.utils import debug
+from game.serializers import TicTacTeoSerializer
 
 
 
@@ -42,61 +43,72 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         self.room_id = None
 
 
+    async def brodcast(self, data, group_name):
+        await self.channel_layer.group_send(
+            group_name,
+            {
+                "type": "chat.message",
+                "data" : data
+            }
+        )
+
+
+    async def senderror(self, error):
+        res = {
+            "status" : 400,
+            "error" : error
+        }
+        await self.send(text_data=json.dumps({"response" : res}))
+
+
     async def connect(self):
         await self.accept()
-
-        self.serialized_user = await self.get_user_from_db()
-        room_name = self.scope["url_route"]["kwargs"]["room_id"]
-        room_type = self.scope["url_route"]["kwargs"]["type"]
-        
-        async with self.shared_data._instance.lock:
-
-            self.room_id = self.get_room(room_name, room_type)
-                # await self.send(text_data=json.dumps({"response" : {"status" : 202}}))
-                # return
-            # debug(self.room_id)
-            if self.room_id == -1:
-                name = room_name
-                if name == 'any':
-                    name = secrets.token_hex(12)
-                self.room_id = len(self.shared_data._instance.rooms)
-                self.shared_data._instance.rooms[self.room_id] = {"name" : name, "privacy" : room_type, "status" : "waiting", "players" : [], "exec" : 0}
+        try :
+            self.serialized_user = await self.get_user_from_db()
+            room_name = self.scope["url_route"]["kwargs"]["room_id"]
+            room_type = self.scope["url_route"]["kwargs"]["type"]
             
-            room = self.shared_data._instance.rooms[self.room_id]
-            room['players'].append(self.serialized_user)
-            await self.channel_layer.group_add(
-                room["name"],
-                self.channel_name
-            )
-            await self.channel_layer.group_send(
-                room['name'],
-                {
-                    "type": "chat.message",
-                    "data" : {
-                            "room" : { "room" : room },
-                            "status" : 201
-                        }
-                }
-            )
+            async with self.shared_data._instance.lock:
 
-            if len(room['players']) == 2:
-                room['status'] = 'started'
-                match = await self.save_match_to_db(room)
-                if match != None:
-                    await self.channel_layer.group_send(
-                        room['name'],
-                        {
-                            "type" : "chat.message",
-                            "data" : {
-                                "game_id" : match['id'],
-                                "status" : 203
-                            }
-                        }
-                    )
+                self.room_id = self.get_room(room_name, room_type)
+                if self.room_id == -1 and room_name != 'any':
+                    raise Exception("Room not found")
+                if self.room_id == -1:
+                    name = room_name
+                    if name == 'any':
+                        name = secrets.token_hex(12)
+                    self.room_id = len(self.shared_data._instance.rooms)
+                    self.shared_data._instance.rooms[self.room_id] = {"name" : name, "privacy" : room_type, "status" : "waiting", "players" : [], "exec" : 0}
+                room = self.shared_data._instance.rooms[self.room_id]
+                room['players'].append(self.serialized_user)
+                await self.channel_layer.group_add(
+                    room["name"],
+                    self.channel_name
+                )
+
+                await self.brodcast({
+                    "room" : { "room" : room },
+                    "status" : 201
+                }, room["name"])
+                
+                if len(room['players']) == 2:
+                    room['status'] = 'started'
+                    match = await self.save_match_to_db(room)
+                    if not match:
+                        raise Exception("Error in creating match")
+                    await self.brodcast({
+                        "game_id" : match['id'],
+                        "status" : 203
+                    }, room["name"])
+        except Exception as e:
+            debug(e)
+            await self.senderror("Error in connection")
+
 
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps({"response" : event["data"]}))
+
 
     async def disconnect(self, close_code):
         room = self.shared_data._instance.rooms.get(self.room_id, None)
@@ -106,7 +118,6 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
                 self.channel_name
             )
             del self.shared_data._instance.rooms[self.room_id]
-            debug(self.shared_data._instance.rooms)
 
 
     @database_sync_to_async
@@ -119,10 +130,8 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
             if serializer.is_valid():
                 serializer.save()
                 return serializer.data
-            # debug(serializer.errors)
             return None
-        except Exception as e:
-            # debug(e)
+        except:
             return None
 
 
@@ -133,6 +142,8 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         except :
             return None
         
+
+
     def get_room(self, room_name, room_type):
         debug(self.shared_data._instance.rooms)
         if room_name == 'any' and room_type == 'public':
@@ -148,12 +159,11 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
                     room['privacy'] == room_type and \
                     room['players'][0]['id'] != self.serialized_user['id']:
                     return key
-                
-        
         return -1
     
 
-from game.serializers import TicTacTeoSerializer
+
+
 
 class TicTakTeoMatchMaking(GameMatchMakingConsumer):
 
