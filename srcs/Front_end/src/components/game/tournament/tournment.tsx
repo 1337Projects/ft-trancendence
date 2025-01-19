@@ -23,6 +23,7 @@ export default function Tournment() {
     const { tournament_id } = useParams()
     const [ alert, setAlert ] = useState<AlertType | null>(null)
     const timeoutRef = useRef<null | NodeJS.Timeout>(null)
+    const [ error , setError] = useState<string | null>(null)
 
     const EndHandler = (data: UserType[]) => {
         setEnded(data)
@@ -37,6 +38,7 @@ export default function Tournment() {
             tournamentSocket.addCallback("tr_data", DataHandler)
             tournamentSocket.addCallback("match_data", matchHandler)
             tournamentSocket.addCallback("winner_data", EndHandler)
+            tournamentSocket.addCallback("error", setError)
             tournamentSocket.sendMessage({"event" : "get_data"})
         }, 100)
 
@@ -58,6 +60,17 @@ export default function Tournment() {
                 }, 3000)
             }
         }
+    }
+
+    if (error) {
+        return (
+            <div className={`w-full h-full overflow-scroll ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} flex items-center justify-center p-2`}>
+                <div className="w-fit h-fit max-w-[300px] text-center">
+                    <h1 className="capitalize font-bold">somthing went wrong...</h1>
+                    <p className="mt-2 text-xs">{error}</p>
+                </div>
+            </div>
+        )
     }
 
 

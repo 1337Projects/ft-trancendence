@@ -97,17 +97,24 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
 
     // console.log(appearence?.color)
     return (
-        <div className={`flex  flex-col items-center justify-center  md:w-[100%]
-        transition-all duration-300 ease-in-out p-6 text-white text-center rounded-lg
-        'backdrop-blur-md
-        ${appearence?.theme === 'light' ? 'bg-[#424242]': 'bg-[#b6b6b6]'  }
+        <div className={`flex flex-col items-center justify-center  md:w-[100%]
+        transition-all duration-300 ease-in-out px-10 py-4 text-white text-center rounded
+        backdrop-blur-xl border-[.4px] shadow-xl
+        ${appearence?.theme === 'light' ? 'bg-gray-950/40 border-gray-800/20': 'bg-[#b6b6b6]/20'  }
         ${bol === true ? 'h-[530px]' : 'h-[100px]' }
         `}>
         {
             bol && 
             <div className='flex justify-center items-center  w-[100%] h-[400px]'>
                 <div className='w-[100%] flex flex-col items-center justify-center'>
-                    <img src={qrCodeUrl} alt="user" className="mt-1 h-[250px] w-[250px] md:h-[280px] md:w-[280px] mx-2 border-[1px] border-black/20 rounded-sm" />
+                    {
+                        qrCodeUrl && <img 
+                            src={qrCodeUrl} 
+                            alt="user" 
+                            className="mt-1 h-[250px] w-[250px] md:h-[280px] md:w-[280px] mx-2 rounded" 
+                        />
+                    }
+                    <p className='text-xs max-w-[400px] mx-auto py-4'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatem nemo soluta error modi nulla debitis.</p>
                     {
                         are_you_in &&
                         <Link to="../login">
@@ -133,22 +140,29 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
                 height: '50px',
                 fontSize: '20px',
                 textAlign: 'center',
-                border: '1px solid #000',
-                borderRadius: '8px',
+                borderRadius: '2px',
                 outline: 'none',
                 color: '#000',
             }}
             />
         }
-        <div className='flex items-center justify-center w-[70%]'>
+        <div className='flex items-center mt-6 justify-center w-[70%]'>
             <button
-            style={{ backgroundColor: appearence?.color }}
-            onClick={handleSubmit} className={` pl-5 pr-5 h-[44px]  rounded-[5px] text-[18px] text-[#fff]`}>
+                style={{ backgroundColor: appearence?.color }}
+                onClick={handleSubmit} 
+                className={`px-6 h-[38px] rounded text-sm text-[#fff]`}
+            >
                 {errr}
             </button>
             {
                 cancel && errr != 'Done' &&
-                <button className={`p-4 text-[18px] ${appearence?.theme === 'light' ? 'text-[#fff]' : 'text-[#000]'} `} onClick={() => setShowPopup(false)} >Cancel</button>
+                <button 
+                    className={`ml-2 px-6 h-[38px] rounded text-sm text-white`} 
+                    onClick={() => 
+                    setShowPopup(false)}
+                >
+                    Cancel
+                </button>
             }
         </div>
         </div>

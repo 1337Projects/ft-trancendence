@@ -32,6 +32,7 @@ class TournamentSocket extends WebSocketService {
                 this.callbacks["winner_data"]?.(data.response.data)
                 break;
             case 400:
+                this.callbacks["error"]?.(data.response.error)
                 this.socket?.close()
                 break;
         }
