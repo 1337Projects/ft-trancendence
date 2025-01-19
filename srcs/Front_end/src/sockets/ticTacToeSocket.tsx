@@ -4,18 +4,8 @@ import { TicTacTeoType } from '@/types/gameTypes'
 
 class TicTacTeoSocket extends WebSocketService {
 
-    openCallback = () => {
-        console.log("tic tac web socket connection established")
-        this.flushQueue()
-    }
-
-    closeCallback = () => {
-        console.log("tic tac WebSocket connection closed");
-    }
-
     eventCallback = (event : MessageEvent) => {
         const data = JSON.parse(event.data)
-        // console.log(data)
         switch (data.status) {
             case 201: {
                 this.callbacks["init"]?.(() => {

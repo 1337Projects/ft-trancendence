@@ -45,18 +45,14 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
     }, [])
 
     useEffect(() => {
-        if (game !== null) {
+        if (game !== null && canvasRef.current) {
             const canvas = canvasRef.current;
             const context = canvas?.getContext('2d');
             const { paddles, ball } = game;
             if (context) {
                 gameInstanceRef.current = new Game(context, paddles, ball);
                 gameInstanceRef.current.render();
-            } else {
-                console.error('Error in getting context of canvas.');
             }
-        } else {
-            console.error('Game is null');
         }
     }, [game]);
 
@@ -70,12 +66,11 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
         <div 
             ref={canvaParentRef}
             className={` ${theme === 'light' ? "border-lightText" : "border-darkText"}
-            rounded-sm relative w-full flex justify-center items-center h-full p-4 transition-transform duration-1000`}
+            rounded-sm relative w-full flex justify-center items-center h-full transition-transform duration-1000`}
         >
-            {/* <div style={{background : color}} className='w-full h-[200px] absolute top-[50%] translate-y-[-50%] z-10'> hello </div> */}
             <div className='w-full h-full'>
                 <canvas 
-                    className={`w-full h-full border-[.1px] rounded border-white/50 mx-auto ${theme === 'light' ? "bg-black/60" : "bg-white/10"}  backdrop-blur-md`}
+                    className={`w-full h-full border-[.1px] rounded border-white/50 ${theme === 'light' ? "bg-black/60" : "bg-white/10"}  backdrop-blur-md`}
                     width="550px" height="300px" 
                     ref={canvasRef}></canvas>
             </div>

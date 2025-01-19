@@ -54,7 +54,7 @@ function PingPong() {
 
 
     useEffect(() => {
-        if (matchResult) {
+        if (matchResult && tournament_id) {
             tournamentSocket.sendMessage({"event" : "upgrade", "result" : matchResult})
             const timer = setTimeout(navigateBack, 2000)
             return () =>  clearTimeout(timer)
@@ -64,21 +64,21 @@ function PingPong() {
     const { theme } = useContext(ApearanceContext) || {}
 
     return (
-            <div className={`relative ${theme === 'light' ? " text-lightText bg-lightItems" : " text-darkText bg-darkItems"}  flex justify-center items-center rounded-none w-full h-[100vh] mt-2 p-2`}>
+            <div className={`${theme === 'light' ? " text-lightText bg-lightItems" : " text-darkText bg-darkItems"}  flex justify-center items-center rounded-none w-full h-[100vh] mt-2 p-2`}>
                 <div className={`relative h-fit`}>
-                    {
-                        matchResult && 
-                        <div 
-                            className="bg-black/20 h-[150px] flex justify-center items-center absolute z-10 w-full top-[50%] translate-y-[-50%]"
-                        > 
-                            <h1 className="text-[30pt] font-bold uppercase">{matchResult.winner == user?.id ? "victory" : "ko"} </h1>
-                        </div>
-                    }
                     <div className="w-full">
                         <div className='flex justify-center px-4'>
                             <Score data={game} score={score} />
                         </div>
-                        <div className={`flex justify-center items-center mt-10 h-fit`}>
+                        <div className={`flex relative justify-center items-center mt-10 h-fit`}>
+                            {
+                                matchResult && 
+                                <div 
+                                    className="bg-black/50 h-[100px] flex justify-center items-center absolute z-10 w-full top-[50%] translate-y-[-50%]"
+                                > 
+                                    <h1 className="text-[30pt] text-white font-bold uppercase">{matchResult.winner == user?.id ? "victory" : "ko"} </h1>
+                                </div>
+                            }
                             <Canvas game={game}/>
                         </div>
                     </div>

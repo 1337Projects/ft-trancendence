@@ -2,18 +2,6 @@ import { WebSocketService } from '@/sockets/index'
 
 class GameSocket extends WebSocketService {
 
-
-    openCallback = () => {
-        console.log("Game web socket connection established")
-        this.flushQueue()
-    }
-
-    closeCallback = () => {
-        // this.callbacks['closeHandler'](true)
-        console.log("Game WebSocket connection closed");
-    }
-    
-
     eventCallback = (event: MessageEvent) => {
 
         const data = JSON.parse(event.data)

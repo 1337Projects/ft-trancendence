@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useContext } from 'react'
-import { NotificationsContext } from '../Contexts/NotificationsContext'
+import { NotificationsContext } from '@/Contexts/NotificationsContext'
 
 const NotFound = () => {
 

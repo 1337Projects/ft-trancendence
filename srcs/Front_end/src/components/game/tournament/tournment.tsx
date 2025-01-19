@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from '@/Contexts/authContext'
 import Hero from "./Hero";
@@ -9,6 +9,8 @@ import { UserType } from "@/types/userTypes";
 import { TournamentType } from "@/types/tournamentTypes";
 import { MatchDataType } from "@/types/gameTypes";
 import { tournamentSocket } from "@/sockets/tournamentSocket";
+import Alert from "@/components/ui/Alert";
+import { AlertType } from "@/types/indexTypes";
 
 
 export default function Tournment() {
@@ -19,7 +21,8 @@ export default function Tournment() {
     const navigate = useNavigate()
     const [ ended, setEnded ] = useState<UserType[] | null>(null)
     const { tournament_id } = useParams()
- 
+    const [ alert, setAlert ] = useState<AlertType | null>(null)
+    const timeoutRef = useRef<null | NodeJS.Timeout>(null)
 
     const EndHandler = (data: UserType[]) => {
         setEnded(data)
@@ -39,6 +42,9 @@ export default function Tournment() {
 
         return () => {
             clearTimeout(timer)
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current)
+            }
         }
     }, [])
 
@@ -46,7 +52,10 @@ export default function Tournment() {
     const matchHandler = (match_data : MatchDataType) => {
         if (match_data && user) {
             if (match_data.player1.username == user?.username || match_data.player2.username == user?.username) {
-                navigate(`/dashboard/game/tournment/${tournament_id}/play/${match_data.id}`)
+                setAlert({message : ['get ready to play match ...'], type : 'success'})
+                timeoutRef.current = setTimeout(() => {
+                    navigate(`/dashboard/game/tournment/${tournament_id}/play/${match_data.id}`)
+                }, 3000)
             }
         }
     }
@@ -63,8 +72,8 @@ export default function Tournment() {
     return  (
         <div className={`w-full h-full overflow-scroll ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} p-2`}>
             <Hero data={tournamentData} />
-            <div className="w-full h-fit mt-2">
-
+            <div className="w-full h-fit mt-6">
+                {alert && <Alert alert={alert} alertHandler={setAlert} />}
                 <Schema data={tournamentData} />
                 {
                     ended && 

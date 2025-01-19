@@ -16,7 +16,7 @@ export default function ApearanceProvider({children} : {children : ReactNode}) {
     }
     
     if (!currentTheme) {
-        currentTheme = 'dark';
+        currentTheme = 'light';
         window.localStorage.setItem("theme", currentTheme)
     }
 

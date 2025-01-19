@@ -9,7 +9,12 @@ function Radio({checked} : {checked : boolean}) {
     const { color } = useContext(ApearanceContext) || {}
     return (
         <li>
-            <input style={{accentColor : color}} type="radio" className="w-[11px]" onChange={() => {}} checked={checked} />
+            <input 
+                style={{accentColor : color}}
+                type="radio" 
+                className="w-[11px]"
+                onChange={() => {}} checked={checked} 
+            />
         </li>
     )
 }

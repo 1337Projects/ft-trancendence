@@ -25,10 +25,18 @@ export default function Profile() {
         try {
             const formdata = new FormData()
             formdata.append("user", JSON.stringify({first_name : values.first_name, last_name : values.last_name, profile : {bio : values.bio}}))
-            if (images.avatar)
+            if (images.avatar) {
+                if (images.avatar.size > 2 * 1024 * 1024) {
+                    throw new Error("avatar size should be less than 2mb")
+                }
                 formdata.append("avatar" , images.avatar)
-            if (images.banner)
+            }
+            if (images.banner) {
+                if (images.banner.size > 2 * 1024 * 1024) {
+                    throw new Error("banner size should be less than 2mb")
+                }
                 formdata.append("banner" , images.banner)
+            }
             const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/set_profile_data/`, {
                 method: 'PUT',
                 credentials:'include',
@@ -49,7 +57,6 @@ export default function Profile() {
                 message : ["your data has been updated successfully"]
             })
         } catch (err) {
-            console.log(err)
             setAlert({
                 type : "error",
                 message : [err instanceof Error ? err.toString() : "error occured"]
@@ -84,7 +91,7 @@ export default function Profile() {
                 </div>
                 <div className="w-full flex mt-8">
                     <img src={user?.profile?.avatar} className="bg-white w-[60px] h-[60px] rounded-sm mr-3" alt="img" />
-                    <div className="text-[10px] relative">
+                    <div className="text-[10px] w-full relative">
                         <input
                             type="file" 
                             className=" absolute bg-darkItems/40 backdrop-blur-lg text-white rounded-sm p-2 text-[12px]"
@@ -92,6 +99,9 @@ export default function Profile() {
                                 return {...prev, avatar: e.target.files![0] ?? null}
                             })}
                         />
+                        <h1 className="bottom-0 uppercase left-0 absolute w-full">
+                            max size 2MB !
+                        </h1>
                     </div>
                 </div>
             </div>

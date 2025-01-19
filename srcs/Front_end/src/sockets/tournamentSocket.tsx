@@ -4,19 +4,8 @@ import { UserType } from '@/types/userTypes'
 
 class TournamentSocket extends WebSocketService {
 
-
-    openCallback = () => {
-        console.log("tournament web socket connection established")
-        this.flushQueue()
-    }
-
-    closeCallback = () => {
-        console.log("tournament WebSocket connection closed");
-    }
-
     eventCallback = (event : MessageEvent) => {
         const data = JSON.parse(event.data)
-        
         switch (data.response.status) {
             case 100: {
                 const players : UserType[] = []
@@ -27,9 +16,6 @@ class TournamentSocket extends WebSocketService {
                 this.callbacks["roomDataHandler"]?.(data.response.data)
                 break;
             }
-            case 200:
-                console.log(JSON.parse(data.response.game))
-                break;
             case 201:
                 this.callbacks["setRoom"]?.(data.response.room)
                 break;
@@ -45,8 +31,8 @@ class TournamentSocket extends WebSocketService {
             case 212:
                 this.callbacks["winner_data"]?.(data.response.data)
                 break;
-            default:
-                console.log(data)
+            case 400:
+                this.socket?.close()
                 break;
         }
     }

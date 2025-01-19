@@ -32,6 +32,7 @@ export default function MatchHistory() {
 
 	const [matches, setMatches] = useState<MatchDataType[] | null>(null)
 	const { authInfos, user } = useContext(UserContext) || {}
+	const { theme } = useContext(ApearanceContext) || {}
 	
     useEffect(() => {
         const timer = setTimeout(async () => {
@@ -83,7 +84,7 @@ export default function MatchHistory() {
 					)
 				}
 			</div>
-			<ul className="w-full overflow-scroll rounded border-white/10 border-[.4px] py-10 px-4 h-fit max-h-[600px] mt-10">
+			<ul className={`w-full overflow-scroll rounded ${theme === 'light' ? "border-black/20" : "border-white/20"} border-[.4px] py-10 px-4 h-fit max-h-[600px] mt-10`}>
 				{
 					(matches?.length > 0)? matches?.map((match, index : number) => (
 						<History key={index} data={match} />

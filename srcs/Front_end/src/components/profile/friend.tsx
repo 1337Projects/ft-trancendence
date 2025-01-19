@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { UserContext } from '@/Contexts/authContext';
 import { FaArrowRight } from 'react-icons/fa';
 import { FriendType, UserType } from '@/types/userTypes';
+import { ApearanceContext } from '@/Contexts/ThemeContext';
 
 function FriendCard({friend} : {friend : UserType}) {
 
@@ -35,6 +36,7 @@ function FriendCard({friend} : {friend : UserType}) {
 
 export default function Friends() {
 	const {authInfos} = useContext(UserContext) || {}
+	const {theme} = useContext(ApearanceContext) || {}
 	const {user_name} = useParams()
 	const [friends, setFriends] = useState<FriendType[] | null>()
     
@@ -73,7 +75,7 @@ export default function Friends() {
                 </div>
                 :
                 <div className='mt-4 h-[150px] p-2'>
-                    <div className='h-full w-full border-[1px] rounded border-white/20 flex justify-center items-center'>
+                    <div className={`h-full w-full border-[1px] rounded ${theme === 'light' ? "border-black/20" : "border-white/20"}  flex justify-center items-center`}>
                         <h1 className='text-sm capitalize'>no friends yet</h1>
                     </div>
                 </div>

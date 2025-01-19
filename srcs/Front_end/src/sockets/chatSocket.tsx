@@ -5,15 +5,6 @@ import { WebSocketService } from '@/sockets/index'
 
 class ChatSocket extends WebSocketService {
 
-    openCallback = () => {
-        console.log("Chat web socket connection established")
-        this.flushQueue()
-    }
-
-    closeCallback = () => {
-        console.log("Chat WebSocket connection closed");
-    }
-    
     eventCallback = (event : MessageEvent) => {
 
         const data = JSON.parse(event.data)
@@ -24,7 +15,6 @@ class ChatSocket extends WebSocketService {
                 this.callbacks["cnvsUpdate"]?.(data.response.conversation)
                 break;
             case 206:
-                console.log(data.response)
                 this.callbacks["setData"]?.((prev : MessageType[]) => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
                 this.callbacks["setUser"]?.(data.response)
                 break;

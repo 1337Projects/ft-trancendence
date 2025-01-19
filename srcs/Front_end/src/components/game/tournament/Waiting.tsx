@@ -1,5 +1,5 @@
 
-import { useContext, useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { UserContext } from "@/Contexts/authContext"
@@ -13,10 +13,7 @@ export default function WaitingTournment() {
     const { id } = useParams()
     const [ roomData, setRoomData ] = useState<null | TournamentRoomType>(null)
     const navigate = useNavigate()
-    const [ loading, setLoading ] = useState(false)
-    const [ num, setNum ] = useState(3)
     const { authInfos } = useContext( UserContext ) || {}
-    const timeoutRef = useRef<null | NodeJS.Timeout>(null)
     
 
 
@@ -28,29 +25,14 @@ export default function WaitingTournment() {
     useEffect(() => {
         return () => {
             tournamentSocket.close()
-            if (timeoutRef.current){
-                clearTimeout(timeoutRef.current)
-            }
         }
     }, [])
 
-    useEffect(() => {
-        if (loading) {
-            setInterval(() => {
-                setNum(prev => prev - 1)
-            }, 1000)
-        }
-    }, [loading])
-
     function roomDataHandler(data : TournamentRoomType) {
-        console.log(data)
         setRoomData(data)
         if (data.players.length == data.data.max_players) {
-            setLoading(true)
-            timeoutRef.current = setTimeout(() => {
-                tournamentSocket.sendMessage({"event" : "start_tournament"})
-                navigate(`/dashboard/game/tournment/${id}/`)
-            }, 1000 * 3)
+            tournamentSocket.close()
+            navigate(`/dashboard/game/tournment/${id}/`)
         }
     }
 
@@ -68,7 +50,6 @@ export default function WaitingTournment() {
                         <InviteFriendsToPlay data={roomData} />
                         </div> */}
                     <h1 className="mt-6 text-lg"> {roomData?.players?.length < roomData?.data?.max_players ? "waiting..." : "ready"}</h1>
-                    {loading && <div className="w-full text-center text-xl uppercase p-2">tournament start on {num}</div>}
                 </div>
                 <div className="p-2 grid grid-cols-4 gap-4 mt-20 ">
                     {

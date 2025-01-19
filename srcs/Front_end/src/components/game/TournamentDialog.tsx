@@ -110,7 +110,7 @@ function ParticaipantElm({elm, handler, data} : {data : DialogDataType , elm : s
         >
             <input 
                 style={{display : "none"}} 
-                checked={data.members === Number(elm)} 
+                defaultChecked={data.members === Number(elm)} 
                 className="mr-2" 
                 type="radio" 
                 id={elm} 
@@ -128,7 +128,7 @@ function ParticipantsList({handler , data } : {data : DialogDataType , handler :
         <div>
             <h1>participents number :</h1>
             <div className="flex mt-4 justify-between items-center max-w-[250px]">
-                { ["4", "8"].map((elm) => <ParticaipantElm data={data} handler={handler} elm={elm} />) }
+                { ["4", "8"].map((elm, index) => <div key={index}><ParticaipantElm data={data} handler={handler} elm={elm} /></div>) }
             </div>
         </div>
     )

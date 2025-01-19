@@ -4,22 +4,10 @@ import { NotificationType } from "@/types/indexTypes";
 
 class NotificationSocket extends WebSocketService {
 
-
-    openCallback = () => {
-        console.log("Notifications web socket connection established")
-        this.flushQueue()
-    }
-
-    closeCallback = () => {
-        console.log("Notifications WebSocket connection closed");
-    }
-
     eventCallback = (event : MessageEvent) => {
         const data = JSON.parse(event.data)
-        console.log("nots ==> ", data)
         switch (data.response.status) {
             case 207:
-                // console.log(this.callbacks)
                 this.callbacks["setNots"]?.((prev : NotificationType[]) => [data.response.not, ...prev])
                 this.callbacks["hasNew"]?.((prev : string) => prev + 1)
                 break;
