@@ -63,6 +63,7 @@ def set_infos(request):
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
     user_id = request.user.id
+    # username = user_infos_dict.get('username')
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
     bio = user_infos_dict.get('profile')['bio']
