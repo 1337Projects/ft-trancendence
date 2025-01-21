@@ -1,12 +1,23 @@
-from django.shortcuts import render
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .models import Game
+from .serializers import UserStatsSerializer
+from django.db.models import Q
 
-# Create your views here.
-def index(request):
-    return render(request, 'login.html')
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_game_stats(request):
+    user = request.user
+    games_played = Game.objects.filter(Q(player1=user) | Q(player2=user)).count()
+    games_won = Game.objects.filter(winner=user).count()
+    games_lost = games_played - games_won
 
+    data = {
+        'games_played': games_played,
+        'games_won': games_won,
+        'games_lost': games_lost,
+    }
 
-def match_makign(request):
-    return render(request, 'match_making.html')
-
-def game(request, game_id):
-    return render(request, 'game.html', {'game_id': game_id})
+    serializer = UserStatsSerializer(data)
+    return Response(serializer.data)

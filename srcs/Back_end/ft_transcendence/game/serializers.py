@@ -36,3 +36,8 @@ class TicTacTeoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game1
         fields = '__all__'
+
+class UserStatsSerializer(serializers.Serializer):
+    games_played = serializers.IntegerField()
+    games_won = serializers.IntegerField()
+    games_lost = serializers.IntegerField()
