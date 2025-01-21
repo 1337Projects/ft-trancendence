@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Game
-from .serializers import UserStatsSerializer
+from .serializers import UserGameStatsSerializer
 from django.db.models import Q
 
 @api_view(['GET'])
@@ -19,5 +19,5 @@ def user_game_stats(request):
         'games_lost': games_lost,
     }
 
-    serializer = UserStatsSerializer(data)
+    serializer = UserGameStatsSerializer(data)
     return Response(serializer.data)
