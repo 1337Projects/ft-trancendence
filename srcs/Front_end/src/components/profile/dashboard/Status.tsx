@@ -1,6 +1,9 @@
+import { CatButton } from "@/components/game/Game"
 import { UserContext } from "@/Contexts/authContext"
 import { UserType } from "@/types/userTypes"
 import { useContext, useEffect, useState } from "react"
+import { GiTicTacToe } from "react-icons/gi"
+import { TbPingPong } from "react-icons/tb"
 import { useOutletContext } from "react-router-dom"
 
 
@@ -18,6 +21,16 @@ function MatchStatusItem({title, avatar, color, num} : {title : string, avatar :
 	)
 }
 
+export const categories = [
+	{
+		title : "ping pong",
+		icon : <TbPingPong />
+	},
+	{
+		title : "tic tac toe",
+		icon : <GiTicTacToe />
+	},
+]
 
 
 export default function MatchStatus() {
@@ -69,7 +82,14 @@ export default function MatchStatus() {
 	}
 
 	return (
-		<div className='w-full h-[120px] p-2'>
+		<div className='w-full h-[200px] p-2'>
+			<div className="w-full h-[60px] flex items-center">
+				{
+					categories.map((item, index) => (
+						<div key={index}><CatButton text={item.title} icon={item.icon} /></div>
+					))
+				}
+			</div>
 			<ul className='grid grid-cols-3 gap-10 h-full'>
 				<MatchStatusItem 
 					num={data?.total}

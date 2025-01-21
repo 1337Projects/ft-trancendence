@@ -1,14 +1,11 @@
 import { useContext, useEffect, useState } from "react"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { MdOutlineTipsAndUpdates } from "react-icons/md";
-import { GiSandsOfTime } from "react-icons/gi";
 import Hero from './Hero'
 import { DialogContext } from "@/Contexts/DialogContext"
 import { TrItem } from "./tournament/Events"
 import Cards from "./GameCards";
 import { UserContext } from "@/Contexts/authContext"
 import { useSearchParams } from "react-router-dom";
-import { LuHistory } from "react-icons/lu";
 import { TournamentDataType } from "@/types/tournamentTypes";
 
 export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
@@ -17,7 +14,7 @@ export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
     const category = searchParams.get('category')
 
     const {color, theme} = useContext(ApearanceContext) || {}
-    const selectedColor = (category === text || (!category && (text === 'latest' || text === 'all'))) ? color : "" 
+    const selectedColor = (category === text || (!category && text === 'ping pong')) ? color : "" 
     return (
         <button 
             style={{color:selectedColor, borderColor : selectedColor}} 
@@ -34,33 +31,6 @@ export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
     )
 }
 
-const categories = [
-    {
-        text : 'latest',
-        icon : <MdOutlineTipsAndUpdates />
-    },
-    {
-        text : 'ongoing',
-        icon : <GiSandsOfTime />
-    },
-    {
-        text : 'ended',
-        icon : <LuHistory />
-    }
-]
-
-export function Categories() {
-    
-    return (
-        <div className="w-full h-[30px] flex">
-            {
-                categories.map((item, index) => 
-                    <CatButton key={index} text={item.text} icon={item.icon} />
-                )
-            }
-        </div>
-    )
-}
 
 
 export default function Game() {
@@ -112,9 +82,6 @@ export default function Game() {
                     
                     <div className="px-10 mt-16">
                         <h1 className="text-xl font-bold">Avialable Tournments :</h1>
-                        <div className="w-full h-[50px] flex items-center mt-6">
-                            <Categories />
-                        </div>
                         <div  className="w-full mt-6 h-fit">
                             {
                                 filtredTournments.length ?

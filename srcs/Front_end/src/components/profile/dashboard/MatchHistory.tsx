@@ -1,29 +1,12 @@
 import { useContext, useEffect, useState } from "react"
 import { UserContext } from "@/Contexts/authContext"
 import { ApearanceContext } from "@/Contexts/ThemeContext"
-import { MdOutlineTipsAndUpdates } from "react-icons/md"
 import { CatButton } from "@/components/game/Game"
 import { IoTimeOutline } from "react-icons/io5"
 import { FaArrowTrendUp } from "react-icons/fa6"
 import { BiSolidMedal } from "react-icons/bi";
 import { MatchDataType } from "@/types/gameTypes"
-
-
-
-const categories = [
-	{
-		text : 'all',
-		icon : <MdOutlineTipsAndUpdates />
-	},
-	{
-		text : 'ping pong',
-		icon : <MdOutlineTipsAndUpdates />
-	},
-	{
-		text : 'tic tac toe',
-		icon : <MdOutlineTipsAndUpdates />
-	}
-]
+import { categories } from "@/components/profile/dashboard/Status"
 
 
 
@@ -80,11 +63,11 @@ export default function MatchHistory() {
 			<div className="w-full h-[30px] flex mt-10">
 				{
 					categories.map((item, index) => 
-						<CatButton key={index} text={item.text} icon={item.icon} />
+						<CatButton key={index} text={item.title} icon={item.icon} />
 					)
 				}
 			</div>
-			<ul className={`w-full overflow-scroll rounded ${theme === 'light' ? "border-black/20" : "border-white/20"} border-[.4px] py-10 px-4 h-fit max-h-[600px] mt-10`}>
+			<ul className={`w-full overflow-scroll rounded ${theme === 'light' ? "border-black/20" : "border-white/20"} border-[0px] py-10 px-4 h-fit max-h-[600px] mt-10`}>
 				{
 					(matches?.length > 0)? matches?.map((match, index : number) => (
 						<History key={index} data={match} />
@@ -105,7 +88,7 @@ export function History ({data} : {data : MatchDataType}) {
 
 	return (
 		<div 
-			className={`mb-10 w-full h-[80px]`}
+			className={`my-1 w-full h-[80px]`}
 		>
 			<div className='h-fit w-full flex items-center  text-[10px]'>
 				<IoTimeOutline className="mr-2" />
@@ -119,7 +102,7 @@ export function History ({data} : {data : MatchDataType}) {
                         {
                             data?.winner === data?.player1?.id && 
                                 <div style={{background : color}} className="absolute flex justify-center items-center p-1 w-[20px] h-[20px] rounded-full bottom-0 right-2">
-                                    <BiSolidMedal className="white"  />
+                                    <BiSolidMedal className="text-white"  />
                                 </div>
                         }
                         <img 
@@ -151,7 +134,7 @@ export function History ({data} : {data : MatchDataType}) {
                         {
                             data?.winner == data?.player2?.id && 
                                 <div style={{background : color}} className="absolute flex justify-center items-center p-1 w-[20px] h-[20px] rounded-full bottom-0 left-2">
-                                    <BiSolidMedal className="white"  />
+                                    <BiSolidMedal className="text-white"  />
                                 </div>
                         }
                         <img 

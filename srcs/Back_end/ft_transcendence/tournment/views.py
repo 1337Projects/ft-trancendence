@@ -30,7 +30,7 @@ class TournmentViews(viewsets.ViewSet):
     
     @action(detail=False, methods=['GET'])
     def get_tournemts(self, request):
-        tournments = Tournment.objects.all()
+        tournments = Tournment.objects.filter(tourament_status='waiting')
         data = TournmentSerializer(tournments, many=True)
         return Response({"data" : data.data}, status=200)
 

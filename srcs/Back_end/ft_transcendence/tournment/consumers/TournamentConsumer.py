@@ -142,19 +142,24 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                     "data" : data,
                     "status" : 210
                 })
-                if data["rounds"][0][0]["winner"] != 'unknown':
-                    self.state.tournaments[self.tournment_id]["data"]["tourament_status"] = "ended"
-                    await sync_to_async(self.set_tournament_status)("ended")
-                    builder = self.state.tournaments_providers[self.tournment_id].builder
-                    await self.brodcast({
-                        "data" : builder.tournament_rank(builder.tree),
-                        "status" : 212
-                    })
+                await self.check_for_winner()
+                
 
         except Exception as e:
             debug(f"receive => {e}")
             self.senderror("error in receive")
 
+
+    async def check_for_winner(self):
+        data = self.state.tournaments[self.tournment_id]
+        if data["rounds"][0][0]["winner"] != 'unknown':
+            self.state.tournaments[self.tournment_id]["data"]["tourament_status"] = "ended"
+            await sync_to_async(self.set_tournament_status)("ended")
+            builder = self.state.tournaments_providers[self.tournment_id].builder
+            await self.brodcast({
+                "data" : builder.tournament_rank(builder.tree),
+                "status" : 212
+            })
 
     async def send_data(self, event):
         json_data = json.dumps({"response" : event["data"]})
@@ -165,6 +170,11 @@ class TournmentConsumer(AsyncWebsocketConsumer):
         try:
             async with self.state.lock:
                 await self.state.tournaments_providers[self.tournment_id].disconnectHandler(self.scope['user'].id)
+                
+                builder = self.state.tournaments_providers[self.tournment_id].builder
+                self.state.tournaments[self.tournment_id]["rounds"] = builder.get_rounds()
+                await self.check_for_winner()
+                
                 self.state.tournaments[self.tournment_id]['user_count'] -= 1
                 if self.state.tournaments[self.tournment_id]['user_count'] == 0:
                     del self.state.tournaments[self.tournment_id]
