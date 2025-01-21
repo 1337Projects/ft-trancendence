@@ -62,26 +62,32 @@ def get_profile(request, username):
 def set_infos(request):
     user_infos = request.data.get('user')
     user_infos_dict = json.loads(user_infos)
-    user_id = id
-    # username = user_infos_dict.get('username')
+    user_id = request.user.id
     first_name = user_infos_dict.get('first_name')
     last_name = user_infos_dict.get('last_name')
     bio = user_infos_dict.get('profile')['bio']
-    # if check_duplicate_username(username=username, id=id):
-    #     return Response({"status": 400, "res": get_infos(user_id).data ,"message": "This username is duplicated"}, status=400)
-        # username=username,
     User.objects.filter(id=user_id).update(
         first_name=first_name,
         last_name=last_name,
     )
     if bio is not None:
-        Profile.objects.filter(id=user_id).update(bio=bio)
+        Profile.objects.filter(id=user_id).update(bio=bio)   
     if 'avatar' in request.FILES:
+        if request.FILES['avatar'].size > (3 * 1024 * 1024):
+            return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
+        format_check = check_format(request.FILES['avatar'])
+        if format_check != 'valid format':
+            return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
         name = manage_images(user_id, request, 'avatar')
         Profile.objects.filter(user_id=user_id).update(
             avatar=f'{os.environ.get("API_URL")}media/{name}'
         )
     if 'banner' in request.FILES:
+        if request.FILES['banner'].size > (3 * 1024 * 1024):    
+            return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
+        format_check = check_format(request.FILES['banner'])
+        if format_check != 'valid format':
+            return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
         name = manage_images(user_id, request, 'banner')
         Profile.objects.filter(user_id=user_id).update(
             banner=f'{os.environ.get("API_URL")}media/{name}'

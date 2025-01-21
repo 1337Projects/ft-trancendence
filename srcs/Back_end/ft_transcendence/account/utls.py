@@ -11,6 +11,8 @@ from django.utils import timezone
 import pyotp
 from functools import wraps
 from django.http import JsonResponse
+from PIL import Image
+from django.core.exceptions import ValidationError
 
 
 default_banner = f"{os.environ.get('API_URL')}media/default-bannerr.jpeg"
@@ -70,6 +72,17 @@ def validate_totp(user, otp):
     secret_key = user.secret_key
     totp = pyotp.TOTP(secret_key)
     return totp.verify(otp)
+
+def check_format(file):
+    try:
+        img = Image.open(file)
+        img.verify()
+        if img.format not in ['JPEG', 'PNG', 'GIF']:
+            return "Unsupported file format. Only JPEG, PNG, and GIF are allowed."
+        else:
+            return 'valid format'
+    except Exception as e:
+        return str(e)
 
 
 
