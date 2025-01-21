@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Game
-from .serializers import UserGameStatsSerializer
+from .serializers import UserGameStatsSerializer, GameSerializer
 from django.db.models import Q
 
 @api_view(['GET'])
@@ -20,4 +20,12 @@ def user_game_stats(request):
     }
 
     serializer = UserGameStatsSerializer(data)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_game_history(request):
+    user = request.user
+    games = Game.objects.filter(Q(player1=user) | Q(player2=user)).order_by('-created_at')
+    serializer = GameSerializer(games, many=True)
     return Response(serializer.data)

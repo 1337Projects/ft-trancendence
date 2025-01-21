@@ -13,14 +13,14 @@ class TestUserGameStatsView:
         self.user1, self.token1 = create_user_and_login(
             username='testuser1',
             email='user1@example.com',
-            password='testpassword',
+            password='Password.test1',
             first_name='Test1',
             last_name='User1'
         )
         self.user2, self.token2 = create_user_and_login(
             username='testuser2',
             email='user2@example.com',
-            password='testpassword',
+            password='Password.test1',
             first_name='Test2',
             last_name='User2'
         )
@@ -52,3 +52,29 @@ class TestUserGameStatsView:
         assert response.data['games_played'] == 5
         assert response.data['games_won'] == 3
         assert response.data['games_lost'] == 2
+
+    def test_user1_game_history(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
+        url = reverse('user_game_history')
+        response = self.client.get(url)
+        
+        assert response.status_code == 200
+        assert len(response.data) == 5
+        assert response.data[0]['winner'] == self.user1.id
+        assert response.data[1]['winner'] == self.user2.id
+        assert response.data[2]['winner'] == self.user2.id
+        assert response.data[3]['winner'] == self.user2.id
+        assert response.data[4]['winner'] == self.user1.id
+
+    def test_user2_game_history(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token2)
+        url = reverse('user_game_history')
+        response = self.client.get(url)
+        
+        assert response.status_code == 200
+        assert len(response.data) == 5
+        assert response.data[0]['winner'] == self.user1.id
+        assert response.data[1]['winner'] == self.user2.id
+        assert response.data[2]['winner'] == self.user2.id
+        assert response.data[3]['winner'] == self.user2.id
+        assert response.data[4]['winner'] == self.user1.id
