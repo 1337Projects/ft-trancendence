@@ -26,12 +26,22 @@ class TestUserGameStatsView:
         )
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
 
+        for i in range(20):
+            if i < 15:
+                Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user1)
+            else:
+                Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user2)
         # Create some game instances for testing
-        Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user1)
-        Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user2)
-        Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user2)
-        Game.objects.create(player1=self.user2, player2=self.user1, winner=self.user2)
-        Game.objects.create(player1=self.user2, player2=self.user1, winner=self.user1)
+        # Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user1)
+        # Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user2)
+        # Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user1)
+        # Game.objects.create(player1=self.user2, player2=self.user1, winner=self.user2)
+        # Game.objects.create(player1=self.user2, player2=self.user1, winner=self.user1)
+        # Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user1)
+        # Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user2)
+        # Game.objects.create(player1=self.user1, player2=self.user2, winner=self.user1)
+        # Game.objects.create(player1=self.user2, player2=self.user1, winner=self.user2)
+        # Game.objects.create(player1=self.user2, player2=self.user1, winner=self.user1)
 
     def test_user1_game_stats(self):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
@@ -39,9 +49,9 @@ class TestUserGameStatsView:
         response = self.client.get(url)
         
         assert response.status_code == 200
-        assert response.data['games_played'] == 5
-        assert response.data['games_won'] == 2
-        assert response.data['games_lost'] == 3
+        assert response.data['games_played'] == 20
+        assert response.data['games_won'] == 15
+        assert response.data['games_lost'] == 5
 
     def test_user2_game_stats(self):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token2)
@@ -49,32 +59,94 @@ class TestUserGameStatsView:
         response = self.client.get(url)
         
         assert response.status_code == 200
-        assert response.data['games_played'] == 5
-        assert response.data['games_won'] == 3
-        assert response.data['games_lost'] == 2
+        assert response.data['games_played'] == 20
+        assert response.data['games_won'] == 5
+        assert response.data['games_lost'] == 15
 
-    def test_user1_game_history(self):
+    def test_user1_game_history_pagination(self):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
         url = reverse('user_game_history')
-        response = self.client.get(url)
+        response = self.client.get(url, {'page': 1, 'page_size': 5})
         
         assert response.status_code == 200
-        assert len(response.data) == 5
-        assert response.data[0]['winner'] == self.user1.id
-        assert response.data[1]['winner'] == self.user2.id
-        assert response.data[2]['winner'] == self.user2.id
-        assert response.data[3]['winner'] == self.user2.id
-        assert response.data[4]['winner'] == self.user1.id
+        assert len(response.data['results']) == 5
+        assert response.data['count'] == 20
+        assert response.data['next'] is not None
+        assert response.data['previous'] is None
 
-    def test_user2_game_history(self):
+    def test_user2_game_history_pagination(self):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token2)
         url = reverse('user_game_history')
-        response = self.client.get(url)
+        response = self.client.get(url, {'page': 1, 'page_size': 5})
         
         assert response.status_code == 200
-        assert len(response.data) == 5
-        assert response.data[0]['winner'] == self.user1.id
-        assert response.data[1]['winner'] == self.user2.id
-        assert response.data[2]['winner'] == self.user2.id
-        assert response.data[3]['winner'] == self.user2.id
-        assert response.data[4]['winner'] == self.user1.id
+        assert len(response.data['results']) == 5
+        assert response.data['count'] == 20
+        assert response.data['next'] is not None
+        assert response.data['previous'] is None
+
+    def test_user1_game_history_second_page(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
+        url = reverse('user_game_history')
+        response = self.client.get(url, {'page': 2, 'page_size': 5})
+        
+        assert response.status_code == 200
+        assert len(response.data['results']) == 5
+        assert response.data['count'] == 20
+        assert response.data['next'] is not None
+        assert response.data['previous'] is not None
+
+    def test_user2_game_history_second_page(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token2)
+        url = reverse('user_game_history')
+        response = self.client.get(url, {'page': 2, 'page_size': 5})
+        
+        assert response.status_code == 200
+        assert len(response.data['results']) == 5
+        assert response.data['count'] == 20
+        assert response.data['next'] is not None
+        assert response.data['previous'] is not None
+
+    def test_user1_game_history_large_page_size(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
+        url = reverse('user_game_history')
+        response = self.client.get(url, {'page': 1, 'page_size': 15})
+        
+        assert response.status_code == 200
+        assert len(response.data['results']) == 15
+        assert response.data['count'] == 20
+        assert response.data['next'] is not None
+        assert response.data['previous'] is None
+
+    def test_user2_game_history_large_page_size(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token2)
+        url = reverse('user_game_history')
+        response = self.client.get(url, {'page': 1, 'page_size': 15})
+        
+        assert response.status_code == 200
+        assert len(response.data['results']) == 15
+        assert response.data['count'] == 20
+        assert response.data['next'] is not None
+        assert response.data['previous'] is None
+
+    def test_user1_game_history_nonexistent_page(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
+        url = reverse('user_game_history')
+        response = self.client.get(url, {'page': 5, 'page_size': 5})
+        
+        assert response.status_code == 200
+        assert len(response.data['results']) == 0
+        assert response.data['count'] == 20
+        assert response.data['next'] is None
+        assert response.data['previous'] is not None
+
+    def test_user2_game_history_nonexistent_page(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token2)
+        url = reverse('user_game_history')
+        response = self.client.get(url, {'page': 5, 'page_size': 5})
+        
+        assert response.status_code == 200
+        assert len(response.data['results']) == 0
+        assert response.data['count'] == 20
+        assert response.data['next'] is None
+        assert response.data['previous'] is not None
