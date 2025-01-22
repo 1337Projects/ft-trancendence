@@ -8,14 +8,12 @@ import { roomSocket } from "@/sockets/MatchMakingSocket"
 import { notificationSocket } from "@/sockets/notificationsSocket"
 
 
-export function PlayerGameCard({player} : { player : UserType | undefined }) {
+export function PlayerGameCard({player, id} : { player : UserType | undefined, id : number }) {
     return (
-        <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center">
-            <div className=' text-center'>
-                <img src={player ? player.profile.avatar : "/_.jpeg"} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
-                <h1 className='uppercase mt-4'>{player ? player.username : "waiting..."}</h1>
-                <h1 className='uppercase mt-2 text-[12px]'>player 2</h1>
-            </div>
+        <div className="w-[120px] h-[150px] p-4 border-[1px] rounded-md flex items-center justify-center flex-col">
+            <img src={player ? player.profile.avatar : "/_.jpeg"} className='bg-white rounded-full w-[60px] h-[60px]' alt="" />
+            <h1 className='uppercase mt-4 font-bold'>{player ? player.username : "waiting..."}</h1>
+            <h1 className='uppercase mt-2 text-[12px]'>player {id}</h1>
         </div>
     )
 }
@@ -86,12 +84,12 @@ export default function Waiting() {
                     <InviteFriendsToPlay data={room?.room} />
                 }
                 <div className="flex items-center mt-20 justify-center">
-                    <PlayerGameCard player={room?.room?.players[0]} />
+                    <PlayerGameCard id={1} player={room?.room?.players[0]} />
                     <div className="w-[100px] text-center">
                         <h1 className='text-[40px]'>vs</h1>
                         <h1 className='mt-2'>0 / 0</h1>
                     </div>
-                    <PlayerGameCard player={room?.room?.players[1]} />   
+                    <PlayerGameCard id={2} player={room?.room?.players[1]} />   
                 </div>
             </div>
         </div>
@@ -149,13 +147,13 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
             </div>
             {
                 invite && 
-                <div ref={FriendsListRef} className="bg-white border-[.4px] border-black/20 overflow-scroll absolute top-[52px] left-0 text-lightText w-full h-fit max-h-[150px] p-2 mt-2 rounded">
+                <div ref={FriendsListRef} className="bg-white/30 backdrop-blur-lg border-[.4px] border-black/20 overflow-scroll absolute top-[52px] left-0 w-full h-fit max-h-[150px] p-2 mt-2 rounded">
                     {
                         myFriends?.length ?
                         <ul className="h-full overflow-scroll">
                             {
                                 myFriends.map((fr, index) => 
-                                    <li key={index} className="my-2">
+                                    <li key={index} className="my-4">
                                         <FriendItem room={data.name} friendShip={fr} />
                                     </li>)
                             }
@@ -204,12 +202,12 @@ function FriendItem({friendShip, room} : { friendShip : FriendType, room : strin
     }, [])
 
     return (
-        <div className={`h-[40px] flex justify-between items-center ${invited && "opacity-30"} p-2`}>
+        <div className={`h-fit rounded border-[.4px] flex justify-between items-center ${invited && "opacity-30"} p-2`}>
             <div className="flex w-fit justify-start items-center">
-                <img src={user.profile.avatar} className="w-[35px] mr-4 rounded" alt="" />  
+                <img src={user.profile.avatar} className="w-[40px] mr-4 rounded" alt="" />  
                 <div>
-                    <h1>{user.username}</h1>
-                    <p className="text-xs">level : {user.profile.level}</p>
+                    <h1 className="uppercase font-bold">{user.username}</h1>
+                    <p className="text-xs mt-1">level : {user.profile.level}</p>
                 </div>  
             </div>
             <button 

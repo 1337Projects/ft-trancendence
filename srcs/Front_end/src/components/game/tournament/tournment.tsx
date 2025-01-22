@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from '@/Contexts/authContext'
 import Hero from "./Hero";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
@@ -19,13 +19,13 @@ export default function Tournment() {
     const { theme } = useContext(ApearanceContext) || {}
     const [ tournamentData, setTournamentData ] = useState<TournamentType | null>(null)
     const navigate = useNavigate()
-    const [ ended, setEnded ] = useState<UserType[] | null>(null)
+    const [ ended, setEnded ] = useState<{user : UserType, xp : number}[] | null>(null)
     const { tournament_id } = useParams()
     const [ alert, setAlert ] = useState<AlertType | null>(null)
     const timeoutRef = useRef<null | NodeJS.Timeout>(null)
     const [ error , setError] = useState<string | null>(null)
 
-    const EndHandler = (data: UserType[]) => {
+    const EndHandler = (data: {user : UserType, xp : number}[]) => {
         setEnded(data)
     }
 
@@ -107,29 +107,29 @@ export default function Tournment() {
     )
 }
 
-function RankItem({ item } : {item : UserType}) {
+function RankItem({ item } : {item : {user : UserType, xp : number}}) {
 
     return (
         <div className="h-[70px] mt-4 rounded p-2">
             <div className="flex items-center justify-evenly h-full">
                 <div className="relative">
-                    <img className="w-[50px] h-[50px] rounded mr-6" src={ item.profile.avatar } alt="" />
+                    <img className="w-[50px] h-[50px] rounded mr-6" src={ item.user.profile.avatar } alt="" />
                 </div>
                 <div>
-                    <div className="w-[160px] font-bold uppercase">{ item.username }</div>
+                    <div className="w-[160px] font-bold uppercase">{ item.user.username }</div>
                     <div className="text-xs mt-1 flex items-center justify-start">
-                        <p className="mr-2">level {item.profile.level} </p>
+                        <p className="mr-2">level {item.user.profile.level} </p>
                         <span>
                             <FaAnglesUp />
                         </span>
                     </div>
                 </div>
                 <div className="h-full flex justify-end items-center w-[100px]">
-                    + 100px
+                    + {item.xp} xp
                 </div>
-                <div className="w-[100px] flex justify-end items-center">
+                <Link to={`/dashboard/profile/${item.user.username}`} className="w-[100px] flex justify-end items-center">
                     <FaArrowRight />
-                </div>
+                </Link>
             </div>
         </div>
     )

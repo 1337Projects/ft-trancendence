@@ -51,7 +51,7 @@ export default function TournmentDialog() {
                         </div> 
                         : 
                         <div>
-                            <h1 className="text-sm mt-4">Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone.</h1>
+                            <h1 className="text-sm mt-4">Create your own tournament and challenge players from around the world! Set the rules, choose the format, and customize your event to make it truly unique. Once you're ready, gather your participants and let the competition begin!</h1>
                                 <div className="mt-4">
                                     <label className="w-full block" htmlFor="name">name</label>
                                     <input 
