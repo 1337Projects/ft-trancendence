@@ -57,7 +57,7 @@ export default function Login() {
         <div className="h-full max-h-[700px]">
             <div className="heading w-full p-1 text-center">
                 <h1 className="text-[40pt] font-bold uppercase">welcome back</h1>
-                <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
+                <p className="text-[8pt] mt-4 max-w-[400px] mx-auto">Enter your credentials to access your account. If you dont have an account yet, you can easily sign up and join us today.</p>
             </div>
             <div className="w-full max-w-[400px] mx-auto mt-2">
                 { alert && <Alert alert={alert} alertHandler={setAlert} /> }

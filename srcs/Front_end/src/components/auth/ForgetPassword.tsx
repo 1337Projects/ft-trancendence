@@ -94,7 +94,7 @@ export default function ForgetPassword() {
             <div className="h-full max-h-[500px]">
                 <div className="text-center">
                     <h1 className="font-bold uppercase text-[18pt]">Forget your passowrd ?</h1>
-                    <p className="mt-4 text-[8pt]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit voluptatum nihil dignissimos?</p>
+                    <p className="mt-4 text-[8pt] max-w-[450px] mx-auto">No worries! If you've forgotten your password, simply follow the steps to reset it. Enter your registered email address, and we’ll send you a link to create a new password. It’s quick, easy, and ensures you regain access to your account securely.</p>
                 </div>
                 <div className="mt-14 max-w-[400px] mx-auto">
                     {

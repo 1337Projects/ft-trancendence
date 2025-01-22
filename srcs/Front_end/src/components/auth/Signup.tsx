@@ -68,7 +68,7 @@ export default function Signup() {
             <div className="h-full max-h-fit">
                 <div className="heading w-full p-1 text-center">
                     <h1 className="text-[40pt] font-semibold uppercase">Hello</h1>
-                    <p className="text-[8pt] mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, cumque.</p>
+                    <p className="text-[8pt] max-w-[400px] mx-auto mt-4">Join us today by signing up! Fill in your details to get started and unlock all the features of your account. It’s quick, easy, and secure.</p>
                 </div>
                 <div className="w-full max-w-[400px] mx-auto mt-10">
                     { alert && <Alert alert={alert} alertHandler={setAlert} /> }

@@ -26,14 +26,21 @@ export default function Profile() {
             const formdata = new FormData()
             formdata.append("user", JSON.stringify({first_name : values.first_name, last_name : values.last_name, profile : {bio : values.bio}}))
             if (images.avatar) {
+                console.log(images.avatar)
                 if (images.avatar.size > 2 * 1024 * 1024) {
                     throw new Error("avatar size should be less than 2mb")
+                }
+                if (images.avatar.type.split("/")[0] !== "image") {
+                    throw new Error("avatar should be an image")
                 }
                 formdata.append("avatar" , images.avatar)
             }
             if (images.banner) {
                 if (images.banner.size > 2 * 1024 * 1024) {
                     throw new Error("banner size should be less than 2mb")
+                }
+                if (images.banner.type.split("/")[0] !== "image") {
+                    throw new Error("avatar should be an image")
                 }
                 formdata.append("banner" , images.banner)
             }
@@ -82,7 +89,8 @@ export default function Profile() {
                         <img src={user?.profile?.banner} className='min-w-full  w-fit min-h-full h-fit' alt="" />
                     </div>
                     <input
-                        type="file" 
+                        type="file"
+                        accept="image/*"
                         className="bg-darkItems/40 backdrop-blur-lg text-white rounded-sm p-2 w-fit absolute top-2 left-2 text-[12px]"
                         onChange={e => setImages(prev => {
                             return {...prev, banner: e.target.files![0] ?? null}
@@ -94,13 +102,14 @@ export default function Profile() {
                     <div className="text-[10px] w-full relative">
                         <input
                             type="file" 
+                            accept="image/*"
                             className=" absolute bg-darkItems/40 backdrop-blur-lg text-white rounded-sm p-2 text-[12px]"
                             onChange={e => setImages(prev => {
                                 return {...prev, avatar: e.target.files![0] ?? null}
                             })}
                         />
                         <h1 className="bottom-0 uppercase left-0 absolute w-full">
-                            max size 2MB !
+                            max size 2MB (png, jpg, jpeg)
                         </h1>
                     </div>
                 </div>

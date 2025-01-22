@@ -80,12 +80,11 @@ function ConvItem({c, menu} : {c : ConversationType, menu : boolean}) {
 
 export function Friends({menu, handler} : {menu : boolean, handler : React.Dispatch<SetStateAction<boolean>>}) {
     const {friends, authInfos} = useContext(UserContext) || {}
-    const { theme } = useContext(ApearanceContext) || {}
     const myFriends = friends?.filter(f => f.status == 'accept')
 
     if (!myFriends || myFriends.length === 0) {
         return (
-            <div className={`text-xs capitalize text-center w-full ${menu ? "block test-style" : "hidden"} ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.6px] rounded p-6`}>you have no friends yet</div>
+            <div className={`text-xs capitalize text-center w-full ${menu ? "block test-style" : "hidden"} p-6`}>you have no friends yet</div>
         )
     } 
 
@@ -162,7 +161,7 @@ export default function ConversationsList({menu, data} : {menu : boolean, data :
     }
 
     return (
-            <div className="">
+            <div className="h-full">
                 <div className="flex items-center">
                     <input 
                         type="text" 
@@ -172,16 +171,14 @@ export default function ConversationsList({menu, data} : {menu : boolean, data :
                         onChange={(e) => setQuery(e.target.value)}
                     />
                 </div>
-                <div className={`mt-4 ${menu ? "test-style" : "hidden"}`}>
-                </div>
-                <ul className="mt-2">
+                <ul className="mt-2 h-full">
                     {
                         cnvs.length ?
                             cnvs?.map(c => {
                                 return <ConvItem menu={menu}  key={c.id} c={c} />
                             })
                         :
-                        <div className={`text-center border-[.6px] ${theme == 'light' ? "border-black/20" : "border-white/20"}  rounded-md p-10 text-xs ${menu ? "block test-style" : "hidden"} `}>no conversations found</div>
+                        <div className={`text-center rounded p-10 text-xs ${menu ? "block test-style" : "hidden"} `}>no conversations found</div>
                     }
                 </ul>
             </div>

@@ -23,7 +23,7 @@ export default function Apperance() {
                     <div className="h-fit w-full grid grid-cols-2 gap-4">
                         <div className="h-full p-2">
                             <h1 className="capitalize">pick your favourite color</h1>
-                            <p className="text-xs mt-4">Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+                            <p className="text-xs mt-4">Personalize your experience by adjusting the app's appearance to fit your style</p>
                             <div className="grid grid-cols-4 mt-6 gap-4 w-[140px]">
                                 {
                                     colors.map((c, index) => 

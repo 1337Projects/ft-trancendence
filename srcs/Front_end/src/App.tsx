@@ -107,7 +107,7 @@ function ChatImg() {
       <div className='w-full h-full min-h-fit p-10 flex justify-center items-center overflow-scroll'>
         <div className='text-center h-fit'>
           <ChatAsset />
-          <p className='text-xs max-w-[450px] mx-auto'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium vero asperiores tempora iure ex autem quod. Porro animi pariatur distinctio?</p>
+          <p className='text-xs max-w-[450px] mx-auto'>Ready to chat? Select a conversation from your list or start a new one. Whether it's a quick message or an in-depth discussion, your chat experience is just a click away. Stay connected and enjoy seamless conversations with friends, colleagues, or anyone you need to reach.</p>
         </div>
       </div>
   )

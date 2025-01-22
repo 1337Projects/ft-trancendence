@@ -64,7 +64,7 @@ export default function Waiting() {
             <div className={`w-full ${ theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-white"}  p-2 mt-2 rounded-sm h-[100vh] flex items-center justify-center`}>
                 <div className='w-fit h-fit text-center'>
                     <h1 className='text-[20px] capitalize'>room not found!</h1>
-                    <p className="text-xs mt-4 w-[400px]">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere odit sapiente totam nihil accusamus dolores!</p>
+                    <p className="text-xs mt-4 w-[400px]">Looks like there are no available rooms at the moment. Please try again later, or create your own room to start a match with others. We’ll match you with players as soon as a room becomes available!</p>
                     <div className='w-full mt-4 flex justify-center'>
                         <Link to="/dashboard/game" style={{background:color}} className='p-2 rounded w-[100px] text-white text-[16px] capitalize'>back</Link>
                     </div>

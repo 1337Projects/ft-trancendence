@@ -78,7 +78,7 @@ export default function Game() {
             <div className={`${appearence?.theme == 'light' ? "bg-lightItems text-lightText " : "bg-darkItems text-darkText"} w-full h-full overflow-scroll p-2`}>
                 <div className="mx-auto max-w-[800px] h-full">
                     <Hero />
-                    <Cards color={appearence?.color || "#ffffff"} />
+                    <Cards />
                     
                     <div className="px-10 mt-16">
                         <h1 className="text-xl font-bold">Avialable Tournments :</h1>

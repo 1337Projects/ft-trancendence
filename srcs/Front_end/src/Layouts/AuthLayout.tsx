@@ -12,7 +12,7 @@ function Slide({text, img} : {text : string, img : string}) {
       </div>
       <div className='text-center'>
         <h1 className='mt-16 text-[28pt]  font-kav text-white'>{text}</h1>
-        <p className='mt-4 text-white font-light text-sm'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, perspiciatis.</p>
+        <p className='mt-4 text-white max-w-[450px] mx-auto font-light text-sm'>Access your account quickly by signing in, or create a new one to get started. It's fast, secure, and the first step to unlocking all the features we offer!</p>
       </div>
     </div>
   )

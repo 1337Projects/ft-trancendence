@@ -114,7 +114,7 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
                             className="mt-1 h-[250px] w-[250px] md:h-[280px] md:w-[280px] mx-2 rounded" 
                         />
                     }
-                    <p className='text-xs max-w-[400px] mx-auto py-4'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatem nemo soluta error modi nulla debitis.</p>
+                    <p className='text-xs max-w-[400px] mx-auto py-4'>Enhance the security of your account by enabling Two-Factor Authentication (2FA). With 2FA, you add an extra layer of protection by requiring both your password and a verification code sent to your phone or email</p>
                     {
                         are_you_in &&
                         <Link to="../login">
