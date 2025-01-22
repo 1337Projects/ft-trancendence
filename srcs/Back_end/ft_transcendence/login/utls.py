@@ -92,8 +92,8 @@ def check_if_duplicate(username):
 
 def generate_username(username):
     while (check_if_duplicate(username)):
-        if (len(username) == 255):
-            username = generate_random_string(15)
+        if (len(username) == 10):
+            username = generate_random_string(6)
         else:
             username += str(random.randint(0, 9))   
             
