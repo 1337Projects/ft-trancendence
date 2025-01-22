@@ -51,14 +51,14 @@ class Tournament:
 
     async def upgrade(self, id):
         match = self.get_match(id)
+        self.builder.print_tree(self.builder.tree)
         if match:
-            # debug("--------------------------------")
             if match.left.val.data['id'] == id:
                 match.val = match.left.val
             elif match.right.val.data['id'] == id:
                 match.val = match.right.val
-            # debug("--------------------------------")
             self.state.current_matches.remove(match)
+        self.builder.print_tree(self.builder.tree)
 
     async def disconnectHandler(self, id):
         async with self.state.lock:

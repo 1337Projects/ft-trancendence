@@ -71,8 +71,6 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
             async with self.shared_data._instance.lock:
 
                 self.room_id = self.get_room(room_name, room_type)
-                if self.room_id == -1 and room_name != 'any':
-                    raise Exception("Room not found")
                 if self.room_id == -1:
                     name = room_name
                     if name == 'any':

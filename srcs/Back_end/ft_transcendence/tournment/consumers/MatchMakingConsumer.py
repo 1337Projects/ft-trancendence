@@ -62,7 +62,7 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
             if len(current_turnament['players']) == current_turnament['data']['max_players']:
                 await sync_to_async(self.add_players_to_db)()
         except Exception as e:
-            await self.senderror(e)
+            await self.senderror(str(e))
             debug(e)
             
 
@@ -82,7 +82,7 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
                 "data" : self.tournaments[self.tournment_id]
             })
         except Exception as e:
-            await self.senderror(e)
+            await self.senderror(str(e))
             debug(e)
 
 

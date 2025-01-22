@@ -1,12 +1,10 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.decorators import action
-import sys
 from rest_framework.response import Response
 from .serializers import TournmentSerializer
 from login.models import User
 from .models import Tournment
-
 
 class TournmentViews(viewsets.ViewSet):
 

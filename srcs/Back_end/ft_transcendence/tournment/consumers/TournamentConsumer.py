@@ -142,7 +142,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                     "data" : data,
                     "status" : 210
                 })
-                await self.check_for_winner()
+                await self.check_for_winner(self.scope["user"].id)
                 
 
         except Exception as e:
@@ -150,9 +150,9 @@ class TournmentConsumer(AsyncWebsocketConsumer):
             self.senderror("error in receive")
 
 
-    async def check_for_winner(self):
+    async def check_for_winner(self, id):
         data = self.state.tournaments[self.tournment_id]
-        if data["rounds"][0][0]["winner"] != 'unknown':
+        if data["rounds"][0][0]["winner"] != 'unknown' and data["rounds"][0][0]["winner"]["id"] == id:
             self.state.tournaments[self.tournment_id]["data"]["tourament_status"] = "ended"
             await sync_to_async(self.set_tournament_status)("ended")
             builder = self.state.tournaments_providers[self.tournment_id].builder
@@ -173,7 +173,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                 
                 builder = self.state.tournaments_providers[self.tournment_id].builder
                 self.state.tournaments[self.tournment_id]["rounds"] = builder.get_rounds()
-                await self.check_for_winner()
+                await self.check_for_winner(self.state.tournaments[self.tournment_id]["rounds"][0][0]["winner"]["id"])
                 
                 self.state.tournaments[self.tournment_id]['user_count'] -= 1
                 if self.state.tournaments[self.tournment_id]['user_count'] == 0:

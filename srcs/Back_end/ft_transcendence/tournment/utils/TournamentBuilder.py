@@ -9,8 +9,6 @@ class TreeNode:
         self.val = data
         self.depth = depth
 
-    def __str__(self):
-        return self.vat
 
 class Match:
     def __init__(self):
@@ -23,9 +21,6 @@ class Match:
 class  Player:
     def __init__(self, data):
         self.data = data
-
-    def __str__(self):
-        return self.data
     
 class Builder:
 
@@ -67,8 +62,6 @@ class Builder:
         return  root.val.data["username"]
     
 
-
-
     def get_rounds(self):
         rounds = []
         for r in self.rounds_list:
@@ -78,24 +71,41 @@ class Builder:
         rounds[0].append({"winner" : self.get_val(self.rounds_list[-1][0])})
         return rounds
     
+    def searc_for_user(self, player):
+        for index, user in enumerate(self.rank):
+            if user['user']['id'] == player['id']:
+                return index
+        return -1
+
+    def add_user(self, node):
+        user = node.val.data
+        user_id = self.searc_for_user(user)
+        if user_id == -1:
+            self.rank.append({"user" : user, "xp" : node.depth * 200 + 50})
+
+    def print_tree(self, root):
+        if root is None:
+            return
+        self.print_tree(root.left)
+        debug(f"{root.val} - {root.depth}")
+        self.print_tree(root.right)
 
     def tournament_rank(self, root):
         queue = []
-        if root is None:
-            return self.rank
-        queue.append(root)
-        if not root.val.data in self.rank:
-            self.rank.append(root.val.data)
-        while queue:
-            current_node = queue.pop(0)
-            if current_node.left:
-                queue.append(current_node.left)
-                if not current_node.left.val.data in self.rank:
-                    self.rank.append(current_node.left.val.data)
-            if current_node.right:
-                queue.append(current_node.right)
-                if not current_node.right.val.data in self.rank:
-                    self.rank.append(current_node.right.val.data)
+        try:
+            if root is None:
+                return self.rank
+            queue.append(root)
+            while queue:
+                current_node = queue.pop(0)
+                self.add_user(current_node)
+                if current_node.left:
+                    queue.append(current_node.left)
+                if current_node.right:
+                    queue.append(current_node.right)
+            self.add_user(root.val.data)
+        except Exception as e:
+            debug(f"Error in tournament_rank {e}")
         return self.rank
         
     
