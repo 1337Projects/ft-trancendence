@@ -1,7 +1,6 @@
 import math
 import random
 import time
-from copy import deepcopy
 from .tictac_game import TicTac
 
 def get_ai_move(board, ai_symbol):
@@ -15,7 +14,7 @@ def get_ai_move(board, ai_symbol):
                 board[row][col] = ai_symbol
                 score = minimax(board, False, ai_symbol, human_symbol)
                 board[row][col] = ''
-                if score > best_score:
+                if score > best_score or (score == best_score and is_win_move(board, row, col, ai_symbol)):
                     best_score = score
                     best_move = {'row': row, 'col': col}
     
@@ -73,3 +72,9 @@ def check_winner(board):
         return 'tie'
     
     return None
+
+def is_win_move(board, row, col, ai_symbol):
+    board[row][col] = ai_symbol
+    is_winning = check_winner(board) == ai_symbol
+    board[row][col] = ''
+    return is_winning
