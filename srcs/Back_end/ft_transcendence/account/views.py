@@ -49,7 +49,7 @@ def get_users(request):
 
 
 @api_view(['GET'])  
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def get_profile(request, username):
     if not User.objects.filter(username=username).exists():
         return Response({"message": "this user is not exist"}, status=400)
