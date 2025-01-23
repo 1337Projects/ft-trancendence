@@ -4,6 +4,7 @@ from channels.db import database_sync_to_async
 from game.backend.tictac_game import TicTac
 from game.models import Game1
 from game.serializers import TicTacTeoSerializer
+from django.contrib.auth.models import AnonymousUser
 import math
 
 class TicTacConsumer(AsyncWebsocketConsumer):
@@ -18,6 +19,11 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         self.user_channels = {}
 
     async def   connect(self):
+        if isinstance(self.scope['user'], AnonymousUser):
+            await self.close()
+            return
+        
+        await self.accept()
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.player = self.scope['user']
         self.room_name = f'tictac_{self.game_id}'
@@ -48,36 +54,36 @@ class TicTacConsumer(AsyncWebsocketConsumer):
         }
 
         await self.channel_layer.group_send(self.room_name, event)
-        await self.accept()
 
         self.tictac.turn_start_time()
         if self.game_id not in self.turn_check_tasks:
             self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
 
     async def disconnect(self, close_code):
-        if self.game_id in self.turn_check_tasks:
+        if hasattr(self, 'game_id') and self.game_id in self.turn_check_tasks:
             self.turn_check_tasks[self.game_id].cancel()
             del self.turn_check_tasks[self.game_id]
-        current_player = self.tictac.player2 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
-        if not self.tictac.get_winner() and not self.tictac.is_board_full() and not self.tictac.is_match_stored(): 
-            self.tictac.set_winner(player=current_player)
-            await self.store_match()
-            await self.channel_layer.group_send(self.room_name, {
-                'type': 'broad_cast',
-                'data': {
-                            'winner': current_player,
-                            'board': self.tictac.get_board(),
-                        },
-                        'status': 203
-                })
-
-        self.tictac.remove_game(game_id=self.game_id)
-        if self.game_id in self.games:
+        if hasattr(self, 'tictac') and hasattr(self, 'player') and self.player.id:
+            current_player = self.tictac.player2 if self.tictac.player1["id"] == self.player.id else self.tictac.player1
+            if not self.tictac.get_winner() and not self.tictac.is_board_full() and not self.tictac.is_match_stored(): 
+                self.tictac.set_winner(player=current_player)
+                await self.store_match()
+                await self.channel_layer.group_send(self.room_name, {
+                    'type': 'broad_cast',
+                    'data': {
+                                'winner': current_player,
+                                'board': self.tictac.get_board(),
+                            },
+                            'status': 203
+                    })
+            self.tictac.remove_game(game_id=self.game_id)
+        if  hasattr(self, 'game_id') and self.game_id in self.games:
             del self.games[self.game_id]
-        if self.player.id in self.user_channels:
+        if hasattr(self, 'player') and self.player.id in self.user_channels:
             del self.user_channels[self.player.id]
-
-        await self.channel_layer.group_discard(self.room_name, self.channel_name)
+            
+        if hasattr(self, 'room_name') and hasattr(self, 'channel_name'):
+            await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
     async def receive(self, text_data=None):
         data = json.loads(text_data)

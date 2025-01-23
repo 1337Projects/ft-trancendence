@@ -8,6 +8,7 @@ from game.serializers import TicTacTeoSerializer
 import math,uuid
 from account.serializer import UserWithProfileSerializer
 from game.backend.tictac_ai import get_ai_move
+from django.contrib.auth.models import AnonymousUser
 
 class TicTacWithAiConsumer(AsyncWebsocketConsumer):
     turn_check_tasks = {}
@@ -22,6 +23,11 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         self.ai_symbol = None
 
     async def connect(self):
+        if isinstance(self.scope['user'], AnonymousUser):
+            await self.close()
+            return
+        
+        await self.accept()
         self.player = await self.get_user()
         self.ai = {
             'id' : str(uuid.uuid4().int),
@@ -30,7 +36,6 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                 'avatar': f"{os.environ.get('API_URL')}media/ai.avif"
             }
         }
-
         self.room_name = f'tictac_ai_{self.game_id}'
         self.user_channels[self.player["id"]] = self.channel_name
 
@@ -50,7 +55,6 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
             'status': 201
         }
         await self.channel_layer.group_send(self.room_name, event)
-        await self.accept()
 
         self.tictac.turn_start_time()
         if self.game_id not in self.turn_check_tasks:
@@ -59,19 +63,21 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
             self.task_ai = asyncio.create_task(self.turn_ai())
 
     async def disconnect(self, close_code):
-        if self.game_id in self.turn_check_tasks:
+        if hasattr(self, 'game_id') and self.game_id in self.turn_check_tasks:
             self.turn_check_tasks[self.game_id].cancel()
             del self.turn_check_tasks[self.game_id]
 
-        if self.task_ai:
+        if hasattr(self, 'task_ai') and self.task_ai:
             self.task_ai.cancel()
             self.task_ai = None
 
-        self.tictac.remove_game(game_id=self.game_id)
-        if self.player["id"] in self.user_channels:
+        if hasattr(self, 'tictac') and self.tictac:
+            self.tictac.remove_game(game_id=self.game_id)
+        if hasattr(self, 'player') and self.player.get('id') in self.user_channels:
             del self.user_channels[self.player["id"]]
 
-        await self.channel_layer.group_discard(self.room_name, self.channel_name)
+        if hasattr(self, 'room_name') and hasattr(self, 'channel_name'):
+            await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
     async def receive(self, text_data=None):
         data = json.loads(text_data)
@@ -178,7 +184,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_user(self):
         serializer = UserWithProfileSerializer(self.scope['user'])
-        return serializer.data
+        return serializer.data  
 
     async def broad_cast(self, event):
         await self.send(text_data=json.dumps(event))

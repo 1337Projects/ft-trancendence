@@ -18,7 +18,7 @@ class MyMiddelware:
             user = User.objects.get(id=user_id)
             return user
         except:
-            return AnonymousUser
+            return AnonymousUser()
 
     async def __call__(self, scope, receive, send):
         query_str = scope['query_string'].decode()
@@ -33,7 +33,7 @@ class MyMiddelware:
             except Exception as e:
                 print(e)
                 sys.stdout.flush()
-                scope['user'] = AnonymousUser
+                scope['user'] = AnonymousUser()
         else:
-            scope['user'] = AnonymousUser
+            scope['user'] = AnonymousUser()
         return await self.inner(scope, receive, send)
