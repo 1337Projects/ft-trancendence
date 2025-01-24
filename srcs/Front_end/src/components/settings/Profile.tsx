@@ -26,7 +26,6 @@ export default function Profile() {
             const formdata = new FormData()
             formdata.append("user", JSON.stringify({first_name : values.first_name, last_name : values.last_name, profile : {bio : values.bio}}))
             if (images.avatar) {
-                console.log(images.avatar)
                 if (images.avatar.size > 2 * 1024 * 1024) {
                     throw new Error("avatar size should be less than 2mb")
                 }

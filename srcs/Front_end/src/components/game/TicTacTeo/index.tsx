@@ -21,7 +21,7 @@ export function GameCardItem({cell} : {cell : string}) {
 }
 
 
-export function Players({data, current} : {data : UserType[], current : UserType}) {
+export function Players({data, current} : {data : {user : UserType, char : string}[], current : UserType}) {
 
     const { color } = useContext(ApearanceContext) || {}
 
@@ -33,31 +33,31 @@ export function Players({data, current} : {data : UserType[], current : UserType
         <div className="w-full h-[100px] rounded p-4">
             <div className="flex w-full relative justify-between items-center h-full">
                 <div 
-                    style={current.username === data[0]?.username ? activeStyle : {}} 
+                    style={current.username === data[0]?.user?.username ? activeStyle : {}} 
                     className="w-[200px] pl-4 rounded h-full justify-start flex items-center"
                 >
-                    <img className="w-[50px] h-[50px] mr-4 rounded-full" src={data[0]?.profile?.avatar} />
+                    <img className="w-[50px] h-[50px] mr-4 rounded-full" src={data[0]?.user?.profile?.avatar} />
                     <div className="flex flex-col items-start justify-center">
-                        <p className="text-sm font-bold">{data[0]?.username}</p>
-                        <p className="text-xs mt-1 uppercase">Player X</p>
+                        <p className="text-sm font-bold">{data[0]?.user?.username}</p>
+                        <p className="text-xs mt-1 uppercase">Player {data[0]?.char}</p>
                     </div>
                     {
-                        current.username === data[0]?.username && 
+                        current.username === data[0]?.user?.username && 
                         <h1 style={{color : color}} className="absolute uppercase left-2 text-xs top-[-40px]">player x play now</h1>
                     }
                 </div>
                 <div 
-                    style={current.username === data[1]?.username ? activeStyle : {}}  
+                    style={current.username === data[1]?.user?.username ? activeStyle : {}}  
                     className="w-[200px] pr-4 rounded h-full flex justify-end items-center"
                 >
                     <div className="flex flex-col items-end justify-center">
-                        <p className="text-sm font-bold">{data[1]?.username}</p>
-                        <p className="text-xs mt-1 uppercase">Player O</p>
+                        <p className="text-sm font-bold">{data[1]?.user?.username}</p>
+                        <p className="text-xs mt-1 uppercase">Player {data[1]?.char}</p>
                     </div>
-                    <img className="w-[50px] h-[50px] ml-4 rounded-full" src={data[1]?.profile?.avatar} />
+                    <img className="w-[50px] h-[50px] ml-4 rounded-full" src={data[1]?.user?.profile?.avatar} />
                 </div>
                 {
-                    current.username === data[1]?.username && 
+                    current.username === data[1]?.user?.username && 
                     <h1 style={{color : color}} className="absolute uppercase right-2 text-xs top-[-40px]">player O play now</h1>
                 }
             </div>

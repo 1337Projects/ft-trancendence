@@ -2,6 +2,7 @@
 import React, {useState, useContext, useEffect} from 'react'
 import { ApearanceContext } from '@/Contexts/ThemeContext'
 import { FaSearch } from 'react-icons/fa'
+import { toast } from 'react-toastify'
 
 export default function Emojies({TextInputHandler, inputText} : {inputText : string, TextInputHandler : React.Dispatch<React.SetStateAction<string>>}) {
     const {theme} = useContext(ApearanceContext) || {}
@@ -51,7 +52,7 @@ function EmojiesSearch({query} : {query : string}) {
                 }
 
             } catch (error) {
-                console.log(error)
+                toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
             }
         }, 200)
             
@@ -87,7 +88,7 @@ function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<Re
             .then(res => {
                 setEmojis(res)
             }).catch(err => {
-                console.log(err)
+                toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
             }) 
         }, 150)
 

@@ -3,6 +3,7 @@ import { ApearanceContext } from "@/Contexts/ThemeContext"
 import { DialogContext } from "@/Contexts/DialogContext"
 import { DialogDataType } from "@/types/indexTypes"
 import { UserContext } from "@/Contexts/authContext"
+import { toast } from "react-toastify"
 
 
 
@@ -16,24 +17,34 @@ export default function TournmentDialog() {
 
 
     async function createHandler() {
-        if (!data.name) return ;
-        const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/create/`, {
-            method : 'POST',
-            headers : { 
-                'Content-Type' : 'application/json',
-                'Authorization' : `Bearer ${authInfos?.accessToken}`
-            },
-            credentials : 'include',
-            body : JSON.stringify(data)
-        })
 
-        if (!response.ok) {
-            console.log(await response.json())
-            return ;
+        try {
+            if (!data.name) {
+                throw Error("Tournament name cannot be empty!")
+            }
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/tournment/create/`, {
+                method : 'POST',
+                headers : { 
+                    'Content-Type' : 'application/json',
+                    'Authorization' : `Bearer ${authInfos?.accessToken}`
+                },
+                credentials : 'include',
+                body : JSON.stringify(data)
+            })
+    
+            if (!response.ok) {
+                const err = await response.json()
+                let ret = ""
+                for (const [_, val] of Object.entries(err)) {
+                    ret += val + '\n'
+                }
+                throw Error(ret);
+            }
+            const { id } = await response.json()
+            setCreated(id)
+        } catch (error) {
+            toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
         }
-
-        const { id } = await response.json()
-        setCreated(id)
     }
 
     

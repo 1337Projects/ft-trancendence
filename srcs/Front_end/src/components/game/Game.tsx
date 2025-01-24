@@ -7,11 +7,12 @@ import Cards from "./GameCards";
 import { UserContext } from "@/Contexts/authContext"
 import { useSearchParams } from "react-router-dom";
 import { TournamentDataType } from "@/types/tournamentTypes";
+import { toast } from "react-toastify"
 
-export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
+export function CatButton({icon, text, filter} : {icon : JSX.Element, text : string, filter : string}) {
 
     const [searchParams, setSearchParams] = useSearchParams()
-    const category = searchParams.get('category')
+    const category = searchParams.get(filter)
 
     const {color, theme} = useContext(ApearanceContext) || {}
     const selectedColor = (category === text || (!category && text === 'ping pong')) ? color : "" 
@@ -20,7 +21,8 @@ export function CatButton({icon, text} : {icon : JSX.Element, text : string}) {
             style={{color:selectedColor, borderColor : selectedColor}} 
             className={`border-[.1px] ${theme == 'light' ? "border-black" : "border-white"} h-fit flex justify-between items-center font-bold capitalize rounded text-[8pt] p-2 mr-3 min-w-10`} 
             onClick={()=> {
-                setSearchParams({category : text})
+                searchParams.set(filter, text)
+                setSearchParams(searchParams)
             }}
         >
             <p className="mr-2">{text}</p>
@@ -54,7 +56,7 @@ export default function Game() {
                 credentials : 'include',
                 headers : {
                     'Authorization' : `Bearer ${authInfos?.accessToken}`
-                }
+                } 
             })
 
             if (!response.ok) {
@@ -65,7 +67,7 @@ export default function Game() {
             const { data } = await response.json()
             setTournments(data)
         } catch(err) {
-            console.log(err)
+            toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
         }
     }
 

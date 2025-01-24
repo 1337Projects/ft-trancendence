@@ -53,7 +53,6 @@ export default function DashboardLayout() {
 
     useEffect(() => {
       const interval = setInterval(async () => {
-        console.log('request new access token')
         await fetch(`${import.meta.env.VITE_API_URL}api/auth/refresh/`, 
           {
               method: 'GET',
@@ -63,7 +62,9 @@ export default function DashboardLayout() {
           .then(res => {
               user?.setAuthInfosHandler(res.access_token)
           })
-          .catch(err => console.log(err))
+          .catch(err => {
+            toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+          })
       }, 14 * 60 * 1000);
       return () => clearInterval(interval);
     }, []);
@@ -86,7 +87,6 @@ export default function DashboardLayout() {
             }
         });
         notificationSocket.addCallback("hasNew", setHasNew!)
-        // console.log(user)
         notificationSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/notifications/${user?.authInfos?.username}/?token=${user?.authInfos?.accessToken}`)
         notificationSocket.sendMessage({
           event : "fetch nots",
@@ -118,7 +118,7 @@ export default function DashboardLayout() {
           setIsLoading(false)
         })
         .catch(err => {
-          console.log(err);
+          toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
         })
       }, 300)
       return () => clearTimeout(timer)
@@ -141,7 +141,9 @@ export default function DashboardLayout() {
           }
           user?.setFriends(res.data)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+        })
       }, 300)
       return () => clearTimeout(timer)
     }, [location])
@@ -166,14 +168,10 @@ export default function DashboardLayout() {
   
         }
       } catch (err) {
-        console.log(err instanceof Error ? err.toString() : "An error occured")
+        toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
       }
     }
 
-    if (!user)
-    {
-      console.log("eorrata")
-    }
     return (
       <>
         <div className="flex h-screen justify-between w-full">

@@ -6,6 +6,7 @@ import { useOutletContext } from "react-router-dom"
 import { UserType } from "@/types/userTypes"
 import { UserContext } from "@/Contexts/authContext"
 import { XpRecordType } from "@/types/gameTypes"
+import { toast } from "react-toastify"
 
 defaults.responsive = true
 defaults.maintainAspectRatio = false
@@ -52,11 +53,10 @@ export default function Chart() {
 				labels.push(`${time.getHours()}:${time.getMinutes()}`)
 			})
 			
-			// console.log(datasets, labels)
 			setData({labels, datasets})
 
 		} catch (error) {
-			console.log(error)
+			toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
 		}
 	}
 

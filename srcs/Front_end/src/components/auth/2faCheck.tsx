@@ -39,7 +39,6 @@ export default function TwoFacCheck () {
             })
             .then(response => response.json())
             .then(data => {
-                console.log('OTP data:', data);
                 if (data['message'] !== 'Successful'){
                     setOtp('')
                     setErrr('Try Again..')

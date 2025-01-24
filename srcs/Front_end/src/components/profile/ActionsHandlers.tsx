@@ -7,6 +7,8 @@ import { UserContext } from "@/Contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { FriendsActionsResType, FriendType, UserType } from "@/types/userTypes";
 import { ApearanceContext } from "@/Contexts/ThemeContext";
+import { toast } from "react-toastify";
+import { notificationSocket } from "@/sockets/notificationsSocket";
 
 
 
@@ -46,7 +48,6 @@ export async function RelationsHandler(url : string, token : string, body : User
     
         if (!response.ok) {
             const { message } = await response.json()
-            console.log(message)
             throw Error(message)
         }
     
@@ -55,7 +56,7 @@ export async function RelationsHandler(url : string, token : string, body : User
         if (id) callback(id)
         else callback(res)
     } catch(err) {
-        console.log(err)
+        toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
     }
     
 }
@@ -67,6 +68,16 @@ export function Relations({ friend } : {friend : UserType}) {
     const { friends, authInfos, setFriends } = useContext(UserContext) || {}
     const { color } = useContext(ApearanceContext) || {}
     const navigate = useNavigate()
+
+    const notificationAcceptFriendRequest = () => {
+        notificationSocket.sendMessage({
+            event: "send_request",
+            sender: friend.username, // Your logged-in user's username
+            receiver: authInfos?.username, // Username of the friend to whom the request is sent
+            message: `${friend.username} accept your Invitation`,
+            link : `${import.meta.env.VITE_API_URL}dashboard/profile/${authInfos?.username}`,
+        });
+    };
     
     function AddFriendCallbck(response : FriendsActionsResType) {
         setFriends!(prev => prev ? [...prev, response as FriendType] : [])
@@ -74,6 +85,7 @@ export function Relations({ friend } : {friend : UserType}) {
 
     function AcceptFriendCallback(response : FriendsActionsResType) {
         setFriends!(prev => prev ? [...prev.filter(item => item.id != (response as FriendType).id), response as FriendType] : [])
+        notificationAcceptFriendRequest();
     }
 
     function DeleteFriendRequest(response : FriendsActionsResType) {

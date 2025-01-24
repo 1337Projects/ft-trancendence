@@ -9,6 +9,7 @@ import { FiUser } from "react-icons/fi";
 import { NotificationsContext } from "../Contexts/NotificationsContext";
 import { InviteItem, NotItem } from "./Notifications";
 import { UserType } from "@/types/userTypes";
+import { toast } from "react-toastify";
 
 
 function SearchResult({query, queryHandler} : {query : string, queryHandler : React.Dispatch<React.SetStateAction<string>>}) {
@@ -34,7 +35,9 @@ function SearchResult({query, queryHandler} : {query : string, queryHandler : Re
                     setData(data.data as UserType[])
                 }
             })
-            .catch(err => console.log("err:", err))
+            .catch(err => {
+                toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+            })
             setLoading(false)
         }, 500)
         return () => clearTimeout(timer)
@@ -245,7 +248,7 @@ function Nots({ notsRef, open } : {open : boolean, notsRef : React.RefObject<HTM
 
             setHasNew!(0)
         } catch (error) {
-            console.log(error instanceof Error ? error.toString() : "Failed to update last notification time")
+            toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
         }
     }
 

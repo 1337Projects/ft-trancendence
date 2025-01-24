@@ -7,7 +7,8 @@ import { FaArrowTrendUp } from "react-icons/fa6"
 import { BiSolidMedal } from "react-icons/bi";
 import { MatchDataType } from "@/types/gameTypes"
 import { categories } from "@/components/profile/dashboard/Status"
-
+import { useSearchParams } from "react-router-dom"
+import{ toast } from 'react-toastify'
 
 
 
@@ -16,35 +17,69 @@ export default function MatchHistory() {
 	const [matches, setMatches] = useState<MatchDataType[] | null>(null)
 	const { authInfos, user } = useContext(UserContext) || {}
 	const { theme } = useContext(ApearanceContext) || {}
+	const [searchParams] = useSearchParams()
+	const categorie = searchParams.get("match-history-categorie")
 	
+	async function fetchPingPongMatchHistory() {
+		try {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}api/game/user_game_history/`, {
+				method : 'GET',
+				credentials : 'include',
+				headers : {
+					'Authorization' : `Bearer ${authInfos?.accessToken}`,
+				}
+			})
+
+			if (!response.ok) {
+				throw new Error('An error occured')
+			}
+
+			const {results} = await response.json()
+			setMatches(results)
+
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async function fetchTicTacToeMatchHistory() {
+		try {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/matchs/${user?.username}`, {
+				method : 'GET',
+				credentials : 'include',
+				headers : {
+					'Authorization' : `Bearer ${authInfos?.accessToken}`,
+				}
+			})
+
+			if (!response.ok) {
+				throw new Error('An error occured')
+			}
+
+			const {data} = await response.json()
+			setMatches(data)
+
+		} catch (error) {
+			toast.error(error instanceof Error ? error.toString() : "Somthing went wrong...")
+		}
+	}
+
+
     useEffect(() => {
-        const timer = setTimeout(async () => {
-            try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/matchs/${user?.username}`, {
-                    method : 'GET',
-                    credentials : 'include',
-                    headers : {
-                        'Authorization' : `Bearer ${authInfos?.accessToken}`,
-                    }
-                })
+        let timer = null
+		
+		if (!categorie || categorie === 'ping pong') {
+			timer = setTimeout(fetchPingPongMatchHistory, 100)
+		} else {
+			timer = setTimeout(fetchTicTacToeMatchHistory, 100)
+		}
 
-                if (!response.ok) {
-                    throw new Error('An error occured')
-                }
-
-                const {data} = await response.json()
-                console.log(data)
-                setMatches(data)
-
-            } catch (error) {
-                console.error(error)
-            }
-            
-            
-        }, 300)
-
-        return () => clearTimeout(timer)
-    }, [])
+        return () => {
+			if (timer) {
+				clearTimeout(timer)
+			}
+		}
+    }, [categorie])
 
     if (!matches) {
         return (
@@ -63,15 +98,15 @@ export default function MatchHistory() {
 			<div className="w-full h-[30px] flex mt-10">
 				{
 					categories.map((item, index) => 
-						<CatButton key={index} text={item.title} icon={item.icon} />
+						<CatButton filter="match-history-categorie" key={index} text={item.title} icon={item.icon} />
 					)
 				}
 			</div>
-			<ul className={`w-full overflow-scroll rounded ${theme === 'light' ? "border-black/20" : "border-white/20"} border-[0px] py-10 px-4 h-fit max-h-[600px] mt-10`}>
+			<ul className={`w-full overflow-scroll rounded ${theme === 'light' ? "border-black/20" : "border-white/20"} border-[0px] py-2 px-4 h-fit max-h-[600px] mt-4`}>
 				{
 					(matches?.length > 0)? matches?.map((match, index : number) => (
 						<History key={index} data={match} />
-					)) : <li className="text-xs text-center capitalize">
+					)) : <li className="text-xs h-[150px] flex justify-center items-center capitalize">
 						you haven't played any match yet
 					</li>
 				}
@@ -88,7 +123,7 @@ export function History ({data} : {data : MatchDataType}) {
 
 	return (
 		<div 
-			className={`my-1 w-full h-[80px]`}
+			className={`my-4 w-full h-[80px]`}
 		>
 			<div className='h-fit w-full flex items-center  text-[10px]'>
 				<IoTimeOutline className="mr-2" />
@@ -96,7 +131,7 @@ export function History ({data} : {data : MatchDataType}) {
 				<p className={`font-light`}>{date.getHours()} : {date.getMinutes()}</p>
 			</div>
 
-			<div className={`w-full mt-2 p-2 flex h-[60] rounded border-[0px] border-white/20 justify-between items-center`}>
+			<div className={`w-full p-2 flex h-[60] rounded border-[0px] border-white/20 justify-between items-center`}>
 				<div className='flex items-center'>
                     <div className="relative">
                         {

@@ -3,6 +3,7 @@ import {useContext, useEffect, useState} from 'react'
 import { Navigate } from 'react-router-dom'
 import DashboardLayout from '../Layouts/DashboardLayout'
 import { UserContext } from '../Contexts/authContext';
+import { toast } from 'react-toastify';
 
 
 export const DashboardPrivateRoute = () => {
@@ -21,7 +22,9 @@ export const DashboardPrivateRoute = () => {
                     user?.setAuthInfosHandler(res.access_token)
                     setIsAuthenticated(res.access_token != null)
                 })
-                .catch(err => console.log(err))
+                .catch(err => {
+                    toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+                })
             }
             
             const timer = setTimeout(async () => {

@@ -4,7 +4,6 @@ import { PlayerImage } from "./Schema4";
 import { UserType } from "@/types/userTypes";
 
 export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
-  console.log(rounds);
 
   return (
     <svg

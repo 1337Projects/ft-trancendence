@@ -4,6 +4,7 @@ import { UserContext } from '../../Contexts/authContext'
 import { Link } from 'react-router-dom';
 import { ApearanceContext } from '../../Contexts/ThemeContext';
 import { OtpInput } from 'reactjs-otp-input';
+import { toast } from 'react-toastify';
 
 
 
@@ -49,7 +50,6 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
             })
             .then(response => response.json())
             .then(data => {
-                console.log('OTP data:', data);
                 if (data['message'] !== 'Successful'){
                     setOtp('')
                     setErrr('Try Again')
@@ -82,11 +82,10 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
                     throw  new Error(error)
                 }
                 const { qr_code_image } = await response.json()
-                console.log(qr_code_image)
                 setQr(qr_code_image)
             }
             catch(err) {
-                console.log(err)
+                toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
             }
         }
 
@@ -95,7 +94,6 @@ export default function TwoFactor ( {are_you_in, cancel, setShowPopup, setTwofa}
         }, []
     )
 
-    // console.log(appearence?.color)
     return (
         <div className={`flex flex-col items-center justify-center  md:w-[100%]
         transition-all duration-300 ease-in-out px-10 py-4 text-white text-center rounded

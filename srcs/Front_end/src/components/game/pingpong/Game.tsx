@@ -23,7 +23,6 @@ class Paddle {
     }
     
     public render() {
-        // console.log('x: ', this.x, 'y: ', this._y);
         this.context.fillStyle = 'white';
         this.context.beginPath()
         this.context.roundRect(this.x, this._y - (this.height / 2), this.width, this.height, 5);
@@ -31,7 +30,6 @@ class Paddle {
     }
 
     public set Y(y: number) {
-        // console.log('setY y: ', y);
         this._y = y;
     }
 
@@ -102,7 +100,6 @@ export class Game {
 
     setUpdate(stats: { paddle1: number, paddle2: number , ball : {x : number, y : number}}): void {
         // set stats of paddle1 and paddle2
-        // console.log('setUpdate (stats): ', stats);
         this.paddle1.Y = stats.paddle1;
         this.paddle2.Y = stats.paddle2;
         this.ball.set(stats.ball);

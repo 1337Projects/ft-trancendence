@@ -10,7 +10,6 @@ import { AlertType } from "@/types/indexTypes"
 async function requestLinkHandler(values : {email : string}) {
     try {
         const url = `${import.meta.env.VITE_API_URL}api/users/forgetPassword/`
-        console.log(url)
         const response = await fetch(url, {
             method: 'POST',
             headers : {

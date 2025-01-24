@@ -4,7 +4,8 @@ import { UserType } from "@/types/userTypes"
 import { useContext, useEffect, useState } from "react"
 import { GiTicTacToe } from "react-icons/gi"
 import { TbPingPong } from "react-icons/tb"
-import { useOutletContext } from "react-router-dom"
+import { useOutletContext, useSearchParams } from "react-router-dom"
+import { toast } from "react-toastify"
 
 
 function MatchStatusItem({title, avatar, color, num} : {title : string, avatar : string, color : string, num : number}) {
@@ -38,8 +39,11 @@ export default function MatchStatus() {
 	const { authInfos  } = useContext(UserContext) || {}
 	const [ data, setData ] = useState<null | {total : number, matches_won : number, matches_lost : number}>(null)
 	const currentUser : UserType = useOutletContext()
+	const [searchParams] = useSearchParams()
+	const categorie = searchParams.get('stats-categorie')
 	
-	async function fetchData() {
+	
+	async function fetchTicTacToeData() {
 		try {
 			const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/score/${currentUser.username}`, {
 				method: 'GET',
@@ -56,20 +60,54 @@ export default function MatchStatus() {
 			const data = await response.json()
 			setData(data.data)
 		}
-		catch (e) {
-			console.log(e)
+		catch (error) {
+			toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
+		}
+	}
+
+
+	async function fetchPingPongData() {
+		try {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}api/game/user_game_stats/`, {
+				method: 'GET',
+				credentials : 'include',
+				headers : {
+					'Authorization' : `Bearer ${authInfos?.accessToken}`,
+				}
+			})
+			
+			if (!response.ok) {
+				throw new Error("Failed to fetch data")
+			}
+			
+			const data = await response.json()
+			setData({
+				total : data.games_played,
+				matches_won : data.games_won,
+				matches_lost : data.games_lost
+			})
+		}
+		catch (error) {
+			toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
 		}
 	}
 	
 	useEffect(() => {
 		if (currentUser) {
-			const timer = setTimeout(fetchData, 100)
+			let timer = null
+			if (!categorie || categorie === 'ping pong') {
+				timer = setTimeout(fetchPingPongData, 100) 
+			} else {
+				timer = setTimeout(fetchTicTacToeData, 100)
+			}
 	
 			return () => {
-				clearTimeout(timer)
+				if (timer) {
+					clearTimeout(timer)
+				}
 			}
 		}
-	}, [currentUser])
+	}, [currentUser, categorie])
 
 	if(!data) {
 		return (
@@ -86,7 +124,7 @@ export default function MatchStatus() {
 			<div className="w-full h-[60px] flex items-center">
 				{
 					categories.map((item, index) => (
-						<div key={index}><CatButton text={item.title} icon={item.icon} /></div>
+						<div key={index}><CatButton filter="stats-categorie" text={item.title} icon={item.icon} /></div>
 					))
 				}
 			</div>

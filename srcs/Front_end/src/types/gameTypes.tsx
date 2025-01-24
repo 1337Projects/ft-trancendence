@@ -46,7 +46,7 @@ export type RoomType = {
 }
 
 export type TicTacTeoType = {
-    players : UserType[],
+    players : {user : UserType, char : string}[],
     user : UserType,
     board : string[][],
     winner : UserType | null

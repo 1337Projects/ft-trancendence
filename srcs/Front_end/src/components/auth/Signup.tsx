@@ -35,7 +35,6 @@ export default function Signup() {
             if (!response.ok) {
                 setAlert(null)
                 const { error } = await response.json()
-                console.log("error => ", error)
                 for (const [key, value] of Object.entries(error)) {
                     setAlert(prev => prev ? {message : [...prev.message, `${key} : ${value}`], type : 'error'} :  {message : [`${key} : ${value}`], type : 'error'})
                 }

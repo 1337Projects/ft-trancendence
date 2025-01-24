@@ -9,6 +9,7 @@ import TwoFactor from "../auth/2fa"
 import Alert from "../ui/Alert"
 import * as Yup from 'yup'
 import { AlertType } from "@/types/indexTypes"
+import { toast } from "react-toastify"
 
 
 function SecurityItem({children} : { children : React.ReactNode }) {
@@ -114,10 +115,9 @@ export default function Security() {
                 setCheck(!showCheck)
                 setTwofa(!twofaa)
             }
-            console.log('changed:', data)
         })
-        .catch((e) => {
-            console.log("errora", e)
+        .catch((error) => {
+            toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
         })
     }
 
@@ -137,17 +137,15 @@ export default function Security() {
                     throw  new Error(error)
                 }
                 const { twofa } = await response.json()
-                // console.log(twofa)
                 if (twofa === 'True')
                 {
                     setTwofa(true)
                 } else {
                     setTwofa(false)
                 }
-                // console.log(twofaa)
             }
             catch(err) {
-                console.log(err)
+                toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
             }
         }
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../../Contexts/authContext'
 import { FaGoogle } from 'react-icons/fa'
 import { Si42 } from "react-icons/si";
+import { toast } from 'react-toastify';
 
 export function OauthProviders() {
 
@@ -12,7 +13,9 @@ export function OauthProviders() {
     .then(data => {
         window.location.href = data.url
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+    })
   }
   
   return (
@@ -56,7 +59,6 @@ export function Oauth({url} : {url : string}) {
         .then(res => res.json())
         .then(data => {
           if (data.status == 200) {
-            console.log(data['2fa'])
             if (data['2fa'] === 'True')
             {
               navigate('/auth/2faCheck')
@@ -68,7 +70,9 @@ export function Oauth({url} : {url : string}) {
             }
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+        })
       } else {
         navigate('/auth/login')
       }

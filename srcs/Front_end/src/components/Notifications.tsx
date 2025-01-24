@@ -11,6 +11,7 @@ import { HeaderItems } from "./Search";
 import { LuBell } from "react-icons/lu";
 import { FiUser } from "react-icons/fi";
 import { notificationSocket } from "@/sockets/notificationsSocket";
+import { toast } from "react-toastify";
 
 
 
@@ -20,8 +21,6 @@ export function NotItem({data} : {data : NotificationType}) {
     const date :string = `${createdAt.getFullYear()}-${(createdAt.getMonth() + 1).toString().padStart(2, '0')}-${createdAt.getDate().toString().padStart(2, '0')}`;
     const time :string = `${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}`;
     
-    // const fiveMinutesLater = new Date(createdAt.getTime() + 5 * 60 * 1000);
-    // console.log(data)
     
     const expired = data?.link === null ? true : false;
     return (
@@ -129,7 +128,6 @@ export default function Notifications() {
     const containerRef = useRef<null | HTMLDivElement>(null);
 
     const handleScroll = () => {
-        console.log("in")
         if (!containerRef.current || !hasMore) return;
         const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
@@ -181,7 +179,7 @@ export default function Notifications() {
 
             setHasNew!(0)
         } catch (error) {
-            console.log(error instanceof Error ? error.toString() : "Failed to update last notification time")
+            toast.error(error instanceof Error ? error.toString() : "Somthing went wrong...")
         }
     }
 
@@ -219,7 +217,6 @@ export default function Notifications() {
 
 
     function handler(value : boolean) {
-        console.log(containerRef.current?.scrollHeight, "scroll height");
         setShow(value)
         window.localStorage.setItem('showNotifications', String(value));
     }

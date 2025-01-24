@@ -57,7 +57,6 @@ export default function Profile() {
 					setCurrentUser(res.data)
 				})
 				.catch(err => {
-						console.log(err, "++");
 						toast.error("Failed to load profile data!");
 					}
 				)
@@ -68,17 +67,7 @@ export default function Profile() {
 
 	}, [user_name])
 	
-	
-	// useEffect(() => {
-	// 	if (!user) {
-	// 		toast.error("No user found!");
-	// 	}
-	// }, [user]);
 
-	// if (!user) {
-	// 	console.log("no user");
-	// }
-	
 	return (
 		<div className={`w-full h-full overflow-scroll p-2 ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}`}>
 			<div className={` w-full h-full sm:h-[100vh]`}>

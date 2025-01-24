@@ -6,9 +6,7 @@ import { CanvasProps, GameStatsType } from '@/types/gameTypes';
 
 
 
-// function Canvas(game: GameType) {
 const Canvas: React.FC<CanvasProps> = ({ game }) => {
-    // console.log(game)
     const canvasRef = useRef<null | HTMLCanvasElement>(null);
     const canvaParentRef = useRef<null | HTMLDivElement>(null);
     const gameInstanceRef = useRef<null | Game>(null);
@@ -25,7 +23,6 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
             };
             if (keyData.key === 'ArrowUp' || keyData.key === 'ArrowDown')
                 gameSocket.sendMessage(keyData);
-            console.log('key down on ', event.key);
         };
 
         window.addEventListener('keydown', handleKeyDown);

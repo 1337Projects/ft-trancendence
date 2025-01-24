@@ -5,6 +5,7 @@ import { UserContext } from '@/Contexts/authContext';
 import { FaArrowRight } from 'react-icons/fa';
 import { FriendType, UserType } from '@/types/userTypes';
 import { ApearanceContext } from '@/Contexts/ThemeContext';
+import { toast } from 'react-toastify';
 
 function FriendCard({friend} : {friend : UserType}) {
 
@@ -53,7 +54,9 @@ export default function Friends() {
         .then(res => {
             setFriends(res.data)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+        })
     }, [])
 
     return (
