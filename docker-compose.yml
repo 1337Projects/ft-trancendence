@@ -62,17 +62,16 @@ services:
   nginx:
     container_name: nginx
     image: nginx:ipman
-    command: [nginx-debug, '-g', 'daemon off;']
     build: ./srcs/nginx/.
-    restart: always
+    # restart: always
     ports:
       - "8080:80"
       - "1024:443"
-    volumes:
-      - ${PWD}/srcs/nginx:/app
-      - ./srcs/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./srcs/nginx/certificate.crt:/etc/nginx/certificate.crt
-      - ./srcs/nginx/prv_certificate.crt:/etc/nginx/prv_certificate.crt
+    # volumes:
+    #   - ${PWD}/srcs/nginx:/app
+      # - ./srcs/nginx/nginx.conf:/etc/nginx/nginx.conf
+      # - ./srcs/nginx/certificate.crt:/etc/nginx/certificate.crt
+      # - ./srcs/nginx/prv_certificate.crt:/etc/nginx/prv_certificate.crt
     networks:
       - ft_transcendence
     depends_on:
