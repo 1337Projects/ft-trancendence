@@ -3,10 +3,13 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .serializers import TournmentSerializer
+from rest_framework.permissions import IsAuthenticated
 from login.models import User
 from .models import Tournment
 
 class TournmentViews(viewsets.ViewSet):
+
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['post'])
     def create_tournment(self, request):

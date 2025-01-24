@@ -13,6 +13,11 @@ class TournmentSerializer(serializers.ModelSerializer):
         representation['players'] = UserWithProfileSerializer(instance.players.all(), many=True).data
         return representation
 
+    def validate_tournament_name(self, value):
+        if value == "":
+            raise serializers.ValidationError("tournament name cannot be empty")
+        return value
+
     class Meta:
         model = Tournment
         fields = ["id", "tournament_name", "tourament_status", "created_at", "max_players"]

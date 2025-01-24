@@ -64,7 +64,7 @@ services:
     container_name: nginx
     image: nginx:ipman
     build: ./srcs/nginx/.
-    # restart: always
+    restart: always
     ports:
       - "8080:80"
       - "1024:443"
