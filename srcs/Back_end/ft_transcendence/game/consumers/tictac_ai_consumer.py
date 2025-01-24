@@ -7,7 +7,7 @@ from game.models import Game1
 from game.serializers import TicTacTeoSerializer
 import math,uuid
 from account.serializer import UserWithProfileSerializer
-from game.backend.tictac_ai import get_ai_move
+from game.backend.tictac_ai import get_ai_move, get_first_move
 from django.contrib.auth.models import AnonymousUser
 
 class TicTacWithAiConsumer(AsyncWebsocketConsumer):
@@ -139,10 +139,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
     async def turn_ai(self):
         await asyncio.sleep(5)
         board = self.tictac.get_board()
-        if self.tictac.moves == 0:
-            move = {'row': 1, 'col': 1}
-        else:
-            move = await self.ai_move(board)
+        move = await self.ai_move(board)
         status = self.tictac.play_turn(row=move['row'], col=move['col'], sender=self.ai['id'])
         if "winner" in status:
             try:
@@ -179,7 +176,11 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                 self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
 
     async def   ai_move(self, board):
-        return get_ai_move(board, self.ai_symbol)
+        if self.tictac.get_moves() == 1 or self.tictac.get_moves() == 0:
+            move = get_first_move(board=board)
+        else:
+            move = get_ai_move(board, self.ai_symbol) 
+        return move
 
     @database_sync_to_async
     def get_user(self):

@@ -1,6 +1,6 @@
 import math
 import random
-import time
+import time, sys
 from .tictac_game import TicTac
 
 def get_ai_move(board, ai_symbol):
@@ -78,3 +78,12 @@ def is_win_move(board, row, col, ai_symbol):
     is_winning = check_winner(board) == ai_symbol
     board[row][col] = ''
     return is_winning
+
+def get_first_move(board):
+    best_move = [[0,0],[0,2],[1,1],[2,2],[2,0]]  
+    random.shuffle(best_move)
+    for move in best_move:
+        if board[move[0]][move[1]] == '':
+            return {'row' : move[0], 'col': move[1]}
+        
+    

@@ -164,3 +164,6 @@ class TicTac:
     
     def get_board(self):
         return self.board
+
+    def get_moves(self):
+        return self.moves
