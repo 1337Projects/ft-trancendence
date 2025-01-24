@@ -31,6 +31,7 @@ services:
         condition: service_healthy
     volumes:
       - ${PWD}/srcs/Back_end:/app
+      - serverFiles:/app/media
     networks:
       - ft_transcendence
     healthcheck:
@@ -49,14 +50,14 @@ services:
     restart: always
     volumes:
       - ${PWD}/srcs/Front_end:/app
+      - frontFiles:/app/dist
     networks:
       - ft_transcendence
-
     environment:
       - VITE_API_URL=https://${HOSTNAME}:1024/
       - VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
       - VITE_EMOJIES_API=https://emoji-api.com/
-      - VITE_EMOJIES_KEY="access_key=5f603eacb5994ec1a691d954ed1b809c369c465d"
+      - VITE_EMOJIES_KEY=access_key=64cbbf2e3c845a7633199a3004eefb71c5eaf31a
 
 
   nginx:
@@ -67,11 +68,13 @@ services:
     ports:
       - "8080:80"
       - "1024:443"
-    # volumes:
-    #   - ${PWD}/srcs/nginx:/app
-      # - ./srcs/nginx/nginx.conf:/etc/nginx/nginx.conf
-      # - ./srcs/nginx/certificate.crt:/etc/nginx/certificate.crt
-      # - ./srcs/nginx/prv_certificate.crt:/etc/nginx/prv_certificate.crt
+    volumes:
+      - ${PWD}/srcs/nginx:/app
+      - ./srcs/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./srcs/nginx/certificate.crt:/etc/nginx/certificate.crt
+      - ./srcs/nginx/prv_certificate.crt:/etc/nginx/prv_certificate.crt
+      - frontFiles:/front_files
+      - serverFiles:/server_files
     networks:
       - ft_transcendence
     depends_on:
@@ -80,8 +83,12 @@ services:
     environment:
       - WAIT_FOR_IT_TIMEOUT=60
 
+
+
 volumes:
   pgdata:
+  frontFiles:
+  serverFiles:
 
 networks:
   ft_transcendence:

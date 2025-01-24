@@ -6,3 +6,4 @@ srcs/Back_end/virtualenv
 venv
 .DS_Store
 *.rest
+srcs/nnginx
