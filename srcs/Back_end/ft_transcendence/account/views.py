@@ -22,6 +22,7 @@ from django.db.models import Q
 from .utls import *
 from datetime import timedelta
 from .tasks import delete_qr_code_image
+from rest_framework_simplejwt.tokens import RefreshToken
 
 import qrcode
 import pyotp, os, io
@@ -263,6 +264,7 @@ def generate_2fa_qr_code(request):
 
 
 @api_view(['POST'])
+@csrf_exempt
 @permission_classes([AllowAny])
 def check_topt(request):
     user_id = request.session.get('user_id')
@@ -279,10 +281,11 @@ def check_topt(request):
             opt = data.get('topt')
             user = User.objects.get(id=user_id)
             if validate_totp(user=user, otp=opt):
-                access_token = generate_access_token(user)
-                refresh_token = generate_refresh_token(user)
+                refresh = RefreshToken.for_user(user)
+                refresh['username'] = user.username
+                access_token = str(refresh.access_token)
                 response = JsonResponse({"access": access_token, "message": "Successful", "status":200}, status=200)
-                set_refresh_token_cookie(response, refresh_token)
+                set_refresh_token_cookie(response, refresh)
                 return response
             else:
                 request.session['retry_limit'] -= 1
