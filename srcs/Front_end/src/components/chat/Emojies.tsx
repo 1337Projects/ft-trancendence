@@ -3,6 +3,7 @@ import React, {useState, useContext, useEffect} from 'react'
 import { ApearanceContext } from '@/Contexts/ThemeContext'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
+import { UserContext } from '@/Contexts/authContext'
 
 export default function Emojies({TextInputHandler, inputText} : {inputText : string, TextInputHandler : React.Dispatch<React.SetStateAction<string>>}) {
     const {theme} = useContext(ApearanceContext) || {}
@@ -33,28 +34,29 @@ export default function Emojies({TextInputHandler, inputText} : {inputText : str
 function EmojiesSearch({query} : {query : string}) {
 
     const [emojis, setEmojis] = useState<{character : string}[] | null>(null)
-    const API = `${import.meta.env.VITE_EMOJIES_API}emojis?search=`
-    const KEY = import.meta.env.VITE_EMOJIES_KEY
-    const url = API + query + "&" + KEY
+    const { authInfos } = useContext(UserContext) || {}
+
     useEffect(() => {
         const timer = setTimeout(async () => {
 
             try {
-                const response = await fetch(url)
+                const response = await fetch(`${import.meta.env.VITE_API_URL}api/emojis/search/?query=${query}`, {
+                    headers : {
+                        "Authorization" : `Bearer ${authInfos?.accessToken}`
+                    }
+                })
 
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
 
-                const data = await response.json()
-                if (data.status !==  "error") {
-                    setEmojis(data)
-                }
+                const {data} = await response.json()
+                setEmojis(data)
 
             } catch (error) {
                 toast.error(error instanceof Error ? error.toString() : "somthing went wrong...")
             }
-        }, 200)
+        }, 500)
             
             
         return () => {
@@ -74,22 +76,29 @@ function EmojiesSearch({query} : {query : string}) {
 }
 
 function EmojesCategories({textHandler, text} : {textHandler : React.Dispatch<React.SetStateAction<string>>, text : string}) {
-    const API = import.meta.env.VITE_EMOJIES_API
-    const KEY = import.meta.env.VITE_EMOJIES_KEY
     const [def, setDef] = useState("smileys-emotion")
     const [emojis, setEmojis] = useState<{character : string}[] | null>(null)
-
-
+    const { authInfos } = useContext(UserContext) || {}
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            fetch(API + "categories/" + def + "?" + KEY)
-            .then(res => res.json())
-            .then(res => {
-                setEmojis(res)
-            }).catch(err => {
+        const timer = setTimeout(async () => {
+
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}api/emojis/get_all/?categorie=${def}`, {
+                    headers : {
+                        "Authorization" : `Bearer ${authInfos?.accessToken}`
+                    }
+                })
+    
+                if (!response.ok) {
+                    throw Error("somthing went wrong")
+                }
+                const {data} = await response.json()
+                setEmojis(data)
+            }
+            catch(err) {
                 toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
-            }) 
+            }
         }, 150)
 
         return () => {

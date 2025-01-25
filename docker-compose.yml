@@ -29,7 +29,7 @@ services:
         condition: service_healthy
     volumes:
       - ${PWD}/srcs/Back_end:/app
-      - serverFiles:/app/media
+      # - serverFiles:/app/media
     networks:
       - ft_transcendence
     healthcheck:
@@ -39,7 +39,9 @@ services:
       start_period: 20s
       timeout: 20s
     environment:
-      API_URL : https://${HOSTNAME}:1024/
+      - API_URL=https://${HOSTNAME}:1024/
+      - EMOJIES_API=https://emoji-api.com/
+      - EMOJIES_KEY=access_key=64cbbf2e3c845a7633199a3004eefb71c5eaf31a
 
 
   nginx:
@@ -50,8 +52,8 @@ services:
     ports:
       - "8080:80"
       - "1024:443"
-    volumes:
-      - serverFiles:/server_files
+    # volumes:
+      # - serverFiles:/server_files
     networks:
       - ft_transcendence
     depends_on:
