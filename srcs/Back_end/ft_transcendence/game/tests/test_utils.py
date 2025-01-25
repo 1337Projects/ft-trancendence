@@ -13,7 +13,7 @@ def create_user_and_login(username, email, password, first_name, last_name):
         'last_name': last_name,
         'password': password
     }, format='json')
-
+    # print(response.content)
     assert response.status_code == 201
     user = User.objects.get(username=username)
     assert user.username == username

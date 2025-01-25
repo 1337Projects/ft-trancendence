@@ -27,7 +27,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name', 'email', 'username', 'password')
 
     def validate_username(self, value):
-        if not re.match(r'^[a-zA-Z0-9]$', value):
+        if not re.match(r'^[a-zA-Z0-9]+$', value):
             raise serializers.ValidationError("Username can only contain letters, numbers, underscores, and hyphens.")
         if len(value) < 3:
             raise serializers.ValidationError("Username must be at least 3 characters long.")

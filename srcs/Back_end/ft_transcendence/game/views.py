@@ -3,6 +3,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Game
+from login.models import User
 from .serializers import UserGameStatsSerializer, GameSerializer
 from django.db.models import Q
 
@@ -13,8 +14,8 @@ class GameHistoryPagination(PageNumberPagination):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_game_stats(request):
-    user = request.user
+def user_game_stats(request, username):
+    user = User.objects.get(username=username)
     games_played = Game.objects.filter(Q(player1=user) | Q(player2=user)).count()
     games_won = Game.objects.filter(winner=user).count()
     games_lost = games_played - games_won
@@ -30,10 +31,8 @@ def user_game_stats(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_game_history(request):
-    user = request.user
+def user_game_history(request, username):
+    user = User.objects.get(username=username)
     games = Game.objects.filter(Q(player1=user) | Q(player2=user)).order_by('-created_at')
-    paginator = GameHistoryPagination()
-    paginated_games = paginator.paginate_queryset(games, request)
-    serializer = GameSerializer(paginated_games, many=True)
-    return paginator.get_paginated_response(serializer.data)
+    serializer = GameSerializer(games, many=True)
+    return Response(serializer.data)
