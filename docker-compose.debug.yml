@@ -14,6 +14,19 @@ services:
       - "8000:8000"
       - "5678:5678"  # for debugger
     command: python -m debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000
-  # nginx:
-  #   volumes:
-  #     - ./nginx_logs:/var/log/nginx
+  
+
+  frontend:
+    container_name: frontend
+    build: srcs/Front_end/
+    image: frontend:aamhamdi
+    restart: always
+    volumes:
+      - ${PWD}/srcs/Front_end:/app
+    networks:
+      - ft_transcendence
+    environment:
+      - VITE_API_URL=https://${HOSTNAME}:1024/
+      - VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
+      - VITE_EMOJIES_API=https://emoji-api.com/
+      - VITE_EMOJIES_KEY=access_key=64cbbf2e3c845a7633199a3004eefb71c5eaf31a

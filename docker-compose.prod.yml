@@ -1,0 +1,6 @@
+services:
+  nginx:
+    build:
+      context: ./srcs
+      dockerfile: ./nginx/Dockerfile.prod
+  

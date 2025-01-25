@@ -1,0 +1,41 @@
+# Step 1: Build the React app
+FROM node:18 as build
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to install dependencies
+COPY ../Front_end/package*.json ./
+# Install dependencies
+RUN npm install --production
+
+# Copy the entire project to the container
+COPY ../Front_end/ .
+
+# Build the React app for production
+RUN npm run build
+
+FROM owasp/modsecurity-crs:4.10.0-nginx-202501050801
+
+WORKDIR /app
+
+# COPY . .
+# Copy custom ModSecurity configuration (optional)
+COPY ./nginx/modsecurity.conf /etc/modsecurity/modsecurity.conf
+
+# Copy custom CRS setup configuration (optional)
+COPY ./nginx/crs-setup.conf /etc/modsecurity.d/crs-setup.conf
+
+COPY --from=build /app/dist ./fr
+# Copy custom Nginx configuration
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
+# Generate a self-signed SSL certificate
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+-keyout /app/prv_certificate.crt \
+-out /app/certificate.crt \
+-subj "/CN=localhost"
+# Expose the default HTTP port
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

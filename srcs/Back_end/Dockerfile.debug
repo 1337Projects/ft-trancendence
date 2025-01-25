@@ -15,7 +15,7 @@ RUN pip install -r requirements.txt
 RUN pip install ptvsd
 
 # Copy application code
-COPY ./ft_transcendence /app
+COPY ./ft_transcendence .
 
 # Expose port for debugger
 EXPOSE 5678

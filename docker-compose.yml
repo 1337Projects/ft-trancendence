@@ -5,8 +5,6 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    # expose:
-    #   - 5137
     env_file:
       - .env
     healthcheck:
@@ -43,22 +41,6 @@ services:
     environment:
       API_URL : https://${HOSTNAME}:1024/
 
-  frontend:
-    container_name: frontend
-    build: srcs/Front_end/
-    image: frontend:aamhamdi
-    restart: always
-    volumes:
-      - ${PWD}/srcs/Front_end:/app
-      - frontFiles:/app/dist
-    networks:
-      - ft_transcendence
-    environment:
-      - VITE_API_URL=https://${HOSTNAME}:1024/
-      - VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
-      - VITE_EMOJIES_API=https://emoji-api.com/
-      - VITE_EMOJIES_KEY=access_key=64cbbf2e3c845a7633199a3004eefb71c5eaf31a
-
 
   nginx:
     container_name: nginx
@@ -69,13 +51,11 @@ services:
       - "8080:80"
       - "1024:443"
     volumes:
-      - frontFiles:/front_files
       - serverFiles:/server_files
     networks:
       - ft_transcendence
     depends_on:
       - be
-      - frontend
     environment:
       - WAIT_FOR_IT_TIMEOUT=60
 
@@ -83,7 +63,6 @@ services:
 
 volumes:
   pgdata:
-  frontFiles:
   serverFiles:
 
 networks:
