@@ -56,7 +56,8 @@ export default function WaitingTournment() {
                         [...Array(roomData?.data?.max_players)].map((_, index) => {
                             return (
                                 <div key={index}>
-                                    <PlayerGameCard 
+                                    <PlayerGameCard
+                                        id={index+1} 
                                         player={index < roomData?.players?.length ? roomData?.players[index] : undefined}
                                     />
                                 </div>

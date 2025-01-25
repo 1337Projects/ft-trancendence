@@ -56,10 +56,9 @@ export default function Profile() {
 					}
 					setCurrentUser(res.data)
 				})
-				.catch(err => {
-						toast.error("Failed to load profile data!");
-					}
-				)
+				.catch((err: Error) => {
+					toast.error(err.toString());
+				})
 			} else 
 				setCurrentUser(user!)
 		}, 300)
