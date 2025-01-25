@@ -15,7 +15,11 @@ class ChatSocket extends WebSocketService {
                 this.callbacks["cnvsUpdate"]?.(data.response.conversation)
                 break;
             case 206:
-                this.callbacks["setData"]?.((prev : MessageType[]) => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
+                if (data.response.page == 1) {
+                    this.callbacks["setData"]?.(data.response.messages.reverse()) 
+                } else {
+                    this.callbacks["setData"]?.((prev : MessageType[]) => prev ? [...[...data.response.messages].reverse(), ...prev, ] : [...[...data.response.messages].reverse()])
+                }
                 this.callbacks["setUser"]?.(data.response)
                 break;
             case 209:

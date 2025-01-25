@@ -148,6 +148,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def fetch_messages(self,text_data_json):
         to_ = text_data_json.get('partner')
         from_ = text_data_json.get('from')
+        page_ = text_data_json.get('page')
         sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
         all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id']) # slicing query
         page = text_data_json.get('page', 1)
@@ -168,6 +169,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 'user': receiver_ser,
                 'nbr_pages': nbr_pages,
                 'freindship' : freindship_ser,
+                'page' : page_
             }
         }))
 

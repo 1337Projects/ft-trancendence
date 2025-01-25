@@ -152,7 +152,7 @@ function MessagesList() {
     useEffect(() => {
         timeoutRef.current = setTimeout(() => {
             send_fetch_event(page)
-        }, 1000)
+        }, 100)
 
         return () => {
             if (timeoutRef.current) {
