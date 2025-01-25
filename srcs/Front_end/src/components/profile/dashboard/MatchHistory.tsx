@@ -7,35 +7,37 @@ import { FaArrowTrendUp } from "react-icons/fa6"
 import { BiSolidMedal } from "react-icons/bi";
 import { MatchDataType } from "@/types/gameTypes"
 import { categories } from "@/components/profile/dashboard/Status"
-import { useSearchParams } from "react-router-dom"
+import { useOutletContext, useSearchParams } from "react-router-dom"
 import{ toast } from 'react-toastify'
+import { UserType } from "@/types/userTypes"
 
 
 
 export default function MatchHistory() {
 
 	const [matches, setMatches] = useState<MatchDataType[] | null>(null)
-	const { authInfos, user } = useContext(UserContext) || {}
+	const { authInfos } = useContext(UserContext) || {}
 	const { theme } = useContext(ApearanceContext) || {}
+	const currentUser : UserType = useOutletContext()
 	const [searchParams] = useSearchParams()
 	const categorie = searchParams.get("match-history-categorie")
 	
 	async function fetchPingPongMatchHistory() {
 		try {
-			const response = await fetch(`${import.meta.env.VITE_API_URL}api/game/user_game_history/`, {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}api/game/user_game_history/${currentUser?.username}/`, {
 				method : 'GET',
 				credentials : 'include',
 				headers : {
 					'Authorization' : `Bearer ${authInfos?.accessToken}`,
 				}
 			})
-
+			
 			if (!response.ok) {
 				throw new Error('An error occured')
 			}
 
-			const {results} = await response.json()
-			setMatches(results)
+			const data = await response.json()
+			setMatches(data)
 
 		} catch (error) {
 			console.error(error)
@@ -44,7 +46,7 @@ export default function MatchHistory() {
 
 	async function fetchTicTacToeMatchHistory() {
 		try {
-			const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/matchs/${user?.username}`, {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/matchs/${currentUser?.username}/`, {
 				method : 'GET',
 				credentials : 'include',
 				headers : {
@@ -68,9 +70,9 @@ export default function MatchHistory() {
     useEffect(() => {
         let timer = null
 		
-		if (!categorie || categorie === 'ping pong') {
+		if (currentUser && !categorie || categorie === 'ping pong') {
 			timer = setTimeout(fetchPingPongMatchHistory, 100)
-		} else {
+		} else if (currentUser) {
 			timer = setTimeout(fetchTicTacToeMatchHistory, 100)
 		}
 
@@ -79,7 +81,7 @@ export default function MatchHistory() {
 				clearTimeout(timer)
 			}
 		}
-    }, [categorie])
+    }, [categorie, currentUser])
 
     if (!matches) {
         return (

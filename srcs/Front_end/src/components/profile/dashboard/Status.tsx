@@ -68,7 +68,7 @@ export default function MatchStatus() {
 
 	async function fetchPingPongData() {
 		try {
-			const response = await fetch(`${import.meta.env.VITE_API_URL}api/game/user_game_stats/`, {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}api/game/user_game_stats/${currentUser.username}`, {
 				method: 'GET',
 				credentials : 'include',
 				headers : {
