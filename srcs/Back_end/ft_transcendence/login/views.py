@@ -115,6 +115,8 @@ def google_oauth(request):
         user_info_response = requests.get(user_info_url, headers={'Authorization': f'Bearer {access_token}'})
         if user_info_response.status_code == 200:
             user_info = user_info_response.json()
+            if "error" in user_info:
+                return JsonResponse({"error": "Failed to fetch user info"}, status=400)
             email = user_info.get('email')
             name = user_info.get('name')
             username = generate_username(customize_username(name))
@@ -140,8 +142,8 @@ def google_oauth(request):
                     response = JsonResponse({"2fa": "True", "status": 200})
                 else:
                     refresh = RefreshToken.for_user(user)
-                    access_token = str(refresh.access_token)
                     refresh['username'] = user.username
+                    access_token = str(refresh.access_token)
                     response = JsonResponse({'access': access_token, "2fa": "False", "status": 200})
                     refresh_token = str(refresh)
                     set_refresh_token_cookie(response, refresh_token)
