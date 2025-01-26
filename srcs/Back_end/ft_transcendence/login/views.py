@@ -1,7 +1,6 @@
 from account.serializer import UserWithFriendsSerializer
 from .utls import *
 from django.db.models import Q
-from chat.views import get_id1
 from datetime import timedelta
 from django.conf import settings
 from urllib.parse import urlencode
