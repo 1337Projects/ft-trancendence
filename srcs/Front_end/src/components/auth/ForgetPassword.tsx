@@ -134,7 +134,7 @@ export default function ForgetPassword() {
                 <h1 className="mt-10 text-center lowercase">
                     you wanna go back to 
                     <span  className="font-bold ml-2 uppercase">
-                        <Link to="../login">
+                        <Link to="/auth/login">
                             login ?
                         </Link>
                     </span>

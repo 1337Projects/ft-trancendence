@@ -99,7 +99,7 @@ export default function Signup() {
                         </div>
                         <p className="mt-10 text-center">
                             already have an account ? 
-                            <Link to="../login" className="font-bold uppercase ml-2">Login</Link>
+                            <Link to="/auth/login" className="font-bold uppercase ml-2">Login</Link>
                         </p>
                     </div>
                 </div>

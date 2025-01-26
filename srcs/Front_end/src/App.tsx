@@ -37,6 +37,7 @@ import GameLayout from './Layouts/GameLayout'
 import NotificationsContextProvider from './Contexts/NotificationsContext'
 import TicTacTeo from './components/game/TicTacTeo'
 import ChatAsset from './components/assets/ChatAsset'
+import { AuthPrivateRoute } from './privateRoutes/AuthPrivateRoute.tsx'
 
 
 function Home() {
@@ -53,15 +54,16 @@ const router = createBrowserRouter(
 
       <Route index element={<Home />} />
 
-
-        <Route path='auth' element={<AuthLayout />}>
-          <Route path='oauth/google' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/google_callback/`} />} />
-          <Route path='oauth/42' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`} />} />
-          <Route path='login' element={<Login />} />
-          <Route path='signup' element={<Signup/>} />
-          <Route path='2faCheck' element={<TwoFacCheck/>} />
-          <Route path='forgetPassowrd' element={<ForgetPassword />} />
+      <Route element={<AuthPrivateRoute />} >
+        <Route element={<AuthLayout />}>
+          <Route path='auth/oauth/google' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/google_callback/`} />} />
+          <Route path='auth/oauth/42' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`} />} />
+          <Route path='auth/login' element={<Login />} />
+          <Route path='auth/signup' element={<Signup/>} />
+          <Route path='auth/2faCheck' element={<TwoFacCheck/>} />
+          <Route path='auth/forgetPassowrd' element={<ForgetPassword />} />
         </Route>
+      </Route>
 
  
       <Route element={<DashboardPrivateRoute />}>

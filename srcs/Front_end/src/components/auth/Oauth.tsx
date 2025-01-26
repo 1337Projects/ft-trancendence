@@ -66,7 +66,7 @@ export function Oauth({url} : {url : string}) {
             else {
 
               user?.setAuthInfosHandler(data.access)
-              navigate('../../dashboard/game')
+              navigate('/dashboard/game')
             }
           }
         })

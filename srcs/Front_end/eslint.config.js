@@ -24,9 +24,7 @@ export default [
         "error",
         {
           parameter: true,
-          // variableDeclaration: true,
           propertyDeclaration: true,
-          // memberVariableDeclaration: true,
         },
       ],
     },

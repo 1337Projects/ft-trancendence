@@ -37,11 +37,11 @@ export default function Login() {
             const data = await response.json()
             if (data['2fa'] === 'True')
             {
-                navigation("../2faCheck")
+                navigation("/auth/2faCheck")
             }
             else {
                 setAuthInfosHandler!(data.access)
-                navigation("../../dashboard/game")
+                navigation("/dashboard/game")
 
             }
   
@@ -74,7 +74,7 @@ export default function Login() {
                             <MyInput type="email" name="email" id="email" label="email" placeholder="jhondeo@example.com" />
                             <MyInput type="password" name="password" id="password" label="password" placeholder="*****************" />
                             <div className="mt-10 flex items-center">                               
-                                <Link to="../forgetPassowrd" className="font-bold capitalize">forget password ?</Link>
+                                <Link to="/auth/forgetPassowrd" className="font-bold capitalize">forget password ?</Link>
                             </div>
                             <button type="submit" className="mt-10 bg-darkItems w-full h-12 rounded text-white text-[14pt]">Login</button>
                         </Form>
@@ -84,7 +84,7 @@ export default function Login() {
                     </div>
                     <p className="mt-10 text-center">
                         you dont have account ? 
-                        <Link to="../signup" className="font-bold uppercase ml-2">register</Link>
+                        <Link to="/auth/signup" className="font-bold uppercase ml-2">register</Link>
                     </p>
                 </div>
             </div>

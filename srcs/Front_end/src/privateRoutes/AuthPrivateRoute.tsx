@@ -1,12 +1,10 @@
-
 import {useContext, useEffect, useState} from 'react'
-import { Navigate } from 'react-router-dom'
-import DashboardLayout from '../Layouts/DashboardLayout'
+import { Navigate, Outlet } from 'react-router-dom'
 import { UserContext } from '../Contexts/authContext';
 import { toast } from 'react-toastify';
 
 
-export const DashboardPrivateRoute = () => {
+export const AuthPrivateRoute = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
     const user = useContext(UserContext)
@@ -42,5 +40,5 @@ export const DashboardPrivateRoute = () => {
     return <div></div>;
   }
 
-  return isAuthenticated ? <div className='max-w-[1600px] mx-auto'><DashboardLayout /></div>  : <Navigate to="/auth/login" />
+  return isAuthenticated ? <Navigate to="/dashboard/game" /> :  <Outlet />
 };

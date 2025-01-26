@@ -29,12 +29,12 @@ function ConvItem({c, menu} : {c : ConversationType, menu : boolean}) {
             end 
             className={`w-full h-[50px] rounded border-white/30 relative mt-3 p-2 flex items-center cursor-pointer`}
         >
-            <div className={`flex justify-start items-center w-full ${menu && "test-style"}`}>
-                <div className={`flex  ${menu ? "test-style" : "justify-center"} items-center w-full`}>
-                    <div className={`w-[35px] h-[35px] ${menu && "test-style"}`}>
+            <div className={`flex justify-start items-center w-full ${menu && ""}`}>
+                <div className={`flex  ${menu ? "" : "justify-center"} items-center w-full`}>
+                    <div className={`w-[35px] h-[35px] ${menu && ""}`}>
                         <img src={data?.profile?.avatar} className="w-[35px] h-[35px] bg-white rounded-full" alt="img" />
                     </div>
-                    <div className={`content w-fit max-w-[100px] ml-4 ${menu ? "test-style" : "hidden"}`}>
+                    <div className={`content w-fit max-w-[100px] ml-4 ${menu ? "" : "hidden"}`}>
                         <div className="flex justify-between items-center">
                             <h1 className="font-bold text-[10pt] max-w-[100px] truncate">{data?.username}</h1>
                             <p className="text-[7pt]">{time}</p>
@@ -56,14 +56,14 @@ export function Friends({menu, handler} : {menu : boolean, handler : React.Dispa
 
     if (!myFriends || myFriends.length === 0) {
         return (
-            <div className={`text-xs capitalize text-center w-full ${menu ? "block test-style" : "hidden"} p-6`}>you have no friends yet</div>
+            <div className={`text-xs capitalize text-center w-full ${menu ? "block " : "hidden"} p-6`}>you have no friends yet</div>
         )
     } 
 
 
     return (
         <div>
-            <ul className={`w-full overflow-y-scroll max-h-[200px] grid gap-4  ${menu ? "h-[100px] p-2 grid-cols-3  flex items-center test-style" : "h-fit grid-cols-1 content-start"}`}> 
+            <ul className={`w-full overflow-y-scroll max-h-[200px] grid gap-4  ${menu ? "h-[100px] p-2 grid-cols-3  flex items-center " : "h-fit grid-cols-1 content-start"}`}> 
                 {
                     myFriends.map((f, index) => {
 
@@ -73,13 +73,13 @@ export function Friends({menu, handler} : {menu : boolean, handler : React.Dispa
                             <li 
                                 key={index}
                                 onClick={() => handler(false)}  
-                                className={`flex justify-center items-center ${menu ? "h-full w-[80px] test-style" : "w-full h-[50px]"}`}
+                                className={`flex justify-center items-center ${menu ? "h-full w-[80px] " : "w-full h-[50px]"}`}
                             >
                                 <Link to={data.username} className="truncate w-[35px]">
                                     <div className="relative w-full">
                                         <img src={data.profile.avatar} className="w-[35px] h-[35px] border-2 mx-auto rounded-full" alt="" />
                                         <div className={`h-2 w-2 ${data.profile.online ? "bg-green-500" : "bg-gray-300"}  rounded-full absolute top-[27px] right-6`}></div>
-                                        <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block test-style" : "hidden"}`}>{data.username}</h1>
+                                        <h1 className={`text-[8pt] text-center mt-2 ${menu ? "block " : "hidden"}`}>{data.username}</h1>
                                     </div>
                                 </Link>
                             </li>
@@ -117,7 +117,7 @@ export default function ConversationsList({menu, data} : {menu : boolean, data :
                 <div className="flex items-center mt-4">
                     <div className="h-8 rounded-full animate-pulse w-full bg-gray-300" />
                 </div>
-                <div className={`mt-10 ${menu ? "test-style" : "hidden"}`}>
+                <div className={`mt-10 ${menu ? "" : "hidden"}`}>
                     <div className="flex">
                         <div className="w-[60px] mr-4 h-8 bg-gray-300 rounded animate-pulse"></div>
                         <div className="w-[60px] h-8 bg-gray-300 rounded animate-pulse"></div>
@@ -138,7 +138,7 @@ export default function ConversationsList({menu, data} : {menu : boolean, data :
                     <input 
                         type="text" 
                         placeholder="search..." 
-                        className={`w-full mt-4 ${menu ? "test-style" : "hidden"} outline-none px-4 text-xs rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.5px]`} 
+                        className={`w-full mt-4 ${menu ? "" : "hidden"} outline-none px-4 text-xs rounded-full bg-transparent h-[35px]  ${theme == 'light' ? "border-black/20" : "border-white/20"} border-[.5px]`} 
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
@@ -150,7 +150,7 @@ export default function ConversationsList({menu, data} : {menu : boolean, data :
                                 return <ConvItem menu={menu}  key={c.id} c={c} />
                             })
                         :
-                        <div className={`text-center rounded p-10 text-xs ${menu ? "block test-style" : "hidden"} `}>no conversations found</div>
+                        <div className={`text-center rounded p-10 text-xs ${menu ? "block " : "hidden"} `}>no conversations found</div>
                     }
                 </ul>
             </div>
