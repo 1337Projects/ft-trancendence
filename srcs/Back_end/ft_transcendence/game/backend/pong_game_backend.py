@@ -136,9 +136,10 @@ class Ball:
     def reset(self):
         self.x = SCREEN_WIDTH // 2
         self.y = SCREEN_HEIGHT // 2
-        self.speed_x *= -1
-        self.speed_y *= -1
-
+        x_sign = -1 if self.speed_x < 0 else 1
+        y_sign = -1 if self.speed_y < 0 else 1
+        self.speed_x = BALL_SPEEDX * x_sign * -1
+        self.speed_y = BALL_SPEEDY * y_sign * -1
 class PongGame:
     def __init__(self, game: Game, room_name):
         self.status = 'waiting'
@@ -176,7 +177,6 @@ class PongGame:
         self.ball.reset()
         self.paddle1.reset()
         self.paddle2.reset()
-        self.ball.speed_x = BALL_SPEEDX
 
     def update(self):    
         self.ball.move()
