@@ -9,6 +9,7 @@ import math,uuid
 from account.serializer import UserWithProfileSerializer
 from game.backend.tictac_ai import get_ai_move, get_first_move
 from django.contrib.auth.models import AnonymousUser
+from django.conf import settings
 
 class TicTacWithAiConsumer(AsyncWebsocketConsumer):
     turn_check_tasks = {}
@@ -34,7 +35,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                 'id' : str(uuid.uuid4().int),
                 'username': 'AI',
                 'profile': {
-                    'avatar': f"{os.environ.get('API_URL')}media/ai.avif"
+                    'avatar': f"{settings.API_URL}media/ai.avif"
                 }
             }
             self.room_name = f'tictac_ai_{self.game_id}'

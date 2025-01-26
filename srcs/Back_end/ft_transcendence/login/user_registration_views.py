@@ -15,6 +15,8 @@ from account.utls import create_profile
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 
+from django.conf import settings
+
 @permission_classes([AllowAny])
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
@@ -28,7 +30,7 @@ class UserRegistrationView(generics.CreateAPIView):
             response = Response({
                 'message':  'User created successfully',
             }, status=status.HTTP_201_CREATED)
-            create_profile(user.id, f'{os.environ.get("API_URL")}media/default-avatar.jpeg')
+            create_profile(user.id, f'{settings.API_URL}media/default-avatar.jpeg')
             return response
         except ValidationError as e:
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)

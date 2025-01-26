@@ -260,7 +260,7 @@ def generate_2fa_qr_code(request):
 
         delete_qr_code_image(file_name, schedule=20)
 
-        return Response({"qr_code_image": f"{os.environ.get('API_URL')}media/" + file_name}, status=200)
+        return Response({"qr_code_image": f"{settings.API_URL}media/" + file_name}, status=200)
     except Exception as e:
         return Response({"error": str(e)}, status=401)
 

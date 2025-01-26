@@ -56,6 +56,8 @@ CLIENT_SECRET_INTRA = get_secret(login_secrets, "client_secret_intra")
 REDIRECT_URI_INTRA = get_secret(login_secrets, "redirect_uri_intra")
 GRANT_TYPE_INTRA = get_secret(login_secrets, "grant_type_intra")
 USERINFO_URL_INTRA = get_secret(login_secrets, "userinfo_url_intra")
+TOKEN_URL_GOOGLE = get_secret(login_secrets, "token_url_google")
+USERINFO_URL_GOOGLE = get_secret(login_secrets, "userinfo_url_google")
 
 DB_NAME = get_secret(settings_secrets, "DB_NAME")
 DB_OWNER = get_secret(settings_secrets, "DB_OWNER")
@@ -69,6 +71,9 @@ EMAIL_USE_TLS = get_secret(settings_secrets, "EMAIL_USE_TLS", True)
 EMAIL_HOST_USER = get_secret(settings_secrets, "EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = get_secret(settings_secrets, "EMAIL_HOST_PASSWORD")
 
+
+
+API_URL = get_secret(settings_secrets, "API_URL")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -158,9 +163,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173"
 ]
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5173",#wa9Ila khas yt7iyd
     "https://localhost:1024",
 ]
 
@@ -232,9 +236,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
