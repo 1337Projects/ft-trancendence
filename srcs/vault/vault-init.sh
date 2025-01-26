@@ -1,0 +1,111 @@
+#!/bin/sh
+set -e
+
+# Start Vault server in the background
+vault server -config=/vault/config.hcl &
+VAULT_PID=$!
+echo '----------------------------------------------------VAULT SERVER---------------'
+
+# Wait for Vault to start
+sleep 3
+
+until vault status | grep -q 'Initialized'; do
+    echo "Waiting for Vault to be ready..."
+    sleep 2
+done
+
+
+# apk add --no-cache jq curl
+
+# Check if Vault is already initialized
+if vault status | grep -q 'Initialized.*true'; then
+  echo "Vault is already initialized."
+  # Ensure unseal keys file exists before proceeding
+  echo '----------------------------------------------------VAULT STATUS : already initialized---------------'
+  if [ ! -f /vault/file/unseal_key.txt ]; then
+    echo "Error: Unseal keys file is missing!"
+    echo '----------------------------------------------------Unseal key file is missing---------------'
+    exit 1
+  fi
+else
+  echo "Initializing Vault..."
+  echo '----------------------------------------------------VAULT INITIALISATION start ---------------'
+  # vault policy write secret-policy /usr/local/bin/secret-policy.hcl
+  vault operator init -key-shares=1 -key-threshold=1 > /vault/init-output.txt
+  echo "Vault initialized. Keys are stored in /vault/init-output.txt"
+
+  # Save unseal keys to /vault/file/unseal_key.txt
+  grep 'Unseal Key' /vault/init-output.txt | cut -d ':' -f 2 | xargs -n1 > /vault/file/unseal_key.txt
+  grep 'Initial Root Token' /vault/init-output.txt | cut -d ':' -f 2 | xargs > /vault/file/root_token.txt
+  echo '----------------------------------------------------VAULT INITIALISATION end ---------------'
+fi
+
+# Unseal Vault
+echo "Unsealing Vault..."
+echo '----------------------------------------------------VAULT unsealing---------------'
+# while read key; do
+#   vault operator unseal "$key"
+# done < /vault/file/unseal_key.txt
+vault operator unseal "$(head -n 1 /vault/file/unseal_key.txt)"
+
+echo '----------------------------------------------------VAULT unsealing done---------------'
+
+# Wait for Vault to be unsealed
+until vault status | grep -q 'Sealed.*false'; do
+    echo "Vault is sealed, waiting for unsealing..."
+    sleep 1
+done
+
+
+echo '----------------------------------------------------VAULT start authenticate---------------'
+# Authenticate with the root token
+export VAULT_TOKEN=$(cat /vault/file/root_token.txt)
+# VAULT_TOKEN=$VAULT_ROOT_TOKEN
+echo "Authenticating with Vault..."
+vault login $VAULT_TOKEN
+
+# Create a root-like policy
+echo "-------------------------------------Creating root-like policy..."
+vault policy write root-policy - <<EOF
+path "*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+EOF
+
+echo "------- $VAULT_ROOT_TOKEN---"
+echo "-------------------------------------Assign the root-like policy to the existing token..."
+# Assign the root-like policy to the existing token
+echo "Assigning root-like policy to the token..."
+vault token create -policy=root-policy -id=$VAULT_ROOT_TOKEN
+
+# Enable KV secrets engine if not enabled
+if ! vault secrets list | grep -q "secret/"; then
+  echo "Enabling KV secrets engine at 'secret' path..."
+  vault secrets enable -path=secret kv
+else
+  echo "KV secrets engine is already enabled."
+fi
+
+# Function to store secrets only if they do not exist
+store_secret_if_not_exists() {
+  local path="$1"
+  shift
+  if ! vault kv get "$path" >/dev/null 2>&1; then
+    echo "Storing $path secrets..."
+    vault kv put "$path" "$@"
+  else
+    echo "Secrets for $path already exist, skipping..."
+  fi
+}
+
+# Store secrets
+store_secret_if_not_exists secret/data/mysecret username="myuser" password="mypassword"
+store_secret_if_not_exists secret/data/database POSTGRES_PASSWORD="133742" POSTGRES_USER="ipman" POSTGRES_DB="ft_transcendence" POSTGRES_PORT="5432"
+store_secret_if_not_exists secret/data/login scope="email profile" google_key='939461351021-ru3eqql8sgakc3unrce3s9n0bmlpln3g.apps.googleusercontent.com' google_secret='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' redirect_uri_google='https://localhost:1024/auth/oauth/google' grant_type="authorization_code" oauth_url="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6&redirect_uri=https%3A%2F%2Flocalhost%3A1024%2Fauth%2Foauth%2F42&response_type=code" token_url_intra="https://api.intra.42.fr/oauth/token" client_id_intra="u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6" client_secret_intra="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" redirect_uri_intra="https://localhost:1024/auth/oauth/42" grant_type_intra="authorization_code" userinfo_url_intra="https://api.intra.42.fr/v2/me"
+store_secret_if_not_exists secret/data/settings DB_NAME="ft_transcendence" DB_OWNER="ipman" PASSWORD="133742" HOST="database" PORT="5432" EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend' EMAIL_HOST='smtp.gmail.com' EMAIL_PORT=587 EMAIL_USE_TLS=true EMAIL_HOST_USER='benhammoukhawla99@gmail.com' EMAIL_HOST_PASSWORD='uqii arug mngk vbzk'
+
+# vault policy write secret-policy /usr/local/bin/secret-policy.hcl
+
+# Keep Vault running
+echo "Vault is now running."
+wait
