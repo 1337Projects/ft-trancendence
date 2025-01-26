@@ -1,6 +1,5 @@
 import json
 import math
-import sys
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
@@ -8,9 +7,7 @@ from game.backend.pong_game_backend import PongGameManager
 from game.models import Game
 from game.serializers import GameSerializer
 from channels.db import database_sync_to_async
-from login.models import User
 from account.models import ExperienceLog, Profile
-from icecream import ic
 from django.db import models
 
 class GameConsumer(AsyncWebsocketConsumer):
@@ -64,8 +61,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             # await self.send_stats()
  
     async def send_stats(self):
-        # ic(stats)
-        # sys.stdout.flush()
         stats = self.pongGameManager.get_stats(self.room_name)
         event = {
             'type': 'broad_cast',
@@ -117,17 +112,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             - The player is removed from the channel group.
         """
         player = self.player.username
-        ic(player, close_code, timeout)
-        sys.stdout.flush()
         if timeout:
-            # Set the player as the winner if they disconnect due to a timeout
-            # ic(player, 'timeout disconect game')
             await self.timeout_disconnect()
         elif self.pongGameManager.get_game_status(self.room_name) != 'end':
-            # ic(player, 'disconect in game')
             await self.disconnect_in_game()
-        # else:
-        #     ic(player, 'disconect after game')
 
         await self.channel_layer.group_discard(
             self.room_name,
@@ -175,8 +163,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         return game_data
     
     def add_xp(self, profile: Profile, xp: int):
-        # profile: Profile = Profile.objects.get(user=player)
-        
         ExperienceLog.objects.create(profile=profile, experience_gained=xp)
         total_xp = ExperienceLog.objects.filter(profile=profile).aggregate(total=models.Sum('experience_gained'))['total']
         profile.level = round(math.sqrt(total_xp / 100), 1)
@@ -197,8 +183,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
         
     async def init_game(self):
-        # ic(self.player.username, "Initializing game")
-        # sys.stdout.flush()
         game_serializer = GameSerializer(self.game)
         game_data = await database_sync_to_async(lambda: game_serializer.data)()
         event = {
@@ -213,5 +197,4 @@ class GameConsumer(AsyncWebsocketConsumer):
         if event['event'] == 'init_game':
             if self.timeout_task != None:
                 self.timeout_task.cancel()
-            # ic('timeout is cancled form ', self.player.username)
         await self.send(text_data=json.dumps(event))
