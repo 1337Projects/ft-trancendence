@@ -1,33 +1,35 @@
 import math
 import random
-import time, sys
+import time
 from .tictac_game import TicTac
 
 def get_ai_move(board, ai_symbol):
+    human_symbol = 'X' if ai_symbol == 'O' else 'O'
     best_score = float('-inf')
     best_move = None
-    human_symbol = 'X' if ai_symbol == 'O' else 'O'
     
     for row in range(3):
         for col in range(3):
             if board[row][col] == '':
+                if is_win_move(board, row, col, ai_symbol):
+                    return {'row': row, 'col': col}
                 board[row][col] = ai_symbol
-                score = minimax(board, False, ai_symbol, human_symbol)
+                score = minimax(board, 0, False, ai_symbol, human_symbol)
                 board[row][col] = ''
-                if score > best_score or (score == best_score and is_win_move(board, row, col, ai_symbol)):
+                if score > best_score:
                     best_score = score
                     best_move = {'row': row, 'col': col}
     
     return best_move
 
-def minimax(board, is_maximizing, ai_symbol, human_symbol):
+def minimax(board, depth, is_maximizing, ai_symbol, human_symbol):
     result = check_winner(board)
     if result is not None:
-        return {
-            ai_symbol: 1, 
-            human_symbol: -1,
-            'tie': 0
-        }[result]
+        if result == ai_symbol:
+            return 10 - depth
+        elif result == human_symbol:
+            return depth - 10
+        return 0
     
     if is_maximizing:
         best_score = float('-inf')
@@ -35,7 +37,7 @@ def minimax(board, is_maximizing, ai_symbol, human_symbol):
             for col in range(3):
                 if board[row][col] == '':
                     board[row][col] = ai_symbol
-                    score = minimax(board, False, ai_symbol, human_symbol)
+                    score = minimax(board, depth + 1, False, ai_symbol, human_symbol)
                     board[row][col] = ''
                     best_score = max(score, best_score)
         return best_score
@@ -45,7 +47,7 @@ def minimax(board, is_maximizing, ai_symbol, human_symbol):
             for col in range(3):
                 if board[row][col] == '':
                     board[row][col] = human_symbol
-                    score = minimax(board, True, ai_symbol, human_symbol)     
+                    score = minimax(board, depth + 1, True, ai_symbol, human_symbol)     
                     board[row][col] = ''
                     best_score = min(score, best_score)
         return best_score
@@ -80,7 +82,7 @@ def is_win_move(board, row, col, ai_symbol):
     return is_winning
 
 def get_first_move(board):
-    best_move = [[0,0],[0,2],[1,1],[2,2],[2,0]]  
+    best_move = [[0,0],[0,2],[1,1],[2,2],[2,0]]
     random.shuffle(best_move)
     for move in best_move:
         if board[move[0]][move[1]] == '':

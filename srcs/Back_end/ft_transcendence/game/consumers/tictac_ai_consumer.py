@@ -42,13 +42,12 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_name, self.channel_name)
 
         self.tictac = TicTac(self.game_id, self.player, self.ai)
-        first_turn = self.tictac.get_current_turn()
+        first_turn = self.tictac.get_current_turn()  
         self.ai_symbol = 'X' if first_turn == self.ai else 'O'
-        player_symbol = 'X' if not first_turn == self.ai else 'O'
         event = {
             'type': 'broad_cast',
             'data': {
-                'players' : [{"user" : self.player, "char" : player_symbol}, {"user" : self.ai, "char" : self.ai_symbol}],
+                'players' : [self.player, self.ai],
                 'user' : first_turn,
                 'board': self.tictac.get_board()
             }, 
@@ -140,8 +139,11 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         await asyncio.sleep(5)
         board = self.tictac.get_board()
         move = await self.ai_move(board)
+      
+        sys.stdout.flush()
         status = self.tictac.play_turn(row=move['row'], col=move['col'], sender=self.ai['id'])
         if "winner" in status:
+            sys.stdout.flush()
             try:
                 self.turn_check_tasks[self.game_id].cancel()
                 del self.turn_check_tasks[self.game_id]
@@ -179,7 +181,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         if self.tictac.get_moves() == 1 or self.tictac.get_moves() == 0:
             move = get_first_move(board=board)
         else:
-            move = get_ai_move(board, self.ai_symbol) 
+            move = get_ai_move(board, self.ai_symbol)
         return move
 
     @database_sync_to_async

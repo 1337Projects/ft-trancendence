@@ -3,6 +3,7 @@ from game.models import Game1
 from login.models import User
 from account.models import Profile, ExperienceLog
 from django.db import models
+import copy
 
 class TicTac:
     _instances = {}
@@ -132,8 +133,10 @@ class TicTac:
     def get_current_turn(self):
         if self.current_turn is None:
             self.current_turn =  self.player1 if random.randint(0, 1) == 0 else self.player2
+            self.player2 = self.player2 if self.current_turn == self.player1 else self.player1
+            self.player1 = self.current_turn
         return self.current_turn
-
+    
     def get_winner(self):
         return self.winner
     
@@ -163,7 +166,7 @@ class TicTac:
         return self.match_stored
     
     def get_board(self):
-        return self.board
-
+        return copy.deepcopy(self.board)
+    
     def get_moves(self):
         return self.moves
