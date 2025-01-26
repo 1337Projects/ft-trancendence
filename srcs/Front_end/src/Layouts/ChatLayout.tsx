@@ -9,11 +9,13 @@ import { UserContext } from "../Contexts/authContext"
 import ChatContextProvider from "@/Contexts/ChatContext"
 import { ChatUserDataType, ConversationType, MessageType } from "@/types/chatTypes"
 import { chatSocket } from "@/sockets/chatSocket"
+import { toast } from "react-toastify"
 
 
 
 export default function ChatLayout() {
     const { theme } = useContext(ApearanceContext) || {}
+    const { authInfos } = useContext(UserContext) || {}
     const [menu, setMenu] = useState<boolean>(false)
 
     const { user } = useContext(UserContext) || {}
@@ -35,10 +37,14 @@ export default function ChatLayout() {
         setCnvs(prev => prev ? [cnv, ...prev.filter(c => c.id != cnv.id)] : [cnv])
     }
 
+    function ErrorMessage(msg : string) {
+        toast.error(msg)
+    }
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            chatSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/chat/${user?.id}/`)
+            chatSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/chat/${user?.id}/?token=${authInfos?.accessToken}`)
+            chatSocket.addCallback('error', ErrorMessage)
             chatSocket.addCallback('cnvsHandler', setCnvs)
             chatSocket.addCallback('cnvsUpdate', UpdateConversationsHandler)
             chatSocket.addCallback("setData", setMessages)

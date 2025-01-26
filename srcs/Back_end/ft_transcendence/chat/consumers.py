@@ -8,6 +8,7 @@ from account.models import Friends
 from asgiref.sync import sync_to_async
 from .models import Conversation, Message
 from channels.db import database_sync_to_async
+from django.contrib.auth.models import AnonymousUser
 from django.core.paginator import Paginator, EmptyPage
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -17,6 +18,9 @@ channel_name_grp = {}
 class PrivateChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
+        if isinstance(self.scope['user'], AnonymousUser):
+            await self.close()
+            return
         self.user_id = self.scope['url_route']['kwargs']['user_id']
         for key, value in channel_name_grp.items():
             if channel_name_grp[key] == str(self.user_id):
@@ -27,7 +31,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
         
     @database_sync_to_async
-    def check_if_blocked (sender, receiver):
+    def check_if_blocked (self, sender, receiver):
         freindship = Friends.objects.filter(
             Q(sender=sender, receiver=receiver) |
             Q(sender=receiver, receiver=sender)
@@ -36,7 +40,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             return 1
 
     @database_sync_to_async
-    def get_messages_between_users(sender_id, receiver_id):
+    def get_messages_between_users(self, sender_id, receiver_id):
         messages = list(Message.objects.filter(
             (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
             (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
@@ -45,7 +49,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         return messages
 
     @database_sync_to_async
-    def get_freindship(sender, receiver):
+    def get_freindship(self, sender, receiver):
         freindship = Friends.objects.filter(
             Q(sender=sender, receiver=receiver) |
             Q(sender=receiver, receiver=sender)
@@ -128,7 +132,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             await self.send(text_data=json.dumps({
                 'response': {
-                    'error': 'Error in fetch conversations',
+                    'error': f'Error in fetch conversations {e}',
                     'status': 400,
                 }
             }))
@@ -164,7 +168,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             await self.send(text_data=json.dumps({
                 'response': {
-                    'error': 'Error in fetch messages',
+                    'error': f'Error in fetch messages {e}',
                     'status' : 400,
                 }
             }))
@@ -232,7 +236,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             await self.send(text_data=json.dumps({
                 'response': {
-                    'error': 'Error in new message',
+                    'error': f'Error in new message {e}',
                     'status' : 400,
                 }
             }))

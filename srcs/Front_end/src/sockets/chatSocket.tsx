@@ -8,7 +8,6 @@ class ChatSocket extends WebSocketService {
     eventCallback = (event : MessageEvent) => {
 
         const data = JSON.parse(event.data)
-
         switch (data.response.status) {
             case 205:
                 this.callbacks["setData"]?.((prev : MessageType[]) => prev ? [...prev, data.response.message] : [data.response.message])
@@ -25,7 +24,8 @@ class ChatSocket extends WebSocketService {
             case 209:
                 this.callbacks["cnvsHandler"]?.(data.response.conversations)
                 break;
-            default:
+            case 400:
+                this.callbacks["error"]?.(data.response.error)
                 break;
         }
     }
