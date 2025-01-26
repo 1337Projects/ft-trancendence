@@ -81,7 +81,8 @@ class Builder:
         user = node.val.data
         user_id = self.searc_for_user(user)
         if user_id == -1:
-            self.rank.append({"user" : user, "xp" : node.depth * 200 + 50})
+            xp = (node.depth * 100) or 20
+            self.rank.append({"user" : user, "xp" : xp})
 
     def print_tree(self, root):
         if root is None:

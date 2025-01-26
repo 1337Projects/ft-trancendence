@@ -123,6 +123,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         receiver = User.objects.get(username=receiver_username)
         return GameRequest.objects.create(sender=sender, receiver=receiver, message=message, link=link)
 
+
     @sync_to_async
     def get_unread_requests(self):
         return GameRequest.objects.filter(receiver__username=self.username, is_read=False)

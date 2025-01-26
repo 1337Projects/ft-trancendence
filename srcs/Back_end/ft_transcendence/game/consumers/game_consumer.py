@@ -14,6 +14,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     pongGameManager = PongGameManager()
 
     async def connect(self):
+        await self.accept()
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.player = self.scope['user']
         self.room_name = f'game_{self.game_id}'

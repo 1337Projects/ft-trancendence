@@ -1,6 +1,7 @@
 from login.models import User
 from game.models import Game
 from enum import Enum
+from asgiref.sync import sync_to_async
 import sys
 from asgiref.sync import sync_to_async
 
