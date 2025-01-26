@@ -16,5 +16,5 @@ class Game(models.Model):
     score2 = models.IntegerField(default=0)
     winner = models.ForeignKey(User, related_name='winner', on_delete=models.CASCADE, null=True, blank=True)
     loser = models.ForeignKey(User, related_name='loser', on_delete=models.CASCADE, null=True, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)  # Temporarily add default
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)

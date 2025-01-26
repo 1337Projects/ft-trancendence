@@ -14,7 +14,6 @@ from account.serializer import UserWithProfileSerializer
 from .serializers import MatchSerializer
 from .models import Match
 
-from tournment.utils.utils import debug
 
 ROOMDATA_STATUS = 201
 GAMEDATA_STATUS = 202
@@ -100,10 +99,8 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
             if serializer.is_valid():
                 serializer.save()
                 return serializer.data
-            debug(serializer.errors)
             return None
         except Exception as e:
-            debug(e)
             return None
 
 
@@ -176,7 +173,6 @@ class GameConsumer(AsyncConsumer):
             self.channel_name
         )
         if self.matches[self.match_id]["game_task"]:
-            # debug("cancel task")
             self.matches[self.match_id]["game_task"].cancel()
             self.matches[self.match_id]["game"].end = True 
         raise StopConsumer()

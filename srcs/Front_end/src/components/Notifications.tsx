@@ -47,8 +47,8 @@ export function InviteItem({data} : {data : FriendType}) {
     const notificationAcceptFriendRequest = () => {
         notificationSocket.sendMessage({
             event: "send_request",
-            sender: data?.sender?.username, // Your logged-in user's username
-            receiver: data?.receiver?.username, // Username of the friend to whom the request is sent
+            sender: data?.sender?.username,
+            receiver: data?.receiver?.username,
             message: `${data?.receiver?.username} accept your Invitation`,
             link : `${import.meta.env.VITE_API_URL}dashboard/profile/${data?.receiver?.username}`,
         });
@@ -88,7 +88,6 @@ export function InviteItem({data} : {data : FriendType}) {
                                 )
                             } 
                             className="flex text-[12px]  items-center h-[28px] rounded px-2 cursor-pointer">
-                            {/* <p className="mr-2 capitalize">accept</p> */}
                             <FaCheck />
                         </div>
                         <div 
@@ -102,7 +101,6 @@ export function InviteItem({data} : {data : FriendType}) {
                             }
                             style={{borderColor:appearence?.color}} 
                             className="flex text-[12px] items-center border-[0px] h-[28px] rounded px-2 cursor-pointer">
-                            {/* <p className="mr-2 capitalize">reject</p> */}
                             <FaTrash />
                         </div>
                     </div>

@@ -3,10 +3,9 @@ from tournment.utils.TournamnetProvider import Tournament
 from tournment.serializers import TournmentSerializer
 from asgiref.sync import sync_to_async
 from tournment.models import Tournment
-from tournment.utils.utils import debug
 import asyncio
 import json
-
+from django.contrib.auth.models import AnonymousUser
 
 
 class TournamentConsumerSharedData:
@@ -52,6 +51,10 @@ class TournmentConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         try:
             await self.accept()
+
+            if isinstance(self.scope['user'], AnonymousUser):
+                await self.close()
+                return
             self.tournment_id = self.scope['url_route']['kwargs']['id']
             self.group_name = f"tournment_{self.tournment_id}"
             await self.channel_layer.group_add(self.group_name, self.channel_name)
@@ -61,7 +64,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                 await self.init()
                 await self.create_provider()
         except Exception as e:
-            debug(f"connect => {e}")
             await self.senderror("error in connection")
         
 
@@ -108,7 +110,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                     "status" : 210
                 })
         except Exception as e:
-            debug(f"create provider {e}")
             raise Exception("error in create provider")
         
 
@@ -127,7 +128,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                     })
 
             elif text_to_json_data["event"] == "upgrade":
-                debug("upgrade")
                 provider = self.state.tournaments_providers[self.tournment_id]
                 res = text_to_json_data["result"]
                 if res["player1"]["id"] == self.scope['user'].id or \
@@ -146,7 +146,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                 
 
         except Exception as e:
-            debug(f"receive => {e}")
             self.senderror("error in receive")
 
 
@@ -182,7 +181,6 @@ class TournmentConsumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
         except Exception as e:
-            debug(f"disconnect => {e}")
             self.senderror("error in disconnect")
 
     def get_tournemnt_data(self, id):

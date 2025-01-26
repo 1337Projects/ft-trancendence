@@ -6,9 +6,8 @@ import secrets
 import json
 from account.serializer import UserWithProfileSerializer
 from game.serializers import GameSerializer
-from tournment.utils.utils import debug
 from game.serializers import TicTacTeoSerializer
-
+from django.contrib.auth.models import AnonymousUser
 
 
 
@@ -63,6 +62,11 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         await self.accept()
+
+        if isinstance(self.scope['user'], AnonymousUser):
+            await self.close()
+            return
+
         try :
             self.serialized_user = await self.get_user_from_db()
             room_name = self.scope["url_route"]["kwargs"]["room_id"]
@@ -99,7 +103,6 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
                         "status" : 203
                     }, room["name"])
         except Exception as e:
-            debug(e)
             await self.senderror("Error in connection")
 
 
@@ -143,7 +146,6 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
 
     def get_room(self, room_name, room_type):
-        debug(self.shared_data._instance.rooms)
         if room_name == 'any' and room_type == 'public':
             for key, room in self.shared_data._instance.rooms.items():
                 if room['status'] == 'waiting' and \
@@ -182,8 +184,6 @@ class TicTakTeoMatchMaking(GameMatchMakingConsumer):
             if serializer.is_valid():
                 serializer.save()
                 return serializer.data
-            debug(serializer.errors)
             return None
         except Exception as e:
-            debug(e)
             return None

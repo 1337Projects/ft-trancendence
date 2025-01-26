@@ -10,8 +10,8 @@ from asgiref.sync import sync_to_async
 SCREEN_WIDTH = 550
 SCREEN_HEIGHT = 300
     # Paddle
-PADDLE_WIDTH = 10 # could be pair (2k)
-PADDLE_HEIGHT = 60 # could be pair (2k)
+PADDLE_WIDTH = 10
+PADDLE_HEIGHT = 60
 PADDLE_SPEED = 20
     # Ball
 BALL_RADIUS = 10

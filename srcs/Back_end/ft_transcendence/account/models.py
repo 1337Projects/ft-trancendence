@@ -4,9 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
-# User = get_user_model()
 
-# !check this
 class ProfileManager(BaseUserManager):
     def create_profile(self, **extra_fields):
         profile = self.model(**extra_fields)

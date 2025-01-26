@@ -15,7 +15,7 @@ urlpatterns = [
     path('api/friends/', include('account.urls')),
     path('api/tournment/', include('tournment.urls')),
     path('api/game/', include('game.urls')),
-    path('api/emojis/', include('emojiesProxy.urls')),
+    path('api/emojis/', include('emojies.urls')),
 ]
 
 if settings.DEBUG:

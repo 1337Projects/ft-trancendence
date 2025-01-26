@@ -72,8 +72,8 @@ export function Relations({ friend } : {friend : UserType}) {
     const notificationAcceptFriendRequest = () => {
         notificationSocket.sendMessage({
             event: "send_request",
-            sender: friend.username, // Your logged-in user's username
-            receiver: authInfos?.username, // Username of the friend to whom the request is sent
+            sender: friend.username,
+            receiver: authInfos?.username,
             message: `${authInfos?.username} accept your Invitation`,
             link : `${import.meta.env.VITE_API_URL}dashboard/profile/${authInfos?.username}`,
         });

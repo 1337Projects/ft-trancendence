@@ -44,8 +44,7 @@ export default function Login() {
                 navigation("../../dashboard/game")
 
             }
-            // if has 2fa enabke
-            // else navigation("../../dashboard/game")
+  
 
         } catch (error) {
             setAlert({message : [error instanceof Error ? error.toString() : "An error has been ocured!"], type : 'error'})

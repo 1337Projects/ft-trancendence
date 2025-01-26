@@ -430,19 +430,6 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
         </g>
       </g>
       <defs>
-
-
-        {/* <pattern
-          id="Rectangle 299"
-          className="winner"
-          patternContentUnits="objectBoundingBox"
-          width="1"
-          height="1"
-        >
-          <PlayerImage player={rounds[0]?.[0]?.["winner"] as UserType} />
-        </pattern> */}
-
-        {/* from one to 4 */}
         <pattern
           id="Rectangle_1-1"
           patternContentUnits="objectBoundingBox"
@@ -477,7 +464,6 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
         </pattern>
 
 
-        {/* from one to 8 */}
         <pattern
           id="Rectangle_1-5"
           patternContentUnits="objectBoundingBox"
@@ -512,7 +498,6 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
         </pattern>
 
 
-        {/* from 2-1 to 2-4 */}
         <pattern
           id="Rectangle_2-1"
           patternContentUnits="objectBoundingBox"
@@ -546,8 +531,6 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
           <PlayerImage player={rounds[2]?.[1]?.["player2"]} />
         </pattern>
         
-
-        {/* from 3-1 to 3-2 */}
         <pattern
           id="Rectangle_3-1"
           patternContentUnits="objectBoundingBox"

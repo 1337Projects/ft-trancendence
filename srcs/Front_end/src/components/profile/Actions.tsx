@@ -54,7 +54,6 @@ export function ActionsList({ friend } : {friend : UserType}) {
 				<FaEllipsisV />
 			</div>
 			{
-				// block and unblock refactor backend
 				openMenu && 
 				<ul ref={menuRef} className={`w-[160px] h-fit p-2 z-10 rounded ${theme === "light" ? "bg-lightItems border-black/20" : "bg-darkItems border-white/20"} border-[.2px] absolute top-[40px] right-[10px]`}>
 					{

@@ -2,7 +2,6 @@
 from channels.db import database_sync_to_async
 from game.serializers import GameSerializer
 from tournment.utils.TournamentBuilder import Builder
-from tournment.utils.utils import debug
 import asyncio
 
 
@@ -51,14 +50,12 @@ class Tournament:
 
     async def upgrade(self, id):
         match = self.get_match(id)
-        self.builder.print_tree(self.builder.tree)
         if match:
             if match.left.val.data['id'] == id:
                 match.val = match.left.val
             elif match.right.val.data['id'] == id:
                 match.val = match.right.val
             self.state.current_matches.remove(match)
-        self.builder.print_tree(self.builder.tree)
 
     async def disconnectHandler(self, id):
         async with self.state.lock:
@@ -79,9 +76,7 @@ class Tournament:
             if serializer.is_valid():
                 serializer.save()
                 return serializer.data
-            debug(f"serializer_errors => {serializer.errors}")
             return None
         except Exception as e:
-            debug(f"exception => {e}")
             return None
 

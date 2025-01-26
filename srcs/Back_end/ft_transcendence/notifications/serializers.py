@@ -1,13 +1,11 @@
 from rest_framework import serializers
 from .models import GameRequest
-from tournment.utils.utils import debug
 
 
 
 class GameRequestSerializer(serializers.ModelSerializer):
     sender_username = serializers.CharField(source='sender.username', read_only=True)
     receiver_username = serializers.CharField(source='receiver.username', read_only=True)
-    # link_expired = serializers.BooleanField(source='is_link_expired', read_only=True)
     link = serializers.SerializerMethodField()
 
     class Meta:
@@ -19,17 +17,4 @@ class GameRequestSerializer(serializers.ModelSerializer):
             return None
         return obj.link
 
-    # expired = serializers.SerializerMethodField()
-
-    # def get_expired(self, obj):
-    #     exp_date = obj.created_at + timedelta(minutes=5)
-    #     return exp_date < datetime.now()
-
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     exp_date = instance.created_at + timedelta(minutes=5)
-    #     # debug(exp_date)
-    #     # now = datetime.now()
-    #     representation['expired'] = exp_date
-    #     return representation
 

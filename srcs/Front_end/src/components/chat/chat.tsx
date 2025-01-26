@@ -5,34 +5,6 @@ import { UserContext } from "../../Contexts/authContext";
 import { ConversationType } from "@/types/chatTypes";
 import { ObjectFilter } from "@/utils/utils";
 import { UserType } from "@/types/userTypes";
-// import { toast } from "react-toastify";
-
-
-
-// export async function BlockHandler(user_id : number, partner_id : number) {
-
-//     try {
-//         const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/blockUser/`, {
-//             method : 'POST',
-//             credentials : 'include',
-//             headers : {
-//                 'Content-Type' : 'application/json'
-//             },
-//             body : JSON.stringify({id : user_id, id_to_block :  partner_id})
-//         })
-    
-//         if (!response.ok) {
-//             throw new Error("somthing went wrong")
-//         }
-
-//         return true
-//     } catch(err) {
-//         toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
-//     }
-//     return false
-// }
-
-
 
 
 

@@ -4,9 +4,8 @@ from asgiref.sync import sync_to_async
 from tournment.serializers import TournmentSerializer
 import json
 from account.serializer import UserWithProfileSerializer
-from tournment.utils.utils import debug
 from login.models import User
-
+from django.contrib.auth.models import AnonymousUser
 
 class MatchMakeingConsumer(AsyncWebsocketConsumer):
 
@@ -38,6 +37,10 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         await self.accept()
+
+        if isinstance(self.scope['user'], AnonymousUser):
+            await self.close()
+            return
         self.tournment_id = self.scope['url_route']['kwargs']['id']
         self.group_name = f"tournament_{self.tournment_id}"
 
@@ -63,7 +66,6 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
                 await sync_to_async(self.add_players_to_db)()
         except Exception as e:
             await self.senderror(str(e))
-            debug(e)
             
 
     async def send_data(self, event):
@@ -75,7 +77,6 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
             del self.tournaments[self.tournment_id]['players'][self.scope['user'].id]
             if len(self.tournaments[self.tournment_id]['players']) == 0:
                 del self.tournaments[self.tournment_id]
-                debug(self.tournaments)
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
             await self.brodcast({
                 "status" : 100,
@@ -83,22 +84,19 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
             })
         except Exception as e:
             await self.senderror(str(e))
-            debug(e)
 
 
 
     def add_players_to_db(self):
-        try:
-            current_tournament = self.tournaments[self.tournment_id]
-            tournment = Tournment.objects.get(id=self.tournment_id)
-            for player in current_tournament['players'].values():
-                try:
-                    current_player = User.objects.get(id=player['id'])
-                    tournment.players.add(current_player)
-                except Exception as e:
-                    continue
-        except Exception as e:
-            debug(e)
+        current_tournament = self.tournaments[self.tournment_id]
+        tournment = Tournment.objects.get(id=self.tournment_id)
+        for player in current_tournament['players'].values():
+            try:
+                current_player = User.objects.get(id=player['id'])
+                tournment.players.add(current_player)
+            except Exception as e:
+                continue
+        
 
 
     def get_tournemnt_data(self, id):

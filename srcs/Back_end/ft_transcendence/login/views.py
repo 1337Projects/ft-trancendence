@@ -243,8 +243,6 @@ def change_password(request):
 
 
 
-from tournment.utils.utils import debug
-
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def block_user(request):
@@ -258,8 +256,6 @@ def block_user(request):
             friendship = Friends.objects.get(
                 Q(sender=id, receiver=target) | Q(sender=target, receiver=id)
             )
-            debug(friendship)
-
             if friendship.status == "blocked":
                 return JsonResponse({'message': 'User is already blocked'}, status=400)
             if friendship.status != "accept":
@@ -273,7 +269,7 @@ def block_user(request):
         except Friends.DoesNotExist:
             return JsonResponse({'message': 'No friendship found'}, status=400)
     except User.DoesNotExist:
-        debug("user doesnt found")
+        return JsonResponse({'message': 'user doesnt found'}, status=400)
     except Exception as e:
         return JsonResponse({'message': 'data is missing'}, status=400)
 
@@ -284,7 +280,6 @@ def block_user(request):
 def unblock_user(request):
     id = request.user.id
     try:
-        # debug(request.data['data']['id'])
         target = request.data["data"]['id']
         if id == target:
             return JsonResponse({'message': 'You cannot unblock yourself'}, status=400)
@@ -292,7 +287,6 @@ def unblock_user(request):
         try:
             friendship = Friends.objects.get(
                 Q(sender=id, receiver=target) | Q(sender=target, receiver=id))
-            debug(friendship.blocker)
             if friendship.status == "blocked" and friendship.blocker.id == id:
                 friendship.status='accept'
                 friendship.blocker=None

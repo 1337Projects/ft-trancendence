@@ -1,4 +1,3 @@
-from tournment.utils.utils import debug
 import copy
 
 
@@ -88,7 +87,6 @@ class Builder:
         if root is None:
             return
         self.print_tree(root.left)
-        debug(f"{root.val} - {root.depth}")
         self.print_tree(root.right)
 
     def tournament_rank(self, root):
@@ -106,7 +104,7 @@ class Builder:
                     queue.append(current_node.right)
             self.add_user(root.val.data)
         except Exception as e:
-            debug(f"Error in tournament_rank {e}")
+            return []
         return self.rank
         
     

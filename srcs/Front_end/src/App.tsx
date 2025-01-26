@@ -54,14 +54,14 @@ const router = createBrowserRouter(
       <Route index element={<Home />} />
 
 
-      <Route path='auth' element={<AuthLayout />}>
-        <Route path='oauth/google' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/google_callback/`} />} />
-        <Route path='oauth/42' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`} />} />
-        <Route path='login' element={<Login />} />
-        <Route path='signup' element={<Signup/>} />
-        <Route path='2faCheck' element={<TwoFacCheck/>} />
-        <Route path='forgetPassowrd' element={<ForgetPassword />} />
-      </Route>
+        <Route path='auth' element={<AuthLayout />}>
+          <Route path='oauth/google' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/google_callback/`} />} />
+          <Route path='oauth/42' element={<Oauth url={`${import.meta.env.VITE_API_URL}api/auth/oauth/intra/`} />} />
+          <Route path='login' element={<Login />} />
+          <Route path='signup' element={<Signup/>} />
+          <Route path='2faCheck' element={<TwoFacCheck/>} />
+          <Route path='forgetPassowrd' element={<ForgetPassword />} />
+        </Route>
 
  
       <Route element={<DashboardPrivateRoute />}>

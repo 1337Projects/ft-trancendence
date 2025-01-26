@@ -9,7 +9,6 @@ import TwoFImg from "../settings/TwoFImg";
 export default function TwoFacCheck () {
     const [otp, setOtp] = useState('');
     const [errr, setErrr] = useState('Verify');
-    // const [bol, setBol] = useState(true);
     const user = useContext(UserContext)
     const navigate = useNavigate()
     const [dataa, setDataa] = useState({
@@ -51,7 +50,6 @@ export default function TwoFacCheck () {
             
         }
     }
-    // 
     return (
         <div className="w-[100%] h-full flex items-center justify-center bg-[#474747]">
             <div className="w-[96%]  flex flex-col items-center justify-between  h-[600px] p-[30px] ">

@@ -8,7 +8,6 @@ import chat.routing
 import game.routing
 import notifications.routing
 from tournment import urls as tournment
-# from .tokenauth_middleware import TokenAuthMiddleware
 from tournment.middelware import MyMiddelware
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat.settings')

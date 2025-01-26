@@ -16,6 +16,10 @@ def get_all_emojis(request):
             emojis_data = response.json()
             if not emojis_data:
                 emojis_data = []
+            if isinstance(emojis_data, dict):
+                status = emojis_data.get("status", None) 
+                if status and status == 'error':
+                    emojis_data = []
             return JsonResponse({"data" : emojis_data}, status=200)
         return JsonResponse({"error" : "Failed to fetch emojis."}, status=401)
     except:

@@ -6,13 +6,11 @@ class Paddle {
     private height: number;
     private x: number;
     private _y: number;
-    // private paddleNum: number;
 
     constructor(context: CanvasRenderingContext2D, num: number, paddles: { width: number, height: number, paddle1: number, paddle2: number }) {
         this.context = context;
         this.width = paddles.width;
         this.height = paddles.height;
-        // this.paddleNum = num;
         if (num === 1) {
             this.x = 6;
             this._y = paddles.paddle1;
@@ -50,7 +48,6 @@ class Ball {
     }
 
     public render() {
-        // Draw the ball
         this.context.beginPath();
         this.context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         this.context.fillStyle = 'white';
@@ -69,14 +66,12 @@ export class Game {
     private ball: Ball;
     private paddle1: Paddle;
     private paddle2: Paddle;
-    // private paddleMove: number;
 
     constructor(context: CanvasRenderingContext2D, paddles: { width: number, height: number, paddle1: number, paddle2: number }, ball: {x : number, y : number}) {
         this.context = context;
         this.ball = new Ball(context, ball);
         this.paddle1 = new Paddle(context, 1, paddles);
         this.paddle2 = new Paddle(context, 2, paddles);
-        // this.paddleMove = 10;
     }
 
     renderNet() {
@@ -88,25 +83,18 @@ export class Game {
 
         this.context.fillStyle = netColor;
         
-        // for (let i = 0; i <= canvasWidth; i += 15) {
-        //     this.context.fillRect(i, canvasHeight / 2 - netHeight / 2, netWidth, netHeight);
-        // }
-        
-        // render i line with the midle of x ray.
         for (let i = 0; i <= canvasHeight; i += 15) {
             this.context.fillRect(canvasWidth / 2 - netHeight / 2, i, netHeight, netWidth);
         }
     }
 
     setUpdate(stats: { paddle1: number, paddle2: number , ball : {x : number, y : number}}): void {
-        // set stats of paddle1 and paddle2
         this.paddle1.Y = stats.paddle1;
         this.paddle2.Y = stats.paddle2;
         this.ball.set(stats.ball);
     }
 
     render() {
-        // Clear the previous frame
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
         this.renderNet();
         this.ball.render();

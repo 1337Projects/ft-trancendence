@@ -27,10 +27,10 @@ export interface GameStatsType {
 };
 
 export interface GameType {
-    paddles: never; // Replace 'any' with the actual type
-    game: never;   // Replace 'any' with the actual type
-    ball: never; 
-    game_data : MatchDataType   // Replace 'any' with the actual type
+    paddles: never;
+    game: never;
+    ball: {x : number, y: number}; 
+    game_data : MatchDataType
 }
 
 export interface ScoreType {
