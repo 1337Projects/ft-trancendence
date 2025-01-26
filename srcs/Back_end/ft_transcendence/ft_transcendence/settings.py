@@ -9,18 +9,72 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
-from pathlib import Path
+import hvac
 import os
+from pathlib import Path
 from dotenv import load_dotenv, dotenv_values
-
 from datetime import timedelta
+import sys
 
 load_dotenv()
+
+print(f'-*-*--*-*-*-*-*-*-* HERE BACKEND ? ${os.getenv("VAULT_ROOT_TOKEN")} ||  ${os.getenv("VAULT_ADDR", "http://vault:8200")}')
+
+
+client = hvac.Client(url=os.getenv("VAULT_ADDR", "http://vault:8200"), token=os.getenv("VAULT_ROOT_TOKEN"))
+
+def fetch_secrets(path):
+    try:
+        return client.secrets.kv.read_secret(path=path)["data"]
+    except hvac.exceptions.InvalidRequest as e:
+        print(f"Invalid Request: {e}")
+    except hvac.exceptions.Forbidden as e:
+        print(f"Permission Denied: {e}")
+    except Exception as e:
+        print(f"An error occurred while fetching {path}: {e}")
+    return {}
+
+# Fetch secrets from Vault
+login_secrets = fetch_secrets("login")
+settings_secrets = fetch_secrets("settings")
+
+def get_secret(secrets, key, default=None):
+    # print(f"L3AAAAAAR : ${secrets.get(key, default)}")
+    return secrets.get(key, default)
+
+
+# Assign secrets
+SCOPE = get_secret(login_secrets, "scope", "email profile")
+GOOGLE_KEY = get_secret(login_secrets, "google_key")
+GOOGLE_SECRET = get_secret(login_secrets, "google_secret")
+REDIRECT_URI_GOOGLE = get_secret(login_secrets, "redirect_uri_google")
+GRANT_TYPE = get_secret(login_secrets, "grant_type")
+OAUTH_URL = get_secret(login_secrets, "oauth_url")
+TOKEN_URL_INTRA = get_secret(login_secrets, "token_url_intra")
+CLIENT_ID_INTRA = get_secret(login_secrets, "client_id_intra")
+CLIENT_SECRET_INTRA = get_secret(login_secrets, "client_secret_intra")
+REDIRECT_URI_INTRA = get_secret(login_secrets, "redirect_uri_intra")
+GRANT_TYPE_INTRA = get_secret(login_secrets, "grant_type_intra")
+USERINFO_URL_INTRA = get_secret(login_secrets, "userinfo_url_intra")
+
+DB_NAME = get_secret(settings_secrets, "DB_NAME")
+DB_OWNER = get_secret(settings_secrets, "DB_OWNER")
+PASSWORD = get_secret(settings_secrets, "PASSWORD")
+HOST = get_secret(settings_secrets, "HOST")
+PORT = get_secret(settings_secrets, "PORT")
+EMAIL_BACKEND = get_secret(settings_secrets, "EMAIL_BACKEND")
+EMAIL_HOST = get_secret(settings_secrets, "EMAIL_HOST")
+EMAIL_PORT = get_secret(settings_secrets, "EMAIL_PORT")
+EMAIL_USE_TLS = get_secret(settings_secrets, "EMAIL_USE_TLS", True)
+EMAIL_HOST_USER = get_secret(settings_secrets, "EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_secret(settings_secrets, "EMAIL_HOST_PASSWORD")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DATABASE_URI = f"postgresql://{DB_OWNER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}"
+print("Database connection string:", DATABASE_URI)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -136,11 +190,11 @@ WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_OWNER"),
-        'PASSWORD': os.getenv("PASSWORD"),
-        'HOST': os.getenv("HOST"),
-        'PORT': os.getenv("PORT"),
+        'NAME': DB_NAME,
+        'USER': DB_OWNER,
+        'PASSWORD': PASSWORD,
+        'HOST': HOST,
+        'PORT': PORT,
     }
 }
 
@@ -203,9 +257,5 @@ CHANNEL_LAYERS = {
 }
 ASGI_APPLICATION = "ft_transcendence.asgi.application"
 
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+# SCOPE = scope  # Now available as settings.SCOPE

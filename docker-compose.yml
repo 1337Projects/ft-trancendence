@@ -1,19 +1,44 @@
 services:
+  vault:
+    container_name: vault
+    image: vault:ipman
+    build: ./srcs/vault/.
+    environment:
+      - VAULT_ADDR=http://vault:8200
+    volumes:
+      - ./vault/file:/vault/file
+      - vault-data:/vault/data
+    ports:
+      - "8200:8200"
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - ft_transcendence
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://vault:8200/v1/sys/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   db:
-    container_name: data_base
-    image: postgres:17-alpine
+    container_name: database
+    build: ./srcs/database/
     restart: always
     ports:
       - "5432:5432"
     env_file:
       - .env
+    depends_on:
+      - vault
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
+      test: ["CMD", "pg_isready", "-U", "ipman", "-d", "ft_transcendence"]
+      interval: 10s
       timeout: 5s
       retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
+      # - ./srcs/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - ft_transcendence
 
@@ -27,17 +52,36 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env
     volumes:
       - ${PWD}/srcs/Back_end:/app
     networks:
       - ft_transcendence
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/auth/login"]
-      interval: 30s
-      retries: 5
-      start_period: 20s
-      timeout: 20s
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/auth/login"]
+    #   interval: 30s
+    #   retries: 5
+    #   start_period: 20s
+    #   timeout: 20s
+    #hadi khassha t7yd otzad f vault
     environment:
+      API_URL : https://${HOSTNAME}:1024/
+
+  frontend:
+    container_name: frontend
+    build: srcs/Front_end/
+    image: frontend:aamhamdi
+    restart: always
+    volumes:
+      - ${PWD}/srcs/Front_end:/app
+    networks:
+      - ft_transcendence
+    environment:
+      - VITE_API_URL=https://${HOSTNAME}:1024/
+      - VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
+      - VITE_EMOJIES_API=https://emoji-api.com/
+      - VITE_EMOJIES_KEY="access_key=5f603eacb5994ec1a691d954ed1b809c369c465d"
       - API_URL=https://${HOSTNAME}:1024/
       - EMOJIES_API=https://emoji-api.com/
       - EMOJIES_KEY=access_key=64cbbf2e3c845a7633199a3004eefb71c5eaf31a
@@ -54,6 +98,7 @@ services:
     networks:
       - ft_transcendence
     depends_on:
+      - vault
       - be
     environment:
       - WAIT_FOR_IT_TIMEOUT=60
@@ -61,7 +106,10 @@ services:
 
 
 volumes:
+  vault-data:
+    driver : local
   pgdata:
+    driver : local
 
 networks:
   ft_transcendence:

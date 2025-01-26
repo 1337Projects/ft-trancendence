@@ -78,9 +78,9 @@ def generate_random_string(length):
 
 def google_login(request):
     params = urlencode({
-        'client_id': os.getenv("google_key"),
-        'redirect_uri': os.getenv("redirect_uri_google"),
-        'scope': os.getenv("scope"),
+        'client_id': settings.GOOGLE_KEY,
+        'redirect_uri': settings.REDIRECT_URI_GOOGLE,
+        'scope': settings.SCOPE,
         'response_type': 'code',
     })
     google_auth_url = f'https://accounts.google.com/o/oauth2/auth?{params}'

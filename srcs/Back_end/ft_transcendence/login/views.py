@@ -22,34 +22,37 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.hashers import make_password, check_password
 import requests, secrets , jwt, datetime, json, os, random, string, re
 
-load_dotenv()
+
+# load_dotenv()
 
 User = get_user_model()
+
+
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def intra_oauth(request):
     if request.method == 'GET' :
-        return JsonResponse({"url": os.getenv("oauth_url")})
+        return JsonResponse({"url": settings.OAUTH_URL})
     elif request.method == 'POST' :
         code = json.loads(request.body).get("code")
         if not code:
             return JsonResponse({"error": "Authorization code not provided"}, status=400)
         data = {
             "code": code,
-            "client_id": os.getenv("client_id_intra"),
-            "client_secret": os.getenv("client_secret_intra"),
-            "redirect_uri": os.getenv("redirect_uri_intra"),
-            "grant_type": os.getenv("grant_type_intra"),
+            "client_id": settings.CLIENT_ID_INTRA,
+            "client_secret": settings.CLIENT_SECRET_INTRA,
+            "redirect_uri": settings.REDIRECT_URI_INTRA ,
+            "grant_type": settings.GRANT_TYPE_INTRA,
         }
-        token_reponse = requests.post(os.getenv("token_url_intra"), data=data)
+        token_reponse = requests.post(settings.TOKEN_URL_INTRA, data=data)
         token_data = token_reponse.json()
         if "error" in token_data:
             return JsonResponse({"error": "Failed to get access token"}, status=400)
         access_token = token_data['access_token']
         headers = {"Authorization": f"Bearer {access_token}"}
-        userinfo_response = requests.get(os.getenv("userinfo_url_intra"), headers=headers)
+        userinfo_response = requests.get(settings.USERINFO_URL_INTRA, headers=headers)
         userinfo = userinfo_response.json()
         if "error" in userinfo:
             return JsonResponse({"error": "Failed to fetch user info"}, status=400)
@@ -96,10 +99,10 @@ def google_oauth(request):
         return JsonResponse({'error': 'Authorization code is missing'}, status=400)
     data = {
         'code': code,
-        'client_id': os.getenv("google_key"),
-        'client_secret': os.getenv("google_secret"),
-        'redirect_uri': os.getenv("redirect_uri_google"),
-        'grant_type': os.getenv("grant_type"),
+        'client_id': settings.GOOGLE_KEY,
+        'client_secret': settings.GOOGLE_SECRET,
+        'redirect_uri': settings.REDIRECT_URI_GOOGLE,
+        'grant_type': settings.GRANT_TYPE,
     }
     response = requests.post(os.getenv("token_url_google"), data=data)
     if response.status_code != 200:
