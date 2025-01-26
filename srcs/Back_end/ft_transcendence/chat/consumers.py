@@ -1,5 +1,5 @@
 
-import json, sys, math
+import json, math
 from .serializers import *
 from login.models import *
 from django.db.models import Q
@@ -10,46 +10,6 @@ from .models import Conversation, Message
 from channels.db import database_sync_to_async
 from django.core.paginator import Paginator, EmptyPage
 from channels.generic.websocket import AsyncWebsocketConsumer
-import sys
-
-@database_sync_to_async
-def get_user_with_profile(username):
-    user = User.objects.get(username=username)
-    profile = Profile.objects.get(user_id=user.id)
-    user_ser = UserWithProfileSerializer(user).data
-    user_ser['profile'] = ProfileSerializers(profile).data
-    return user_ser
-
-@database_sync_to_async
-def get_messages_between_users(sender_id, receiver_id):
-    messages = list(Message.objects.filter(
-        (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
-        (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
-    ).order_by('-created_at'))
-    nbr_msgs = len(messages)
-    return messages
-
-@database_sync_to_async
-def get_freindship(sender, receiver):
-    freindship = Friends.objects.filter(
-        Q(sender=sender, receiver=receiver) |
-        Q(sender=receiver, receiver=sender)
-    ).first()
-    return UserWithFriendsSerializer(freindship).data
-
-@database_sync_to_async
-def get_last(all_messages):
-    last_message = all_messages[0] if len(all_messages) > 0 else None
-    return last_message
-
-@database_sync_to_async
-def check_if_blocked (sender, receiver):
-    freindship = Friends.objects.filter(
-        Q(sender=sender, receiver=receiver) |
-        Q(sender=receiver, receiver=sender)
-    ).first()
-    if freindship and freindship.status == "blocked":
-        return 1
 
 
 channel_name_grp = {}
@@ -67,8 +27,30 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
         
     @database_sync_to_async
-    def save_message(self, message):
-        message.save()
+    def check_if_blocked (sender, receiver):
+        freindship = Friends.objects.filter(
+            Q(sender=sender, receiver=receiver) |
+            Q(sender=receiver, receiver=sender)
+        ).first()
+        if freindship and freindship.status == "blocked":
+            return 1
+
+    @database_sync_to_async
+    def get_messages_between_users(sender_id, receiver_id):
+        messages = list(Message.objects.filter(
+            (Q(sender_id=sender_id) & Q(receiver_id=receiver_id)) |
+            (Q(sender_id=receiver_id) & Q(receiver_id=sender_id))
+        ).order_by('-created_at'))
+        nbr_msgs = len(messages)
+        return messages
+
+    @database_sync_to_async
+    def get_freindship(sender, receiver):
+        freindship = Friends.objects.filter(
+            Q(sender=sender, receiver=receiver) |
+            Q(sender=receiver, receiver=sender)
+        ).first()
+        return UserWithFriendsSerializer(freindship).data
 
     @database_sync_to_async
     def add_users_to_group(self, sender_id, receiver_id):
@@ -110,11 +92,9 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             sender = User.objects.get(username=from_)
             receiver = User.objects.get(username=to_)
         except User.DoesNotExist:
-            return None, None,None, 'user not found'
-
+            return 'user not found' , 'user not found' ,'user not found' , 'user not found'
         sender_ser = UserWithProfileSerializer(sender).data
         receiver_ser = UserWithProfileSerializer(receiver).data
-
         return sender, receiver, sender_ser, receiver_ser
 
     async def send_message(self, event):
@@ -136,42 +116,58 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         }))
 
     async def fetch_conversations(self):
-        conversations = await self.get_conversations(self.user_id)
-        await self.send(text_data=json.dumps({
-            'response': {
-                'event': 'fetch_conversations',
-                'status': 209,
-                'conversations': conversations,
-            }
-        }))
+        try:
+            conversations = await self.get_conversations(self.user_id)
+            await self.send(text_data=json.dumps({
+                'response': {
+                    'event': 'fetch_conversations',
+                    'status': 209,
+                    'conversations': conversations,
+                }
+            }))
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                'response': {
+                    'error': 'Error in fetch conversations',
+                    'status': 400,
+                }
+            }))
     
     async def fetch_messages(self,text_data_json):
-        to_ = text_data_json.get('partner')
-        from_ = text_data_json.get('from')
-        page_ = text_data_json.get('page')
-        sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
-        all_messages = await get_messages_between_users(sender_ser['id'], receiver_ser['id']) # slicing query
-        page = text_data_json.get('page', 1)
-        limit = text_data_json.get('limit', 30)
-        paginator = Paginator(all_messages, limit)
         try:
-            messages = paginator.page(page)
-        except EmptyPage:
-            messages = []
-        serialized_messages = [await self.serialize_message(message) for message in messages]
-        nbr_msgs = len(all_messages)
-        nbr_pages = math.ceil(nbr_msgs/limit)
-        freindship_ser = await get_freindship(sender, receiver)
-        await self.send(text_data=json.dumps({
-            'response': {
-                'status': 206,
-                'messages': serialized_messages,
-                'user': receiver_ser,
-                'nbr_pages': nbr_pages,
-                'freindship' : freindship_ser,
-                'page' : page_
-            }
-        }))
+            to_ = text_data_json.get('partner')
+            from_ = text_data_json.get('from')
+            page_ = text_data_json.get('page')
+            sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
+            all_messages = await self.get_messages_between_users(sender_ser['id'], receiver_ser['id'])
+            page = text_data_json.get('page', 1)
+            limit = text_data_json.get('limit', 30)
+            paginator = Paginator(all_messages, limit)
+            try:
+                messages = paginator.page(page)
+            except EmptyPage:
+                messages = []
+            serialized_messages = [await self.serialize_message(message) for message in messages]
+            nbr_msgs = len(all_messages)
+            nbr_pages = math.ceil(nbr_msgs/limit)
+            freindship_ser = await self.get_freindship(sender, receiver)
+            await self.send(text_data=json.dumps({
+                'response': {
+                    'status': 206,
+                    'messages': serialized_messages,
+                    'user': receiver_ser,
+                    'nbr_pages': nbr_pages,
+                    'freindship' : freindship_ser,
+                    'page' : page_
+                }
+            }))
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                'response': {
+                    'error': 'Error in fetch messages',
+                    'status' : 400,
+                }
+            }))
 
     async def create_message(self, sender, receiver, message_content, conversation, link):
         message = await sync_to_async(Message.objects.create)(
@@ -187,65 +183,61 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         return message
 
     async def new_message(self, text_data_json):
-        link = text_data_json.get('link')
-        message_content = text_data_json.get('content')
-        from_ = text_data_json.get('from')
-        to_ = text_data_json.get('partner')
-        sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
-        if not sender or not receiver:
-            await self.send(text_data=json.dumps({
-                'response': {
-                    'error': 'user not found',
-                    'status' : 400,
-                }
-            }))
-            return
-        if (await check_if_blocked(sender, receiver)) == True:
-            await self.send(text_data=json.dumps({
-                'response': {
-                    'error': 'There is a blocked relationship',
-                    'status' : 400
-                }
-            }))
-            return
-        conversation = await self.get_or_create_conversation(sender, receiver)
-        message = await self.create_message(sender, receiver, message_content, conversation, link)
-        message_ser = await self.serialize_message(message)
-        message_ser['sender'] = sender_ser
-        message_ser['receiver'] = receiver_ser
         try:
+            link = text_data_json.get('link')
+            message_content = text_data_json.get('content')
+            from_ = text_data_json.get('from')
+            to_ = text_data_json.get('partner')
+            sender, receiver, sender_ser, receiver_ser = await self.get_sender_and_receiver(from_, to_)
+            if not sender or not receiver:
+                await self.send(text_data=json.dumps({
+                    'response': {
+                        'error': 'user not found',
+                        'status' : 400,
+                    }
+                }))
+                return
+            if (await self.check_if_blocked(sender, receiver)) == True:
+                await self.send(text_data=json.dumps({
+                    'response': {
+                        'error': 'There is a blocked relationship',
+                        'status' : 400
+                    }
+                }))
+                return
+            conversation = await self.get_or_create_conversation(sender, receiver)
+            message = await self.create_message(sender, receiver, message_content, conversation, link)
+            message_ser = await self.serialize_message(message)
+            message_ser['sender'] = sender_ser
+            message_ser['receiver'] = receiver_ser
             conversation_ser = await self.serialize_conversation(conversation)
+            room_group_name, sender_channel, receiver_channel = await self.add_users_to_group(sender_ser['id'], receiver_ser['id'])
+            self.room_group_name = room_group_name
+            if sender_channel:
+                await self.channel_layer.group_add(self.room_group_name, sender_channel)
+            if receiver_channel:
+                await self.channel_layer.group_add(self.room_group_name, receiver_channel)
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'send_message',
+                    'message': message_ser,
+                    'status': 205,
+                    'receiver': receiver_ser,
+                    'sender': sender_ser,
+                    'conversation': conversation_ser,
+                    'link' :link,
+                }
+            )
         except Exception as e:
             await self.send(text_data=json.dumps({
                 'response': {
-                    'error': 'Error serializing conversation',
+                    'error': 'Error in new message',
                     'status' : 400,
                 }
             }))
-            return
-        room_group_name, sender_channel, receiver_channel = await self.add_users_to_group(sender_ser['id'], receiver_ser['id'])
-        self.room_group_name = room_group_name
-        if sender_channel:
-            await self.channel_layer.group_add(self.room_group_name, sender_channel)
-        if receiver_channel:
-            await self.channel_layer.group_add(self.room_group_name, receiver_channel)
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'send_message',
-                'message': message_ser,
-                'status': 205,
-                'receiver': receiver_ser,
-                'sender': sender_ser,
-                'conversation': conversation_ser,
-                'link' :link,
-            }
-        )
 
     async def receive(self, text_data=None):
-        text_data_json = json.loads(text_data)
-        print(text_data_json)
-        sys.stdout.flush()
         event = text_data_json.get('event')
         if event == "fetch_conversations":
             await self.fetch_conversations()
