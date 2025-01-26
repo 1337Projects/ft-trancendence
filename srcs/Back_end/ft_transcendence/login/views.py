@@ -21,7 +21,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.hashers import make_password, check_password
 import requests, secrets , jwt, datetime, json, os, random, string, re
-
+from rest_framework import status
 
 # load_dotenv()
 
@@ -104,13 +104,13 @@ def google_oauth(request):
         'redirect_uri': settings.REDIRECT_URI_GOOGLE,
         'grant_type': settings.GRANT_TYPE,
     }
-    response = requests.post(os.getenv("token_url_google"), data=data)
+    response = requests.post(settings.TOKEN_URL_GOOGLE, data=data)
     if response.status_code != 200:
         return JsonResponse(response.json(), status=response.status_code)
     token_info = response.json()
     access_token = token_info.get('access_token')
     if access_token:
-        user_info_response = requests.get(os.getenv("userinfo_url_google"), headers={'Authorization': f'Bearer {access_token}'})
+        user_info_response = requests.get(settings.USERINFO_URL_GOOGLE, headers={'Authorization': f'Bearer {access_token}'})
         if user_info_response.status_code == 200:
             user_info = user_info_response.json()
             if "error" in user_info:
@@ -118,7 +118,7 @@ def google_oauth(request):
             email = user_info.get('email')
             name = user_info.get('name')
             username = generate_username(customize_username(name))
-            image = f"{os.environ.get('API_URL')}media/default-avatar.jpeg"
+            image = f"{settings.API_URL}media/default-avatar.jpeg"
             if not email or not username:
                 return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
             try:
@@ -160,7 +160,7 @@ def forget_password(request):
                 return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
             token = default_token_generator.make_token(user)
             PasswordReset.objects.create(user=user, token=token)
-            reset_link = f"{os.environ.get('API_URL')}auth/forgetPassowrd?token={token}&email={email}"
+            reset_link = f"{settings.API_URL}auth/forgetPassowrd?token={token}&email={email}"
             send_mail(
                 'Request : Reset Password',
                 f"""
@@ -186,7 +186,7 @@ def forget_password(request):
             )
             return JsonResponse({'message': 'the reset link has been send to your email'}, status=200)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': str(e)}, status==status.HTTP_400_BAD_REQUEST)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -218,7 +218,7 @@ def confirm_password(request):
                     return JsonResponse({'error': 'Expired token'}, status=400)
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e)}, status==status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -242,7 +242,7 @@ def change_password(request):
         user.save()
         return JsonResponse({'message': 'The Password has been changed'}, status=200)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
