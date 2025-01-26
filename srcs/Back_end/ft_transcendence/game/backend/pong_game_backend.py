@@ -3,6 +3,7 @@ from login.models import User
 from game.models import Game
 from enum import Enum
 import sys
+from asgiref.sync import sync_to_async
 
 # Define constants
     # Screen
