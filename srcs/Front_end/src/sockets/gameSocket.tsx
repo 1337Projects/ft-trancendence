@@ -28,6 +28,11 @@ class GameSocket extends WebSocketService {
                     this.callbacks['set_match_result'](data.game_data)
                 }
                 break;
+            case 'game_ended':
+                if (this.callbacks['game_ended']){
+                    this.callbacks['game_ended'](data.message);
+                }
+                break;
             default:
                 break;
         }

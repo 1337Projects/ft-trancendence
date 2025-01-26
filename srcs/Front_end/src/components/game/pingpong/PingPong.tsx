@@ -32,6 +32,7 @@ function PingPong() {
             gameSocket.addCallback("init", init);
             gameSocket.addCallback("set_score", set_score);
             gameSocket.addCallback("set_match_result", setMatchResult);
+            gameSocket.addCallback("game_ended", navigateBack)
             gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game_id}/?token=${authInfos?.accessToken}`);
         }, 200);
 

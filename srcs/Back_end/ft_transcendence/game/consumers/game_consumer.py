@@ -23,6 +23,8 @@ class GameConsumer(AsyncWebsocketConsumer):
     
         player1_id = await database_sync_to_async(lambda: self.game.player1.id)()
         player2_id = await database_sync_to_async(lambda: self.game.player2.id)()
+        
+        await self.accept()
 
         if self.player.id != player1_id and self.player.id != player2_id:
             await self.close(code=4000)
@@ -31,9 +33,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.channel_layer = get_channel_layer()
         status = self.pongGameManager.get_game_status(self.room_name)
         if status == 'end':
-            await self.disconnect(10)
+            await self.disconnect(4001)
             return
-        await self.accept()
         await self.channel_layer.group_add(
             self.room_name,
             self.channel_name
@@ -111,11 +112,15 @@ class GameConsumer(AsyncWebsocketConsumer):
             - If the game has already ended, no additional actions are taken.
             - The player is removed from the channel group.
         """
-        player = self.player.username
         if timeout:
             await self.timeout_disconnect()
         elif self.pongGameManager.get_game_status(self.room_name) != 'end':
             await self.disconnect_in_game()
+        elif self.pongGameManager.get_game_status(self.room_name) == 'end':
+            await self.send(text_data=json.dumps({
+                'event': 'game_ended',
+                'message': 'The game has already ended.'
+            }))
 
         await self.channel_layer.group_discard(
             self.room_name,
