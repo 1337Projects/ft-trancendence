@@ -37,15 +37,6 @@ def create_profile(id, image_link):
         avatar=image_link,
     )
 
-def get_id(request):
-    refresh_token = request.COOKIES.get('refresh_token')
-    if refresh_token is not None:
-        payload = jwt.decode(refresh_token.encode(), settings.SECRET_KEY, algorithms=['HS256'])
-        user_id = payload['user_id']
-        update_time_activity(user_id=user_id)
-        return user_id
-    return None
-
 def get_infos(id):
     user = get_object_or_404(User, id=id)
     serialiser = UserWithProfileSerializer(user)
@@ -59,14 +50,6 @@ def check_duplicate_username(username, id):
         return False
     except ObjectDoesNotExist:
         return False
-
-def update_time_activity(user_id):
-    try:
-        profile = Profile.objects.get(user_id=user_id)
-        profile.last_activity = timezone.now()
-        profile.save()
-    except ObjectDoesNotExist:
-        print(f"Profile with user_id {user_id} does not exist.")
 
 def validate_totp(user, otp):
     secret_key = user.secret_key

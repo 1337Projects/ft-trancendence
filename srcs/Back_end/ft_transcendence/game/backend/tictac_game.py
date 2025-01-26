@@ -110,11 +110,13 @@ class TicTac:
 
                 self.match_stored = True
             except Game1.DoesNotExist:
-                print(f"Game with id {self.game_id} does not exist")
+                return f"Game with id {self.game_id} does not exist"
             except User.DoesNotExist:
-                print(f"User with id {self.winner['id']} does not exist")
+                return f"User with id {self.winner['id']} does not exist"
             except Profile.DoesNotExist:
-                print(f"Profile for user with id {self.winner['id']} or {self.loser['id']} does not exist")
+                return f"Profile for user with id {self.winner['id']} or {self.loser['id']} does not exist"
+            except Exception as err:
+                return str(err)
 
     def store_experience_log(self, player1_profile, player2_profile, player1_experience, player2_experience):
         ExperienceLog.objects.create(profile=player1_profile, experience_gained=player1_experience)

@@ -61,40 +61,42 @@ def get_profile(request, username):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def set_infos(request):
-    user_infos = request.data.get('user')
-    user_infos_dict = json.loads(user_infos)
-    user_id = request.user.id
-    # username = user_infos_dict.get('username')
-    first_name = user_infos_dict.get('first_name')
-    last_name = user_infos_dict.get('last_name')
-    bio = user_infos_dict.get('profile')['bio']
-    User.objects.filter(id=user_id).update(
-        first_name=first_name,
-        last_name=last_name,
-    )
-    if bio is not None:
-        Profile.objects.filter(id=user_id).update(bio=bio)   
-    if 'avatar' in request.FILES:
-        if request.FILES['avatar'].size > (3 * 1024 * 1024):
-            return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
-        format_check = check_format(request.FILES['avatar'])
-        if format_check != 'valid format':
-            return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
-        name = manage_images(user_id, request, 'avatar')
-        Profile.objects.filter(user_id=user_id).update(
-            avatar=f'{os.environ.get("API_URL")}media/{name}'
+    try:
+        user_infos = request.data.get('user')
+        user_infos_dict = json.loads(user_infos)
+        user_id = request.user.id
+        first_name = user_infos_dict.get('first_name')
+        last_name = user_infos_dict.get('last_name')
+        bio = user_infos_dict.get('profile')['bio']
+        User.objects.filter(id=user_id).update(
+            first_name=first_name,
+            last_name=last_name,
         )
-    if 'banner' in request.FILES:
-        if request.FILES['banner'].size > (3 * 1024 * 1024):    
-            return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
-        format_check = check_format(request.FILES['banner'])
-        if format_check != 'valid format':
-            return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
-        name = manage_images(user_id, request, 'banner')
-        Profile.objects.filter(user_id=user_id).update(
-            banner=f'{os.environ.get("API_URL")}media/{name}'
-        )
-    return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
+        if bio is not None:
+            Profile.objects.filter(id=user_id).update(bio=bio)   
+        if 'avatar' in request.FILES:
+            if request.FILES['avatar'].size > (3 * 1024 * 1024):
+                return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
+            format_check = check_format(request.FILES['avatar'])
+            if format_check != 'valid format':
+                return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
+            name = manage_images(user_id, request, 'avatar')
+            Profile.objects.filter(user_id=user_id).update(
+                avatar=f'{os.environ.get("API_URL")}media/{name}'
+            )
+        if 'banner' in request.FILES:
+            if request.FILES['banner'].size > (3 * 1024 * 1024):    
+                return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
+            format_check = check_format(request.FILES['banner'])
+            if format_check != 'valid format':
+                return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
+            name = manage_images(user_id, request, 'banner')
+            Profile.objects.filter(user_id=user_id).update(
+                banner=f'{os.environ.get("API_URL")}media/{name}'
+            )
+        return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
+    except Exception as e:
+        return Response({"status": 400, "error": str(e)}, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -267,33 +269,36 @@ def generate_2fa_qr_code(request):
 @csrf_exempt
 @permission_classes([AllowAny])
 def check_topt(request):
-    user_id = request.session.get('user_id')
-    user_retry = request.session.get('retry_limit')
-    if not user_id:
-        return JsonResponse({'error': 'Invalid data from the session'}, status=400)
-    
-    if user_retry <= 0:
-        return JsonResponse({'error': 'Retry limit exceeded. Please try again later.'}, status=429)
+    try:
+        user_id = request.session.get('user_id')
+        user_retry = request.session.get('retry_limit')
+        if not user_id:
+            return JsonResponse({'error': 'Invalid data from the session'}, status=400)
+        
+        if user_retry <= 0:
+            return JsonResponse({'error': 'Retry limit exceeded. Please try again later.'}, status=429)
 
-    if 'data' in request.data:
-        data = request.data.get('data')
-        if 'topt' in data:
-            opt = data.get('topt')
-            user = User.objects.get(id=user_id)
-            if validate_totp(user=user, otp=opt):
-                refresh = RefreshToken.for_user(user)
-                refresh['username'] = user.username
-                access_token = str(refresh.access_token)
-                response = JsonResponse({"access": access_token, "message": "Successful", "status":200}, status=200)
-                set_refresh_token_cookie(response, refresh)
-                return response
+        if 'data' in request.data:
+            data = request.data.get('data')
+            if 'topt' in data:
+                opt = data.get('topt')
+                user = User.objects.get(id=user_id)
+                if validate_totp(user=user, otp=opt):
+                    refresh = RefreshToken.for_user(user)
+                    refresh['username'] = user.username
+                    access_token = str(refresh.access_token)
+                    response = JsonResponse({"access": access_token, "message": "Successful", "status":200}, status=200)
+                    set_refresh_token_cookie(response, refresh)
+                    return response
+                else:
+                    request.session['retry_limit'] -= 1
+                    return JsonResponse({"status": 400, "message": "Invalid TOPT",}, status=400)
             else:
-                request.session['retry_limit'] -= 1
-                return JsonResponse({"status": 400, "message": "Invalid TOPT",}, status=400)
+                return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
         else:
             return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
-    else:
-        return JsonResponse({"status": 400, "message": "Invalid data"}, status=400)
+    except Exception as e:
+        return JsonResponse({"status": 400, "errr": str(e)}, status=400)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -323,14 +328,9 @@ def disable_2fa(request):
 @permission_classes([IsAuthenticated])
 def get_others_friends(request, username):
     try :
-        id = get_id(request)
-        if not id:
-            return Response({"message": "Invalid token"}, status=400)
-        try:
-            user = User.objects.get(username=username)
-            current_user = User.objects.get(id=id)
-        except User.DoesNotExist:
-            return Response({"message": "this user is not exist"}, status=404)
+        id = request.user.id
+        user = User.objects.get(username=username)
+        current_user = User.objects.get(id=id)
         friends_filter  = Friends.objects.filter(Q(sender=user) | Q(receiver=user), status='accept').exclude(
             Q(sender=current_user, receiver=user)  | Q(sender=user, receiver=current_user)
         )
@@ -344,7 +344,7 @@ def get_others_friends(request, username):
 @permission_classes([IsAuthenticated])
 def set_lst_not_time(request):
     try:
-        id = get_id(request)
+        id = request.user.id
         time = request.data.get("time")
         user = User.objects.get(id=id)
         user.last_notification_seen = time
