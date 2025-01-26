@@ -1,9 +1,9 @@
 from account.serializer import UserWithFriendsSerializer
 from .utls import *
 from django.db.models import Q
-from datetime import timedelta
+# from datetime import timedelta
 from django.conf import settings
-from urllib.parse import urlencode
+# from urllib.parse import urlencode
 from account.models import Friends
 from django.http import JsonResponse
 # from django.shortcuts import redirect
@@ -88,7 +88,7 @@ def intra_oauth(request):
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
 @csrf_exempt
-@api_view(["post"])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def google_oauth(request):
     code = request.data.get('code')
@@ -146,12 +146,12 @@ def google_oauth(request):
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
-@api_view(["post"])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def forget_password(request):
     if request.method == 'POST':
-        email = request.data.get('email')
         try:
+            email = request.data.get('email')
             user = User.objects.get(email=email)
             if user.google_or_intra:
                 return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
@@ -166,64 +166,70 @@ def forget_password(request):
                 fail_silently=False,
             )
             return JsonResponse({'message': 'the reset link has been send to your email'}, status=200)
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Email not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-@api_view(["post"])
-@permission_classes([AllowAny])
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def confirm_password(request):
-    if request.method == 'POST':
-        email = request.data.get('email')
-        token = request.data.get('token')
-        new_password = request.data.get('password')
-        errors = validate_password(new_password)
-        if errors:
-            return JsonResponse({'error': errors}, status=400)
-        try:
-            password_reset = PasswordReset.objects.get(token=token, user__email=email)
-            if password_reset.is_used:
-                return JsonResponse({'error': 'Token has already been used.'}, status=400)
-            user = password_reset.user
-            if default_token_generator.check_token(user, token):
-                user.set_password(new_password)
-                user.save()
-                password_reset.is_used = True
-                password_reset.save()
-                return JsonResponse({'message': 'Password has been reset'}, status=200)
-            else:
-                return JsonResponse({'error': 'Expired token'}, status=400)
-        except PasswordReset.DoesNotExist:
-            return JsonResponse({'error': 'Invalid token'}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+    try:
+        if request.method == 'POST':
+            email = request.data.get('email')
+            token = request.data.get('token')
+            new_password = request.data.get('password')
+            errors = validate_password(new_password)
+            if errors:
+                return JsonResponse({'error': errors}, status=400)
+            try:
+                password_reset = PasswordReset.objects.get(token=token, user__email=email)
+            except PasswordReset.DoesNotExist:
+                return JsonResponse({'error': 'Invalid token'}, status=400)
+                if password_reset.is_used:
+                    return JsonResponse({'error': 'Token has already been used.'}, status=400)
+                user = password_reset.user
+                if default_token_generator.check_token(user, token):
+                    user.set_password(new_password)
+                    user.save()
+                    password_reset.is_used = True
+                    password_reset.save()
+                    return JsonResponse({'message': 'Password has been reset'}, status=200)
+                else:
+                    return JsonResponse({'error': 'Expired token'}, status=400)
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
-@api_view(["post"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def change_password(request):
-    id = request.user.id
-    user = User.objects.get(id=id)
-    if user.google_or_intra:
-        return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
-    old_password = request.data.get('old_password')
-    new_password = request.data.get('new_password')
-    if not old_password or not new_password:
-        return JsonResponse({'error': 'Old password or New password is missing'}, status=400)
-    exist_password = User.objects.get(id=id).password
-    if not check_password(old_password, exist_password):
-        return JsonResponse({'error': 'Invalid old password'}, status=400)
-    err = validate_password(new_password)
-    if err:
-        return JsonResponse({'error': err}, status=400)
-    user.password = make_password(new_password)
-    user.save()
-    return JsonResponse({'message': 'The Password has been changed'}, status=200)
+    try:
+        id = request.user.id
+        user = User.objects.get(id=id)
+        if user.google_or_intra:
+            return JsonResponse({'error': 'This account is registered with Google or Intra'}, status=400)
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        if not old_password or not new_password:
+            return JsonResponse({'error': 'Old password or New password is missing'}, status=400)
+        exist_password = User.objects.get(id=id).password
+        if not check_password(old_password, exist_password):
+            return JsonResponse({'error': 'Invalid old password'}, status=400)
+        err = validate_password(new_password)
+        if err:
+            return JsonResponse({'error': err}, status=400)
+        user.password = make_password(new_password)
+        user.save()
+        return JsonResponse({'message': 'The Password has been changed'}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 
 from tournment.utils.utils import debug
 
-@api_view(["post"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def block_user(request):
     id = request.user.id
@@ -257,7 +263,7 @@ def block_user(request):
 
     
         
-@api_view(["post"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def unblock_user(request):
     id = request.user.id
