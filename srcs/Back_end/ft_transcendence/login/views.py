@@ -160,10 +160,26 @@ def forget_password(request):
             reset_link = f"{os.environ.get('API_URL')}auth/forgetPassowrd?token={token}&email={email}"
             send_mail(
                 'Request : Reset Password',
-                f'A password change has been requested for your account. If this was you, please use the link below to reset your password: {reset_link}',
-                'from@example.com',
+                f"""
+                Hello,
+
+                A password change has been requested for your account.
+
+                If you initiated this request, please use the link below to reset your password:
+                
+                {reset_link}
+
+                If you did not request a password reset, please disregard this email or contact support if you believe this was an error.
+
+                Best regards,
+
+                The Transcendence Coders
+
+                """,
+                None,
                 [email],
                 fail_silently=False,
+                headers={'X-Spam-Flag': 'NO'}
             )
             return JsonResponse({'message': 'the reset link has been send to your email'}, status=200)
         except Exception as e:
