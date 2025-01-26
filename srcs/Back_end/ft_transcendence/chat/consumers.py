@@ -241,13 +241,22 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 }
             }))
 
+
     async def receive(self, text_data=None):
-        text_data_json = json.loads(text_data)
-        event = text_data_json.get('event')
-        if event == "fetch_conversations":
-            await self.fetch_conversations()
-        elif event == "fetch_messages":
-            await self.fetch_messages(text_data_json)
-        elif event == 'new_message':
-            await self.new_message(text_data_json)
+        try :
+            text_data_json = json.loads(text_data)
+            event = text_data_json.get('event')
+            if event == "fetch_conversations":
+                await self.fetch_conversations()
+            elif event == "fetch_messages":
+                await self.fetch_messages(text_data_json)
+            elif event == 'new_message':
+                await self.new_message(text_data_json)
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                'response': {
+                    'error': f'Error in new message {e}',
+                    'status' : 400,
+                }
+            }))
 
