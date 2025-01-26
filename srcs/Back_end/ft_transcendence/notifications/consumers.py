@@ -59,7 +59,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             return str(e)
 
     async def receive(self, text_data):
-        try
+        try:
             data = json.loads(text_data)
             event = data.get("event")
         except Exception as a:
