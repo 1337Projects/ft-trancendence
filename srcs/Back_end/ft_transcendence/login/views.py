@@ -94,8 +94,6 @@ def google_oauth(request):
     code = request.data.get('code')
     if not code:
         return JsonResponse({'error': 'Authorization code is missing'}, status=400)
-
-    token_url = 'https://oauth2.googleapis.com/token'
     data = {
         'code': code,
         'client_id': os.getenv("google_key"),
@@ -103,15 +101,13 @@ def google_oauth(request):
         'redirect_uri': os.getenv("redirect_uri_google"),
         'grant_type': os.getenv("grant_type"),
     }
-    response = requests.post(token_url, data=data)
+    response = requests.post(os.getenv("token_url_google"), data=data)
     if response.status_code != 200:
         return JsonResponse(response.json(), status=response.status_code)
-
     token_info = response.json()
     access_token = token_info.get('access_token')
     if access_token:
-        user_info_url = 'https://www.googleapis.com/oauth2/v2/userinfo'
-        user_info_response = requests.get(user_info_url, headers={'Authorization': f'Bearer {access_token}'})
+        user_info_response = requests.get(os.getenv("userinfo_url_google"), headers={'Authorization': f'Bearer {access_token}'})
         if user_info_response.status_code == 200:
             user_info = user_info_response.json()
             if "error" in user_info:
