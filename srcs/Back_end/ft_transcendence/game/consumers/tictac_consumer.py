@@ -42,11 +42,14 @@ class TicTacConsumer(AsyncWebsocketConsumer):
             return
         
         self.tictac = TicTac(self.game_id, self.game["player1"], self.game["player2"])
+        # first_turn = 
+        # player1_symbol = 
+        # player2_symbol = 
 
         event = {
             'type': 'broad_cast',
             'data': {
-                'players' : [self.game["player1"], self.game["player2"]],
+                'players' : [{"user" : self.tictac.get_player1(), "char" : 'X'}, {"user" : self.tictac.get_player2(), "char" : 'O'}],
                 'user' : self.tictac.get_current_turn(),
                 'board': self.tictac.get_board()
             }, 

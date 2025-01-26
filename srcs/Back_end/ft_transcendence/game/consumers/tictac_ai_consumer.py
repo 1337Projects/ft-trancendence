@@ -33,7 +33,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
             'id' : str(uuid.uuid4().int),
             'username': 'AI',
             'profile': {
-                'avatar': f"{os.environ.get('API_URL')}media/ai.avif"
+                'avatar': f"{os.environ.get('API_URL')}media/ai.avif"    
             }
         }
         self.room_name = f'tictac_ai_{self.game_id}'
@@ -44,10 +44,11 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
         self.tictac = TicTac(self.game_id, self.player, self.ai)
         first_turn = self.tictac.get_current_turn()  
         self.ai_symbol = 'X' if first_turn == self.ai else 'O'
+        player_symbol= 'O' if self.ai_symbol == 'X' else 'X'
         event = {
             'type': 'broad_cast',
             'data': {
-                'players' : [self.player, self.ai],
+                'players' : [{"user" : self.player, "char" : player_symbol}, {"user" : self.ai, "char" : self.ai_symbol}],
                 'user' : first_turn,
                 'board': self.tictac.get_board()
             }, 
