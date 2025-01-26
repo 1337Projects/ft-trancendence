@@ -120,7 +120,7 @@ function Main() {
   const {open} = useContext(DialogContext) || {}
 
   return (
-    <div className={`w-screen h-screen font-pt ${appearence?.theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
+    <div className={`w-screen h-screen relative font-pt ${appearence?.theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
       {
         open &&
         <div className={`w-[100vw] h-[100vh] absolute bg-black/40 backdrop-blur-sm z-30`}></div>

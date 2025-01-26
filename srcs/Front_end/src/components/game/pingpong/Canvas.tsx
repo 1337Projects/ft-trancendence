@@ -32,6 +32,37 @@ const Canvas: React.FC<CanvasProps> = ({ game }) => {
         };
     }, []);
 
+    const eventHandler = (e : TouchEvent) => {
+        const rect = canvasRef!.current!.getBoundingClientRect()
+        const eventy = e.touches[0]?.clientY!
+        if (eventy < rect.top + (canvasRef!.current!.height / 2)) {
+            gameSocket.sendMessage({
+                event: 'movePaddle',
+                key: 'ArrowUp',
+            });
+        } else {
+            gameSocket.sendMessage({
+                event: 'movePaddle',
+                key: 'ArrowDown',
+            });
+        }
+    } 
+
+    useEffect(() => {
+        if (canvasRef && canvasRef.current) {
+            canvasRef.current?.addEventListener('touchstart', eventHandler)
+        }
+        
+        return () => {
+            if (canvasRef && canvasRef.current) {
+                canvasRef.current.removeEventListener('touchstart', eventHandler)
+            }
+        }
+
+    }, [canvasRef.current])
+
+
+
     function update_stats(stats: GameStatsType) {
         gameInstanceRef.current?.setUpdate(stats);
         gameInstanceRef.current?.render();

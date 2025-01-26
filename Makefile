@@ -28,6 +28,7 @@ build:
 	$(BUILD)
 
 prod:
+	HOSTNAME=${HOSTNAME}
 	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 
 rebuild:

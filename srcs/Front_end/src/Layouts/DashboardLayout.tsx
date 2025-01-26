@@ -177,8 +177,8 @@ export default function DashboardLayout() {
 
     return (
       <>
-        <div className="flex h-screen justify-between w-full">
-          <div className='flex h-screen flex-col space-y-2'>
+        <div className="flex h-screen justify-between w-full overflow-x-scroll">
+          <div className='flex h-screen flex-col  space-y-2'>
 
             <div className='h-[100px] flex-shrink-0'>
               <div className={`hidden sm:flex justify-center ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} rounded sm:block h-full cursor-pointer  items-center justify-center text-center w-full text-[22px]`}>

@@ -14,6 +14,7 @@ export interface SocketMessageType {
     result? : MatchDataType,
     x? : number,
     y? : number,
+    key? : string
 }
 
 export type CallBackType<T = any> = (data : T) => void
