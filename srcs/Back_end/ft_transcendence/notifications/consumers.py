@@ -1,4 +1,3 @@
-import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from .models import GameRequest
@@ -9,8 +8,8 @@ from .serializers import GameRequestSerializer
 from django.core.cache import cache
 from account.models import Profile
 from django.contrib.auth.models import AnonymousUser
+import json
 
-import sys
 
 User = get_user_model()
 @database_sync_to_async
@@ -60,8 +59,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             return str(e)
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        event = data.get("event")
+        try
+            data = json.loads(text_data)
+            event = data.get("event")
+        except Exception as a:
+            return
         if event == "fetch nots":
             try:
                 usernamo = data["sender"]
@@ -80,14 +82,17 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 return
 
         elif event == "send_request":
-            sender_username = data["sender"]
-            receiver_username = data["receiver"]
-            message = data.get("message")
-            link = data.get("link")
-            
-            receiverr = await get_user_with_profile(receiver_username)
-            game_request = await self.create_game_request(sender_username, receiver_username, message, link)
-            sender_channel_names = self.get_user_channel_names(sender_username)
+            try:
+                sender_username = data["sender"]
+                receiver_username = data["receiver"]
+                message = data.get("message")
+                link = data.get("link")
+                
+                receiverr = await get_user_with_profile(receiver_username)
+                game_request = await self.create_game_request(sender_username, receiver_username, message, link)
+                sender_channel_names = self.get_user_channel_names(sender_username)
+            except Exception as e:
+                return
             if sender_channel_names:
                 for channel_name in sender_channel_names:
                     await self.channel_layer.send(
