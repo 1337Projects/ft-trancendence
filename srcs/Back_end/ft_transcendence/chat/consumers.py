@@ -238,6 +238,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             }))
 
     async def receive(self, text_data=None):
+        text_data_json = json.loads(text_data)
         event = text_data_json.get('event')
         if event == "fetch_conversations":
             await self.fetch_conversations()

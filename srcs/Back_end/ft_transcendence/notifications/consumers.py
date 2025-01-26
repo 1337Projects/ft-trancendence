@@ -1,16 +1,12 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async #, database_sync_to_async
+from asgiref.sync import sync_to_async
 from .models import GameRequest
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 from account.serializer import *
-from login.serializer import UserSerializer
 from .serializers import GameRequestSerializer
-from channels.layers import get_channel_layer
 from django.core.cache import cache
-import sys
-from django.core.paginator import Paginator
 
 User = get_user_model()
 @database_sync_to_async
@@ -20,6 +16,8 @@ def get_user_with_profile(username):
     user_ser = UserWithProfileSerializer(user).data
     user_ser['profile'] = ProfileSerializers(profile).data
     return user_ser
+
+
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -43,8 +41,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         event = data.get("event")
         if event == "fetch nots":
             try:
-                print('---------------------------------------------------', data)
-                sys.stdout.flush()
                 usernamo = data["sender"]
                 page = data.get("page", 1)
                 page_size = data.get("page_size")
@@ -59,9 +55,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     }
                 }))
             except Exception as e:
-                # print(e)
-                # print('---------------------------------------------------errora')
-                # sys.stdout.flush()
                 return
 
         elif event == "send_request":
@@ -73,8 +66,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             receiverr = await get_user_with_profile(receiver_username)
             game_request = await self.create_game_request(sender_username, receiver_username, message, link)
             sender_channel_names = self.get_user_channel_names(sender_username)
-            # print('---------------------------------------------------', sender_channel_names)
-            # sys.stdout.flush()
             if sender_channel_names:
                 for channel_name in sender_channel_names:
                     await self.channel_layer.send(
@@ -119,8 +110,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             
             notifications_list = []
             serializer = GameRequestSerializer(notifications, many=True)
-            # print('-------------------------------------------321--------', notifications_list)
-            # sys.stdout.flush()
+            
             for notification in serializer.data:
                 user = User.objects.get(username=notification["receiver_username"])
                 profile = Profile.objects.get(user_id=notification["receiver"])
@@ -141,7 +131,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "num_of_notify": num_of_notify,
             }
         except Exception as e:
-            print("errora", e)
-            sys.stdout.flush()
+            return
     def get_user_channel_names(self, username):
         return cache.get(f"channels_{username}", [])
