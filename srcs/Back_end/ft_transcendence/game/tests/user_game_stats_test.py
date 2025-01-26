@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from login.models import User
 from game.models import Game
 from game.tests.test_utils import create_user_and_login
+from icecream import ic
 
 @pytest.mark.django_db
 class TestUserGameStatsView:
@@ -50,6 +51,14 @@ class TestUserGameStatsView:
         assert response.data['games_played'] == 5
         assert response.data['games_won'] == 3
         assert response.data['games_lost'] == 2
+        
+    def test_game_stats_for_non_exist_user(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
+        url = reverse('user_game_stats', kwargs={'username': 'test'})
+        response = self.client.get(url)
+        assert response.status_code == 404
+        assert response.data == {'error': 'User not found'}
+        
 
     def test_user1_game_history(self):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
@@ -76,3 +85,11 @@ class TestUserGameStatsView:
         assert response.data[2]['winner'] == self.user2.id
         assert response.data[3]['winner'] == self.user2.id
         assert response.data[4]['winner'] == self.user1.id
+    
+    def test_game_history_for_non_exist_user(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token1)
+        url = reverse('user_game_history', kwargs={'username': 'test'})
+        response = self.client.get(url)
+        ic(response, response.data)
+        assert response.status_code == 404
+        assert response.data == {'error': 'User not found'} 

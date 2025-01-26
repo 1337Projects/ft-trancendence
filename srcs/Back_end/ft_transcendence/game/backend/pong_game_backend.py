@@ -1,11 +1,7 @@
 from typing import Dict
 from login.models import User
 from game.models import Game
-from channels.layers import get_channel_layer
-from asgiref.sync import sync_to_async
-from channels.db import database_sync_to_async
 from enum import Enum
-from icecream import ic
 import sys
 
 # Define constants
@@ -87,7 +83,6 @@ class Paddle:
         if self.paddlePlayer == PaddlePlayer.PLAYER_1_PADDLE:
             if x - r <= self.x + self.width:
                 if y  < self.y - (self.height // 2 + 10) or y > self.y + (self.height // 2 + 10):
-                    # ic('ball', ball.get(), 'paddle', self.x, self.y)
                     return True
                 ball.speed_x = -ball.speed_x
                 self.update_speed(ball)
@@ -95,7 +90,6 @@ class Paddle:
         else:
             if x + r >= self.x:
                 if y - r < self.y - (self.height // 2 + 20) or y + r > self.y + (self.height // 2 + 20):
-                    # ic('ball', ball.get(), 'paddle', self.x, self.y - self.height // 2, self.y + self.height // 2)
                     return True
                 ball.speed_x = -ball.speed_x
                 self.update_speed(ball)
@@ -116,7 +110,6 @@ class Ball:
     def increse_speed(self):
         sign = 1 if self.speed_x > 0 else -1
         self.speed_x += sign
-        ic(self.speed_x)
         sys.stdout.flush()
     
     def get(self):
@@ -136,9 +129,10 @@ class Ball:
     def reset(self):
         self.x = SCREEN_WIDTH // 2
         self.y = SCREEN_HEIGHT // 2
-        self.speed_x *= -1
-        self.speed_y *= -1
-
+        x_sign = -1 if self.speed_x < 0 else 1
+        y_sign = -1 if self.speed_y < 0 else 1
+        self.speed_x = BALL_SPEEDX * x_sign * -1
+        self.speed_y = BALL_SPEEDY * y_sign * -1
 class PongGame:
     def __init__(self, game: Game, room_name):
         self.status = 'waiting'
@@ -176,7 +170,6 @@ class PongGame:
         self.ball.reset()
         self.paddle1.reset()
         self.paddle2.reset()
-        self.ball.speed_x = BALL_SPEEDX
 
     def update(self):    
         self.ball.move()
@@ -189,14 +182,10 @@ class PongGame:
                     'score1': self.score1,
                     'score2': self.score2
                 }
-                # ic('goal is scored on ', self.player1)
-                # sys.stdout.flush()
         if self.ball.x + BALL_RADIUS >= self.paddle2.x:
             if self.paddle2.check_collision(self.ball):
                 self.score1 += 1
                 self.reset()
-                # ic('goal is scored on ', self.player2)
-                # sys.stdout.flush()
                 return {
                     'score1': self.score1,
                     'score2': self.score2
