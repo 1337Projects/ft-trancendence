@@ -168,7 +168,6 @@ export default function DashboardLayout() {
           setCurrentPage!(1);
           notificationSocket.close();
           navigate("/auth/login")
-  
         }
       } catch (err) {
         toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")

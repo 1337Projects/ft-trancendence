@@ -1,5 +1,5 @@
 import { ReactElement, useContext } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { ApearanceContext } from '../Contexts/ThemeContext';
 import { UserContext } from '../Contexts/authContext';
 
@@ -10,6 +10,9 @@ import { PiMoonStars, PiSunDim } from "react-icons/pi";
 import { GrGamepad } from "react-icons/gr";
 import { RxDashboard } from "react-icons/rx";
 import { IoIosLogOut } from "react-icons/io";
+import { toast } from 'react-toastify';
+import { notificationSocket } from '@/sockets/notificationsSocket';
+import {NotificationsContext} from '@/Contexts/NotificationsContext';
 
 
 
@@ -68,6 +71,30 @@ function SideBar() {
 		themeHandler!(theme == 'light' ? 'dark' : 'light')
 	}
 
+
+	const navigate = useNavigate();
+	const { setHasMore, setCurrentPage} = useContext(NotificationsContext) || {}
+
+	async function logoutHandler() {
+		  try {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}api/auth/logout/`, {
+			  credentials : 'include',
+			  method : 'GET'
+			})
+	  
+			if (response.ok) {
+			  user?.setAuthInfosHandler(null)
+			  user?.setUser(null)
+			  setHasMore!(true);
+			  setCurrentPage!(1);
+			  notificationSocket.close();
+			  navigate("/auth/login")
+			}
+		  } catch (err) {
+			toast.error(err instanceof Error ? err.toString() : "somthing went wrong...")
+		  }
+	}
+
 	return (
 		<div className={`w-full h-full min-h-fit ${theme === 'light' ? "bg-lightItems text-lightText  border-black/40" : "bg-darkItems text-darkText border-white/40"} xl:w-[260px]`}>
 			<header 
@@ -81,7 +108,7 @@ function SideBar() {
 							</div>
 							<p className='text-xs mt-4 sm:mt-0 sm:ml-4 hidden sm:block'>Theme</p>
 						</button>
-						<button className='text-[20pt] w-full flex justify-center items-center sm:hidden'>
+						<button onClick={logoutHandler} className='text-[20pt] w-full flex justify-center items-center sm:hidden'>
 							<IoIosLogOut />
 						</button>
 					</div>
