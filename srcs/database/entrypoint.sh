@@ -50,7 +50,7 @@ echo "host all all 0.0.0.0/0 md5" >> "$PG_HBA_CONF"
 
 # Start PostgreSQL temporarily to create the database and user
 echo "Starting PostgreSQL temporarily..."
-# sudo -u postgres /usr/lib/postgresql/13/bin/pg_ctl -D /var/lib/postgresql/data -o "-c listen_addresses=''" -w start
+
 
 sudo -u postgres /usr/lib/postgresql/13/bin/pg_ctl -D /var/lib/postgresql/data -o "-c listen_addresses='*'" -w start
 
@@ -94,4 +94,3 @@ sudo -u postgres /usr/lib/postgresql/13/bin/pg_ctl -D /var/lib/postgresql/data -
 echo "Starting PostgreSQL..."
 exec sudo -u postgres /usr/lib/postgresql/13/bin/postgres -D /var/lib/postgresql/data
 
-# back_end  | Database connection string: postgresql://ipman:133742@database:5432/ft_transcendence
