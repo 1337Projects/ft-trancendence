@@ -3,8 +3,6 @@ services:
     container_name: vault
     image: vault:ipman
     build: ./srcs/vault/.
-    environment:
-      - VAULT_ADDR=http://vault:8200
     volumes:
       - ./vault/file:/vault/file
       - vault-data:/vault/data
@@ -32,13 +30,13 @@ services:
     depends_on:
       - vault
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ipman", "-d", "ft_transcendence"]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # - ./srcs/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./srcs/database/init.sql:/docker-entrypoint-init/db.d/init.sql
     networks:
       - ft_transcendence
 
@@ -58,15 +56,7 @@ services:
       - ${PWD}/srcs/Back_end:/app
     networks:
       - ft_transcendence
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/auth/login"]
-    #   interval: 30s
-    #   retries: 5
-    #   start_period: 20s
-    #   timeout: 20s
-    #hadi khassha t7yd otzad f vault
-    environment:
-      API_URL : https://${HOSTNAME}:1024/
+
 
   frontend:
     container_name: frontend
