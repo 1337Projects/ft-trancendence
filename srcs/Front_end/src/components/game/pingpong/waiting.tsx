@@ -49,7 +49,7 @@ export default function Waiting() {
                 clearTimeout(timeoutRef.current)
             }
         }
-    }, [])
+    }, [room_id])
 
     
     function startGameHandler(id : number) {

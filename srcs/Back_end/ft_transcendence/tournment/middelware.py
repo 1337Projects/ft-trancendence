@@ -27,7 +27,7 @@ class MyMiddelware:
 
         if token:
             try:
-                payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"], options={"verify_signature": False})
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
                 user_id = payload['user_id']
                 scope['user'] = await self.get_user(user_id)
             except Exception as e:
@@ -36,4 +36,5 @@ class MyMiddelware:
                 scope['user'] = AnonymousUser()
         else:
             scope['user'] = AnonymousUser()
-        return await self.inner(scope, receive, send)
+        return  await self.inner(scope, receive, send)
+        

@@ -12,8 +12,7 @@ import ChatLayout from './Layouts/ChatLayout'
 
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
-import { Oauth } from './components/auth/Oauth'
-// import TwoFactor from './components/auth/2fa'
+import { Oauth } from './components/auth/Oauth' 
 import TwoFacCheck from './components/auth/2faCheck'
 
 import { DashboardPrivateRoute } from './privateRoutes/DashboardPrivateRoute'
