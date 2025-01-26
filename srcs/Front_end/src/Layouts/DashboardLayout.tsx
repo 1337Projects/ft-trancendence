@@ -52,6 +52,7 @@ export default function DashboardLayout() {
     const { setNotifications, setHasMore, setHasNew, setCurrentPage} = useContext(NotificationsContext) || {}
 
     useEffect(() => {
+      
       const interval = setInterval(async () => {
         await fetch(`${import.meta.env.VITE_API_URL}api/auth/refresh/`, 
           {
@@ -104,6 +105,7 @@ export default function DashboardLayout() {
     }, [])
     
     useEffect(() => {
+      console.log(user?.authInfos)
       const timer = setTimeout(() => {
         fetch(`${import.meta.env.VITE_API_URL}api/profile/profile_data/`, {
           method: 'GET',

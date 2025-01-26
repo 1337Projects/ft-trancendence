@@ -27,6 +27,9 @@ re: down build up
 build:
 	$(BUILD)
 
+prod:
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+
 rebuild:
 	$(REBUILD)
 	$(UP)

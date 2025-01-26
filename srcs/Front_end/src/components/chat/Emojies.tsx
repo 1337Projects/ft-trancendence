@@ -25,13 +25,19 @@ export default function Emojies({TextInputHandler, inputText} : {inputText : str
                 </div>
             </div>
             {
-                search ? <EmojiesSearch query={query} /> : <EmojesCategories  textHandler={TextInputHandler} text={inputText} />
+                search ? <EmojiesSearch query={query} textHandler={TextInputHandler} text={inputText} /> : <EmojesCategories  textHandler={TextInputHandler} text={inputText} />
             }
         </div>
     )
 }
 
-function EmojiesSearch({query} : {query : string}) {
+function EmojiesSearch({
+    textHandler, text, query
+} : {
+    textHandler : React.Dispatch<React.SetStateAction<string>>,
+    text : string,
+    query : string
+}) {
 
     const [emojis, setEmojis] = useState<{character : string}[] | null>(null)
     const { authInfos } = useContext(UserContext) || {}
@@ -68,7 +74,7 @@ function EmojiesSearch({query} : {query : string}) {
         <ul className='flex w-full text-[14px] flex-wrap p-1 h-[16vh] overflow-y-auto font-noto'>
             {
                 emojis != null && emojis?.map((i, index) => {
-                    return <li className='m-1'  key={index}>{i.character}</li>
+                    return <li className='m-1' onClick={() => textHandler(text + i.character)}  key={index}>{i.character}</li>
                 })
             }
         </ul> 

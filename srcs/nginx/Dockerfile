@@ -11,7 +11,7 @@ COPY modsecurity.conf /etc/modsecurity/modsecurity.conf
 COPY crs-setup.conf /etc/modsecurity.d/crs-setup.conf
 
 # Copy custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY nginx.dev.conf /etc/nginx/conf.d/nginx.conf
 # Generate a self-signed SSL certificate
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /app/prv_certificate.crt \

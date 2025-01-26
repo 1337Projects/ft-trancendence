@@ -29,7 +29,6 @@ services:
         condition: service_healthy
     volumes:
       - ${PWD}/srcs/Back_end:/app
-      # - serverFiles:/app/media
     networks:
       - ft_transcendence
     healthcheck:
@@ -52,8 +51,6 @@ services:
     ports:
       - "8080:80"
       - "1024:443"
-    # volumes:
-      # - serverFiles:/server_files
     networks:
       - ft_transcendence
     depends_on:
@@ -65,7 +62,6 @@ services:
 
 volumes:
   pgdata:
-  serverFiles:
 
 networks:
   ft_transcendence:
