@@ -3,7 +3,7 @@ import math
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
-from game.backend.pong_game_backend import PongGameManager
+from game.backend.pong_game_manager import PongGameManager
 from game.models import Game
 from game.serializers import GameSerializer
 from channels.db import database_sync_to_async
