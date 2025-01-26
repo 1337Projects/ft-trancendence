@@ -7,6 +7,10 @@ from channels.db import database_sync_to_async
 from account.serializer import *
 from .serializers import GameRequestSerializer
 from django.core.cache import cache
+from account.models import Profile
+from django.contrib.auth.models import AnonymousUser
+
+import sys
 
 User = get_user_model()
 @database_sync_to_async
@@ -22,19 +26,38 @@ def get_user_with_profile(username):
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        if isinstance(self.scope['user'], AnonymousUser):
+            await self.close()
+            return
         self.username = self.scope['url_route']['kwargs']['username']
+        self.user = self.scope['user']
         user_channels = cache.get(f"channels_{self.username}", [])
         if self.channel_name not in user_channels:
             user_channels.append(self.channel_name)
         cache.set(f"channels_{self.username}", user_channels, timeout=None)
+        try:
+            await self.change_online_state(value=True)
+            
+        except Exception as e:
+            await self.close()
         await self.accept()
-
+    
     async def disconnect(self, close_code):
         user_channels = cache.get(f"channels_{self.username}", [])
-    
         if self.channel_name in user_channels:
             user_channels.remove(self.channel_name)
+            await self.change_online_state(value=False)
         cache.set(f"channels_{self.username}", user_channels, timeout=None)
+
+    @database_sync_to_async     
+    def change_online_state(self, value):
+        try:
+            user = User.objects.get(username=self.user)
+            profile = Profile.objects.get(user_id=user.id)
+            profile.online = value
+            profile.save()
+        except Exception as e:
+            return str(e)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -50,7 +73,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     "response": {
                         "nots": notifications["notifications"],
                         "num_of_notify": notifications["num_of_notify"],
-                        # "current_page": notifications["current_page"],
                         "status": 208 if data.get("page") == None else 209,
                     }
                 }))
