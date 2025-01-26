@@ -164,6 +164,7 @@ export default function DashboardLayout() {
           user?.setUser(null)
           setHasMore!(true);
           setCurrentPage!(1);
+          notificationSocket.close();
           navigate("/auth/login")
   
         }
