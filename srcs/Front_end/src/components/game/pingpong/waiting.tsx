@@ -130,18 +130,17 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 
     return (
         <div className="relative">
-            <div className='w-full flex items-center bg-white text-gray-700 h-[50px] border-[1px] mt-8 rounded'>
+            <div className='w-full flex items-center bg-white text-gray-700 h-[50px] mt-8'>
                 <div className='w-full  flex items-center justify-between px-2'>
-                    <h1 className='ml-4 w-[300px] overflow-hidden h-[18px] text-[10px] uppercase'>http://localhost:5173/dashboard/game/waiting/?room={data?.name}</h1>
                     <button 
                         ref={buttonRef} 
                         onClick={() => {
                             setInvite(prev => !prev)
                         }} 
                         style={{background : color}} 
-                        className='border-white/80 text-white border-[1px] p-1 rounded-full text-[12px] h-[35px] w-[60px]'
+                        className='border-white/80 capitalize w-full text-white border-[1px] p-1 rounded text-[12px] h-[35px]'
                     >
-                        {invite ? "close" : "invite"}
+                        {invite ? "hide friends list" : "invite your friends to play"}
                     </button>
                 </div>
             </div>
