@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from .models import (
@@ -82,7 +83,7 @@ def set_infos(request):
                 return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
             name = manage_images(user_id, request, 'avatar')
             Profile.objects.filter(user_id=user_id).update(
-                avatar=f'{os.environ.get("API_URL")}media/{name}'
+                avatar=f'{settings.API_URL}media/{name}'
             )
         if 'banner' in request.FILES:
                 if request.FILES['banner'].size > (2 * 1024 * 1024):    
@@ -92,7 +93,7 @@ def set_infos(request):
                     return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
                 name = manage_images(user_id, request, 'banner')
                 Profile.objects.filter(user_id=user_id).update(
-                    banner=f'{os.environ.get("API_URL")}media/{name}'
+                    banner=f'{settings.API_URL}media/{name}'
                 )
         return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
     except Exception as e:
