@@ -24,6 +24,13 @@ def get_user_with_profile(username):
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
+    async def senderror(self, error):
+        res = {
+            "status" : 400,
+            "error" : error
+        }
+        await self.send(text_data=json.dumps({"response" : res}))
+    
     async def connect(self):
         if isinstance(self.scope['user'], AnonymousUser):
             await self.close()
@@ -56,14 +63,14 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             profile.online = value
             profile.save()
         except Exception as e:
-            return str(e)
+            self.senderror(str(e))
 
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
             event = data.get("event")
         except Exception as a:
-            return
+            await self.senderror(str(a))
         if event == "fetch nots":
             try:
                 usernamo = data["sender"]
@@ -79,7 +86,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     }
                 }))
             except Exception as e:
-                return
+                await self.senderror(str(e))
 
         elif event == "send_request":
             try:
@@ -92,7 +99,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 game_request = await self.create_game_request(sender_username, receiver_username, message, link)
                 sender_channel_names = self.get_user_channel_names(sender_username)
             except Exception as e:
-                return
+                await self.senderror(str(e))
             if sender_channel_names:
                 for channel_name in sender_channel_names:
                     await self.channel_layer.send(
@@ -159,6 +166,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "num_of_notify": num_of_notify,
             }
         except Exception as e:
-            return
+            self.senderror(str(e))
     def get_user_channel_names(self, username):
         return cache.get(f"channels_{username}", [])
