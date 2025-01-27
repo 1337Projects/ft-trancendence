@@ -97,9 +97,37 @@ store_secret_if_not_exists() {
 
 # Store secrets
 store_secret_if_not_exists secret/data/mysecret username="myuser" password="mypassword"
-store_secret_if_not_exists secret/data/database POSTGRES_PASSWORD="133742" POSTGRES_USER="ipman" POSTGRES_DB="ft_transcendence" POSTGRES_PORT="5432"
-store_secret_if_not_exists secret/data/login scope="email profile" google_key='939461351021-ru3eqql8sgakc3unrce3s9n0bmlpln3g.apps.googleusercontent.com' google_secret='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' redirect_uri_google='https://localhost:1024/auth/oauth/google' grant_type="authorization_code" oauth_url="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6&redirect_uri=https%3A%2F%2Flocalhost%3A1024%2Fauth%2Foauth%2F42&response_type=code" token_url_intra="https://api.intra.42.fr/oauth/token" client_id_intra="u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6" client_secret_intra="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" redirect_uri_intra="https://localhost:1024/auth/oauth/42" grant_type_intra="authorization_code" userinfo_url_intra="https://api.intra.42.fr/v2/me" token_url_google="https://oauth2.googleapis.com/token" userinfo_url_google="https://www.googleapis.com/oauth2/v2/userinfo"
-store_secret_if_not_exists secret/data/settings DB_NAME="ft_transcendence" DB_OWNER="ipman" PASSWORD="133742" HOST="database" PORT="5432" EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend' EMAIL_HOST='smtp.gmail.com' EMAIL_PORT=587 EMAIL_USE_TLS=true EMAIL_HOST_USER='benhammoukhawla99@gmail.com' EMAIL_HOST_PASSWORD='uqii arug mngk vbzk' API_URL="https://localhost:1024/ CRSF_URL="http://localhost:5173""
+store_secret_if_not_exists secret/data/database POSTGRES_PASSWORD="133742" \
+  POSTGRES_USER="ipman" \
+  POSTGRES_DB="ft_transcendence" \
+  POSTGRES_PORT="5432"
+store_secret_if_not_exists secret/data/login scope="email profile" \
+  google_key='939461351021-ru3eqql8sgakc3unrce3s9n0bmlpln3g.apps.googleusercontent.com' \
+  google_secret='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' \
+  redirect_uri_google='https://localhost:1024/auth/oauth/google' \
+  grant_type="authorization_code" \
+  oauth_url="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6&redirect_uri=https%3A%2F%2Flocalhost%3A1024%2Fauth%2Foauth%2F42&response_type=code" \
+  token_url_intra="https://api.intra.42.fr/oauth/token" \
+  client_id_intra="u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6" \
+  client_secret_intra="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" \
+  redirect_uri_intra="https://localhost:1024/auth/oauth/42" \
+  grant_type_intra="authorization_code" \
+  userinfo_url_intra="https://api.intra.42.fr/v2/me" \
+  token_url_google="https://oauth2.googleapis.com/token" \
+  userinfo_url_google="https://www.googleapis.com/oauth2/v2/userinfo"
+store_secret_if_not_exists secret/data/settings DB_NAME="ft_transcendence" \
+  DB_OWNER="ipman" \
+  PASSWORD="133742" \
+  HOST="database" \
+  PORT="5432" \
+  EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend' \
+  EMAIL_HOST='smtp.gmail.com' \
+  EMAIL_PORT=587 \
+  EMAIL_USE_TLS=true \
+  EMAIL_HOST_USER='benhammoukhawla99@gmail.com' \
+  EMAIL_HOST_PASSWORD='uqii arug mngk vbzk' \
+  API_URL="https://localhost:1024/" \
+  CRSF_URL="http://localhost:5173"
 
 
 # Keep Vault running
