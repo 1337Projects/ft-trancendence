@@ -159,9 +159,11 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173"
 ]
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_URL = API_URL[:-1]
+
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:1024",
+    CORS_URL
 ]
 
 ROOT_URLCONF = 'ft_transcendence.urls'
