@@ -18,7 +18,7 @@ import sys
 
 load_dotenv()
 
-
+client = hvac.Client(url=os.getenv("VAULT_ADDR"), token=os.getenv("VAULT_ROOT_TOKEN"))
 
 def fetch_secrets(path):
     try:
@@ -72,11 +72,11 @@ EMAIL_HOST_PASSWORD = get_secret(settings_secrets, "EMAIL_HOST_PASSWORD")
 API_URL = get_secret(settings_secrets, "API_URL")
 CRSF_URL = get_secret(settings_secrets, "CRSF_URL")
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASE_URI = f"postgresql://{DB_OWNER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}"
-print("Database connection string:", DATABASE_URI)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -159,6 +159,7 @@ SIMPLE_JWT = {
 CSRF_TRUSTED_ORIGINS = [
     CRSF_URL
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_URL = API_URL[:-1]
