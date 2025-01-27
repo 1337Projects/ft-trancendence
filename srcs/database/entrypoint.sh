@@ -20,9 +20,9 @@ while [ -z "$POSTGRES_USER" ] || [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_
         exit 1
     fi
     echo "Waiting for valid credentials from Vault..."
-    POSTGRES_USER=$(curl -s --header "X-Vault-Token: $VAULT_ROOT_TOKEN" $VAULT_ADDR/v1/secret/data/database | jq -r ".data.POSTGRES_USER")
-    POSTGRES_PASSWORD=$(curl -s --header "X-Vault-Token: $VAULT_ROOT_TOKEN" $VAULT_ADDR/v1/secret/data/database | jq -r ".data.POSTGRES_PASSWORD")
-    POSTGRES_DB=$(curl -s --header "X-Vault-Token: $VAULT_ROOT_TOKEN" $VAULT_ADDR/v1/secret/data/database | jq -r ".data.POSTGRES_DB")
+    POSTGRES_USER=$(curl -s --header "X-Vault-Token: $VAULT_ROOT_TOKEN" $VAULT_ADDR/v1/secret/data/database | jq -r ".data.POSTGRES_USER // empty")
+    POSTGRES_PASSWORD=$(curl -s --header "X-Vault-Token: $VAULT_ROOT_TOKEN" $VAULT_ADDR/v1/secret/data/database | jq -r ".data.POSTGRES_PASSWORD // empty")
+    POSTGRES_DB=$(curl -s --header "X-Vault-Token: $VAULT_ROOT_TOKEN" $VAULT_ADDR/v1/secret/data/database | jq -r ".data.POSTGRES_DB // empty")
     RETRY_COUNT=$((RETRY_COUNT + 1))
     sleep 2
 done
@@ -33,7 +33,7 @@ echo "----------------Retrieved credentials: POSTGRES_USER=$POSTGRES_USER, POSTG
 if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
     echo "Initializing PostgreSQL data directory..."
     mkdir -p /var/lib/postgresql/data
-    chown -R postgres:postgres /var/lib/postgresql/data 
+    chown -R postgres:postgres /var/lib/postgresql/data
     sudo -u postgres /usr/lib/postgresql/13/bin/initdb -D /var/lib/postgresql/data
 fi
 
