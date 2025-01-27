@@ -67,14 +67,13 @@ EOF
 echo "-------------------------------------Assign the root-like policy to the existing token..."
 
 # Check if the token already exists
-EXISTING_TOKEN=$(vault token lookup $VAULT_ROOT_TOKEN 2>/dev/null)
-
-if [ $? -eq 0 ]; then
+if vault token lookup $VAULT_ROOT_TOKEN >/dev/null 2>&1; then
     echo "Token with ID $VAULT_ROOT_TOKEN already exists."
 else
-    echo "Creating new token with root-like policy... && assigning root-like policy to it"
+    echo "Assigning root-like policy to the token in env"
     vault token create -policy=root-policy -id=$VAULT_ROOT_TOKEN
 fi
+
 
 # Enable KV secrets engine if not enabled
 if ! vault secrets list | grep -q "secret/"; then
