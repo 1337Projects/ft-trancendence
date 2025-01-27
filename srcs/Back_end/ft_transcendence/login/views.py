@@ -246,8 +246,8 @@ def change_password(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def block_user(request):
-    id = request.user.id
     try:
+        id = request.user.id
         target = request.data["data"]['id']
         if id == target:
             return JsonResponse({'message': 'You cannot block yourself'}, status=400)
@@ -265,7 +265,6 @@ def block_user(request):
             friendship.save()
             serializer = UserWithFriendsSerializer(friendship)
             return JsonResponse({'message': 'User has been blocked', 'res' : serializer.data}, status=200)
-
         except Friends.DoesNotExist:
             return JsonResponse({'message': 'No friendship found'}, status=400)
     except User.DoesNotExist:
@@ -278,12 +277,11 @@ def block_user(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def unblock_user(request):
-    id = request.user.id
     try:
+        id = request.user.id
         target = request.data["data"]['id']
         if id == target:
             return JsonResponse({'message': 'You cannot unblock yourself'}, status=400)
-        
         try:
             friendship = Friends.objects.get(
                 Q(sender=id, receiver=target) | Q(sender=target, receiver=id))
