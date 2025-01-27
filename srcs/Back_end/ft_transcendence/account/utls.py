@@ -65,7 +65,7 @@ def check_format(file):
         else:
             return 'valid format'
     except Exception as e:
-        return str(e)
+        raise e
 
 
 
