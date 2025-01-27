@@ -18,10 +18,7 @@ import sys
 
 load_dotenv()
 
-print(f'-*-*--*-*-*-*-*-*-* HERE BACKEND ? ${os.getenv("VAULT_ROOT_TOKEN")} ||  ${os.getenv("VAULT_ADDR", "http://vault:8200")}')
 
-
-client = hvac.Client(url=os.getenv("VAULT_ADDR", "http://vault:8200"), token=os.getenv("VAULT_ROOT_TOKEN"))
 
 def fetch_secrets(path):
     try:
@@ -39,7 +36,6 @@ login_secrets = fetch_secrets("login")
 settings_secrets = fetch_secrets("settings")
 
 def get_secret(secrets, key, default=None):
-    # print(f"L3AAAAAAR : ${secrets.get(key, default)}")
     return secrets.get(key, default)
 
 
@@ -263,4 +259,3 @@ CHANNEL_LAYERS = {
 ASGI_APPLICATION = "ft_transcendence.asgi.application"
 
 
-# SCOPE = scope  # Now available as settings.SCOPE
