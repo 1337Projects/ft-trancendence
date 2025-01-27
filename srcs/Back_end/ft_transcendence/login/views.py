@@ -23,7 +23,7 @@ from django.contrib.auth.hashers import make_password, check_password
 import requests, secrets , jwt, datetime, json, os, random, string, re
 from rest_framework import status
 
-# load_dotenv()
+
 
 User = get_user_model()
 

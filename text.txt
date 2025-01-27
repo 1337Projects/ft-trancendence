@@ -18,3 +18,12 @@ Major module: Infrastructure Setup with ELK (Elasticsearch, Logstash, Kibana) fo
 Minor module: Monitoring system.
 Minor module: Expanding Browser Compatibility.////
 Minor module: Multiple language supports./////
+
+requests-oauthlib==2.0.0
+rest_social_auth==8.4.0
+python-social-auth==0.3.6
+oauthlib==3.2.2
+django-rest-framework-social-oauth2==1.2.0
+PyJWT==2.10.0
+django-oauth-toolkit==3.0.1
+django-allauth==65.2.0

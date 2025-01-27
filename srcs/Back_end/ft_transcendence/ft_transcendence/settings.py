@@ -107,7 +107,6 @@ INSTALLED_APPS = [
     'chat',
     'game',
     'notifications',
-    # 'game_api',
     'tournment',
     'channels',
     'django.contrib.staticfiles',
