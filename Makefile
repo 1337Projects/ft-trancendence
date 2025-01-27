@@ -4,7 +4,12 @@ WORK_DIR = --project-directory ./srcs
 DOCKER_COMPOSE_FILE = -f docker-compose.yml
 DOCKER_COMPOSE_DEB = -f docker-compose.debug.yml
 DOCKER_COMPOSE_PROD = -f docker-compose.prod.yml
-DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_PROD)
+MODE ?= dev
+ifeq ($(MODE), prod)
+	DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_PROD)
+else
+	DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_DEB)
+endif
 DOCKER_COMPOSE_OVERRIDE = -f srcs/docker-compose.override.yml
 BUILD = $(DOCKER_COMPOSE)  build
 REBUILD = $(DOCKER_COMPOSE)  build --no-cache
@@ -29,8 +34,10 @@ build:
 	$(BUILD)
 
 prod:
-	HOSTNAME=${HOSTNAME}
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+	export MODE=prod
+
+dev:
+	export MODE=dev
 
 rebuild:
 	$(REBUILD)
