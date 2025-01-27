@@ -71,7 +71,7 @@ class TicTac:
                 self.make_move(row, col, player)
                 self.current_turn = self.player2 if self.current_turn == self.player1 else self.player1
             except Exception as e:
-                return {'error': str(e)}
+                raise e
             if self.check_complete(sign='X' if player == self.player1 else 'O', player=player):
                 self.set_winner(player=player)
                 return {'winner': player}
@@ -109,14 +109,8 @@ class TicTac:
                 player2_profile.save()
 
                 self.match_stored = True
-            except Game1.DoesNotExist:
-                return f"Game with id {self.game_id} does not exist"
-            except User.DoesNotExist:
-                return f"User with id {self.winner['id']} does not exist"
-            except Profile.DoesNotExist:
-                return f"Profile for user with id {self.winner['id']} or {self.loser['id']} does not exist"
             except Exception as err:
-                return str(err)
+                raise err
 
     def store_experience_log(self, player1_profile, player2_profile, player1_experience, player2_experience):
         ExperienceLog.objects.create(profile=player1_profile, experience_gained=player1_experience)
@@ -125,6 +119,7 @@ class TicTac:
     def store_game(self, winner):
         game = Game1.objects.get(id=self.game_id)
         game.winner = winner
+        game.ended = True
         game.save()
 
     def get_total_experience(self, player1, player2):

@@ -34,7 +34,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                 'id' : str(uuid.uuid4().int),
                 'username': 'AI',
                 'profile': {
-                    'avatar': f"{os.environ.get('API_URL')}media/ai.avif"    
+                    'avatar': f"{os.environ.get('API_URL')}media/ai.avif"
                 }
             }
             self.room_name = f'tictac_ai_{self.game_id}'
@@ -64,7 +64,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
             if self.tictac.get_current_turn() == self.ai:
                 self.task_ai = asyncio.create_task(self.turn_ai())
         except Exception as e:
-            self.send_error(str(e))
+            await self.send_error(str(e))
 
     async def disconnect(self, close_code):
         if hasattr(self, 'game_id') and self.game_id in self.turn_check_tasks:
@@ -102,14 +102,11 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                     await self.send_to_user(self.player['id'], event=event)
                 elif "winner" in status: 
                     if self.game_id in self.turn_check_tasks:
-                        try:
-                            self.turn_check_tasks[self.game_id].cancel()
-                            del self.turn_check_tasks[self.game_id]
-                            if self.turn_ai:
-                                self.task_ai.cancel()
-                                self.turn_ai = None
-                        except Exception as e:
-                            error =  f"Error cancelling turn check task for game {self.game_id}: {e}"
+                        self.turn_check_tasks[self.game_id].cancel()
+                        del self.turn_check_tasks[self.game_id]
+                    if self.turn_ai:
+                        self.task_ai.cancel()
+                        self.turn_ai = None
                     event = {
                         'type': 'broad_cast',
                         'data': {
@@ -122,11 +119,8 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_send(self.room_name, event)
                 elif "turn" in status:
                     if self.game_id in self.turn_check_tasks:
-                        try:
-                            self.turn_check_tasks[self.game_id].cancel()
-                            del self.turn_check_tasks[self.game_id]
-                        except Exception as e:
-                            error = f"Error cancelling turn check task for game {self.game_id}: {e}"
+                        self.turn_check_tasks[self.game_id].cancel()
+                        del self.turn_check_tasks[self.game_id]
                     event = {
                         'type': 'broad_cast',
                         'data': {
@@ -141,61 +135,58 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                     if self.tictac.get_current_turn() == self.ai:
                         self.task_ai = asyncio.create_task(self.turn_ai())
         except Exception as e:
-            self.send_error(str(e))
+            await self.send_error(str(e))
 
     async def turn_ai(self):
-        await asyncio.sleep(5)
-        board = self.tictac.get_board()
-        move = await self.ai_move(board)
-      
-        sys.stdout.flush()
-        status = self.tictac.play_turn(row=move['row'], col=move['col'], sender=self.ai['id'])
-        if "winner" in status:
-            sys.stdout.flush()
-            try:
+        try:
+            await asyncio.sleep(5)
+            board = self.tictac.get_board()
+            move = await self.ai_move(board)
+            status = self.tictac.play_turn(row=move['row'], col=move['col'], sender=self.ai['id'])
+            if "winner" in status:
                 self.turn_check_tasks[self.game_id].cancel()
                 del self.turn_check_tasks[self.game_id]
-            except Exception as e:
-                error = f"Error cancelling turn check task for game {self.game_id}: {e}"
-            event = {
-                'type': 'broad_cast',
-                'data': {
-                    'winner': status["winner"],
-                    'board': self.tictac.get_board(),
-                },
-                'status': 203
-            }
-            await self.channel_layer.group_send(self.room_name, event)
-        elif "turn" in status:
-            try:
+                event = {
+                    'type': 'broad_cast',
+                    'data': {
+                        'winner': status["winner"],
+                        'board': self.tictac.get_board(),
+                    },
+                    'status': 203
+                }
+                await self.channel_layer.group_send(self.room_name, event)
+            elif "turn" in status:
                 self.turn_check_tasks[self.game_id].cancel()
                 del self.turn_check_tasks[self.game_id]
-            except Exception as e:
-                error = f"Error cancelling turn check task for game {self.game_id}: {e}"
-            event = {
-                'type': 'broad_cast',
-                'data': {
-                    'user': self.tictac.get_current_turn(),
-                    'board': self.tictac.get_board(),
-                },
-                'status': 202
-            }
-            await self.channel_layer.group_send(self.room_name, event)
-            self.tictac.turn_start_time()
-            if self.game_id not in self.turn_check_tasks:
-                self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
+                event = {
+                    'type': 'broad_cast',
+                    'data': {
+                        'user': self.tictac.get_current_turn(),
+                        'board': self.tictac.get_board(),
+                    },
+                    'status': 202
+                }
+                await self.channel_layer.group_send(self.room_name, event)
+                self.tictac.turn_start_time()
+                if self.game_id not in self.turn_check_tasks:
+                    self.turn_check_tasks[self.game_id] = asyncio.create_task(self.check_turn_timing())
+        except Exception as e:
+            await self.send_error(str(e))
 
     async def   ai_move(self, board):
-        if self.tictac.get_moves() == 1 or self.tictac.get_moves() == 0:
-            move = get_first_move(board=board)
-        else:
-            move = get_ai_move(board, self.ai_symbol)
-        return move
+        try:
+            if self.tictac.get_moves() == 1 or self.tictac.get_moves() == 0:
+                move = get_first_move(board=board)
+            else:
+                move = get_ai_move(board, self.ai_symbol)
+            return move
+        except Exception as e:
+            await self.send_error(str(e))
 
     @database_sync_to_async
     def get_user(self):
         serializer = UserWithProfileSerializer(self.scope['user'])
-        return serializer.data  
+        return serializer.data 
 
     async def broad_cast(self, event):
         await self.send(text_data=json.dumps(event))

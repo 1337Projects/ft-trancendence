@@ -8,6 +8,7 @@ class Game1(models.Model):
     player2 = models.ForeignKey(User, related_name='games1_as_player2', on_delete=models.CASCADE)
     winner = models.ForeignKey(User, related_name='game_1_winner', on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
+    ended = models.BooleanField(default=False)
 
 class Game(models.Model):
     player1 = models.ForeignKey(User, related_name='games_as_player1', on_delete=models.CASCADE)
