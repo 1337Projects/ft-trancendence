@@ -27,8 +27,6 @@ while [ -z "$POSTGRES_USER" ] || [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_
     sleep 2
 done
 
-echo "----------------Retrieved credentials: POSTGRES_USER=$POSTGRES_USER, POSTGRES_DB=$POSTGRES_DB -----------------------------------"
-
 # Initialize PostgreSQL data directory if it doesn't exist
 if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
     echo "Initializing PostgreSQL data directory..."
