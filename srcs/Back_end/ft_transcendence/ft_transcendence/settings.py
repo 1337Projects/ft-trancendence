@@ -70,6 +70,7 @@ EMAIL_HOST_PASSWORD = get_secret(settings_secrets, "EMAIL_HOST_PASSWORD")
 
 
 API_URL = get_secret(settings_secrets, "API_URL")
+CRSF_URL = get_secret(settings_secrets, "CRSF_URL")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -156,7 +157,7 @@ SIMPLE_JWT = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173"
+    CRSF_URL
 ]
 CORS_ALLOW_CREDENTIALS = True
 
