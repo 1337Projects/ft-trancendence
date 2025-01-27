@@ -61,27 +61,16 @@ def get_profile(request, username):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def set_infos(request):
-    user_infos = request.data.get('user')
-    user_infos_dict = json.loads(user_infos)
-    user_id = request.user.id
-    first_name = user_infos_dict.get('first_name')
-    last_name = user_infos_dict.get('last_name')
-    bio = user_infos_dict.get('profile')['bio']
-    User.objects.filter(id=user_id).update(
-        first_name=first_name,
-        last_name=last_name,
-    )
-    if bio is not None:
-        Profile.objects.filter(id=user_id).update(bio=bio)   
-    if 'avatar' in request.FILES:
-        if request.FILES['avatar'].size > (3 * 1024 * 1024):
-            return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
-        format_check = check_format(request.FILES['avatar'])
-        if format_check != 'valid format':
-            return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
-        name = manage_images(user_id, request, 'avatar')
-        Profile.objects.filter(user_id=user_id).update(
-            avatar=f'{os.environ.get("API_URL")}media/{name}'
+    try:
+        user_infos = request.data.get('user')
+        user_infos_dict = json.loads(user_infos)
+        user_id = request.user.id
+        first_name = user_infos_dict.get('first_name')
+        last_name = user_infos_dict.get('last_name')
+        bio = user_infos_dict.get('profile')['bio']
+        User.objects.filter(id=user_id).update(
+            first_name=first_name,
+            last_name=last_name,
         )
         if bio is not None:
             Profile.objects.filter(id=user_id).update(bio=bio)   
@@ -95,17 +84,29 @@ def set_infos(request):
             Profile.objects.filter(user_id=user_id).update(
                 avatar=f'{os.environ.get("API_URL")}media/{name}'
             )
-        if 'banner' in request.FILES:
-            if request.FILES['banner'].size > (3 * 1024 * 1024):    
-                return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
-            format_check = check_format(request.FILES['banner'])
-            if format_check != 'valid format':
-                return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
-            name = manage_images(user_id, request, 'banner')
-            Profile.objects.filter(user_id=user_id).update(
-                banner=f'{os.environ.get("API_URL")}media/{name}'
-            )
-        return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
+            if bio is not None:
+                Profile.objects.filter(id=user_id).update(bio=bio)   
+            if 'avatar' in request.FILES:
+                if request.FILES['avatar'].size > (3 * 1024 * 1024):
+                    return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
+                format_check = check_format(request.FILES['avatar'])
+                if format_check != 'valid format':
+                    return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
+                name = manage_images(user_id, request, 'avatar')
+                Profile.objects.filter(user_id=user_id).update(
+                    avatar=f'{os.environ.get("API_URL")}media/{name}'
+                )
+            if 'banner' in request.FILES:
+                if request.FILES['banner'].size > (3 * 1024 * 1024):    
+                    return Response({"message": "File size should not exceed 3 MB.","res": get_infos(user_id).data}, status=400)
+                format_check = check_format(request.FILES['banner'])
+                if format_check != 'valid format':
+                    return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
+                name = manage_images(user_id, request, 'banner')
+                Profile.objects.filter(user_id=user_id).update(
+                    banner=f'{os.environ.get("API_URL")}media/{name}'
+                )
+            return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
     except Exception as e:
         return Response({"status": 400, "error": str(e)}, status=400)
 
