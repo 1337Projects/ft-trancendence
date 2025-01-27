@@ -13,18 +13,16 @@ services:
     restart: unless-stopped
     networks:
       - ft_transcendence
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://vault:8200/v1/sys/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://vault:8200/v1/sys/health"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
 
   db:
     container_name: database
     build: ./srcs/database/
     restart: always
-    ports:
-      - "5432:5432"
     env_file:
       - .env
     depends_on:
@@ -53,29 +51,10 @@ services:
     env_file:
       - .env
     volumes:
-      - ${PWD}/srcs/Back_end:/app
+      # - ${PWD}/srcs/Back_end:/app
+      - ${PWD}/srcs/Back_end/ft_transcendence:/app
     networks:
       - ft_transcendence
-
-
-  frontend:
-    container_name: frontend
-    build: srcs/Front_end/
-    image: frontend:aamhamdi
-    restart: always
-    volumes:
-      - ${PWD}/srcs/Front_end:/app
-    networks:
-      - ft_transcendence
-    environment:
-      - VITE_API_URL=https://${HOSTNAME}:1024/
-      - VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
-      - VITE_EMOJIES_API=https://emoji-api.com/
-      - VITE_EMOJIES_KEY="access_key=5f603eacb5994ec1a691d954ed1b809c369c465d"
-      - API_URL=https://${HOSTNAME}:1024/
-      - EMOJIES_API=https://emoji-api.com/
-      - EMOJIES_KEY=access_key=64cbbf2e3c845a7633199a3004eefb71c5eaf31a
-
 
   nginx:
     container_name: nginx
