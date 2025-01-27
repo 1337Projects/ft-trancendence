@@ -172,6 +172,8 @@ def forget_password(request):
                 
                 {reset_link}
 
+                Note: If the link does not work, please copy and paste it into your browser’s address bar.
+
                 If you did not request a password reset, please disregard this email or contact support if you believe this was an error.
 
                 Best regards,
@@ -182,11 +184,10 @@ def forget_password(request):
                 None,
                 [email],
                 fail_silently=False,
-                headers={'X-Spam-Flag': 'NO'}
             )
             return JsonResponse({'message': 'the reset link has been send to your email'}, status=200)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status==status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -218,7 +219,7 @@ def confirm_password(request):
                     return JsonResponse({'error': 'Expired token'}, status=400)
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status==status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
