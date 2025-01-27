@@ -89,7 +89,7 @@ AUTH_USER_MODEL = 'login.User'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [CORS_URL]
 
 INSTALLED_APPS = [
     'daphne',
@@ -235,7 +235,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
@@ -247,7 +246,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    # 'django_otp.backends.OTPBackend',
 )
 
 
@@ -259,6 +257,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
 ASGI_APPLICATION = "ft_transcendence.asgi.application"
 
 

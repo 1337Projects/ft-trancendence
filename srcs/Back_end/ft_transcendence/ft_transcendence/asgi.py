@@ -10,8 +10,6 @@ import notifications.routing
 from tournment import urls as tournment
 from tournment.middelware import MyMiddelware
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat.settings')
-
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(

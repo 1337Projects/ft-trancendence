@@ -16,7 +16,7 @@ class SharedState:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(SharedState, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance.lock = asyncio.Lock()
             cls._instance.rooms = {}
         return cls._instance
@@ -27,7 +27,7 @@ class SharedStateT:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(SharedStateT, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance.lock = asyncio.Lock()
             cls._instance.rooms = {}
         return cls._instance

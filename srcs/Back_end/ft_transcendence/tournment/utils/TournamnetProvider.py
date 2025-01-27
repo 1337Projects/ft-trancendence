@@ -11,7 +11,7 @@ class TournamentData:
 
     def __new__(cls):
         if cls.instance is None:
-            cls.instance = super(TournamentData, cls).__new__(cls)
+            cls.instance = super().__new__(cls)
             cls.instance.current_matches = []
             cls.instance.lock = asyncio.Lock()
         return cls.instance
