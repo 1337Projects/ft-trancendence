@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.conf import settings
-from django_otp.plugins.otp_totp.models import TOTPDevice
+# from django_otp.plugins.otp_totp.models import TOTPDevice
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -36,10 +36,3 @@ class PasswordReset(models.Model):
     token = models.CharField(unique=True)
     is_used = models.BooleanField(default=False)
 
-# class BlockedUser(models.Model):
-#     blocker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blocked_users")
-#     blocked = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blocked_by")
-
-
-#     class Meta:
-#         unique_together = ('blocker', 'blocked')

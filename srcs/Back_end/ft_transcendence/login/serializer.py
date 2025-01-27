@@ -1,7 +1,13 @@
-# from account.serializer import UserWithFriendsSerializer
+
 from .models import User
 from account.models import Friends
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from rest_framework.validators import UniqueValidator
+import re
+
+User = get_user_model()
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,12 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'first_name', 'last_name')
 
 
-from django.contrib.auth import get_user_model
-from rest_framework.validators import UniqueValidator
-
-User = get_user_model()
-
-import re
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

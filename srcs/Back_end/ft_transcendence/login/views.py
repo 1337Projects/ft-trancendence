@@ -1,16 +1,12 @@
 from account.serializer import UserWithFriendsSerializer
 from .utls import *
 from django.db.models import Q
-# from datetime import timedelta
 from django.conf import settings
-# from urllib.parse import urlencode
 from account.models import Friends
 from django.http import JsonResponse
-# from django.shortcuts import redirect
 from django.core.mail import send_mail
 from account.utls import create_profile
 from .models import User , PasswordReset
-# from rest_framework.response import Response
 from dotenv import load_dotenv, dotenv_values
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
