@@ -72,13 +72,13 @@ services:
     environment:
       - WAIT_FOR_IT_TIMEOUT=60
 
-  # redis:
-  #   container_name: redis
-  #   image: redis:latest
-  #   hostname: redis 
-  #   networks:
-  #     - ft_transcedance  
-  #   restart: always
+  redis:
+    container_name: redis
+    image: redis:latest
+    hostname: redis 
+    networks:
+      - ft_transcendence  
+    restart: always
 
 volumes:
   vault-data:

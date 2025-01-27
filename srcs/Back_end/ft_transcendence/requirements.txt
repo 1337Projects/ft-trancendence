@@ -1,12 +1,15 @@
-icecream==2.1.3
 asgiref==3.8.1
+asttokens==3.0.0
+async-timeout==5.0.1
 attrs==24.2.0
 autobahn==24.4.2
 Automat==24.8.1
 certifi==2024.8.30
 cffi==1.17.1
 channels==4.2.0
+channels_redis==4.2.1
 charset-normalizer==3.4.0
+colorama==0.4.6
 constantly==23.10.4
 cryptography==43.0.3
 daphne==4.1.2
@@ -22,12 +25,16 @@ django-rest-framework-social-oauth2==1.2.0
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 exceptiongroup==1.2.2
+executing==2.2.0
 gunicorn==21.2.0
+hvac==0.11.1
 hyperlink==21.0.0
+icecream==2.1.3
 idna==3.10
 incremental==24.7.2
 iniconfig==2.0.0
 jwcrypto==1.5.6
+msgpack==1.1.0
 oauthlib==3.2.2
 packaging==24.1
 pillow==11.0.0
@@ -37,6 +44,7 @@ ptvsd==4.3.2
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pycparser==2.22
+Pygments==2.19.1
 PyJWT==2.10.0
 pyOpenSSL==24.2.1
 pyotp==2.9.0
@@ -47,6 +55,7 @@ python-dotenv==1.0.1
 python-social-auth==0.3.6
 python3-openid==3.2.0
 qrcode==8.0
+redis==5.2.1
 requests==2.32.3
 requests-oauthlib==2.0.0
 rest_social_auth==8.4.0
@@ -61,5 +70,3 @@ txaio==23.1.1
 typing_extensions==4.12.2
 urllib3==2.2.3
 zope.interface==7.0.3
-django-background-tasks==1.2.8
-hvac==0.11.1
