@@ -25,7 +25,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         player1_id = await database_sync_to_async(lambda: self.game.player1.id)()
         player2_id = await database_sync_to_async(lambda: self.game.player2.id)()
         
-        await self.accept()
 
         if self.player.id != player1_id and self.player.id != player2_id:
             await self.close(code=4000)
