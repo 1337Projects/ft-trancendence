@@ -7,7 +7,9 @@ WORKDIR /app
 # Copy package.json and package-lock.json to install dependencies
 COPY ../Front_end/package*.json ./
 # Install dependencies
+
 RUN npm install --production
+RUN npm i --save-dev @types/react-dom
 
 # Copy the entire project to the container
 COPY ../Front_end/ .

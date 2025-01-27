@@ -106,10 +106,10 @@ store_secret_if_not_exists secret/data/login scope="email profile" \
   google_secret='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' \
   redirect_uri_google='https://localhost:1024/auth/oauth/google' \
   grant_type="authorization_code" \
-  oauth_url="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6&redirect_uri=https%3A%2F%2Flocalhost%3A1024%2Fauth%2Foauth%2F42&response_type=code" \
   token_url_intra="https://api.intra.42.fr/oauth/token" \
-  client_id_intra="u-s4t2ud-b97f4b3ece6dc6dd2cb9d3602842374fc3507805aac150759b70886538e840e6" \
-  client_secret_intra="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" \
+  oauth_url="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d13c3ff37f755b7f823cb3bef695747e2db412aea0d484a5b1ebec3aa4d34d6a&redirect_uri=https%3A%2F%2Flocalhost%3A1024%2Fauth%2Foauth%2F42&response_type=code" \
+  client_id_intra="u-s4t2ud-d13c3ff37f755b7f823cb3bef695747e2db412aea0d484a5b1ebec3aa4d34d6a" \
+  client_secret_intra="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" \
   redirect_uri_intra="https://localhost:1024/auth/oauth/42" \
   grant_type_intra="authorization_code" \
   userinfo_url_intra="https://api.intra.42.fr/v2/me" \
