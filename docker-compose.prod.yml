@@ -2,5 +2,9 @@ services:
   nginx:
     build:
       context: ./srcs
-      dockerfile: ./nginx/Dockerfile.prod
+      dockerfile: ./nginx/Dockerfile.prod 
+  be:
+    build:
+      context: ./srcs/Back_end/
+      dockerfile: ./Dockerfile.debug
   
