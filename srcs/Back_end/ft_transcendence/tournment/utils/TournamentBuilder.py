@@ -104,7 +104,7 @@ class Builder:
                     queue.append(current_node.right)
             self.add_user(root.val.data)
         except Exception as e:
-            return []
+            return self.rank
         return self.rank
         
     

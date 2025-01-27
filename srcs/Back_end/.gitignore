@@ -133,7 +133,7 @@ ft_transcendence/media/*
 !ft_transcendence/media/default-banner.jpeg
 !ft_transcendence/media/default-banner.webp
 !ft_transcendence/media/default-bannerr.jpeg
-!ai.avif
+!ai.png
 
 # Environments
 # .env

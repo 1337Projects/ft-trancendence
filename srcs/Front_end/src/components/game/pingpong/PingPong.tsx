@@ -8,6 +8,7 @@ import Canvas from "./Canvas";
 import Score from "./Score";
 import { GameType, MatchDataType, ScoreType } from "@/types/gameTypes";
 import { tournamentSocket } from "@/sockets/tournamentSocket";
+import { toast } from "react-toastify";
 
 
 
@@ -27,12 +28,17 @@ function PingPong() {
         }
     }
 
+    const ErrorHandler = (msg : string) => {
+        toast.error(msg)
+        navigateBack()
+    }
+
     useEffect(() => {
         const timer = setTimeout(() => {
             gameSocket.addCallback("init", init);
             gameSocket.addCallback("set_score", set_score);
             gameSocket.addCallback("set_match_result", setMatchResult);
-            gameSocket.addCallback("game_ended", navigateBack)
+            gameSocket.addCallback("game_ended", ErrorHandler)
             gameSocket.connect(`${import.meta.env.VITE_SOCKET_URL}wss/game/${game_id}/?token=${authInfos?.accessToken}`);
         }, 200);
 

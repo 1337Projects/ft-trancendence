@@ -160,6 +160,7 @@ class TournmentConsumer(AsyncWebsocketConsumer):
                 "status" : 212
             })
 
+
     async def send_data(self, event):
         json_data = json.dumps({"response" : event["data"]})
         await self.send(text_data=json_data)
@@ -168,12 +169,17 @@ class TournmentConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         try:
             async with self.state.lock:
-                await self.state.tournaments_providers[self.tournment_id].disconnectHandler(self.scope['user'].id)
-                
+                await asyncio.sleep(0.2)
+                current_tourament = self.state.tournaments_providers[self.tournment_id]
+                await current_tourament.disconnectHandler(self.scope['user'].id)
                 builder = self.state.tournaments_providers[self.tournment_id].builder
                 self.state.tournaments[self.tournment_id]["rounds"] = builder.get_rounds()
+                data = self.state.tournaments[self.tournment_id]
+                await self.brodcast({
+                    "data" : data,
+                    "status" : 210
+                })
                 await self.check_for_winner(self.state.tournaments[self.tournment_id]["rounds"][0][0]["winner"]["id"])
-                
                 self.state.tournaments[self.tournment_id]['user_count'] -= 1
                 if self.state.tournaments[self.tournment_id]['user_count'] == 0:
                     del self.state.tournaments[self.tournment_id]

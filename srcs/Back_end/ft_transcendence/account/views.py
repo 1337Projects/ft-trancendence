@@ -76,25 +76,25 @@ def set_infos(request):
         if bio is not None:
             Profile.objects.filter(id=user_id).update(bio=bio)   
         if 'avatar' in request.FILES:
-            if request.FILES['avatar'].size > (3 * 1024 * 1024):
-                return Response({"message": "File size should not exceed 2 MB.","res": get_infos(user_id).data}, status=400)
+            if request.FILES['avatar'].size > (2 * 1024 * 1024):
+                return Response({"message": "File size should not exceed 2 MB."}, status=400)
             format_check = check_format(request.FILES['avatar'])
             if format_check != 'valid format':
-                return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
+                return Response({"message": format_check}, status=400) 
             name = manage_images(user_id, request, 'avatar')
             Profile.objects.filter(user_id=user_id).update(
                 avatar=f'{settings.API_URL}media/{name}'
             )
         if 'banner' in request.FILES:
-                if request.FILES['banner'].size > (2 * 1024 * 1024):    
-                    return Response({"message": "File size should not exceed 2 MB.","res": get_infos(user_id).data}, status=400)
-                format_check = check_format(request.FILES['banner'])
-                if format_check != 'valid format':
-                    return Response({"message": format_check, "res": get_infos(user_id).data}, status=400) 
-                name = manage_images(user_id, request, 'banner')
-                Profile.objects.filter(user_id=user_id).update(
-                    banner=f'{settings.API_URL}media/{name}'
-                )
+            if request.FILES['banner'].size > (2 * 1024 * 1024):    
+                return Response({"message": "File size should not exceed 2 MB."}, status=400)
+            format_check = check_format(request.FILES['banner'])
+            if format_check != 'valid format':
+                return Response({"message": format_check}, status=400) 
+            name = manage_images(user_id, request, 'banner')
+            Profile.objects.filter(user_id=user_id).update(
+                banner=f'{os.environ.get("API_URL")}media/{name}'
+            )
         return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
     except Exception as e:
         return Response({"status": 400, "error": str(e)}, status=400)

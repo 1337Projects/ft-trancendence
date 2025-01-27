@@ -35,7 +35,7 @@ class TicTacWithAiConsumer(AsyncWebsocketConsumer):
                 'id' : str(uuid.uuid4().int),
                 'username': 'AI',
                 'profile': {
-                    'avatar': f"{settings.API_URL}media/ai.avif"
+                    'avatar': f"{settings.API_URL}media/ai.png"
                 }
             }
             self.room_name = f'tictac_ai_{self.game_id}'

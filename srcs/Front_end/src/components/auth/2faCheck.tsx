@@ -44,7 +44,7 @@ export default function TwoFacCheck () {
                 }
                 else {
                     user?.setAuthInfosHandler(data.access)
-                    navigate('../../dashboard/game')
+                    navigate('/dashboard/game')
                 }
             })
             
