@@ -73,6 +73,8 @@ def set_infos(request):
         first_name = user_infos_dict.get('first_name')
         last_name = user_infos_dict.get('last_name')
         bio = user_infos_dict.get('profile')['bio']
+        if not last_name or not first_name:
+            return Response({"message": "First name or Last name can't be Null"}, status=400)
         User.objects.filter(id=user_id).update(
             first_name=first_name,
             last_name=last_name,
@@ -101,7 +103,7 @@ def set_infos(request):
             )
         return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
     except Exception as e:
-        return Response({"status": 400, "error": str(e)}, status=400)
+        return Response({"status": 400, "message": str(e)}, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

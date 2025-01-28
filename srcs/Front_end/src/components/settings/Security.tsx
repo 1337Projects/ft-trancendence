@@ -48,12 +48,13 @@ function ChangePassword() {
             })
     
             if (!response.ok) {
-                throw(await response.json())
+                const { error } = await response.json()
+                throw Error(error)
             }
     
             setAlert({"type" : "success", "message" : ["your password has been updated successfully"]})
         } catch (err) {
-            setAlert({"type" : "error" , "message" : [err instanceof Error ? err.message : "error occured"]})
+            setAlert({"type" : "error" , "message" : [err instanceof Error ? err.toString() : "error occured"]})
         }
         setTimeout(() => {
             setAlert(null)
