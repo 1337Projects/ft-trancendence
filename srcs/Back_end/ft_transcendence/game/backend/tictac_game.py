@@ -45,7 +45,7 @@ class TicTac:
             else:
                 raise NameError("already taken")
         except Exception as e:
-            raise e
+            return e
 
     def check_complete(self, sign, player):
         for line in self.senario_of_success:
@@ -67,11 +67,9 @@ class TicTac:
             return {"winner": self.winner}
         player = self.current_turn
         if player["id"] == sender:
-            try:
-                self.make_move(row, col, player)
-                self.current_turn = self.player2 if self.current_turn == self.player1 else self.player1
-            except Exception as e:
-                raise e
+            if self.make_move(row, col, player):
+                return {'error': "This place is already taken"}
+            self.current_turn = self.player2 if self.current_turn == self.player1 else self.player1
             if self.check_complete(sign='X' if player == self.player1 else 'O', player=player):
                 self.set_winner(player=player)
                 return {'winner': player}
