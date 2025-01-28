@@ -27,8 +27,16 @@ export interface GameStatsType {
 };
 
 export interface GameType {
-    paddles: never;
-    game: never;
+    paddles: {
+        paddle1: number,
+        paddle2: number
+        width : number,
+        height : number
+    };
+    game: {
+        width : number,
+        height : number
+    };
     ball: {x : number, y: number}; 
     game_data : MatchDataType
 }

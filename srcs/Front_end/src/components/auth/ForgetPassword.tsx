@@ -46,7 +46,7 @@ const PasswordvalidationSchema = Yup.object({
     password :  Yup.string().required('Required').min(10, 'your password must contain at least 10 chars')
 })
 
-async function resetPasswordHandler(values : {password : string} ) {
+async function resetPasswordHandler(values : {password : string, token : string, email : string} ) {
 
     try { 
         const response = await fetch(`${import.meta.env.VITE_API_URL}api/users/confirmPassword/`, {
@@ -83,6 +83,7 @@ export default function ForgetPassword() {
     const params = new URLSearchParams(window.location.search)
 
     const token = params.get('token')
+    const email = params.get('email')
     const [alert, setAlert] = useState<AlertType | null>(null)
 
     const navigate = useNavigate()
@@ -116,10 +117,12 @@ export default function ForgetPassword() {
                             initialValues={{ password : '' }}
                             validationSchema={PasswordvalidationSchema}
                             onSubmit={async (values) => {
-                                const ret = await resetPasswordHandler({...values})
-                                setAlert(ret)
-                                if (ret.type === "success") {
-                                    setTimeout(() => navigate('/auth/login') , 1000 * 3)
+                                if (token && email) {
+                                    const ret = await resetPasswordHandler({...values, token , email})
+                                    setAlert(ret)
+                                    if (ret.type === "success") {
+                                        setTimeout(() => navigate('/auth/login') , 1000 * 2)
+                                    }
                                 }
                             }}
                         >

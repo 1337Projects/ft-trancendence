@@ -20,7 +20,6 @@ export default function Tournment() {
     const navigate = useNavigate()
     const [ ended, setEnded ] = useState<{user : UserType, xp : number}[] | null>(null)
     const { tournament_id } = useParams()
-    const [ alert, setAlert ] = useState<string | null>(null)
     const timeoutRef = useRef<null | NodeJS.Timeout>(null)
     const [ error , setError] = useState<string | null>(null)
 
@@ -53,7 +52,7 @@ export default function Tournment() {
     const matchHandler = (match_data : MatchDataType) => {
         if (match_data && user) {
             if (match_data.player1.username == user?.username || match_data.player2.username == user?.username) {
-                setAlert('get ready to play match ...')
+                toast.info('get ready to play match ...')
                 timeoutRef.current = setTimeout(() => {
                     navigate(`/dashboard/game/tournment/${tournament_id}/play/${match_data.id}`)
                 }, 3000)
@@ -85,7 +84,6 @@ export default function Tournment() {
         <div className={`w-full h-full overflow-scroll ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} p-2`}>
             <Hero data={tournamentData} />
             <div className="w-full h-fit mt-6">
-                {alert && toast.info(alert)}
                 <Schema data={tournamentData} />
                 {
                     ended && 

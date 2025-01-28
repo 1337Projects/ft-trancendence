@@ -73,7 +73,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   x2="113.5"
                   y2="35.5005"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
                 <line
                   id="Line 7_2"
@@ -82,7 +82,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   x2="114.5"
                   y2="110.5"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
               </g>
             </g>
@@ -131,7 +131,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   x2="113.5"
                   y2="227.5"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
                 <line
                   id="Line 7_4"
@@ -140,7 +140,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   x2="114.5"
                   y2="302.5"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
               </g>
             </g>
@@ -184,7 +184,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                 x2="246.5"
                 y2="87.5005"
                 stroke="#464444"
-                stroke-linecap="round"
+                strokeLinecap="round"
               />
               <line
                 id="Line 7_6"
@@ -193,7 +193,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                 x2="247.5"
                 y2="162.5"
                 stroke="#464444"
-                stroke-linecap="round"
+                strokeLinecap="round"
               />
             </g>
             <g id="Group 532_2">
@@ -284,7 +284,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   y2="-0.5"
                   transform="matrix(-1 0 0 1 807 36.0005)"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
                 <line
                   id="Line 7_8"
@@ -294,7 +294,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   y2="-0.5"
                   transform="matrix(0 1 1 0 765 36)"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
               </g>
             </g>
@@ -346,7 +346,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   y2="-0.5"
                   transform="matrix(-1 0 0 1 807 228)"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
                 <line
                   id="Line 7_10"
@@ -356,7 +356,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                   y2="-0.5"
                   transform="matrix(0 1 1 0 765 228)"
                   stroke="#464444"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
               </g>
             </g>
@@ -401,7 +401,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                 y2="-0.5"
                 transform="matrix(-1 0 0 1 669 83.0005)"
                 stroke="#464444"
-                stroke-linecap="round"
+                strokeLinecap="round"
               />
               <line
                 id="Line 7_12"
@@ -411,7 +411,7 @@ export default function Schema8({ rounds } : {rounds : MatchDataType[][]}) {
                 y2="-0.5"
                 transform="matrix(0 1 1 0 627 83)"
                 stroke="#464444"
-                stroke-linecap="round"
+                strokeLinecap="round"
               />
             </g>
             <g id="Group 533_2">

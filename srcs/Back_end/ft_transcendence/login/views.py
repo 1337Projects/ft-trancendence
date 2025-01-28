@@ -196,7 +196,7 @@ def forget_password(request):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def confirm_password(request):
     try:
         if request.method == 'POST':
@@ -208,8 +208,6 @@ def confirm_password(request):
                 return JsonResponse({'error': errors}, status=400)
             try:
                 password_reset = PasswordReset.objects.get(token=token, user__email=email)
-            except PasswordReset.DoesNotExist:
-                return JsonResponse({'error': 'Invalid token'}, status=400)
                 if password_reset.is_used:
                     return JsonResponse({'error': 'Token has already been used.'}, status=400)
                 user = password_reset.user
@@ -221,6 +219,8 @@ def confirm_password(request):
                     return JsonResponse({'message': 'Password has been reset'}, status=200)
                 else:
                     return JsonResponse({'error': 'Expired token'}, status=400)
+            except PasswordReset.DoesNotExist:
+                return JsonResponse({'error': 'Invalid token'}, status=400)
         return JsonResponse({'error': 'Invalid request method'}, status=405)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
