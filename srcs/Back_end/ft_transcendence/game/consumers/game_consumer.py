@@ -14,52 +14,57 @@ class GameConsumer(AsyncWebsocketConsumer):
     pongGameManager = PongGameManager()
 
     async def connect(self):
-        await self.accept()
-        self.game_id = self.scope['url_route']['kwargs']['game_id']
-        self.player = self.scope['user']
-        self.room_name = f'game_{self.game_id}'
+        try:
+            await self.accept()
+            self.game_id = self.scope['url_route']['kwargs']['game_id']
+            self.player = self.scope['user']
+            self.room_name = f'game_{self.game_id}'
 
-        self.game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
+            self.game = await database_sync_to_async(Game.objects.get)(id=self.game_id)
+            player1_id = await database_sync_to_async(lambda: self.game.player1.id)()
+            player2_id = await database_sync_to_async(lambda: self.game.player2.id)()
 
-    
-        player1_id = await database_sync_to_async(lambda: self.game.player1.id)()
-        player2_id = await database_sync_to_async(lambda: self.game.player2.id)()
-        
+            if self.player.id != player1_id and self.player.id != player2_id:
+                await self.close(code=4000)
+                return
 
-        if self.player.id != player1_id and self.player.id != player2_id:
-            await self.close(code=4000)
-            return
+            self.channel_layer = get_channel_layer()
+            status = self.pongGameManager.get_game_status(self.room_name)
+            if status == 'end':
+                await self.disconnect(4001)
+                return
+            await self.channel_layer.group_add(
+                self.room_name,
+                self.channel_name
+            )
+            game_is_full = await self.pongGameManager.add_player_to_game(self.game, self.player, self.room_name)
 
-        self.channel_layer = get_channel_layer()
-        status = self.pongGameManager.get_game_status(self.room_name)
-        if status == 'end':
-            await self.disconnect(4001)
-            return
-        await self.channel_layer.group_add(
-            self.room_name,
-            self.channel_name
-        )
-        game_is_full = await self.pongGameManager.add_player_to_game(self.game, self.player, self.room_name)
+            self.timeout_task = None
+            if game_is_full:
+                await self.init_game()
+                asyncio.create_task(self.game_loop())
+                return
 
-        self.timeout_task = None
-        if game_is_full:
-            await self.init_game()
-            asyncio.create_task(self.game_loop())
-            return
-
-        self.timeout_task = asyncio.create_task(self.player_timeout())
+            self.timeout_task = asyncio.create_task(self.player_timeout())
+        except Exception as e:
+            await self.send_error(str(e))
+            await self.close(code=4002)
 
     async def player_timeout(self):
         await asyncio.sleep(3)  # Set timeout period (e.g., 30 seconds)
         await self.disconnect(4001, timeout=True)  # Disconnect the player if timeout expires
     
     async def receive(self, text_data=None):
-        data = json.loads(text_data)
-        event_type = data.get('event')
-        if event_type == 'movePaddle':
-            key = data.get('key')
-            self.pongGameManager.move_player(self.room_name, self.player.id, key)
-            # await self.send_stats()
+        try:
+            data = json.loads(text_data)
+            event_type = data.get('event')
+            if event_type == 'movePaddle':
+                key = data.get('key')
+                self.pongGameManager.move_player(self.room_name, self.player.id, key)
+                # await self.send_stats()
+        except Exception as e:
+            await self.send_error(str(e))
+            await self.close(code=4002)
  
     async def send_stats(self):
         stats = self.pongGameManager.get_stats(self.room_name)
@@ -112,42 +117,48 @@ class GameConsumer(AsyncWebsocketConsumer):
             - If the game has already ended, no additional actions are taken.
             - The player is removed from the channel group.
         """
-        if timeout:
-            await self.timeout_disconnect()
-        elif self.pongGameManager.get_game_status(self.room_name) != 'end':
-            await self.disconnect_in_game()
-        elif self.pongGameManager.get_game_status(self.room_name) == 'end':
-            await self.send(text_data=json.dumps({
-                'event': 'game_ended',
-                'message': 'The game has already ended.'
-            }))
+        try:
+            if timeout:
+                await self.timeout_disconnect()
+            elif self.pongGameManager.get_game_status(self.room_name) != 'end':
+                await self.disconnect_in_game()
+            elif self.pongGameManager.get_game_status(self.room_name) == 'end':
+                await self.send(text_data=json.dumps({
+                    'event': 'game_ended',
+                    'message': 'The game has already ended.'
+                }))
 
-        await self.channel_layer.group_discard(
-            self.room_name,
-            self.channel_name
-        )
+            await self.channel_layer.group_discard(
+                self.room_name,
+                self.channel_name
+            )
+        except Exception as e:
+            await self.send_error(str(e))
 
     async def game_loop(self):
-        speed_increment_time = 0
-        while self.pongGameManager.game_is_starting(self.room_name):
-            await asyncio.sleep(1 / 40)
-            score = self.pongGameManager.update(self.room_name)
-            if score:
-                await self.send_score(score)
-                if score['score1'] >= 5 or score['score2'] >= 5:
-                    game_data = await self.end_game(score)
-                    event = {
-                        'type': 'broad_cast',
-                        'event': 'end_game',
-                        'game_data': game_data
-                    }
-                    self.pongGameManager.end_game(self.room_name)
-                    await self.group_send(event)
-            current_time = asyncio.get_event_loop().time()
-            if current_time - speed_increment_time >= 5:
-                self.pongGameManager.increse_speed(self.room_name)
-                speed_increment_time = current_time
-            await self.send_stats()
+        try:
+            speed_increment_time = 0
+            while self.pongGameManager.game_is_starting(self.room_name):
+                await asyncio.sleep(1 / 40)
+                score = self.pongGameManager.update(self.room_name)
+                if score:
+                    await self.send_score(score)
+                    if score['score1'] >= 5 or score['score2'] >= 5:
+                        game_data = await self.end_game(score)
+                        event = {
+                            'type': 'broad_cast',
+                            'event': 'end_game',
+                            'game_data': game_data
+                        }
+                        self.pongGameManager.end_game(self.room_name)
+                        await self.group_send(event)
+                current_time = asyncio.get_event_loop().time()
+                if current_time - speed_increment_time >= 5:
+                    self.pongGameManager.increse_speed(self.room_name)
+                    speed_increment_time = current_time
+                await self.send_stats()
+        except Exception as e:
+            await self.send_error(str(e))
 
     @database_sync_to_async
     def end_game(self, score):
@@ -203,3 +214,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             if self.timeout_task != None:
                 self.timeout_task.cancel()
         await self.send(text_data=json.dumps(event))
+    
+    async def send_error(self, error):
+        res = {
+            "status" : 400,
+            "error" : error
+        }
+        await self.send(text_data=json.dumps({"response" : res}))
