@@ -73,9 +73,6 @@ This project is a web application that includes both front-end and back-end comp
 │   │   ├── index.html
 │   ├── nginx
 │   ├── vault
-├── text.txt
-├── vault
-│   ├── file
 ├── wait-for-it.sh
 ```
 
@@ -102,10 +99,9 @@ Create another `.env` in Front_end and add the following environment variables:
 HOSTNAME=localhost
 VITE_API_URL=https://${HOSTNAME}:1024/
 VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
-VITE_EMOJIES_API=https://emoji-api.com/
-VITE_EMOJIES_KEY=your_emojies_api_key
 ```
-Replace `your_emojies_api_key` with the actual value. This configuration sets up the API URLs and other necessary environment variables for the front-end application.
+
+After that, create an `vault-init.sh` file in the vault directory .
 
 ## Example Vault Initialization Script
 
