@@ -24,8 +24,6 @@ PS = $(DOCKER_COMPOSE)  ps
 # Targets
 .PHONY: all build up down logs restart config ps clean
 
-#HOSTNAME := $(shell hostname -f)
-HOSTNAME := localhost
 
 all: build up
 
@@ -47,7 +45,7 @@ rebuild:
 	$(UP)
 
 up: 
-	HOSTNAME=${HOSTNAME} $(UP)
+	$(UP)
 
 down:
 	$(DOWN)

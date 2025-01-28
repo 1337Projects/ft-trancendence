@@ -3,14 +3,10 @@ FROM python:3.9-slim
 
 RUN apt-get update && apt-get install -y curl wget netcat-traditional
 
-# Set working directory to /app
 WORKDIR /app
 
-
-# Copy requirements file
 COPY ./ft_transcendence/requirements.txt .
 
-# Install dependencies
 RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
@@ -22,10 +18,10 @@ COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
 
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 
-# Copy application code
+
 COPY ./ft_transcendence .
 
-# Expose port for debugger
+
 EXPOSE 5678
 
 COPY ./entry-point.sh /usr/local/bin/
@@ -35,5 +31,4 @@ RUN [ "chmod",  "+x", "/usr/local/bin/entry-point.sh" ]
 ENTRYPOINT [ "entry-point.sh" ]
 
 
-# Run command to start debugger
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

@@ -6,8 +6,6 @@ services:
     volumes:
       - ./vault/file:/vault/file
       - vault-data:/vault/data
-    ports:
-      - "8200:8200"
     env_file:
       - .env
     restart: unless-stopped
