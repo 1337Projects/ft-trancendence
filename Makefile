@@ -4,7 +4,8 @@ WORK_DIR = --project-directory ./srcs
 DOCKER_COMPOSE_FILE = -f docker-compose.yml
 DOCKER_COMPOSE_DEB = -f docker-compose.debug.yml
 DOCKER_COMPOSE_PROD = -f docker-compose.prod.yml
-MODE ?= prod
+MODE := $(shell cat .mode 2>/dev/null || echo prod)
+
 ifeq ($(MODE), prod)
 	DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_PROD)
 else
@@ -34,10 +35,12 @@ build:
 	$(BUILD)
 
 prod:
-	export MODE=prod
+	@echo prod > .mode
+	@echo "Switched to production mode (MODE=prod)."
 
 dev:
-	export MODE=dev
+	@echo dev > .mode
+	@echo "Switched to development mode (MODE=dev)."
 
 rebuild:
 	$(REBUILD)

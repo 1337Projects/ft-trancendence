@@ -271,20 +271,33 @@ wait
 
 To build the project, you can use the Makefile to set up either the production or development environment.
 
-### Building for Production
+### Setting the Mode of the Project
 
-To build the project in production mode, run the following command:
+You can set the mode of the project to either development or production by using the `MODE` environment variable. This variable determines which Docker Compose configuration file will be used.
 
-```sh
-MODE=prod make all
-```
-
-### Building for Development
-
-To build the project in development mode, run the following command:
+By default, the `MODE` is set to `prod`, so all targets will execute with the production configuration. If the `MODE` is already set to `dev`, you can switch to production mode by running the following command:
 
 ```sh
-MODE=dev make all
+make prod
 ```
 
-This command sets the MODE to dev and runs the all target, which builds and starts the Docker containers using the development configuration.
+To set, the `MODE` to `dev`. you could run the command:
+
+```sh
+make dev
+```
+this command will switch to dev mod in the project.
+
+### Run the Project
+
+To run the project, use the following command:
+```sh
+make
+```
+
+### Clean the Project
+
+To clean the project, use the following command:
+```sh
+make clean
+```
