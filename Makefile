@@ -4,7 +4,7 @@ WORK_DIR = --project-directory ./srcs
 DOCKER_COMPOSE_FILE = -f docker-compose.yml
 DOCKER_COMPOSE_DEB = -f docker-compose.debug.yml
 DOCKER_COMPOSE_PROD = -f docker-compose.prod.yml
-MODE ?= dev
+MODE ?= prod
 ifeq ($(MODE), prod)
 	DOCKER_COMPOSE += $(DOCKER_COMPOSE_FILE) $(DOCKER_COMPOSE_PROD)
 else
