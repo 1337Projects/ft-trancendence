@@ -68,9 +68,9 @@ EMAIL_HOST_USER = get_secret(settings_secrets, "EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = get_secret(settings_secrets, "EMAIL_HOST_PASSWORD")
 
 
-
 API_URL = get_secret(settings_secrets, "API_URL")
 CRSF_URL = get_secret(settings_secrets, "CRSF_URL")
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -82,7 +82,7 @@ DATABASE_URI = f"postgresql://{DB_OWNER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}"
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n)z6y-28r18$*7r)3c5i8&fvxjfpbi!=@(tl48h8e1_#la%r$+'
+SECRET_KEY = get_secret(settings_secrets, "SECRET_KEY")
 
 AUTH_USER_MODEL = 'login.User'
 

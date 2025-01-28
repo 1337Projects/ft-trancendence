@@ -127,7 +127,8 @@ store_secret_if_not_exists secret/data/settings DB_NAME="ft_transcendence" \
   EMAIL_HOST_USER='benhammoukhawla99@gmail.com' \
   EMAIL_HOST_PASSWORD='uqii arug mngk vbzk' \
   API_URL="https://localhost:1024/" \
-  CRSF_URL="http://localhost:5173"
+  CRSF_URL="http://localhost:5173" \
+  SECRET_KEY='django-insecure-n)z6y-28r18$*7r)3c5i8&fvxjfpbi!=@(tl48h8e1_#la%r$+'
 
 
 # Keep Vault running
