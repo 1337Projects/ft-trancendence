@@ -73,10 +73,11 @@ def set_infos(request):
         first_name = user_infos_dict.get('first_name')
         last_name = user_infos_dict.get('last_name')
         bio = user_infos_dict.get('profile')['bio']
-        User.objects.filter(id=user_id).update(
-            first_name=first_name,
-            last_name=last_name,
-        )
+        if first_name and last_name:
+            User.objects.filter(id=user_id).update(
+                first_name=first_name,
+                last_name=last_name,
+            )
         if bio is not None:
             Profile.objects.filter(id=user_id).update(bio=bio)   
         if 'avatar' in request.FILES:
