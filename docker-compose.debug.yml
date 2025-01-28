@@ -26,4 +26,4 @@ services:
     networks:
       - ft_transcendence
     env_file:
-      - .env
+      - ./srcs/Front_end/.env
