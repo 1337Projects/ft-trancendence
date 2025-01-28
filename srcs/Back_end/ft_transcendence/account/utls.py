@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from PIL import Image
 from django.core.exceptions import ValidationError
 
-default_banner = f"{settings.API_URL}media/default-banner.jpg"
+default_banner = f"{settings.API_URL}media/default-banner.jpeg"
 default_avatar = f"{settings.API_URL}media/default-avatar.jpeg"
 
 def manage_images(user_id, request, type):
