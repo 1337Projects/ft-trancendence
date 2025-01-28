@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - PYCHARM_HOST=host.docker.internal
-      - DEBUG=True
+      - DEBUG_MODE=True
       - DJANGO_SETTINGS_MODULE=ft_transcendence.settings
     volumes:
       - ${PWD}/srcs/Back_end/ft_transcendence:/app
@@ -25,6 +25,5 @@ services:
       - ${PWD}/srcs/Front_end:/app
     networks:
       - ft_transcendence
-    environment:
-      - VITE_API_URL=https://${HOSTNAME}:1024/
-      - VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
+    env_file:
+      - .env

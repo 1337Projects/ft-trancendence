@@ -3,8 +3,22 @@ services:
     build:
       context: ./srcs
       dockerfile: ./nginx/Dockerfile.prod 
+    volumes:
+      - media_data:/app/media
   be:
     build:
       context: ./srcs/Back_end/
       dockerfile: ./Dockerfile
-  
+    volumes:
+      - media_data:/app/media/
+    environment:
+      - DEBUG_MODE=True
+
+volumes:
+  media_data:
+    name: media
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/srcs/Back_end/ft_transcendence/media
