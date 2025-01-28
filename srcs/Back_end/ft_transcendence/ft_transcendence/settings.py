@@ -71,6 +71,8 @@ EMAIL_HOST_PASSWORD = get_secret(settings_secrets, "EMAIL_HOST_PASSWORD")
 API_URL = get_secret(settings_secrets, "API_URL")
 CRSF_URL = get_secret(settings_secrets, "CRSF_URL")
 
+A_HOST = get_secret(settings_secrets, "A_HOST")
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -88,7 +90,7 @@ AUTH_USER_MODEL = 'login.User'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = [A_HOST]
 
 
 INSTALLED_APPS = [
@@ -233,7 +235,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 

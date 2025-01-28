@@ -13,11 +13,7 @@ services:
     restart: unless-stopped
     networks:
       - ft_transcendence
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://vault:8200/v1/sys/health"]
-    #   interval: 5s
-    #   timeout: 5s
-    #   retries: 5
+
 
   db:
     container_name: database
