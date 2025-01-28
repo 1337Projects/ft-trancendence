@@ -245,7 +245,7 @@ def generate_2fa_qr_code(request):
         totp = pyotp.TOTP(pyotp.random_base32())
         user.secret_key = totp.secret
         user.save()
-        uri = totp.provisioning_uri(name=user.email, issuer_name="FT_TRANCANDENCE")
+        uri = totp.provisioning_uri(name=user.email, issuer_name="FT_TRANSCENDENCE")
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,

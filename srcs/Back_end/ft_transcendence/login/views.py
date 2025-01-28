@@ -29,102 +29,44 @@ User = get_user_model()
 @api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def intra_oauth(request):
-    if request.method == 'GET' :
-        return JsonResponse({"url": settings.OAUTH_URL})
-    elif request.method == 'POST' :
-        code = json.loads(request.body).get("code")
-        if not code:
-            return JsonResponse({"error": "Authorization code not provided"}, status=400)
-        data = {
-            "code": code,
-            "client_id": settings.CLIENT_ID_INTRA,
-            "client_secret": settings.CLIENT_SECRET_INTRA,
-            "redirect_uri": settings.REDIRECT_URI_INTRA ,
-            "grant_type": settings.GRANT_TYPE_INTRA,
-        }
-        token_reponse = requests.post(settings.TOKEN_URL_INTRA, data=data)
-        token_data = token_reponse.json()
-        if "error" in token_data:
-            return JsonResponse({"error": "Failed to get access token"}, status=400)
-        access_token = token_data['access_token']
-        headers = {"Authorization": f"Bearer {access_token}"}
-        userinfo_response = requests.get(settings.USERINFO_URL_INTRA, headers=headers)
-        userinfo = userinfo_response.json()
-        if "error" in userinfo:
-            return JsonResponse({"error": "Failed to fetch user info"}, status=400)
-        intra_id = userinfo['id']
-        email = userinfo['email']
-        first_name = userinfo['first_name']
-        last_name = userinfo['last_name']
-        name = generate_username(customize_username(userinfo['login']))
-        image = userinfo['image']['link']
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            user = User.objects.create_user(
-                username=name,
-                email=email,
-                last_name=last_name,
-                first_name=first_name,
-                google_or_intra=True,
-            )
-            create_profile(user.id, image)
-        try:
-            if user.twofa:
-                request.session['user_id'] =  user.id
-                request.session['retry_limit'] = 5
-                request.session.set_expiry(300)
-                response = JsonResponse({"2fa": "True", "status": 200})
-            else:
-                refresh = RefreshToken.for_user(user)
-                refresh['username'] = user.username
-                access_token = str(refresh.access_token)
-                response = JsonResponse({'access': access_token, "userinfo": userinfo, "2fa": "False", "status": 200})
-                refresh_token = str(refresh)
-                set_refresh_token_cookie(response, refresh_token)
-            return response
-        except AuthenticationFailed:
-            return JsonResponse({'error': 'Invalid credentials'}, status=401)
-
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def google_oauth(request):
-    code = request.data.get('code')
-    if not code:
-        return JsonResponse({'error': 'Authorization code is missing'}, status=400)
-    data = {
-        'code': code,
-        'client_id': settings.GOOGLE_KEY,
-        'client_secret': settings.GOOGLE_SECRET,
-        'redirect_uri': settings.REDIRECT_URI_GOOGLE,
-        'grant_type': settings.GRANT_TYPE,
-    }
-    response = requests.post(settings.TOKEN_URL_GOOGLE, data=data)
-    if response.status_code != 200:
-        return JsonResponse(response.json(), status=response.status_code)
-    token_info = response.json()
-    access_token = token_info.get('access_token')
-    if access_token:
-        user_info_response = requests.get(settings.USERINFO_URL_GOOGLE, headers={'Authorization': f'Bearer {access_token}'})
-        if user_info_response.status_code == 200:
-            user_info = user_info_response.json()
-            if "error" in user_info:
+    try:
+        if request.method == 'GET' :
+            return JsonResponse({"url": settings.OAUTH_URL})
+        elif request.method == 'POST' :
+            code = json.loads(request.body).get("code")
+            if not code:
+                return JsonResponse({"error": "Authorization code not provided"}, status=400)
+            data = {
+                "code": code,
+                "client_id": settings.CLIENT_ID_INTRA,
+                "client_secret": settings.CLIENT_SECRET_INTRA,
+                "redirect_uri": settings.REDIRECT_URI_INTRA ,
+                "grant_type": settings.GRANT_TYPE_INTRA,
+            }
+            token_reponse = requests.post(settings.TOKEN_URL_INTRA, data=data)
+            token_data = token_reponse.json()
+            if "error" in token_data:
+                return JsonResponse({"error": "Failed to get access token"}, status=400)
+            access_token = token_data['access_token']
+            headers = {"Authorization": f"Bearer {access_token}"}
+            userinfo_response = requests.get(settings.USERINFO_URL_INTRA, headers=headers)
+            userinfo = userinfo_response.json()
+            if "error" in userinfo:
                 return JsonResponse({"error": "Failed to fetch user info"}, status=400)
-            email = user_info.get('email')
-            name = user_info.get('name')
-            username = generate_username(customize_username(name))
-            image = f"{settings.API_URL}media/default-avatar.jpeg"
-            if not email or not username:
-                return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
+            intra_id = userinfo['id']
+            email = userinfo['email']
+            first_name = userinfo['first_name']
+            last_name = userinfo['last_name']
+            name = generate_username(customize_username(userinfo['login']))
+            image = userinfo['image']['link']
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
                 user = User.objects.create_user(
-                    username=username,
+                    username=name,
                     email=email,
-                    last_name= ' '.join(name.split()[1:]) if name else "",
-                    first_name= name.split()[0] if name else "",
+                    last_name=last_name,
+                    first_name=first_name,
                     google_or_intra=True,
                 )
                 create_profile(user.id, image)
@@ -138,12 +80,78 @@ def google_oauth(request):
                     refresh = RefreshToken.for_user(user)
                     refresh['username'] = user.username
                     access_token = str(refresh.access_token)
-                    response = JsonResponse({'access': access_token, "2fa": "False", "status": 200})
+                    response = JsonResponse({'access': access_token, "userinfo": userinfo, "2fa": "False", "status": 200})
                     refresh_token = str(refresh)
                     set_refresh_token_cookie(response, refresh_token)
-                    return response
+                return response
             except AuthenticationFailed:
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def google_oauth(request):
+    try:
+        code = request.data.get('code')
+        if not code:
+            return JsonResponse({'error': 'Authorization code is missing'}, status=400)
+        data = {
+            'code': code,
+            'client_id': settings.GOOGLE_KEY,
+            'client_secret': settings.GOOGLE_SECRET,
+            'redirect_uri': settings.REDIRECT_URI_GOOGLE,
+            'grant_type': settings.GRANT_TYPE,
+        }
+        response = requests.post(settings.TOKEN_URL_GOOGLE, data=data)
+        if response.status_code != 200:
+            return JsonResponse(response.json(), status=response.status_code)
+        token_info = response.json()
+        access_token = token_info.get('access_token')
+        if access_token:
+            user_info_response = requests.get(settings.USERINFO_URL_GOOGLE, headers={'Authorization': f'Bearer {access_token}'})
+            if user_info_response.status_code == 200:
+                user_info = user_info_response.json()
+                if "error" in user_info:
+                    return JsonResponse({"error": "Failed to fetch user info"}, status=400)
+                email = user_info.get('email')
+                name = user_info.get('name')
+                username = generate_username(customize_username(name))
+                image = f"{settings.API_URL}media/default-avatar.jpeg"
+                if not email or not username:
+                    return JsonResponse({'error': 'Failed to retrieve user information'}, status=400)
+                try:
+                    user = User.objects.get(email=email)
+                except User.DoesNotExist:
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        last_name= ' '.join(name.split()[1:]) if name else "",
+                        first_name= name.split()[0] if name else "",
+                        google_or_intra=True,
+                    )
+                    create_profile(user.id, image)
+                try:
+                    if user.twofa:
+                        request.session['user_id'] =  user.id
+                        request.session['retry_limit'] = 5
+                        request.session.set_expiry(300)
+                        response = JsonResponse({"2fa": "True", "status": 200})
+                    else:
+                        refresh = RefreshToken.for_user(user)
+                        refresh['username'] = user.username
+                        access_token = str(refresh.access_token)
+                        response = JsonResponse({'access': access_token, "2fa": "False", "status": 200})
+                        refresh_token = str(refresh)
+                        set_refresh_token_cookie(response, refresh_token)
+                    return response
+                except AuthenticationFailed:
+                    return JsonResponse({'error': 'Invalid credentials'}, status=401)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
