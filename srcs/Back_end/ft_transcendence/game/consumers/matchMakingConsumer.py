@@ -112,13 +112,16 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        room = self.shared_data._instance.rooms.get(self.room_id, None)
-        if room:
-            await self.channel_layer.group_discard(
-                room['name'],
-                self.channel_name
-            )
-            del self.shared_data._instance.rooms[self.room_id]
+        try:
+            room = self.shared_data._instance.rooms.get(self.room_id, None)
+            if room:
+                await self.channel_layer.group_discard(
+                    room['name'],
+                    self.channel_name
+                )
+                del self.shared_data._instance.rooms[self.room_id]
+        except:
+            await self.senderror("somthing went wrong")
 
 
     @database_sync_to_async
@@ -146,19 +149,22 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
 
     def get_room(self, room_name, room_type):
-        if room_name == 'any' and room_type == 'public':
-            for key, room in self.shared_data._instance.rooms.items():
-                if room['status'] == 'waiting' and \
-                    room['privacy'] == 'public' and \
-                    room['players'][0]['id'] != self.serialized_user['id']:
-                    return key
-        else:
-            for key, room in self.shared_data._instance.rooms.items():
-                if room['status'] == 'waiting' and \
-                    room['name'] == room_name and \
-                    room['privacy'] == room_type and \
-                    room['players'][0]['id'] != self.serialized_user['id']:
-                    return key
+        try:
+            if room_name == 'any' and room_type == 'public':
+                for key, room in self.shared_data._instance.rooms.items():
+                    if room['status'] == 'waiting' and \
+                        room['privacy'] == 'public' and \
+                        room['players'][0]['id'] != self.serialized_user['id']:
+                        return key
+            else:
+                for key, room in self.shared_data._instance.rooms.items():
+                    if room['status'] == 'waiting' and \
+                        room['name'] == room_name and \
+                        room['privacy'] == room_type and \
+                        room['players'][0]['id'] != self.serialized_user['id']:
+                        return key
+        except:
+            return -1
         return -1
     
 

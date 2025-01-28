@@ -6,5 +6,5 @@ services:
   be:
     build:
       context: ./srcs/Back_end/
-      dockerfile: ./Dockerfile.debug
+      dockerfile: ./Dockerfile
   
