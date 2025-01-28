@@ -6,7 +6,6 @@ import json
 from account.serializer import UserWithProfileSerializer
 from login.models import User
 from django.contrib.auth.models import AnonymousUser
-from tournment.utils.utils import debug
 
 class MatchMakeingConsumer(AsyncWebsocketConsumer):
 
@@ -58,7 +57,6 @@ class MatchMakeingConsumer(AsyncWebsocketConsumer):
             current_turnament = self.tournaments.get(self.tournment_id, None)
             if current_turnament:
                 current_turnament['players'][str(self.serialized_user['id'])] = self.serialized_user
-                debug(current_turnament)
                 await self.brodcast({
                     "data" : current_turnament,
                     "status" : 100
