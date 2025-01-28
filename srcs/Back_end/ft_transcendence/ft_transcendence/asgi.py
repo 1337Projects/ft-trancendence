@@ -1,3 +1,10 @@
+from channels.generic.websocket import AsyncWebsocketConsumer
+
+class CatchAllConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.close(code=4004)
+
+
 
 import os
 
@@ -9,6 +16,8 @@ import game.routing
 import notifications.routing
 from tournment import urls as tournment
 from tournment.middelware import MyMiddelware
+from django.urls import re_path
+
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
@@ -18,7 +27,8 @@ application = ProtocolTypeRouter({
                 chat.routing.websocket_urlpatterns +
                 notifications.routing.websocket_urlpatterns +
                 tournment.websocket_urlpatterns +
-                game.routing.websocket_urlpatterns
+                game.routing.websocket_urlpatterns +
+                [re_path(r"^wss/.*$", CatchAllConsumer.as_asgi())],
             )
         )
     )
