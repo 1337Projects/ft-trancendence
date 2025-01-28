@@ -46,7 +46,7 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             group_name,
             {
-                "type": "chat.message",
+                "type": "send.message",
                 "data" : data
             }
         )
@@ -107,7 +107,7 @@ class GameMatchMakingConsumer(AsyncWebsocketConsumer):
 
 
 
-    async def chat_message(self, event):
+    async def send_message(self, event):
         await self.send(text_data=json.dumps({"response" : event["data"]}))
 
 

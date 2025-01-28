@@ -34,4 +34,5 @@ done css issue in tic tac
 done protect image format (png jpg, jpeg)
 doen debug false
 
+media files
 secret key

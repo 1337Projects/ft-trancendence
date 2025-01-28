@@ -50,9 +50,6 @@ services:
         condition: service_healthy
     env_file:
       - .env
-    volumes:
-      # - ${PWD}/srcs/Back_end:/app
-      - ${PWD}/srcs/Back_end/ft_transcendence:/app
     networks:
       - ft_transcendence
 

@@ -3,7 +3,7 @@ services:
   be:
     build:
       context: ./srcs/Back_end/
-      dockerfile: Dockerfile.debug
+      dockerfile: Dockerfile
     environment:
       - PYCHARM_HOST=host.docker.internal
       - DEBUG=True
@@ -28,5 +28,3 @@ services:
     environment:
       - VITE_API_URL=https://${HOSTNAME}:1024/
       - VITE_SOCKET_URL=wss://${HOSTNAME}:1024/
-      - VITE_EMOJIES_API=https://emoji-api.com/
-      - VITE_EMOJIES_KEY=access_key=64cbbf2e3c845a7633199a3004eefb71c5eaf31a
