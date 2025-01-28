@@ -90,7 +90,7 @@ AUTH_USER_MODEL = 'login.User'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG_MODE')
-print(DEBUG)
+
 ALLOWED_HOSTS = [A_HOST]
 
 

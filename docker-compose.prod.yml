@@ -12,7 +12,7 @@ services:
     volumes:
       - media_data:/app/media/
     environment:
-      - DEBUG_MODE=True
+      - DEBUG_MODE=False
 
 volumes:
   media_data:
