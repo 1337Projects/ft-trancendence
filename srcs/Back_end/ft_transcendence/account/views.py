@@ -93,7 +93,7 @@ def set_infos(request):
                 return Response({"message": format_check}, status=400) 
             name = manage_images(user_id, request, 'banner')
             Profile.objects.filter(user_id=user_id).update(
-                banner=f'{os.environ.get("API_URL")}media/{name}'
+                banner=f'{settings.API_URL}media/{name}'
             )
         return Response({"status": 200, "res": get_infos(user_id).data}, status=200)
     except Exception as e:
