@@ -6,6 +6,15 @@ import SettingsInput, { TextArea } from "./Input"
 import { AlertType } from "@/types/indexTypes"
 import Alert from "../ui/Alert"
 
+function checkImage(img : File) {
+    const type = img.type.split("/")
+    if (type?.[0] !== "image" || (type?.[1] !== "png" && type?.[1] != "jpg" && type?.[1] != "jpeg")) {
+        throw new Error("avatar should be an image (png, jpg, jpeg)")
+    }
+    if (img.size > 2 * 1024 * 1024) {
+        throw new Error("avatar size should be less than 2mb")
+    }
+}
 
 export default function Profile() {
 
@@ -26,21 +35,11 @@ export default function Profile() {
             const formdata = new FormData()
             formdata.append("user", JSON.stringify({first_name : values.first_name, last_name : values.last_name, profile : {bio : values.bio}}))
             if (images.avatar) {
-                if (images.avatar.size > 2 * 1024 * 1024) {
-                    throw new Error("avatar size should be less than 2mb")
-                }
-                if (images.avatar.type.split("/")[0] !== "image") {
-                    throw new Error("avatar should be an image")
-                }
+                checkImage(images.avatar)
                 formdata.append("avatar" , images.avatar)
             }
             if (images.banner) {
-                if (images.banner.size > 2 * 1024 * 1024) {
-                    throw new Error("banner size should be less than 2mb")
-                }
-                if (images.banner.type.split("/")[0] !== "image") {
-                    throw new Error("avatar should be an image")
-                }
+                checkImage(images.banner)
                 formdata.append("banner" , images.banner)
             }
             const response = await fetch(`${import.meta.env.VITE_API_URL}api/profile/set_profile_data/`, {

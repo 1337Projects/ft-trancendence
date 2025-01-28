@@ -1,6 +1,4 @@
 import React, { useContext, useState } from "react"
-import { FaKeyboard, FaRegSmile } from "react-icons/fa"
-import Emojies from './Emojies';
 import { ApearanceContext } from "../../Contexts/ThemeContext"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../Contexts/authContext"
@@ -8,13 +6,9 @@ import { FiSend } from "react-icons/fi";
 import { IoGameControllerOutline } from "react-icons/io5";
 import { ChatContext } from "@/Contexts/ChatContext";
 import { chatSocket } from "@/sockets/chatSocket";
+import { v4 as uuidv4 } from 'uuid';
 
 
-function generateRandomId() {
-    return Math.floor(Math.random() * 1e12)
-      .toString()
-      .padStart(12, '0');
-  }
 
 export default function ChatInput() {
 
@@ -23,7 +17,6 @@ export default function ChatInput() {
     const { userData } = useContext(ChatContext) || {}
     const [ text, setText ] = useState('');
     const { user } = useParams()
-    const [emojie, setEmojie] = useState<boolean>(false)
      
     function sendMessage() {
         if (text != '') {
@@ -36,7 +29,6 @@ export default function ChatInput() {
             chatSocket.sendMessage(data)
         }
         setText('')
-        setEmojie(false)
     }
 
     function inputHandler(e : React.KeyboardEvent<HTMLInputElement>) {
@@ -46,12 +38,13 @@ export default function ChatInput() {
     }
 
     function sendGameInvite() {
+        const id = uuidv4()
         const data = {
             "from" : authInfos?.username,
             "partner": user,
             "type" : "game_invite",
             "content": "",
-            "link":  `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/private/ping-pong/?room_id=${authInfos?.username}-${user}${generateRandomId()}`,
+            "link":  `${import.meta.env.VITE_API_URL}dashboard/game/waiting/room/private/ping-pong/?room_id=${authInfos?.username}-${user}${id}`,
             "event" : "new_message"
         }
         chatSocket.sendMessage(data)
@@ -66,7 +59,6 @@ export default function ChatInput() {
                 userData?.freindship?.status == 'blocked' ?
                 <div className="w-full h-full flex justify-center items-center text-xs capitalize">you cant send messages</div> :
                 <div className='w-full h-1/2 relative' >
-                    { emojie && <Emojies inputText={text} TextInputHandler={setText} /> }
                     <div className="flex w-full max-w-[500px] mx-auto h-full items-center">
                         <div
                             className={`text-[14pt] mr-2 flex justify-center items-center ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black text-white border-[.2px] border-white/40"} rounded-full h-full w-[45px]`} 
@@ -74,9 +66,6 @@ export default function ChatInput() {
                             <IoGameControllerOutline />
                         </div>
                         <div className={`input w-full h-full rounded-full px-2 pl-4 text-[16pt] flex items-center justify-between ${theme == 'light' ? "bg-gray-950 text-white" : "bg-black border-[.2px] border-white/40 text-white"} `}>
-                            <div onClick={() => setEmojie(prev => !prev)}>
-                                { emojie ? <FaKeyboard /> : <FaRegSmile /> }
-                            </div>
                             <input 
                                 onKeyUp={inputHandler} 
                                 value={text}  

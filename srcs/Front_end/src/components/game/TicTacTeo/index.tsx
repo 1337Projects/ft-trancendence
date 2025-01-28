@@ -14,8 +14,8 @@ export function GameCardItem({cell} : {cell : string}) {
     const {theme} = useContext(ApearanceContext) || {}
 
     return (
-        <div className={`w-full h-full cursor-pointer rounded ${theme === 'light' ? "bg-lightItems" : "bg-darkItems/60 backdrop-blur-md"} flex justify-center items-center text-3xl`}> 
-            <p>{cell}</p>
+        <div className={`w-full h-full cursor-pointer rounded ${theme === 'light' ? "bg-lightItems" : "bg-darkItems/60 backdrop-blur-md"} flex justify-center items-center`}> 
+            <p className="text-[20px]">{cell || "-"}</p>
         </div>
     )
 }
@@ -95,11 +95,21 @@ export default function TicTacTeo() {
     }, [])
 
     useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError(null)
+            }, 1000)
+
+            return () => clearTimeout(timer)
+        }
+    }, [error])
+
+    useEffect(() => {
         let interval : NodeJS.Timeout | null = null;
         if (data?.winner !== null) {
             interval = setTimeout(() => {
                 navigate('/dashboard/game')
-            }, 4000)
+            }, 2000)
 
         }
 
@@ -146,7 +156,7 @@ export default function TicTacTeo() {
                 <div className="w-full h-[100px] flex justify-center items-center">
                     <p className="text-2xl">00 : {time < 10 && "0"}{time}</p>
                 </div>
-                <div className="w-full h-[400px] t mt-2 rounded p-4 relative">
+                <div className="w-full h-[400px] tictaktoe-background mt-2 rounded p-4 relative">
                     {
                         data.winner !== null &&
                         <div 

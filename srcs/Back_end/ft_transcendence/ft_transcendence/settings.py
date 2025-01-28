@@ -87,9 +87,9 @@ SECRET_KEY = get_secret(settings_secrets, "SECRET_KEY")
 AUTH_USER_MODEL = 'login.User'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+ALLOWED_HOSTS = ["localhost"]
 
-ALLOWED_HOSTS = [CORS_URL]
 
 INSTALLED_APPS = [
     'daphne',

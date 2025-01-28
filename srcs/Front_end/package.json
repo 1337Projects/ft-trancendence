@@ -25,6 +25,7 @@
     "react-toastify": "^11.0.2",
     "reactjs-otp-input": "^2.0.10",
     "typescript": "^5.6.2",
+    "uuid": "^11.0.5",
     "yup": "^1.4.0"
   },
   "devDependencies": {

@@ -26,7 +26,6 @@ export default function Waiting() {
     const { type, game } = useParams()
     const searchUrl = new URLSearchParams(window.location.search)
     let room_id = searchUrl.get('room_id')
-    const timeoutRef = useRef<null | NodeJS.Timeout>(null)
     const [error , setError] = useState<string | null>(null)
 
     if (!room_id) { 
@@ -45,17 +44,12 @@ export default function Waiting() {
         return () => {
             clearTimeout(timer)
             roomSocket.close()
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current)
-            }
         }
     }, [room_id])
 
     
     function startGameHandler(id : number) {
-        timeoutRef.current = setTimeout(() => {
-            navigate(`../${game}/room/${id}`)
-        }, 3000)
+        navigate(`../${game}/room/${id}`)
     }
     if (error) {
         return (
