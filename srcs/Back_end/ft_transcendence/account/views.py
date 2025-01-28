@@ -44,11 +44,15 @@ def get_profile_infos(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_users(request):
-    username = request.GET.get('query')
-    users = User.objects.filter(username__startswith=username).exclude(id=request.user.id)
-    serializer = UserWithProfileSerializer(users, many=True)
-    return Response({"data": serializer.data}, status=200)
-
+    try:
+        username = request.GET.get('query')
+        if not username:
+            return Response({"err": "None query value"}, status=400)
+        users = User.objects.filter(username__startswith=username).exclude(id=request.user.id)
+        serializer = UserWithProfileSerializer(users, many=True)
+        return Response({"data": serializer.data}, status=200)
+    except Exception as e:
+        return Response({"err": str(e)}, status=400)
 
 @api_view(['GET'])  
 @permission_classes([IsAuthenticated])
