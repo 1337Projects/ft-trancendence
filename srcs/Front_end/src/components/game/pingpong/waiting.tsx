@@ -124,19 +124,17 @@ export function InviteFriendsToPlay({ data } : { data : RoomType }) {
 
     return (
         <div className="relative">
-            <div className='w-full flex items-center bg-white text-gray-700 h-[50px] mt-8'>
-                <div className='w-full  flex items-center justify-between px-2'>
-                    <button 
-                        ref={buttonRef} 
-                        onClick={() => {
-                            setInvite(prev => !prev)
-                        }} 
-                        style={{background : color}} 
-                        className='border-white/80 capitalize w-full text-white border-[1px] p-1 rounded text-[12px] h-[35px]'
-                    >
-                        {invite ? "hide friends list" : "invite your friends to play"}
-                    </button>
-                </div>
+            <div className='w-full mt-4 flex items-center justify-between px-2'>
+                <button 
+                    ref={buttonRef} 
+                    onClick={() => {
+                        setInvite(prev => !prev)
+                    }} 
+                    style={{background : color}} 
+                    className='capitalize w-full text-white p-1 rounded text-[12px] h-[35px]'
+                >
+                    {invite ? "hide friends list" : "invite your friends to play"}
+                </button>
             </div>
             {
                 invite && 
