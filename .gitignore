@@ -7,3 +7,5 @@ venv
 .DS_Store
 *.rest
 srcs/nnginx
+
+vault/file/
