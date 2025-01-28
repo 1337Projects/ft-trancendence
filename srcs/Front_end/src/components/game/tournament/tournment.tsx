@@ -9,7 +9,6 @@ import { UserType } from "@/types/userTypes";
 import { TournamentType } from "@/types/tournamentTypes";
 import { MatchDataType } from "@/types/gameTypes";
 import { tournamentSocket } from "@/sockets/tournamentSocket";
-import { toast } from "react-toastify";
 
 
 export default function Tournment() {
@@ -22,6 +21,7 @@ export default function Tournment() {
     const { tournament_id } = useParams()
     const timeoutRef = useRef<null | NodeJS.Timeout>(null)
     const [ error , setError] = useState<string | null>(null)
+    const [ nextMatch, setNextMatch] = useState(false)
 
     const EndHandler = (data: {user : UserType, xp : number}[]) => {
         setEnded(data)
@@ -52,7 +52,7 @@ export default function Tournment() {
     const matchHandler = (match_data : MatchDataType) => {
         if (match_data && user) {
             if (match_data.player1.username == user?.username || match_data.player2.username == user?.username) {
-                toast.info('get ready to play match ...')
+                setNextMatch(true)
                 timeoutRef.current = setTimeout(() => {
                     navigate(`/dashboard/game/tournment/${tournament_id}/play/${match_data.id}`)
                 }, 3000)
@@ -81,8 +81,9 @@ export default function Tournment() {
     }
    
     return  (
-        <div className={`w-full h-full overflow-scroll ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} p-2`}>
+        <div className={` relative w-full h-full overflow-scroll ${theme == 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} p-2`}>
             <Hero data={tournamentData} />
+            {nextMatch && <div className="absolute z-10 top-0 px-8 text-[14pt] right-0 bg-gray-700/50 text-white backdrop-blur-md p-4">get ready to play match ...</div>}
             <div className="w-full h-fit mt-6">
                 <Schema data={tournamentData} />
                 {
