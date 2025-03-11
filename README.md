@@ -1,4 +1,4 @@
-# Project Name
+# 42-Transcendence
 
 ## Overview
 
